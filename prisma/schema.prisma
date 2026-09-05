@@ -1,0 +1,271 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String
+  image       String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  price       Float
+  salePrice   Float?
+  images      String   // Stored as JSON string array
+  weight      String?
+  stock       Int      @default(100)
+  status      String   @default("ACTIVE")
+  isOrganic   Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  tags        String   // Stored as comma-separated string
+  categoryId          String
+  category            Category @relation(fields: [categoryId], references: [id])
+  slogan              String?
+  ingredients         String?
+  nutritionalInfo     String?
+  manufacturedDetails String?
+  barcode             String?
+  mrp                 Float?
+  priceAlerts PriceAlert[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orderItems  OrderItem[]
+  reviews     Review[]
+  recipes     Recipe[]      @relation("RecipeProducts")
+  dietaryTags DietaryTag[]  @relation("ProductDietaryTags")
+  labelSettings String?
+}
+
+model User {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  password        String
+  role            String   @default("USER") // USER or ADMIN
+  points          Int      @default(0)
+  address         String?
+  city            String?
+  state           String?
+  pincode         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  orders          Order[]
+  recipes         Recipe[]
+  reviews         Review[]
+  blogPosts       BlogPost[]
+  notifications   Notification[]
+  dietaryTags     DietaryTag[] @relation("UserDietaryTags")
+  subscriptions   Subscription[]
+}
+
+model Recipe {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  image       String
+  category    String   // Breakfast, Main Course, etc
+  status      String   @default("APPROVED") // PENDING, APPROVED, REJECTED
+  authorId    String?
+  author      User?    @relation(fields: [authorId], references: [id])
+  prepTime    String
+  cookTime    String
+  servings    Int
+  difficulty  String
+  ingredients String   // Stored as JSON string array of objects
+  steps       String   // Stored as JSON string array
+  tags        String   // Stored as comma-separated string
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  products    Product[] @relation("RecipeProducts")
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+  total           Float
+  status          String      @default("PENDING") // PENDING, PAID, SHIPPED, DELIVERED, CANCELLED
+  razorpayOrderId String?
+  paymentId       String?
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  shippingAddress String
+  trackingNumber  String?
+  trackingUrl     String?
+  invoiceNotes    String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int
+  price     Float
+  weight    String
+}
+
+model Settings {
+  id                    String @id @default("default")
+  storeName             String
+  contactEmail          String
+  storeDescription      String
+  freeShippingThreshold Float
+  flatShippingRate      Float
+  gstRate               Float
+  currency              String @default("INR")
+}
+
+
+model PriceAlert {
+  id        String   @id @default(cuid())
+  email     String
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Coupon {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  discountType  String   // PERCENTAGE, FIXED
+  discountValue Float
+  active        Boolean  @default(true)
+  expiryDate    DateTime?
+  minPurchase   Float?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model BlogPost {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  excerpt   String
+  content   String
+  image     String?
+  category  String
+  published Boolean  @default(false)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  status    String   @default("UNREAD") // UNREAD, READ, REPLIED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, PROMO, ORDER
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DietaryProfile {
+  id           String @id @default(cuid())
+  userId       String @unique
+  isVegan      Boolean @default(false)
+  isGlutenFree Boolean @default(false)
+  isNutFree    Boolean @default(false)
+}
+
+model CustomBlend {
+  id        String @id @default(cuid())
+  userId    String?
+  name      String
+  base      String
+  heat      String
+  aromatics String
+  price     Float
+}
+
+model Batch {
+  id          String   @id @default(cuid())
+  batchNumber String   @unique
+  productId   String
+  farmName    String
+  harvestDate DateTime
+}
+
+model MealPlan {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  planData  String   // JSON string mapping day of week to Recipe ID
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DietaryTag {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  products    Product[] @relation("ProductDietaryTags")
+  users       User[]    @relation("UserDietaryTags")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Subscription {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  boxType          String   // e.g., "Standard Box", "Family Box"
+  status           String   @default("ACTIVE") // ACTIVE, CANCELLED
+  price            Float
+  nextDeliveryDate DateTime
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

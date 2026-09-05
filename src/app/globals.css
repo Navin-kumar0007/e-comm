@@ -1,0 +1,229 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-playfair);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  /* Brand accents (were referenced across components but never defined) */
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-gold-deep: var(--brand-gold-deep);
+  --color-brand-green: var(--primary);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer base {
+  :root {
+    --background: #f4f3ea;
+    --foreground: #052216;
+    
+    --card: #ffffff;
+    --card-foreground: #052216;
+    
+    --popover: #ffffff;
+    --popover-foreground: #052216;
+    
+    --primary: #052c1e;
+    --primary-foreground: #fcfbf7;
+    
+    --secondary: #c59b27;
+    --secondary-foreground: #052216;
+
+    --muted: #e7e5dc;
+    --muted-foreground: #55675e;
+
+    --accent: #c59b27;
+    --accent-foreground: #fcfbf7;
+
+    --destructive: #dc2626;
+    --destructive-foreground: #fcfbf7;
+
+    --border: #e3dec9;
+    --input: #e3dec9;
+    --ring: #052c1e;
+
+    /* Metallic gold accent + a darker tone that meets AA contrast on light bg */
+    --brand-gold: #c59b27;
+    --brand-gold-deep: #8a6d1f;
+
+    --radius: 1.25rem;
+  }
+
+  .dark {
+    --background: #06130e;
+    --foreground: #fcfaf5;
+
+    --card: #0a1b15;
+    --card-foreground: #fcfaf5;
+
+    --popover: #0a1b15;
+    --popover-foreground: #fcfaf5;
+
+    --primary: #1e7a52;
+    --primary-foreground: #f3fbf7;
+
+    --secondary: #cba35c;
+    --secondary-foreground: #06130e;
+
+    --muted: #11231d;
+    --muted-foreground: #a0b7ae;
+
+    --accent: #cba35c;
+    --accent-foreground: #06130e;
+
+    --destructive: #ef4444;
+    --destructive-foreground: #fcfaf5;
+
+    --border: #1c332a;
+    --input: #1c332a;
+    --ring: #cba35c;
+
+    --brand-gold: #cba35c;
+    --brand-gold-deep: #cba35c;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Glassmorphism styling details */
+.glass {
+  background-color: rgba(244, 243, 234, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(197, 155, 39, 0.12);
+  box-shadow: 0 8px 32px 0 rgba(197, 155, 39, 0.04);
+}
+
+.dark .glass {
+  background-color: rgba(6, 19, 14, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+}
+
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(197, 155, 39, 0.08);
+  box-shadow: 0 10px 30px -10px rgba(197, 155, 39, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .glass-card {
+  background-color: rgba(10, 27, 21, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+}
+
+.glass-card:hover {
+  border-color: rgba(197, 155, 39, 0.22);
+  box-shadow: 0 20px 40px -15px rgba(197, 155, 39, 0.1);
+}
+
+.dark .glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  opacity: 0.15;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  opacity: 0.3;
+}
+
+/* Scroll-reveal: elements fade/rise in when they enter the viewport.
+   A client observer adds `.is-visible`; a load fallback guarantees content
+   is never left hidden if JS/observer is unavailable. */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Subtle 3D lift used by feature cards */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-3d:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px -25px rgba(5, 44, 30, 0.28);
+}
+
+/* Refined numerals for pricing */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
