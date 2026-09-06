@@ -22,6 +22,7 @@ function Analytics() {
 }
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/storefront/Navbar";
+import { MobileBottomNav } from "@/components/storefront/mobile-bottom-nav";
 import { PageTransition } from "@/components/ui/page-transition";
 import { PromoBanner } from "@/components/storefront/promo-banner";
 import { Footer } from "@/components/storefront/Footer";
@@ -97,7 +98,7 @@ export default function RootLayout({
                 {children}
               </PageTransition>
             </main>
-            <div className="print:hidden"><Footer /><AIConcierge /><AccessibilityToolbar /></div><ScrollReveal />
+            <div className="print:hidden"><Footer /><MobileBottomNav /><AIConcierge /><AccessibilityToolbar /></div><ScrollReveal />
             <Toaster />
           </ThemeProvider>
         </AuthProvider>

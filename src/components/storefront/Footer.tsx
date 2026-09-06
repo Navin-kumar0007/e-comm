@@ -26,7 +26,7 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/40 bg-muted/30">
+    <footer className="border-t border-border/40 bg-muted/30 pb-24 md:pb-12">
       <div className="container mx-auto max-w-7xl px-4 py-12 sm:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
@@ -45,7 +45,7 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              Pure, natural, organic Indian groceries sourced directly from farmers.
+              Purveyors of Imperial Dry Fruits, Royal Nuts, and Rare Whole Spices sourced directly from single-estate farms.
             </p>
             <p className="text-xs text-muted-foreground">GSTIN: 27AABCU9603R1ZM</p>
           </div>

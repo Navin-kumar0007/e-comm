@@ -65,7 +65,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-[#C85B43] font-mono mb-2 block">
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono mb-2 block">
               Handpicked Essentials
             </span>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 font-heading">
@@ -75,7 +75,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
               Royal dry fruits, hand-ground masalas, and nutritious superfoods loved by our patrons.
             </p>
           </div>
-          <Link href="/shop" className="mt-4 md:mt-0 inline-flex items-center gap-1.5 text-sm font-bold text-[#C85B43] hover:text-[#A84832] transition-colors">
+          <Link href="/shop" className="mt-4 md:mt-0 inline-flex items-center gap-1.5 text-sm font-bold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors">
             <span>View All Products</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
@@ -139,7 +139,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
               const isAdded = addedIds[product.id];
 
               return (
-                <CarouselItem key={product.id} className="pl-3 md:pl-5 basis-full sm:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={product.id} className="pl-3 md:pl-5 basis-[85%] sm:basis-1/2 lg:basis-1/3">
                   <div className="p-1 h-full">
                     <Card className="h-full overflow-hidden border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 rounded-3xl group flex flex-col justify-between">
                       <CardContent className="p-0">
@@ -150,7 +150,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                           </Badge>
 
                           {hasDiscount && (
-                            <span className="absolute top-4 right-4 z-20 bg-[#C85B43] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow">
+                            <span className="absolute top-4 right-4 z-20 bg-amber-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow">
                               SAVE ₹{activeMrp - activePrice}
                             </span>
                           )}
@@ -180,7 +180,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                           </div>
 
                           <Link href={`/product/${product.slug}`}>
-                            <h3 className="text-base font-bold font-heading text-zinc-900 dark:text-zinc-100 group-hover:text-[#C85B43] transition-colors line-clamp-1">
+                            <h3 className="text-base font-bold font-heading text-zinc-900 dark:text-zinc-100 group-hover:text-amber-700 dark:text-amber-400 transition-colors line-clamp-1">
                               {product.name}
                             </h3>
                           </Link>
@@ -194,7 +194,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                                 onClick={() => setSelectedWeights((prev) => ({ ...prev, [product.id]: w }))}
                                 className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold transition-all ${
                                   currentWeight === w
-                                    ? "bg-[#1E3A2B] text-white shadow-sm"
+                                    ? "bg-[#0A261D] dark:bg-amber-500 dark:text-zinc-950 text-white shadow-sm"
                                     : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200"
                                 }`}
                               >
@@ -205,7 +205,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
 
                           {/* Price Display */}
                           <div className="flex items-baseline gap-2 mt-1">
-                            <span className="text-2xl font-extrabold text-[#C85B43]">
+                            <span className="text-2xl font-extrabold text-amber-700 dark:text-amber-400">
                               ₹{activePrice}
                             </span>
                             {hasDiscount && (
@@ -228,7 +228,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                           className={`flex-1 rounded-xl h-10 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all ${
                             isAdded
                               ? "bg-emerald-700 text-white"
-                              : "bg-[#1E3A2B] hover:bg-[#15291E] text-white"
+                              : "bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white"
                           }`}
                         >
                           {isAdded ? (
