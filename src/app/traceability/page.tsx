@@ -183,7 +183,7 @@ export default function TraceabilityPage() {
                 {/* Location Node 2: Bangalore Hub */}
                 <circle cx="150" cy="70" r="6" fill="#16a34a" />
                 <circle cx="150" cy="70" r="12" fill="none" stroke="#16a34a" strokeWidth="1.5" className="animate-ping" style={{ animationDuration: '3s', animationDelay: '1s' }} />
-                <text x="150" y="55" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#78716c">Nutty World Hub</text>
+                <text x="150" y="55" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#78716c">Spicy Nuts Hub</text>
               </svg>
             </div>
             

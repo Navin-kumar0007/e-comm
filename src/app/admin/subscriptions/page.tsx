@@ -14,7 +14,7 @@ export default async function AdminSubscriptionsPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl font-heading font-bold text-gray-900">Taste of Nutty World Box</h1>
+        <h1 className="text-3xl font-heading font-bold text-gray-900">Taste of Spicy Nuts Box</h1>
         <p className="text-muted-foreground mt-1">Manage active monthly subscription boxes</p>
       </div>
 

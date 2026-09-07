@@ -10,7 +10,7 @@ export function AIConcierge() {
     {
       role: "model",
       content:
-        "Greetings! I am the Nutty World Royal Concierge. How may I assist you with our single-estate dry fruits, organic masalas, or custom spice blends today?",
+        "Greetings! I am the Spicy Nuts Royal Concierge. How may I assist you with our single-estate dry fruits, organic masalas, or custom spice blends today?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -72,7 +72,7 @@ export function AIConcierge() {
               </div>
               <div>
                 <h3 className="font-heading font-bold text-sm text-amber-100 leading-none">
-                  Nutty World Concierge
+                  Spicy Nuts Concierge
                 </h3>
                 <span className="text-[10px] text-amber-300/80 font-mono">
                   AI Sommelier &amp; Guide

@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Our Story | Nutty World",
-  description: "The story behind Nutty World — our mission to bring pure, organic Indian food to every home.",
+  title: "Our Story | Spicy Nuts",
+  description: "The story behind Spicy Nuts — our mission to bring pure, organic Indian food to every home.",
 };
 
 export default function AboutPage() {
@@ -28,7 +28,7 @@ export default function AboutPage() {
           </div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-3">Our Story</h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed text-sm">
-            Nutty World was born from a simple belief: the food we eat should be pure, honest, and full of life. What started as a grandmother's kitchen wisdom has grown into a movement to bring authentic, organic Indian food to every home.
+            Spicy Nuts was born from a simple belief: the food we eat should be pure, honest, and full of life. What started as a grandmother's kitchen wisdom has grown into a movement to bring authentic, organic Indian food to every home.
           </p>
         </div>
       </section>
@@ -51,7 +51,7 @@ export default function AboutPage() {
                   Growing up, our founders watched their families carefully select each raw spice, each batch of nuts, selecting the finest high-oil nuts and roasting wholesome traditional snacks — always choosing what was pure and natural. There were no shortcuts. No artificial colours. No preservatives. Just real food, prepared with love.
                 </p>
                 <p>
-                  Years later, when our team couldn't find that same purity in the supermarket aisles, she decided to source it herself — directly from organic farmers across India. What began as personal sourcing for family and friends soon became Nutty World.
+                  Years later, when our team couldn't find that same purity in the supermarket aisles, she decided to source it herself — directly from organic farmers across India. What began as personal sourcing for family and friends soon became Spicy Nuts.
                 </p>
                 <p>
                   Today, we work with over 50 farming families across 8 states, bringing you ingredients that are as pure as what grandmother used to choose — with the convenience of modern delivery.

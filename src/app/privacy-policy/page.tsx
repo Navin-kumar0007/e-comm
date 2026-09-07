@@ -1,4 +1,4 @@
-export const metadata = { title: 'Privacy Policy | Nutty World' };
+export const metadata = { title: 'Privacy Policy | Spicy Nuts' };
 export default function LegalPage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-10 md:py-12">
@@ -6,7 +6,7 @@ export default function LegalPage() {
       <div className="prose prose-stone dark:prose-invert max-w-none">
         
 <p>Last updated: August 2026</p>
-<p>This Privacy Policy describes how Nutty World ("we", "us", or "our") collects, uses, and shares your personal information when you visit or make a purchase from our website.</p>
+<p>This Privacy Policy describes how Spicy Nuts ("we", "us", or "our") collects, uses, and shares your personal information when you visit or make a purchase from our website.</p>
 <h2>Information We Collect</h2>
 <p>When you visit the Site, we automatically collect certain information about your device, including information about your web browser, IP address, time zone, and some of the cookies that are installed on your device.</p>
 <p>When you make a purchase or attempt to make a purchase, we collect certain information from you, including your name, billing address, shipping address, payment information, email address, and phone number.</p>

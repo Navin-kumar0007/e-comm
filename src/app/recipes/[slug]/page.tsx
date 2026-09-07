@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const recipe = await prisma.recipe.findUnique({ where: { slug } });
   if (!recipe) return { title: "Recipe Not Found" };
   return {
-    title: `${recipe.title} | Nutty World Recipes`,
+    title: `${recipe.title} | Spicy Nuts Recipes`,
     description: recipe.description,
   };
 }

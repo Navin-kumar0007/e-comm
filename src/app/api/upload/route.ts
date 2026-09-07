@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     // If Cloudinary is configured, upload there
     if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY) {
       const result = await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream({ folder: 'nutty-world' }, (error, result) => {
+        cloudinary.uploader.upload_stream({ folder: 'spicy-nuts' }, (error, result) => {
           if (error) reject(error);
           else resolve(result);
         }).end(buffer);

@@ -98,7 +98,7 @@ export default function RecipePrintClient({ recipe }: { recipe: any }) {
             {/* Footer */}
             <div className="shrink-0 p-4 bg-orange-900 text-orange-50 flex items-center justify-between">
               <div className="w-3/4 pr-4">
-                <h3 className="font-black text-sm uppercase tracking-widest mb-1 text-white">Nutty World</h3>
+                <h3 className="font-black text-sm uppercase tracking-widest mb-1 text-white">Spicy Nuts</h3>
                 <p className="text-[9px] opacity-80 leading-tight font-medium">Scan the QR code to watch the video, read the full recipe, and buy the organic spices used in this dish!</p>
               </div>
               <div className="shrink-0 bg-white p-1 rounded-sm shadow-sm">
@@ -171,7 +171,7 @@ export default function RecipePrintClient({ recipe }: { recipe: any }) {
                </div>
                
                <div className="text-right text-orange-800 font-heading font-bold text-sm">
-                 Nutty World
+                 Spicy Nuts
                </div>
             </div>
             

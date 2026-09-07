@@ -119,8 +119,8 @@ export type StoreSettings = {
 };
 
 const defaultSettings: StoreSettings = {
-  storeName: "Nutty World",
-  contactEmail: 'support@nuttyworld.com',
+  storeName: "Spicy Nuts",
+  contactEmail: 'spicynuts1973@gmail.com',
   storeDescription: 'Pure, Natural, Organic Indian Groceries',
   freeShippingThreshold: 999,
   flatShippingRate: 50,

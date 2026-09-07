@@ -35,7 +35,7 @@ export function SpiceJar({
 }: SpiceJarProps) {
   const group = useRef<THREE.Group>(null);
   
-  const texture = useLoader(THREE.TextureLoader, '/logo.png');
+  const texture = useLoader(THREE.TextureLoader, '/spicy-nuts-logo-v3.jpg');
   
   // Clone the texture so we don't mutate the global cache for different jars if they needed different settings
   // But here we can just configure it

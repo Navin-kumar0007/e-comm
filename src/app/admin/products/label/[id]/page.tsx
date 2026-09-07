@@ -5,7 +5,7 @@ import { ArrowLeft, Printer, Leaf, ShieldCheck, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const metadata = {
-  title: "Packaging Label - Nutty World Admin",
+  title: "Packaging Label - Spicy Nuts Admin",
 };
 
 export default async function ProductLabelPage({ params }: { params: Promise<{ id: string }> }) {
@@ -50,7 +50,7 @@ export default async function ProductLabelPage({ params }: { params: Promise<{ i
             <div className="border-b-2 border-black pb-3 text-center space-y-1">
               <div className="flex items-center justify-center gap-1.5 font-heading font-black text-lg uppercase tracking-wider text-black">
                 <Leaf className="w-5 h-5 text-green-800" />
-                <span>NUTTY WORLD</span>
+                <span>SPICY NUTS</span>
               </div>
               <p className="text-[10px] uppercase font-bold tracking-widest text-gray-700">
                 Pure • Natural • Single-Estate Harvest
@@ -101,8 +101,8 @@ export default async function ProductLabelPage({ params }: { params: Promise<{ i
               <div>
                 <p className="font-bold text-[9px] uppercase tracking-wider">FSSAI Lic No: 10020021000456</p>
                 <p className="text-[8px] text-gray-600 leading-tight mt-0.5">
-                  Mkd & Pkd by: Nutty World Gourmet Pvt Ltd<br />
-                  Customer Care: care@nuttyworld.com
+                  Mkd & Pkd by: Spicy Nuts Gourmet Pvt Ltd<br />
+                  Customer Care: spicynuts1973@gmail.com
                 </p>
               </div>
 

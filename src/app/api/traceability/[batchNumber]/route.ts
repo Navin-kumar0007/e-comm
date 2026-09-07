@@ -30,7 +30,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ batchNum
       },
       {
         date: "20 Oct 2026",
-        title: "Packaged at Nutty World",
+        title: "Packaged at Spicy Nuts",
         description: "Sealed in eco-friendly, aroma-lock packaging.",
         icon: "package"
       }

@@ -6,7 +6,7 @@ import { unstable_cache } from 'next/cache';
 import { auth } from '@/lib/auth';
 
 export const metadata = {
-  title: 'Shop | Nutty World',
+  title: 'Shop | Spicy Nuts',
   description: 'Browse our collection of premium organic spices, lentils, and cold-pressed oils.',
 };
 

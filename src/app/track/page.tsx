@@ -105,7 +105,7 @@ export default function TrackOrderLookup() {
         <p className="text-center text-xs text-muted-foreground mt-6">
           Your Order ID was sent to your email when you placed the order.
           <br />
-          Check your inbox for &quot;Order Confirmed&quot; from Nutty World.
+          Check your inbox for &quot;Order Confirmed&quot; from Spicy Nuts.
         </p>
       </div>
     </div>

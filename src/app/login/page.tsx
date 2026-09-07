@@ -57,7 +57,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
             <Leaf className="h-8 w-8 text-primary" />
-            <span className="font-heading text-2xl font-bold">Nutty World</span>
+            <span className="font-heading text-2xl font-bold">Spicy Nuts</span>
           </Link>
           <h1 className="text-3xl font-heading font-bold text-foreground">Welcome Back</h1>
           <p className="text-muted-foreground mt-2">Sign in to your account</p>
@@ -74,7 +74,7 @@ export default function LoginPage() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="demo@nuttyworld.com"
+                  placeholder="spicynuts1973@gmail.com"
                   required
                   className="pl-10 h-11 rounded-xl"
                 />
@@ -125,7 +125,7 @@ export default function LoginPage() {
           {/* Demo hint */}
           <div className="mt-6 p-3 rounded-xl bg-muted/50 border border-border/30 text-center">
             <p className="text-xs text-muted-foreground">
-              <strong>Demo:</strong> demo@nuttyworld.com / demo123
+              <strong>Demo:</strong> spicynuts1973@gmail.com / demo123
             </p>
           </div>
 

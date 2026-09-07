@@ -362,7 +362,7 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
               </div>
               <div className="space-y-2">
                 <Label>Manufacturing Details</Label>
-                <Textarea value={manufacturedDetails} onChange={e => setManufacturedDetails(e.target.value)} placeholder="e.g. Manufactured by Nutty World..." rows={2} className="rounded-xl" />
+                <Textarea value={manufacturedDetails} onChange={e => setManufacturedDetails(e.target.value)} placeholder="e.g. Manufactured by Spicy Nuts..." rows={2} className="rounded-xl" />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
@@ -411,7 +411,7 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
                 <div className="absolute bottom-0 inset-x-0 h-2" style={{ backgroundColor: labelBrandColor }}></div>
                 
                 <h1 className="text-xl md:text-2xl font-black tracking-widest uppercase opacity-80" style={{ color: labelBrandColor }}>
-                  Nutty World
+                  Spicy Nuts
                   <br/>
                   <span className="text-base tracking-[0.3em]">Kitchen</span>
                 </h1>
@@ -462,7 +462,7 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
                   
                   <div>
                     <strong className="uppercase block mb-1 text-[11px] md:text-xs tracking-wider" style={{ color: labelBrandColor }}>Manufacturing</strong>
-                    <p className="font-medium opacity-80 leading-relaxed">{manufacturedDetails || "Manufactured & Marketed by Nutty World, Humnabad, Chittaguppa, Karnataka, 585412"}</p>
+                    <p className="font-medium opacity-80 leading-relaxed">{manufacturedDetails || "Manufactured & Marketed by Spicy Nuts, Humnabad, Chittaguppa, Karnataka, 585412"}</p>
                     <div className="flex items-center gap-2 mt-2 font-mono text-[9px] md:text-[10px] bg-black/5 inline-block px-2 py-0.5 rounded">
                       <strong className="font-bold opacity-70">FSSAI:</strong>
                       <span className="font-bold">112XXXXXXXXXXX</span>

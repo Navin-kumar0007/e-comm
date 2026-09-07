@@ -11,7 +11,7 @@ export default function FounderPage() {
         <div className="max-w-6xl mx-auto text-center space-y-6">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-[#2C3E2D]">Meet The Founder</h1>
           <p className="text-sm sm:text-base text-zinc-600 max-w-2xl mx-auto">
-            The story behind Nutty World and our mission to bring pure, organic Indian flavors to your home.
+            The story behind Spicy Nuts and our mission to bring pure, organic Indian flavors to your home.
           </p>
         </div>
       </div>
@@ -20,10 +20,10 @@ export default function FounderPage() {
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
           {/* Image */}
           <div className="relative aspect-[4/3.8] rounded-2xl overflow-hidden shadow-lg border border-border/40">
-            <Image src="/mamra-almonds.jpg" alt="Nutty World - Pure Origin Harvest" fill className="object-cover" priority />
+            <Image src="/mamra-almonds.jpg" alt="Spicy Nuts - Pure Origin Harvest" fill className="object-cover" priority />
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
               <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 font-mono">Founding Vision</span>
-              <p className="font-heading font-bold text-xl">Nutty World</p>
+              <p className="font-heading font-bold text-xl">Spicy Nuts</p>
               <p className="text-xs text-white/80">Founder &amp; Chief Curator</p>
             </div>
           </div>
@@ -33,7 +33,7 @@ export default function FounderPage() {
             <div>
               <h2 className="text-2xl font-heading font-bold mb-3 text-[#2C3E2D]">A Passion for Purity</h2>
               <p className="text-zinc-600 leading-relaxed text-sm mb-3">
-                "I started Nutty World with a simple realization: the flavors of my childhood were slowly disappearing from modern kitchens, replaced by heavily processed, artificially flavored alternatives."
+                "I started Spicy Nuts with a simple realization: the flavors of my childhood were slowly disappearing from modern kitchens, replaced by heavily processed, artificially flavored alternatives."
               </p>
               <p className="text-zinc-600 leading-relaxed text-sm">
                 Growing up in a household where every spice was ground fresh and every nut was hand-graded with care, I knew that authentic taste comes from pure ingredients. That's why we partner directly with organic farmers across India to bring you the finest, unadulterated spices and dry fruits.
@@ -63,8 +63,8 @@ export default function FounderPage() {
             </div>
 
             <div className="pt-8">
-              <p className="font-heading text-2xl font-bold mb-2">Nutty World Team</p>
-              <p className="text-zinc-500 italic">Founder, Nutty World</p>
+              <p className="font-heading text-2xl font-bold mb-2">Mahesh Jain</p>
+              <p className="text-zinc-500 italic">Founder, Spicy Nuts</p>
             </div>
           </div>
         </div>

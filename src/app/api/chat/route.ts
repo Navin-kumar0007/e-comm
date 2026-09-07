@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
     const response = await ai.models.generateContent({
       model: 'gemini-3.6-flash',
-      contents: `You are a helpful AI shopping concierge for Nutty World, an online store selling natural homemade masalas, pickles, and dry fruits. Be concise and friendly. User asks: ${userMessage}`,
+      contents: `You are a helpful AI shopping concierge for Spicy Nuts, an online store selling natural homemade masalas, pickles, and dry fruits. Be concise and friendly. User asks: ${userMessage}`,
     });
 
     return NextResponse.json({

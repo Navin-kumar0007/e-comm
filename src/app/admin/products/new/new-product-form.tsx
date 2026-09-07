@@ -177,7 +177,7 @@ export default function NewProductForm({ categories, dietaryTags }: { categories
               </div>
               <div className="space-y-2">
                 <Label htmlFor="manufacturedDetails">Manufacturing Details</Label>
-                <Textarea id="manufacturedDetails" name="manufacturedDetails"  placeholder="e.g. Manufactured by Nutty World, Humnabad..." rows={2} className="rounded-xl" />
+                <Textarea id="manufacturedDetails" name="manufacturedDetails"  placeholder="e.g. Manufactured by Spicy Nuts, Humnabad..." rows={2} className="rounded-xl" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

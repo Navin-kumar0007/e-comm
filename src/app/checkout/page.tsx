@@ -173,7 +173,7 @@ export default function CheckoutPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_mockedkey123", 
         amount: order.amount,
         currency: "INR",
-        name: "Nutty World",
+        name: "Spicy Nuts",
         description: "Pure, Natural, Organic Gourmet Spices & Dry Fruits",
         order_id: order.razorpayOrderId || order.id,
         handler: async function (response: any) {

@@ -1,4 +1,4 @@
-export const metadata = { title: 'Returns & Refunds | Nutty World' };
+export const metadata = { title: 'Returns & Refunds | Spicy Nuts' };
 export default function LegalPage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-10 md:py-12">

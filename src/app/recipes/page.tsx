@@ -16,7 +16,7 @@ export default async function RecipesPage() {
           Authentic <span className="text-primary italic">Recipes</span>
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-          Discover traditional Indian recipes crafted with our premium, organic spices. Bring the authentic taste of Nutty World to your home.
+          Discover traditional Indian recipes crafted with our premium, organic spices. Bring the authentic taste of Spicy Nuts to your home.
         </p>
       </div>
 

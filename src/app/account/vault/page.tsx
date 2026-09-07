@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ShieldCheck, Info, RefreshCw, AlertTriangle, Sparkles, HelpCircle } from 'lucide-react';
 
 export const metadata = {
-  title: 'My Freshness Vault - Nutty World',
+  title: 'My Freshness Vault - Spicy Nuts',
 };
 
 interface VaultItem {
@@ -278,7 +278,7 @@ export default async function VaultPage() {
             <Sparkles className="w-5 h-5 text-secondary animate-pulse" /> Optimal Shelf-Life Storage Tips
           </h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Nutty World organic spices are packed immediately post-roasting in certified aroma-lock glass jars. 
+            Spicy Nuts organic spices are packed immediately post-roasting in certified aroma-lock glass jars. 
             For maximum essential oil longevity, store your vault items in a cool, dry pantry away from direct solar radiation or oven heats. 
             Whole spices retain potency up to 2x longer than fine ground masalas.
           </p>

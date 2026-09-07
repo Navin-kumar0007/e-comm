@@ -48,7 +48,7 @@ export default async function CustomerInvoicePage({ params }: { params: Promise<
           <div>
             <div className="flex items-center gap-2 mb-2 text-green-700">
               <Leaf className="h-6 w-6" />
-              <span className="font-heading text-2xl font-bold">Nutty World</span>
+              <span className="font-heading text-2xl font-bold">Spicy Nuts</span>
             </div>
             <p className="text-sm text-gray-500">Pure, Natural, Single-Estate Gourmet</p>
             <p className="text-sm text-gray-500">GSTIN: 27AABCU9603R1ZM</p>
@@ -128,8 +128,8 @@ export default async function CustomerInvoicePage({ params }: { params: Promise<
         </div>
 
         <div className="mt-16 pt-8 border-t text-center text-sm text-gray-500">
-          <p>Thank you for choosing pure, natural dry fruits & spices from Nutty World.</p>
-          <p>If you have any questions about this invoice, please contact care@nuttyworld.com</p>
+          <p>Thank you for choosing pure, natural dry fruits & spices from Spicy Nuts.</p>
+          <p>If you have any questions about this invoice, please contact spicynuts1973@gmail.com</p>
         </div>
       </div>
     </div>

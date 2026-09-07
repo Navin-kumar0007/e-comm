@@ -48,8 +48,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nuttyworld.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Nutty World | Pure, Natural, Organic",
-    template: "%s | Nutty World",
+    default: "Spicy Nuts | Pure, Natural, Organic",
+    template: "%s | Spicy Nuts",
   },
   description:
     "Bringing pure, natural, and organic food directly from our trusted farms to your table. Artisanal masalas, pickles, and dry fruits.",
@@ -58,19 +58,19 @@ export const metadata: Metadata = {
     "natural masala",
     "homemade pickles",
     "dry fruits",
-    "Nutty World",
+    "Spicy Nuts",
   ],
   openGraph: {
     type: "website",
-    siteName: "Nutty World",
-    title: "Nutty World | Pure, Natural, Organic",
+    siteName: "Spicy Nuts",
+    title: "Spicy Nuts | Pure, Natural, Organic",
     description:
       "Pure, natural, and organic food directly from our trusted farms to your table.",
     url: siteUrl,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nutty World | Pure, Natural, Organic",
+    title: "Spicy Nuts | Pure, Natural, Organic",
     description:
       "Pure, natural, and organic food directly from our trusted farms to your table.",
   },

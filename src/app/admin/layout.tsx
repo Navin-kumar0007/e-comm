@@ -80,7 +80,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <header className="h-16 bg-card border-b border-border/50 flex items-center justify-between px-4 sm:px-6 lg:px-8 print:hidden">
            <div>
              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
-               Nutty World Operations
+               Spicy Nuts Operations
              </span>
            </div>
            <div className="flex items-center gap-4">

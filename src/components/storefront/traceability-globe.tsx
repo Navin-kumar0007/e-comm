@@ -44,7 +44,7 @@ function GlobeModel({ activeOrigin }: { activeOrigin: boolean }) {
   const locations = useMemo(() => {
     return [
       { name: "Kerala Farm", lat: 10.8, lon: 76.2, color: "#EAB308" },
-      { name: "Nutty World Hub", lat: 13.0, lon: 77.5, color: "#15803d" }
+      { name: "Spicy Nuts Hub", lat: 13.0, lon: 77.5, color: "#15803d" }
     ];
   }, []);
 

@@ -10,7 +10,7 @@ export function NewsletterSignup() {
       
       <div className="container relative z-10 px-4 md:px-6">
         <div className="max-w-3xl mx-auto glass rounded-3xl p-8 md:p-12 text-center animate-on-scroll">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground">Join the Nutty World Family</h2>
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground">Join the Spicy Nuts Family</h2>
           <p className="text-muted-foreground mb-8 text-lg">
             Subscribe to our newsletter for exclusive offers, traditional recipes, and stories from the farm.
           </p>

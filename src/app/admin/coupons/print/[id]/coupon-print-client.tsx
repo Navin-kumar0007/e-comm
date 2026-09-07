@@ -58,7 +58,7 @@ export default function CouponPrintClient({ coupon }: { coupon: any }) {
                <div>
                  <div className="flex items-center gap-2 text-amber-700 mb-1">
                    <Leaf className="w-5 h-5" />
-                   <span className="font-heading font-black tracking-widest uppercase text-sm">Nutty World</span>
+                   <span className="font-heading font-black tracking-widest uppercase text-sm">Spicy Nuts</span>
                  </div>
                  <h2 className="text-3xl font-black uppercase text-amber-900 mt-2 mb-1 flex items-center gap-2">
                    <Sparkles className="w-6 h-6 text-amber-500" />
@@ -100,7 +100,7 @@ export default function CouponPrintClient({ coupon }: { coupon: any }) {
             <div className="flex-1 p-5 pt-10 flex flex-col items-center text-center relative z-10">
                <div className="flex flex-col items-center gap-1 text-amber-700 mb-6">
                  <Leaf className="w-8 h-8" />
-                 <span className="font-heading font-black tracking-widest uppercase text-xs">Nutty World</span>
+                 <span className="font-heading font-black tracking-widest uppercase text-xs">Spicy Nuts</span>
                </div>
                
                <div className="bg-white/80 border border-amber-200 w-full py-4 px-2 rounded-lg shadow-sm mb-6">

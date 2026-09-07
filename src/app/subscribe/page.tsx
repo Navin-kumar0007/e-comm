@@ -46,7 +46,7 @@ export default function SubscribePage() {
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20">
           <Leaf className="w-4 h-4" /> Organic & Homemade
         </span>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold">Taste of Nutty World Box</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold">Taste of Spicy Nuts Box</h1>
         <p className="text-lg text-muted-foreground">
           Discover a curated selection of our finest Royal Dry Fruits (Mamra Almonds, Goan Cashews), freshly roasted organic snacks, and artisanal Chai masalas delivered to your door every month.
         </p>

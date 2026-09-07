@@ -3,7 +3,7 @@ import { ProductCard } from '@/components/storefront/product-card';
 import { Search } from 'lucide-react';
 
 export const metadata = {
-  title: 'Search Results | Nutty World',
+  title: 'Search Results | Spicy Nuts',
   description: 'Search results for your query.',
 };
 

@@ -95,7 +95,7 @@ export default function OrderConfirmationPage() {
           Order Successfully Placed!
         </h1>
         <p className="text-base text-muted-foreground max-w-lg mx-auto">
-          Thank you for choosing <span className="font-semibold text-foreground">Nutty World</span>. Your single-estate harvest is being freshly packed and prepared for dispatch.
+          Thank you for choosing <span className="font-semibold text-foreground">Spicy Nuts</span>. Your single-estate harvest is being freshly packed and prepared for dispatch.
         </p>
       </motion.div>
 

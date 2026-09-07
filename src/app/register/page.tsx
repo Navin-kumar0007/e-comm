@@ -59,7 +59,7 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
             <Leaf className="h-8 w-8 text-primary" />
-            <span className="font-heading text-2xl font-bold">Nutty World</span>
+            <span className="font-heading text-2xl font-bold">Spicy Nuts</span>
           </Link>
           <h1 className="text-3xl font-heading font-bold text-foreground">Create Account</h1>
           <p className="text-muted-foreground mt-2">Join the organic food revolution</p>

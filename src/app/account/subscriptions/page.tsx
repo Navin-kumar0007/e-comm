@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import SubscriptionActions from './subscription-actions';
 
 export const metadata = {
-  title: 'My Subscriptions | Nutty World',
+  title: 'My Subscriptions | Spicy Nuts',
 };
 
 export default async function SubscriptionsPage() {
@@ -38,7 +38,7 @@ export default async function SubscriptionsPage() {
         <div>
           <h1 className="text-3xl font-heading font-bold text-foreground">My Subscriptions</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Manage your recurring Taste of Nutty World deliveries.
+            Manage your recurring Taste of Spicy Nuts deliveries.
           </p>
         </div>
         <Link href="/subscribe">
@@ -53,7 +53,7 @@ export default async function SubscriptionsPage() {
           </div>
           <h2 className="text-xl font-bold mb-2">No active subscriptions</h2>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            You are not currently subscribed to any Taste of Nutty World monthly boxes.
+            You are not currently subscribed to any Taste of Spicy Nuts monthly boxes.
           </p>
           <Link href="/subscribe">
             <Button className="rounded-xl">Explore Subscription Boxes</Button>

@@ -68,16 +68,8 @@ export function Navbar() {
                 <div>
                   <div className="p-6 pb-5 bg-gradient-to-b from-emerald-950/10 dark:from-emerald-950/50 to-transparent border-b border-amber-500/15">
                     <div className="flex items-center gap-3">
-                      <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-amber-500/40 shadow-md flex-shrink-0 bg-white">
-                        <Image src="/logo.png" alt="Nutty World" fill className="object-cover" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-heading font-black text-xl tracking-tight text-foreground leading-none">
-                          NUTTY WORLD
-                        </span>
-                        <span className="text-[10px] font-mono tracking-widest text-amber-700 dark:text-amber-400 uppercase mt-1 font-bold">
-                          Royal Pantry &amp; Spices
-                        </span>
+                      <div className="relative h-12 w-[110px] flex-shrink-0">
+                        <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" fill className="object-contain object-left dark:brightness-110" />
                       </div>
                     </div>
                   </div>
@@ -161,17 +153,9 @@ export function Navbar() {
           </div>
 
           {/* Logo & Wordmark */}
-          <Link href="/" className="flex items-center gap-2 md:gap-3 group">
-            <div className="relative w-9 h-9 md:w-11 md:h-11 rounded-full overflow-hidden border border-amber-500/30 shadow-sm flex-shrink-0 bg-white transition-transform duration-300 group-hover:scale-105">
-              <Image src="/logo.png" alt="Nutty World" fill className="object-cover" priority />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heading font-black text-base md:text-xl tracking-tight text-foreground leading-none group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
-                NUTTY WORLD
-              </span>
-              <span className="text-[8px] md:text-[9px] font-mono tracking-widest text-muted-foreground uppercase mt-0.5 md:mt-1 font-semibold">
-                Fine Nuts &amp; Spices
-              </span>
+          <Link href="/" className="flex items-center group -ml-2">
+            <div className="relative h-14 md:h-[72px] w-[110px] md:w-[140px] flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+              <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" fill className="object-contain object-left dark:brightness-110" priority />
             </div>
           </Link>
         </div>

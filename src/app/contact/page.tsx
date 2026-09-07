@@ -37,7 +37,7 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="font-bold text-lg mb-1">Email</h3>
-              <p className="text-zinc-600 dark:text-zinc-400">hello@nuttyworld.com</p>
+              <p className="text-zinc-600 dark:text-zinc-400">spicynuts1973@gmail.com</p>
             </div>
             <div>
               <h3 className="font-bold text-lg mb-1">Phone</h3>

@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { Package, Truck, CheckCircle, Clock } from 'lucide-react';
 
 export const metadata = {
-  title: 'My Orders - Nutty World',
+  title: 'My Orders - Spicy Nuts',
 };
 
 function OrderTimeline({ status }: { status: string }) {

@@ -1,5 +1,5 @@
 /**
- * Email notification system for Nutty World.
+ * Email notification system for Spicy Nuts.
  *
  * Uses Resend when RESEND_API_KEY is configured (no SDK dependency — plain REST call).
  * Falls back to a console log in development so local flows still work. In production
@@ -8,7 +8,7 @@
 
 async function sendEmail(to: string, subject: string, html: string) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM || 'Nutty World <orders@nuttyworld.com>';
+  const from = process.env.EMAIL_FROM || 'Spicy Nuts <spicynuts1973@gmail.com>';
 
   if (apiKey) {
     try {
@@ -60,7 +60,7 @@ const baseStyles = `
 
 const headerHtml = `
   <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #c59b27;">
-    <h2 style="margin: 0; color: #052c1e; font-size: 24px;">✦ Nutty World ✦</h2>
+    <h2 style="margin: 0; color: #052c1e; font-size: 24px;">✦ Spicy Nuts ✦</h2>
     <p style="margin: 4px 0 0; color: #8a6d1f; font-size: 12px; letter-spacing: 2px;">PURE · NATURAL · ORGANIC</p>
   </div>
 `;
@@ -71,13 +71,13 @@ export async function sendOrderConfirmation(email: string, orderId: string, tota
     <div style="${baseStyles}">
       ${headerHtml}
       <h1 style="color: #052c1e; font-size: 20px;">Order Confirmed 🎉</h1>
-      <p>Thank you for your purchase from Nutty World!</p>
+      <p>Thank you for your purchase from Spicy Nuts!</p>
       <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
         <p style="margin: 4px 0;"><strong>Order ID:</strong> #${orderNum}</p>
         <p style="margin: 4px 0;"><strong>Total:</strong> ₹${total.toFixed(2)}</p>
       </div>
       <p>We're preparing your order with care. You'll receive updates as we ship it.</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— The Nutty World Team</p>
+      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— The Mahesh Jain</p>
     </div>
   `);
 }
@@ -98,7 +98,7 @@ export async function sendOrderShipped(email: string, orderId: string, trackingN
       <p>Great news! Your order <strong>#${orderNum}</strong> is on its way.</p>
       ${trackingHtml}
       <p>Your package will arrive within 3-7 business days.</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— The Nutty World Team</p>
+      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— The Mahesh Jain</p>
     </div>
   `);
 }
@@ -110,14 +110,14 @@ export async function sendOrderDelivered(email: string, orderId: string) {
       ${headerHtml}
       <h1 style="color: #052c1e; font-size: 20px;">Order Delivered ✅</h1>
       <p>Your order <strong>#${orderNum}</strong> has been delivered successfully!</p>
-      <p>We hope you enjoy your Nutty World products. If you love them, we'd appreciate a review!</p>
+      <p>We hope you enjoy your Spicy Nuts products. If you love them, we'd appreciate a review!</p>
       <div style="text-align: center; margin: 24px 0;">
         <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://nuttyworld.com'}/account/orders" 
            style="display: inline-block; background: #052c1e; color: #fcfbf7; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
           Leave a Review
         </a>
       </div>
-      <p style="color: #8a6d1f; font-size: 13px;">— The Nutty World Team</p>
+      <p style="color: #8a6d1f; font-size: 13px;">— The Mahesh Jain</p>
     </div>
   `);
 }
@@ -131,13 +131,13 @@ export async function sendOrderCancelled(email: string, orderId: string) {
       <p>Your order <strong>#${orderNum}</strong> has been cancelled.</p>
       <p>If you paid online, a refund will be processed within 5-7 business days.</p>
       <p>If this was a mistake or you'd like to reorder, visit our store anytime.</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— The Nutty World Team</p>
+      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— The Mahesh Jain</p>
     </div>
   `);
 }
 
 export async function notifyAdminNewOrder(orderId: string, total: number, customerName: string, paymentMethod: string) {
-  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM?.match(/<(.+)>/)?.[1] || 'admin@nuttyworld.com';
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM?.match(/<(.+)>/)?.[1] || 'spicynuts1973@gmail.com';
   const orderNum = orderId.slice(-8).toUpperCase();
   const payLabel = paymentMethod === 'COD' ? '💵 Cash on Delivery' : '💳 Online Payment';
   

@@ -144,7 +144,7 @@ export default function OrderHubClient({ order }: { order: any }) {
                   <div>
                     <div className="flex items-center gap-2 mb-2 text-green-700">
                       <Leaf className="h-8 w-8" />
-                      <span className="font-heading text-3xl font-bold">Nutty World</span>
+                      <span className="font-heading text-3xl font-bold">Spicy Nuts</span>
                     </div>
                     <p className="text-sm text-gray-500">Pure, Natural, Organic Spices</p>
                     <p className="text-sm text-gray-500">GSTIN: 27AABCU9603R1ZM</p>
@@ -224,7 +224,7 @@ export default function OrderHubClient({ order }: { order: any }) {
 
                 <div className="pt-8 border-t-2 border-black/10 text-center space-y-2">
                   <p className="font-medium text-gray-800 text-lg">{invoiceNotes || "Thank you for your order!"}</p>
-                  <p className="text-xs text-gray-500">For support, email us at support@nuttyworld.com</p>
+                  <p className="text-xs text-gray-500">For support, email us at spicynuts1973@gmail.com</p>
                 </div>
               </div>
             )}
@@ -233,7 +233,7 @@ export default function OrderHubClient({ order }: { order: any }) {
             {invoiceSize === "THERMAL" && (
               <div className="w-[80mm] min-h-[150mm] bg-white text-black p-4 rounded-xl shadow-lg border print:shadow-none print:border-none print:p-0 font-mono text-sm leading-tight mx-auto">
                 <div className="text-center mb-6 border-b border-dashed border-gray-400 pb-4">
-                  <h1 className="font-black text-xl mb-1 uppercase tracking-tight">Nutty World</h1>
+                  <h1 className="font-black text-xl mb-1 uppercase tracking-tight">Spicy Nuts</h1>
                   <p className="text-xs">Organic Spices</p>
                   <p className="text-xs">GST: 27AABCU9603R1ZM</p>
                 </div>

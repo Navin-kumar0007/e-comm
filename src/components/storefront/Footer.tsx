@@ -33,11 +33,11 @@ export function Footer() {
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-4">
               <div className="relative w-11 h-11 rounded-full overflow-hidden border border-amber-500/20 shadow-sm flex-shrink-0">
-                <Image src="/logo.png" alt="Nutty World" fill className="object-cover" />
+                <Image src="/spicy-nuts-logo-v3.jpg" alt="Spicy Nuts" fill className="object-cover" />
               </div>
               <div className="flex flex-col">
                 <span className="font-heading font-black text-lg tracking-tight text-foreground leading-none">
-                  NUTTY WORLD
+                  SPICY NUTS
                 </span>
                 <span className="text-[9px] font-mono tracking-widest text-muted-foreground uppercase mt-1 font-semibold">
                   Fine Nuts &amp; Spices
@@ -96,7 +96,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-border/40 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-muted-foreground">
-            &copy; {2026} Nutty World. All rights reserved.
+            &copy; {2026} Spicy Nuts. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <span>UPI</span>

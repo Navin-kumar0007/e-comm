@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Nutty World",
-    short_name: 'NuttyWorld',
+    name: "Spicy Nuts",
+    short_name: 'SpicyNuts',
     description: 'Pure, Natural, Organic foods directly from our farms to your table.',
     start_url: '/',
     display: 'standalone',

@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const category = await prisma.category.findUnique({ where: { slug: resolvedParams.slug } });
   if (!category) return { title: 'Not Found' };
   return {
-    title: `${category.name} | Nutty World`,
+    title: `${category.name} | Spicy Nuts`,
     description: category.description,
   };
 }

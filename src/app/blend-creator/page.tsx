@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { SpiceMixer } from '@/components/storefront/spice-mixer';
 
 export const metadata: Metadata = {
-  title: 'Custom Spice Blend Creator | Nutty World',
+  title: 'Custom Spice Blend Creator | Spicy Nuts',
   description: 'Mix your own custom organic spice blend.',
 };
 

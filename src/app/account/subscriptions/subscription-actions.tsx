@@ -15,7 +15,7 @@ export default function SubscriptionActions({
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleToggle = async (newStatus: 'ACTIVE' | 'CANCELLED') => {
-    if (newStatus === 'CANCELLED' && !confirm("Are you sure you want to cancel your Taste of Nutty World subscription? You will lose access to early seasonal harvests.")) {
+    if (newStatus === 'CANCELLED' && !confirm("Are you sure you want to cancel your Taste of Spicy Nuts subscription? You will lose access to early seasonal harvests.")) {
       return;
     }
 

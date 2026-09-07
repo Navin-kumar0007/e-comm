@@ -10,8 +10,8 @@ export async function getAdminSettings() {
   if (!settings) {
     // Return default properties if not seeded
     return {
-      storeName: "Nutty World",
-      contactEmail: 'support@nuttyworld.com',
+      storeName: "Spicy Nuts",
+      contactEmail: 'spicynuts1973@gmail.com',
       storeDescription: 'Pure, Natural, Organic Indian Groceries',
       freeShippingThreshold: 999,
       flatShippingRate: 50,
@@ -39,8 +39,8 @@ export async function updateAdminSettingsAction(data: {
     update: data,
     create: {
       id,
-      storeName: data.storeName || "Nutty World",
-      contactEmail: data.contactEmail || 'support@nuttyworld.com',
+      storeName: data.storeName || "Spicy Nuts",
+      contactEmail: data.contactEmail || 'spicynuts1973@gmail.com',
       storeDescription: data.storeDescription || 'Pure, Natural, Organic Indian Groceries',
       freeShippingThreshold: data.freeShippingThreshold ?? 999,
       flatShippingRate: data.flatShippingRate ?? 50,
