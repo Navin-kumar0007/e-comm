@@ -9,7 +9,15 @@ export async function middleware(req: NextRequest) {
     console.error("AUTH_SECRET is not set — refusing to authorize protected routes.");
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
-  const token = await getToken({ req, secret });
+  const isSecure = process.env.NODE_ENV === "production" || req.nextUrl.protocol === "https:";
+  const salt = isSecure ? "__Secure-authjs.session-token" : "authjs.session-token";
+  
+  const token = await getToken({ 
+    req, 
+    secret, 
+    salt,
+    secureCookie: isSecure 
+  });
   const isLoggedIn = !!token;
   const isAuthRoute = req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/register');
   const isAdminRoute = req.nextUrl.pathname.startsWith('/admin');
