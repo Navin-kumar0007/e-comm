@@ -47,7 +47,7 @@ export function CartDrawer() {
         <span className="sr-only">Shopping Cart</span>
       </SheetTrigger>
 
-      <SheetContent side="right" className="w-[380px] sm:w-[420px] flex flex-col p-0">
+      <SheetContent side="right" className="w-full sm:w-[420px] max-w-full flex flex-col p-0 bg-[#FAF8F4] dark:bg-zinc-950">
         {/* Header */}
         <div className="p-6 pb-4 border-b border-border/50">
           <h2 className="text-xl font-heading font-bold flex items-center gap-2">
@@ -137,17 +137,20 @@ export function CartDrawer() {
 
         {/* Footer */}
         {mounted && items.length > 0 && (
-          <div className="p-6 pt-4 border-t border-border/50 space-y-4 bg-background/80 backdrop-blur-md">
+          <div className="p-4 sm:p-6 pt-3 sm:pt-4 border-t border-border/50 space-y-3 sm:space-y-4 bg-background/95 backdrop-blur-md safe-area-bottom pb-8 sm:pb-6">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Subtotal</span>
-              <span className="text-xl font-bold text-foreground">₹{total.toFixed(2)}</span>
+              <span className="text-muted-foreground text-sm font-medium">Subtotal</span>
+              <span className="text-xl font-black text-foreground tnum">₹{total.toFixed(2)}</span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Shipping and taxes calculated at checkout
+            <p className="text-[11px] text-muted-foreground">
+              Free royal shipping &amp; insured packaging on all orders over ₹999.
             </p>
-            <Button onClick={() => { setIsOpen(false); router.push('/checkout'); }} className="w-full h-12 rounded-full text-base shadow-lg hover:shadow-primary/25 transition-all">
-                Proceed to Checkout
-              </Button>
+            <Button 
+              onClick={() => { setIsOpen(false); router.push('/checkout'); }} 
+              className="w-full h-12 rounded-2xl text-sm font-bold bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white shadow-lg transition-all"
+            >
+              Proceed to Checkout
+            </Button>
           </div>
         )}
       </SheetContent>

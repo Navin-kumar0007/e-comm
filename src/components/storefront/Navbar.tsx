@@ -1,5 +1,7 @@
 "use client";
 
+import { PromoBanner } from "./promo-banner";
+
 import Image from "next/image";
 import Link from "next/link";
 import { UserMenu } from "./user-menu";
@@ -46,8 +48,10 @@ export function Navbar() {
   );
 
   return (
-    <header className="bg-background/85 backdrop-blur-2xl fixed top-0 w-full z-50 border-b border-amber-500/20 shadow-sm shadow-primary/5 h-16 md:h-20 transition-all duration-300">
-      <div className="container mx-auto h-full px-3 md:px-6 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300">
+      <PromoBanner />
+      <div className="bg-background/90 backdrop-blur-2xl w-full border-b border-amber-500/20 shadow-sm shadow-primary/5 h-16 md:h-20 transition-all duration-300">
+        <div className="container mx-auto h-full px-3 md:px-6 flex items-center justify-between">
 
         {/* Left: Mobile Menu Trigger + Brand Identity */}
         <div className="flex items-center gap-2.5 md:gap-4">
@@ -191,6 +195,7 @@ export function Navbar() {
           <UserMenu />
         </div>
 
+        </div>
       </div>
       <CommandPalette open={searchOpen} setOpen={setSearchOpen} />
     </header>

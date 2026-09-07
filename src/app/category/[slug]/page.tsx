@@ -21,7 +21,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   }
 
   const rawProducts = await prisma.product.findMany({ where: { categoryId: category.id } });
-  const categoryProducts = rawProducts.map(p => ({...p, weight: p.weight || undefined, images: JSON.parse(p.images), tags: p.tags ? p.tags.split(',') : []}));
+  const categoryProducts = rawProducts.map((p: any) => ({...p, weight: p.weight || undefined, images: JSON.parse(p.images), tags: p.tags ? p.tags.split(',') : []}));
 
   return (
     <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-8 md:pt-28 md:pb-10">
@@ -39,8 +39,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           No products found in this category.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {categoryProducts.map((product) => (
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          {categoryProducts.map((product: any) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

@@ -1,3 +1,4 @@
+import { StickyMobileBuyBar } from '@/components/storefront/sticky-mobile-buy-bar';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ShieldCheck, Truck, ArrowLeft, Star } from 'lucide-react';
@@ -54,6 +55,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-8 md:pt-28 md:pb-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
         <Link href="/shop" className="hover:text-primary transition-colors flex items-center gap-1">
@@ -226,6 +231,19 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <div className="mt-20 border-t border-border/50 pt-16">
         <ProductReviews productId={product.id} />
       </div>
+
+      {/* Sticky Bottom Buy Bar on Mobile */}
+      <StickyMobileBuyBar
+        product={{
+          id: product.id,
+          name: product.name,
+          slug: product.slug,
+          price: Number(product.price),
+          salePrice: product.salePrice ? Number(product.salePrice) : null,
+          image: product.images[0],
+          weight: product.weight || 'Standard',
+        }}
+      />
     </div>
   );
 }

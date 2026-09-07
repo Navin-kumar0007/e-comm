@@ -142,22 +142,22 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
           </div>
 
           {/* Price & Action */}
-          <div className="mt-auto pt-3 border-t border-border/20 flex items-center justify-between gap-2">
-            <div className="flex items-baseline gap-1.5 flex-wrap">
+          <div className="mt-auto pt-2.5 sm:pt-3 border-t border-border/20 flex items-center justify-between gap-1.5">
+            <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-1.5 min-w-0">
               {product.salePrice ? (
                 <>
-                  <span className="text-base sm:text-lg font-black text-amber-800 dark:text-amber-400 tnum">₹{product.salePrice}</span>
-                  <span className="text-xs text-muted-foreground line-through tnum">₹{product.price}</span>
+                  <span className="text-sm sm:text-base md:text-lg font-black text-amber-800 dark:text-amber-400 tnum truncate">₹{product.salePrice}</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground line-through tnum">₹{product.price}</span>
                 </>
               ) : (
-                <span className="text-base sm:text-lg font-black text-foreground tnum">₹{product.price}</span>
+                <span className="text-sm sm:text-base md:text-lg font-black text-foreground tnum truncate">₹{product.price}</span>
               )}
             </div>
 
             <Button
               size="sm"
               aria-label={`Add ${product.name} to cart`}
-              className="rounded-xl h-9 px-3 bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-transform active:scale-95"
+              className="rounded-xl h-8 sm:h-9 px-2 sm:px-3 bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition-transform active:scale-95 shrink-0"
               onClick={handleAddToCart}
               disabled={isAdding}
             >

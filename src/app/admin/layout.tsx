@@ -13,18 +13,22 @@ import {
   ListChecks,
   Ticket,
   Sparkles,
-  Repeat
+  Repeat,
+  FolderTree,
+  MessageSquare
 } from "lucide-react";
 import { ThemeToggle } from "@/components/storefront/ThemeToggle";
 
 const sidebarLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Package },
+  { href: "/admin/categories", label: "Categories", icon: FolderTree },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/customers", label: "Customers", icon: Users },
+  { href: "/admin/messages", label: "Customer Inquiries", icon: MessageSquare },
+  { href: "/admin/coupons", label: "Coupons", icon: Ticket },
   { href: "/admin/recipes", label: "Recipes", icon: ChefHat },
   { href: "/admin/dietary", label: "Dietary Profiles", icon: ListChecks },
-  { href: "/admin/coupons", label: "Coupons", icon: Ticket },
   { href: "/admin/subscriptions", label: "Subscriptions", icon: Repeat },
   { href: "/admin/points", label: "Spice Points", icon: Sparkles },
   { href: "/admin/settings", label: "Settings", icon: Settings },
@@ -75,7 +79,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         {/* Header */}
         <header className="h-16 bg-card border-b border-border/50 flex items-center justify-between px-4 sm:px-6 lg:px-8 print:hidden">
            <div>
-             {/* Mobile menu trigger could go here */}
+             <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
+               Nutty World Operations
+             </span>
            </div>
            <div className="flex items-center gap-4">
              <ThemeToggle />

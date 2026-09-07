@@ -14,18 +14,23 @@ export async function getAdminProducts() {
 export async function deleteProductAction(id: string) {
   await requireAdmin();
   
-  // Clean up relations to avoid foreign key constraint violations
-  await prisma.$transaction(async (tx) => {
-    // 1. Delete associated order items
-    await tx.orderItem.deleteMany({ where: { productId: id } });
-    // 2. Clean up any orders that are now completely empty
-    await tx.order.deleteMany({ where: { items: { none: {} } } });
-    // 3. Delete reviews and price alerts
-    await tx.review.deleteMany({ where: { productId: id } });
-    await tx.priceAlert.deleteMany({ where: { productId: id } });
-    // 4. Finally delete the product
-    await tx.product.delete({ where: { id } });
-  });
+  // Protect customer order history and tax records
+  const orderItemCount = await prisma.orderItem.count({ where: { productId: id } });
+  
+  if (orderItemCount > 0) {
+    // Soft Archive: product remains in past orders, but is removed from catalog & set to 0 stock
+    await prisma.product.update({
+      where: { id },
+      data: { status: 'ARCHIVED', stock: 0 }
+    });
+  } else {
+    // No past orders: safe hard delete
+    await prisma.$transaction(async (tx: any) => {
+      await tx.review.deleteMany({ where: { productId: id } });
+      await tx.priceAlert.deleteMany({ where: { productId: id } });
+      await tx.product.delete({ where: { id } });
+    });
+  }
 
   revalidatePath('/admin/products');
   revalidatePath('/shop');
@@ -35,18 +40,21 @@ export async function deleteProductAction(id: string) {
 export async function bulkDeleteProductsAction(ids: string[]) {
   await requireAdmin();
 
-  // Clean up relations to avoid foreign key constraint violations
-  await prisma.$transaction(async (tx) => {
-    // 1. Delete associated order items
-    await tx.orderItem.deleteMany({ where: { productId: { in: ids } } });
-    // 2. Clean up any orders that are now completely empty
-    await tx.order.deleteMany({ where: { items: { none: {} } } });
-    // 3. Delete reviews and price alerts
-    await tx.review.deleteMany({ where: { productId: { in: ids } } });
-    await tx.priceAlert.deleteMany({ where: { productId: { in: ids } } });
-    // 4. Finally delete the products
-    await tx.product.deleteMany({ where: { id: { in: ids } } });
-  });
+  for (const id of ids) {
+    const orderItemCount = await prisma.orderItem.count({ where: { productId: id } });
+    if (orderItemCount > 0) {
+      await prisma.product.update({
+        where: { id },
+        data: { status: 'ARCHIVED', stock: 0 }
+      });
+    } else {
+      await prisma.$transaction(async (tx: any) => {
+        await tx.review.deleteMany({ where: { productId: id } });
+        await tx.priceAlert.deleteMany({ where: { productId: id } });
+        await tx.product.delete({ where: { id } });
+      });
+    }
+  }
 
   revalidatePath('/admin/products');
   revalidatePath('/shop');

@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requireAdmin, requireUser } from '@/lib/auth-guard';
 
 export async function approveRecipe(id: string) {
   await requireAdmin();
@@ -72,6 +72,7 @@ export async function updateRecipe(id: string, data: any) {
 }
 
 export async function submitRecipe(data: any) {
+  await requireUser();
   const recipe = await prisma.recipe.create({
     data: {
       ...data,

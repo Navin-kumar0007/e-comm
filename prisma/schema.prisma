@@ -50,6 +50,10 @@ model Product {
   recipes     Recipe[]      @relation("RecipeProducts")
   dietaryTags DietaryTag[]  @relation("ProductDietaryTags")
   labelSettings String?
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([slug])
 }
 
 model User {
@@ -102,9 +106,13 @@ model Order {
   user            User?       @relation(fields: [userId], references: [id])
   items           OrderItem[]
   total           Float
-  status          String      @default("PENDING") // PENDING, PAID, SHIPPED, DELIVERED, CANCELLED
+  status          String      @default("PENDING") // PENDING, PROCESSING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED, DELETED
+  paymentMethod   String      @default("ONLINE")  // ONLINE, COD
   razorpayOrderId String?
   paymentId       String?
+  discount        Float       @default(0)
+  couponCode      String?
+  pointsUsed      Int         @default(0)
   customerName    String
   customerEmail   String
   customerPhone   String
@@ -114,17 +122,26 @@ model Order {
   invoiceNotes    String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([customerEmail])
 }
 
 model OrderItem {
-  id        String  @id @default(cuid())
-  orderId   String
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  quantity  Int
-  price     Float
-  weight    String
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productName String   @default("Product")
+  quantity    Int
+  price       Float
+  weight      String
+
+  @@index([orderId])
+  @@index([productId])
 }
 
 model Settings {

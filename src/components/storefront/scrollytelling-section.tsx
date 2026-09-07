@@ -40,7 +40,7 @@ export function ScrollytellingSection() {
         
         {/* Header */}
         <div className="flex flex-col items-center text-center space-y-3 mb-8 max-w-2xl mx-auto">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#C85B43] font-mono">
+          <span className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono">
             Purity &amp; Heritage
           </span>
           <h2 className="text-2xl md:text-3xl font-bold font-heading text-zinc-900 dark:text-zinc-50 tracking-tight">

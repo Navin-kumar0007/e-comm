@@ -7,21 +7,27 @@ export async function getAdminCustomers() {
   await requireAdmin();
   const users = await prisma.user.findMany({
     include: {
-      orders: true
+      _count: {
+        select: { orders: true }
+      }
     },
     orderBy: { createdAt: 'desc' }
   });
 
-  return users.map(u => {
-    const userOrders = u.orders || [];
-    const spent = userOrders.reduce((sum, o) => sum + o.total, 0);
-    return {
-      id: u.id,
-      name: u.name,
-      email: u.email,
-      orders: userOrders.length,
-      spent: spent,
-      status: u.role === 'ADMIN' ? 'Admin' : 'Active'
-    };
+  // Get total spend per user with a single aggregate query
+  const spendData = await prisma.order.groupBy({
+    by: ['userId'],
+    _sum: { total: true },
+    where: { userId: { not: null }, status: { notIn: ['CANCELLED', 'DELETED'] } }
   });
+  const spendByUser = new Map(spendData.map(s => [s.userId, s._sum.total || 0]));
+
+  return users.map(u => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    orders: u._count.orders,
+    spent: spendByUser.get(u.id) || 0,
+    status: u.role === 'ADMIN' ? 'Admin' : 'Active'
+  }));
 }

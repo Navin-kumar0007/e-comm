@@ -19,7 +19,7 @@ export function MobileBottomNav() {
   }, []);
 
   // Do not show bottom nav on admin routes
-  if (pathname.startsWith("/admin")) return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/checkout")) return null;
 
   return (
     <>

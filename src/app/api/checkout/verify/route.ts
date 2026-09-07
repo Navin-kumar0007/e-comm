@@ -2,15 +2,11 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import crypto from "crypto";
-import { sendOrderConfirmation } from "@/lib/email";
+import { sendOrderConfirmation, notifyAdminNewOrder } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await req.json();
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = body;
 
@@ -47,21 +43,29 @@ export async function POST(req: Request) {
     }
 
     if (signatureValid || allowMock) {
-      // Verify the order exists and belongs to the current user before confirming.
+      // Verify the order exists before confirming.
       const existing = await prisma.order.findUnique({ where: { id: orderId } });
-      // Fetch fresh user from DB to handle stale JWT session IDs
-      const dbUser = await prisma.user.findUnique({ where: { email: session.user.email! } });
-      
-      if (!existing || existing.userId !== dbUser?.id) {
-        console.error("Order verification failed. Order User ID:", existing?.userId, "Session Email DB ID:", dbUser?.id);
-        return NextResponse.json({ error: "Order not found or access denied" }, { status: 404 });
+      if (!existing) {
+        return NextResponse.json({ error: "Order not found" }, { status: 404 });
       }
+
+      let dbUser = null;
+      if (session?.user?.email) {
+        dbUser = await prisma.user.findUnique({ where: { email: session.user.email } });
+      }
+
+      // If order was placed with an account, ensure caller matches
+      if (existing.userId && dbUser && existing.userId !== dbUser.id) {
+        console.error("Order verification access denied. Order User ID:", existing.userId, "Session User ID:", dbUser.id);
+        return NextResponse.json({ error: "Access denied" }, { status: 403 });
+      }
+
       // Idempotency: if already processed, don't re-award points.
       if (existing.status !== "PENDING") {
         return NextResponse.json({ success: true, alreadyProcessed: true });
       }
 
-      const [order] = await prisma.$transaction([
+      const updates: any[] = [
         prisma.order.update({
           where: { id: orderId },
           data: {
@@ -70,24 +74,37 @@ export async function POST(req: Request) {
             paymentId: razorpay_payment_id,
           },
         }),
-        prisma.user.update({
-          where: { id: dbUser.id },
-          data: { points: { increment: Math.floor(existing.total * 0.05) } }, // 5% cashback
-        }),
-        prisma.notification.create({
-          data: {
-            userId: dbUser.id,
-            title: "Payment Successful",
-            message: `Your payment for order #${existing.id} was successful. We are now processing it.`,
-            type: "ORDER",
-            link: "/account/orders",
-          },
-        }),
-      ]);
+      ];
 
-      await sendOrderConfirmation(order.customerEmail, order.id, order.total);
+      if (dbUser) {
+        updates.push(
+          prisma.user.update({
+            where: { id: dbUser.id },
+            data: { points: { increment: Math.floor(existing.total * 0.05) } }, // 5% cashback
+          }),
+          prisma.notification.create({
+            data: {
+              userId: dbUser.id,
+              title: "Payment Successful",
+              message: `Your payment for order #${existing.id.slice(-8).toUpperCase()} was successful. We are now processing it.`,
+              type: "ORDER",
+              link: "/account/orders",
+            },
+          })
+        );
+      }
 
-      return NextResponse.json({ success: true });
+      const [order] = await prisma.$transaction(updates);
+
+      try {
+        await sendOrderConfirmation(order.customerEmail, order.id, order.total);
+      } catch (err) {
+        console.error("Failed to send order email:", err);
+      }
+      // Notify admin of new paid order
+      try { await notifyAdminNewOrder(order.id, order.total, order.customerName, "ONLINE"); } catch (e) { console.error("Admin notification failed:", e); }
+
+      return NextResponse.json({ success: true, orderId: order.id });
     } else {
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }

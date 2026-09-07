@@ -78,7 +78,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   
   const counts = {
     total: allProducts.length,
-    categories: allProducts.reduce((acc: any, p) => {
+    categories: allProducts.reduce((acc: any, p: any) => {
       acc[p.categoryId] = (acc[p.categoryId] || 0) + 1;
       return acc;
     }, {})
@@ -93,7 +93,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
       include: { dietaryTags: true }
     });
     if (user && user.dietaryTags) {
-      userDietaryTagIds = user.dietaryTags.map(t => t.id);
+      userDietaryTagIds = user.dietaryTags.map((t: any) => t.id);
     }
   }
 
@@ -104,7 +104,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     include: { dietaryTags: true }
   });
 
-  const products = rawProducts.map(p => ({
+  const products = rawProducts.map((p: any) => ({
     ...p, 
     weight: p.weight || undefined, 
     images: JSON.parse(p.images), 
@@ -115,10 +115,10 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-8 md:pt-28 md:pb-10">
       <div className="mb-6 text-center md:text-left">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">
-          Organic Shop
+          The Imperial Harvests & Pantry
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">
-          Discover our curated selection of farm-fresh, sustainably sourced ingredients. Pure, unadulterated, and full of natural flavor.
+          Explore single-estate Afghan Mamra almonds, high-altitude Kashmiri walnuts, Goan king cashews, and slow-roasted whole spices.
         </p>
       </div>
 
@@ -126,17 +126,19 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
         <ShopSidebar categories={categories} counts={counts} />
 
         <main className="flex-1">
-          <div className="flex items-center justify-between mb-6">
-            <p className="text-muted-foreground text-sm">Showing {products.length} {products.length === 1 ? 'result' : 'results'}</p>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Sort by:</span>
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <p className="text-muted-foreground text-xs md:text-sm font-medium">
+              Showing <span className="text-foreground font-bold">{products.length}</span> {products.length === 1 ? 'harvest' : 'harvests'}
+            </p>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="hidden sm:inline text-xs md:text-sm text-muted-foreground">Sort by:</span>
               <SortSelect />
             </div>
           </div>
 
           {products.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product) => (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+              {products.map((product: any) => (
                 <ProductCard key={product.id} product={product} userDietaryTagIds={userDietaryTagIds} />
               ))}
             </div>

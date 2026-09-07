@@ -25,7 +25,7 @@ export function CategoryBento() {
         {/* Section Title */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-6">
           <div className="max-w-xl">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#C85B43] font-mono mb-2 block">
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono mb-2 block">
               Curated Collections
             </span>
             <h2 className="text-2xl md:text-3xl font-bold font-heading text-zinc-900 dark:text-zinc-50 tracking-tight">
@@ -43,10 +43,10 @@ export function CategoryBento() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-12 gap-5 md:h-[420px]"
+          className="grid grid-cols-1 md:grid-cols-12 gap-5"
         >
           {/* Main Tile 1: Royal Dry Fruits & Superfoods (Col 7, Row 2) */}
-          <motion.div variants={itemVariants} className="md:col-span-7 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[190px]">
+          <motion.div variants={itemVariants} className="md:col-span-7 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[260px] md:min-h-[220px]">
             <Link href="/category/dry-fruits" className="block w-full h-full">
               <Image
                 src="https://images.unsplash.com/photo-1607349913338-fca9f7fc42d0?q=80&w=800&auto=format&fit=crop"
@@ -70,7 +70,7 @@ export function CategoryBento() {
                     Afghan Mamra Almonds, Goan W180 Cashews, Kashmiri Walnuts, Turkish Figs &amp; Medjool Dates.
                   </p>
                 </div>
-                <div className="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-[#C85B43] flex-shrink-0 ml-4">
+                <div className="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-amber-600 dark:group-hover:bg-amber-500 flex-shrink-0 ml-4">
                   <ArrowUpRight className="text-white w-5 h-5" />
                 </div>
               </div>
@@ -78,7 +78,7 @@ export function CategoryBento() {
           </motion.div>
 
           {/* Main Tile 2: Chai Masalas & Artisanal Blends (Col 5, Row 1) */}
-          <motion.div variants={itemVariants} className="md:col-span-5 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[190px]">
+          <motion.div variants={itemVariants} className="md:col-span-5 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[260px] md:min-h-[220px]">
             <Link href="/category/masalas" className="block w-full h-full">
               <Image
                 src="/jar3.jpg"
@@ -88,7 +88,7 @@ export function CategoryBento() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-300" />
               <div className="absolute top-5 left-5">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C85B43] text-white text-xs font-bold shadow-md backdrop-blur-sm">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-600 dark:bg-amber-500 text-white text-xs font-bold shadow-md backdrop-blur-sm">
                   <Flame className="w-3.5 h-3.5" />
                   Slow-Roasted Heritage
                 </span>
@@ -102,7 +102,7 @@ export function CategoryBento() {
                     Tandoori Chai Masala, Garam Masala &amp; small-batch blends roasted in iron pans.
                   </p>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-[#C85B43] flex-shrink-0 ml-3">
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-amber-600 dark:group-hover:bg-amber-500 flex-shrink-0 ml-3">
                   <ArrowUpRight className="text-white w-4 h-4" />
                 </div>
               </div>
@@ -132,7 +132,7 @@ export function CategoryBento() {
                     Meghalaya Lakadong Turmeric, Royal Kashmiri Saffron &amp; Tellicherry Black Pepper.
                   </p>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-[#C85B43] flex-shrink-0 ml-2">
+                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-amber-600 dark:group-hover:bg-amber-500 flex-shrink-0 ml-2">
                   <ArrowUpRight className="text-white w-4 h-4" />
                 </div>
               </div>
@@ -162,7 +162,7 @@ export function CategoryBento() {
                     Slow-Roasted Peri Peri Makhana, 7-Seed Trail Mix &amp; Organic Jaggery Chikki.
                   </p>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-[#C85B43] flex-shrink-0 ml-2">
+                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-amber-600 dark:group-hover:bg-amber-500 flex-shrink-0 ml-2">
                   <ArrowUpRight className="text-white w-4 h-4" />
                 </div>
               </div>

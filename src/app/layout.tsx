@@ -93,7 +93,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="print:hidden"><PromoBanner /><Navbar /></div><main className="flex-1 print:m-0 print:p-0">
+            <div className="print:hidden"><Navbar /></div><main className="flex-1 pb-20 md:pb-0 print:m-0 print:p-0">
               <PageTransition>
                 {children}
               </PageTransition>

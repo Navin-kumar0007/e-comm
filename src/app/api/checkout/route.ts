@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import type { Prisma, Product } from "@prisma/client";
 import Razorpay from "razorpay";
-import { sendOrderConfirmation } from "@/lib/email";
+import { sendOrderConfirmation, notifyAdminNewOrder } from "@/lib/email";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || "mock_key_id",
@@ -13,8 +13,11 @@ const razorpay = new Razorpay({
 export async function POST(req: Request) {
   try {
     const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    let user = null;
+    if (session?.user?.email) {
+      user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+      });
     }
 
     const body = await req.json();
@@ -34,13 +37,6 @@ export async function POST(req: Request) {
       ) {
         return NextResponse.json({ error: "Invalid cart item" }, { status: 400 });
       }
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-    if (!user) {
-      return NextResponse.json({ error: "User account not found" }, { status: 404 });
     }
 
     // Ensure a default category exists for custom blends.
@@ -91,7 +87,7 @@ export async function POST(req: Request) {
     );
 
     let subtotal = 0;
-    const orderItems: Array<{ productId: string; quantity: number; price: number; weight: string }> = [];
+    const orderItems: Array<{ productId: string; quantity: number; price: number; weight: string; productName: string }> = [];
     for (const item of items) {
       const product = priceById.get(item.productId);
       if (!product) {
@@ -114,13 +110,14 @@ export async function POST(req: Request) {
         quantity: item.quantity,
         price: unitPrice,
         weight: item.weight || "150g",
+        productName: product.name, // Persist product name for audit trail
       });
     }
 
     // Loyalty points discount (validated, applied inside the transaction).
     let discount = 0;
     let pointsToDeduct = 0;
-    if (usePoints && user.points > 0) {
+    if (usePoints && user && user.points > 0) {
       const maxPointsDiscount = Math.floor(user.points / 10);
       const applicablePointsDiscount = Math.min(maxPointsDiscount, subtotal);
       discount += applicablePointsDiscount;
@@ -128,6 +125,7 @@ export async function POST(req: Request) {
     }
 
     // Coupon (validate active + expiry + minimum purchase).
+    let appliedCouponCode: string | null = null;
     if (couponCode) {
       const coupon = await prisma.coupon.findUnique({ where: { code: couponCode } });
       if (coupon && coupon.active) {
@@ -138,33 +136,50 @@ export async function POST(req: Request) {
             coupon.discountType === "PERCENTAGE"
               ? subtotal * (coupon.discountValue / 100)
               : coupon.discountValue;
+          appliedCouponCode = coupon.code;
         }
       }
     }
 
     const finalTotal = Math.max(0, subtotal - discount);
 
-    const name = shippingDetails?.name || user.name || "Customer";
-    const email = shippingDetails?.email || user.email || "customer@example.com";
+    const name = shippingDetails?.name || user?.name || "Customer";
+    const email = shippingDetails?.email || user?.email || "customer@example.com";
     const phone = shippingDetails?.phone || "0000000000";
     const address = shippingDetails?.address || "Address";
     const city = shippingDetails?.city || "City";
     const state = shippingDetails?.state || "State";
     const pincode = shippingDetails?.pincode || "000000";
 
-    // Create the order (and deduct points atomically) in a single transaction.
+    // Create the order, decrement stock, and deduct points atomically.
     const order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      if (pointsToDeduct > 0) {
+      // Deduct loyalty points if applicable
+      if (user && pointsToDeduct > 0) {
         await tx.user.update({
           where: { id: user.id },
           data: { points: { decrement: pointsToDeduct } },
         });
       }
+
+      // Decrement stock for each catalogue product
+      for (const item of orderItems) {
+        if (!item.productId.startsWith("custom-")) {
+          await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { decrement: item.quantity } },
+          });
+        }
+      }
+
       return tx.order.create({
         data: {
-          userId: user.id,
+          userId: user?.id || null,
           total: finalTotal,
           status: paymentMethod === "cod" ? "PROCESSING" : "PENDING",
+          paymentMethod: paymentMethod === "cod" ? "COD" : "ONLINE",
+          discount: discount,
+          couponCode: appliedCouponCode,
+          pointsUsed: pointsToDeduct,
           customerName: name,
           customerEmail: email,
           customerPhone: phone,
@@ -175,22 +190,30 @@ export async function POST(req: Request) {
     });
 
     if (paymentMethod === "cod") {
-      await prisma.$transaction([
-        prisma.user.update({
-          where: { id: user.id },
-          data: { points: { increment: Math.floor(finalTotal * 0.05) } },
-        }),
-        prisma.notification.create({
-          data: {
-            userId: user.id,
-            title: "Order Placed Successfully",
-            message: `Your Cash on Delivery order #${order.id} is confirmed.`,
-            type: "ORDER",
-            link: "/account/orders",
-          },
-        }),
-      ]);
-      await sendOrderConfirmation(email, order.id, finalTotal);
+      if (user) {
+        await prisma.$transaction([
+          prisma.user.update({
+            where: { id: user.id },
+            data: { points: { increment: Math.floor(finalTotal * 0.05) } },
+          }),
+          prisma.notification.create({
+            data: {
+              userId: user.id,
+              title: "Order Placed Successfully",
+              message: `Your Cash on Delivery order #${order.id.slice(-8).toUpperCase()} is confirmed.`,
+              type: "ORDER",
+              link: "/account/orders",
+            },
+          }),
+        ]);
+      }
+      try {
+        await sendOrderConfirmation(email, order.id, finalTotal);
+      } catch (err) {
+        console.error("Failed to send order email:", err);
+      }
+      // Notify admin of new order
+      try { await notifyAdminNewOrder(order.id, finalTotal, name, "COD"); } catch (e) { console.error("Admin notification failed:", e); }
       return NextResponse.json({ success: true, orderId: order.id });
     }
 

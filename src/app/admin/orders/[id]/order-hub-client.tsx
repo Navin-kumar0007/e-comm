@@ -18,6 +18,7 @@ export default function OrderHubClient({ order }: { order: any }) {
   const subtotal = order.items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
   const tax = subtotal * 0.05;
   const shipping = subtotal > 999 ? 0 : 50;
+  const discount = Math.max(0, (subtotal + shipping + tax) - order.total);
 
   const handleSaveNotes = async () => {
     setIsSaving(true);
@@ -71,7 +72,7 @@ export default function OrderHubClient({ order }: { order: any }) {
                 {order.items.map((item: any, i: number) => (
                   <div key={i} className="flex justify-between items-center py-3 border-b last:border-0">
                     <div>
-                      <p className="font-medium">{item.product.name}</p>
+                      <p className="font-medium">{item.product?.name || "Single Estate Gourmet Item"}</p>
                       <p className="text-sm text-gray-500">Weight: {item.weight}</p>
                     </div>
                     <div className="text-right">
@@ -181,7 +182,7 @@ export default function OrderHubClient({ order }: { order: any }) {
                     {order.items.map((item: any, i: number) => (
                       <tr key={i}>
                         <td className="py-4 px-2">
-                          <p className="font-bold text-gray-900">{item.product.name}</p>
+                          <p className="font-bold text-gray-900">{item.product?.name || "Single Estate Gourmet Item"}</p>
                           <p className="text-xs font-medium text-gray-500">Weight: {item.weight}</p>
                         </td>
                         <td className="py-4 px-2 text-center font-medium text-gray-700">{item.quantity}</td>
@@ -200,6 +201,12 @@ export default function OrderHubClient({ order }: { order: any }) {
                       <span>Subtotal</span>
                       <span>₹{subtotal.toFixed(2)}</span>
                     </div>
+                    {discount > 0 && (
+                      <div className="flex justify-between text-sm text-emerald-700 font-bold">
+                        <span>Discount / Coupon</span>
+                        <span>-₹{discount.toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-sm text-gray-600 font-medium">
                       <span>Shipping</span>
                       <span>{shipping === 0 ? "Free" : `₹${shipping.toFixed(2)}`}</span>
@@ -248,7 +255,7 @@ export default function OrderHubClient({ order }: { order: any }) {
                   {order.items.map((item: any, i: number) => (
                     <div key={i} className="flex justify-between text-xs mb-1.5 items-start">
                       <div className="w-1/2 pr-1">
-                        <span className="block truncate">{item.product.name}</span>
+                        <span className="block truncate">{item.product?.name || "Single Estate Gourmet Item"}</span>
                         <span className="text-[10px] text-gray-500">{item.weight} @ {item.price}</span>
                       </div>
                       <span className="w-1/4 text-center mt-1">{item.quantity}</span>
@@ -259,6 +266,7 @@ export default function OrderHubClient({ order }: { order: any }) {
 
                 <div className="space-y-1 mb-4 text-xs border-b border-dashed border-gray-400 pb-4">
                   <div className="flex justify-between"><span>Subtotal:</span><span>{subtotal.toFixed(2)}</span></div>
+                  {discount > 0 && <div className="flex justify-between font-bold"><span>Discount:</span><span>-{discount.toFixed(2)}</span></div>}
                   <div className="flex justify-between"><span>Shipping:</span><span>{shipping.toFixed(2)}</span></div>
                   <div className="flex justify-between"><span>Tax (5%):</span><span>{tax.toFixed(2)}</span></div>
                   <div className="flex justify-between text-base font-black mt-2 pt-2 border-t border-gray-200">
@@ -340,7 +348,7 @@ export default function OrderHubClient({ order }: { order: any }) {
                         <div className="w-6 h-6 border-2 border-gray-400 rounded-sm mx-auto"></div>
                       </td>
                       <td className="py-6 px-4">
-                        <p className="font-bold text-lg">{item.product.name}</p>
+                        <p className="font-bold text-lg">{item.product?.name || "Single Estate Gourmet Item"}</p>
                         <p className="text-sm text-gray-500">SKU: {item.productId.slice(0,8).toUpperCase()}</p>
                       </td>
                       <td className="py-6 px-4 border-l border-black font-medium text-gray-700">

@@ -21,10 +21,10 @@ export function AccessibilityToolbar() {
   }, [largeText, highContrast, reducedMotion]);
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 flex flex-col-reverse gap-4">
+    <div className="fixed bottom-20 left-4 md:bottom-6 md:left-6 z-40 flex flex-col-reverse gap-4">
       <Button 
         onClick={() => setIsOpen(!isOpen)}
-        className="rounded-full w-12 h-12 shadow-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800"
+        className="rounded-full w-10 h-10 md:w-12 md:h-12 shadow-xl bg-zinc-900/90 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 backdrop-blur-md border border-amber-500/20"
       >
         <Accessibility size={24} />
       </Button>

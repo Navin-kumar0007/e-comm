@@ -17,7 +17,7 @@ export async function addReview(productId: string, rating: number, comment: stri
         comment,
         productId,
         userId: user.id,
-        status: 'APPROVED', // Auto-approving for demo purposes
+        status: 'PENDING', // Requires admin moderation before appearing publicly
       }
     });
 

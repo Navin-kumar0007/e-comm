@@ -6,7 +6,8 @@ const withSerwist = require("@serwist/next").default({
   disable: process.env.NODE_ENV === "development",
 });
 
-const nextConfig: NextConfig = {
+const nextConfig: any = {
+  allowedDevOrigins: ['.lhr.life', '192.0.0.2', 'localhost'],
   turbopack: {},
   typescript: {
     ignoreBuildErrors: true,

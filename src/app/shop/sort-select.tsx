@@ -19,10 +19,11 @@ export function SortSelect() {
     <select 
       value={currentSort} 
       onChange={handleSort}
-      className="h-9 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      aria-label="Sort products"
+      className="h-9 px-2.5 sm:px-3 text-xs sm:text-sm rounded-xl border border-amber-500/30 bg-background/90 text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 cursor-pointer font-medium transition-colors"
     >
-      <option value="newest">Newest Arrivals</option>
-      <option value="featured">Featured</option>
+      <option value="newest">✨ Newest Harvests</option>
+      <option value="featured">👑 Featured Royal</option>
       <option value="price-asc">Price: Low to High</option>
       <option value="price-desc">Price: High to Low</option>
     </select>

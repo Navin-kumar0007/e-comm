@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ShoppingCart, Check } from 'lucide-react';
+import { ShoppingBag, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/lib/store/cart-store';
 import { toast } from 'sonner';
@@ -46,8 +46,8 @@ export function AddToCartButton({ product, className, size = 'default', fullWidt
     <Button
       size={size}
       onClick={handleAdd}
-      className={`gap-2 rounded-full shadow-lg hover:shadow-primary/25 transition-all ${
-        isAdded ? 'bg-green-600 hover:bg-green-600 scale-105' : ''
+      className={`gap-2 rounded-2xl font-bold bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white shadow-lg active:scale-95 transition-all ${
+        isAdded ? 'bg-emerald-700 hover:bg-emerald-700 text-white scale-105' : ''
       } ${fullWidth ? 'w-full' : ''} ${className ?? ''}`}
     >
       {isAdded ? (
@@ -57,8 +57,8 @@ export function AddToCartButton({ product, className, size = 'default', fullWidt
         </>
       ) : (
         <>
-          <ShoppingCart className="h-4 w-4" />
-          Add to Cart
+          <ShoppingBag className="h-4 w-4" />
+          Add to Bag
         </>
       )}
     </Button>

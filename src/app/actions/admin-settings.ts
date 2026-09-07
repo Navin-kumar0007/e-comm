@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth-guard';
 
 export async function getAdminSettings() {
+  await requireAdmin();
   const settings = await prisma.settings.findFirst();
   if (!settings) {
     // Return default properties if not seeded
