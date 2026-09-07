@@ -5,13 +5,13 @@ import { Input } from "@/components/ui/input";
 
 export function NewsletterSignup() {
   return (
-    <section className="py-24 bg-background relative overflow-hidden">
+    <section className="py-10 md:py-24 bg-background relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center opacity-10 dark:opacity-5" />
       
       <div className="container relative z-10 px-4 md:px-6">
-        <div className="max-w-3xl mx-auto glass rounded-3xl p-8 md:p-12 text-center animate-on-scroll">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground">Join the Spicy Nuts Family</h2>
-          <p className="text-muted-foreground mb-8 text-lg">
+        <div className="max-w-3xl mx-auto glass rounded-3xl p-5 md:p-12 text-center animate-on-scroll">
+          <h2 className="text-2xl md:text-5xl font-bold mb-3 md:mb-4 text-foreground">Join the Spicy Nuts Family</h2>
+          <p className="text-muted-foreground mb-4 md:mb-8 text-sm md:text-lg">
             Subscribe to our newsletter for exclusive offers, traditional recipes, and stories from the farm.
           </p>
           

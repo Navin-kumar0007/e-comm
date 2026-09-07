@@ -52,24 +52,24 @@ export function ScrollytellingSection() {
         </div>
 
         {/* Process Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {CRAFT_STEPS.map((step) => {
             const Icon = step.icon;
             return (
               <div
                 key={step.step}
-                className="relative p-6 rounded-3xl bg-[#FAF7F2] dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group hover:-translate-y-1"
+                className="relative p-4 sm:p-6 rounded-3xl bg-[#FAF7F2] dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group hover:-translate-y-1"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm ${step.color}`}>
-                      <Icon className="w-6 h-6" />
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-sm ${step.color}`}>
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
                     <span className="font-mono text-xs font-extrabold text-zinc-400">
                       PHASE {step.step}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold font-heading text-zinc-900 dark:text-zinc-100 mb-2">
+                  <h3 className="text-sm sm:text-lg font-bold font-heading text-zinc-900 dark:text-zinc-100 mb-2">
                     {step.title}
                   </h3>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">

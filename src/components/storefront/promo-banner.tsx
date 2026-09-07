@@ -19,7 +19,7 @@ export function PromoBanner() {
           exit={{ height: 0, opacity: 0 }}
           className="bg-gradient-to-r from-[#052C1E] via-[#0A3D2A] to-[#052C1E] text-amber-200 border-b border-amber-500/30 text-xs relative overflow-hidden"
         >
-          <div className="container mx-auto px-4 py-2 flex items-center justify-center text-center">
+          <div className="container mx-auto px-4 py-1.5 md:py-2 flex items-center justify-center text-center">
             <div className="flex items-center gap-2 flex-wrap justify-center pr-6">
               <span className="inline-flex items-center gap-1 font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider">
                 <Sparkles className="w-3 h-3" />

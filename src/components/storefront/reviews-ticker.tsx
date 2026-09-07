@@ -25,7 +25,7 @@ export function ReviewsTicker() {
       <div className="relative flex overflow-x-hidden group">
         <div className="py-4 animate-marquee whitespace-nowrap flex gap-6 items-center">
           {[...REVIEWS, ...REVIEWS].map((review, i) => (
-            <div key={`${review.id}-${i}`} className="w-72 md:w-80 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/15 inline-flex flex-col whitespace-normal shrink-0 shadow-lg">
+            <div key={`${review.id}-${i}`} className="w-64 md:w-80 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/15 inline-flex flex-col whitespace-normal shrink-0 shadow-lg">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex gap-1 text-amber-400">
                   {[...Array(review.rating)].map((_, i) => (

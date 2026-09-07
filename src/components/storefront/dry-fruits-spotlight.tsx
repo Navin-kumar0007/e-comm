@@ -68,7 +68,7 @@ export function DryFruitsSpotlight() {
             <Award className="w-3.5 h-3.5" />
             <span>Purity Standard</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-heading text-zinc-900 dark:text-zinc-50 tracking-tight mb-4">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold font-heading text-zinc-900 dark:text-zinc-50 tracking-tight mb-4">
             The Royal Superfood Pantry
           </h2>
           <p className="text-zinc-600 dark:text-zinc-400 text-base md:text-lg">
@@ -77,14 +77,14 @@ export function DryFruitsSpotlight() {
         </div>
 
         {/* 4 Pillars Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-8">
           {PILLARS.map((p) => (
             <div
               key={p.step}
-              className="p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group hover:-translate-y-1"
+              className="p-4 sm:p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group hover:-translate-y-1"
             >
               <div className="flex items-center justify-between mb-4">
-                <span className="text-3xl">{p.icon}</span>
+                <span className="text-2xl sm:text-3xl">{p.icon}</span>
                 <span className="text-[11px] font-bold font-mono px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
                   PILLAR {p.step}
                 </span>

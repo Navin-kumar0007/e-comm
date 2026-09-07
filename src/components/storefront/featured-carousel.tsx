@@ -59,11 +59,11 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
   };
 
   return (
-    <section className="py-24 bg-[#FAF7F2] dark:bg-zinc-950">
+    <section className="py-10 md:py-24 bg-[#FAF7F2] dark:bg-zinc-950">
       <div className="container px-4 md:px-6 mx-auto">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-12">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono mb-2 block">
               Handpicked Essentials
@@ -139,12 +139,12 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
               const isAdded = addedIds[product.id];
 
               return (
-                <CarouselItem key={product.id} className="pl-3 md:pl-5 basis-[85%] sm:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={product.id} className="pl-3 md:pl-5 basis-[75%] sm:basis-1/2 lg:basis-1/3">
                   <div className="p-1 h-full">
                     <Card className="h-full overflow-hidden border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 rounded-3xl group flex flex-col justify-between">
                       <CardContent className="p-0">
                         {/* Image Container */}
-                        <div className="relative aspect-[4/3.8] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-950">
+                        <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-950">
                           <Badge className={`absolute top-4 left-4 z-20 font-bold uppercase text-[10px] tracking-wider border-none shadow-md ${badgeColor}`}>
                             {badgeText}
                           </Badge>
@@ -166,7 +166,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                         </div>
 
                         {/* Product Info */}
-                        <div className="p-5 flex flex-col gap-2.5">
+                        <div className="p-3 sm:p-5 flex flex-col gap-2 sm:gap-2.5">
                           <div className="flex items-center justify-between text-xs">
                             <div className="flex items-center gap-1 text-amber-500">
                               {[...Array(5)].map((_, i) => (
@@ -205,7 +205,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
 
                           {/* Price Display */}
                           <div className="flex items-baseline gap-2 mt-1">
-                            <span className="text-2xl font-extrabold text-amber-700 dark:text-amber-400">
+                            <span className="text-xl sm:text-2xl font-extrabold text-amber-700 dark:text-amber-400">
                               ₹{activePrice}
                             </span>
                             {hasDiscount && (
@@ -221,7 +221,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                       </CardContent>
 
                       {/* Card Bottom CTA Actions */}
-                      <div className="px-5 pb-5 pt-0 flex items-center gap-2">
+                      <div className="px-3 pb-3 sm:px-5 sm:pb-5 pt-0 flex items-center gap-2">
                         <Button
                           size="sm"
                           onClick={() => handleAddToCart(product, activePrice, currentWeight, primaryImage)}

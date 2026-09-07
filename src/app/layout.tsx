@@ -93,7 +93,7 @@ export default function RootLayout({
             forcedTheme="light"
             disableTransitionOnChange
           >
-            <div className="print:hidden"><Navbar /></div><main className="flex-1 pb-20 md:pb-0 print:m-0 print:p-0">
+            <div className="print:hidden"><Navbar /></div><main className="flex-1 pb-16 md:pb-0 print:m-0 print:p-0">
               <PageTransition>
                 {children}
               </PageTransition>

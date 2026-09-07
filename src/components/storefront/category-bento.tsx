@@ -19,7 +19,7 @@ export function CategoryBento() {
   };
 
   return (
-    <section className="py-12 md:py-14 bg-white dark:bg-zinc-900 border-b border-zinc-200/80 dark:border-zinc-800">
+    <section className="py-8 md:py-14 bg-white dark:bg-zinc-900 border-b border-zinc-200/80 dark:border-zinc-800">
       <div className="container px-4 md:px-6 mx-auto">
         
         {/* Section Title */}
@@ -43,10 +43,10 @@ export function CategoryBento() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-12 gap-5"
+          className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-5"
         >
           {/* Main Tile 1: Royal Dry Fruits & Superfoods (Col 7, Row 2) */}
-          <motion.div variants={itemVariants} className="md:col-span-7 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[260px] md:min-h-[220px]">
+          <motion.div variants={itemVariants} className="md:col-span-7 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[200px] md:min-h-[220px]">
             <Link href="/category/dry-fruits" className="block w-full h-full">
               <Image
                 src="https://images.unsplash.com/photo-1607349913338-fca9f7fc42d0?q=80&w=800&auto=format&fit=crop"
@@ -55,15 +55,15 @@ export function CategoryBento() {
                 className="object-cover transition-transform duration-700 group-hover:scale-108"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-300" />
-              <div className="absolute top-5 left-5">
+              <div className="absolute top-3 left-3 md:top-5 md:left-5">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/90 text-black text-xs font-bold shadow-md backdrop-blur-sm">
                   <HeartPulse className="w-3.5 h-3.5" />
                   High-Oil &amp; Nutrient Dense
                 </span>
               </div>
-              <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end text-white">
+              <div className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 flex justify-between items-end text-white">
                 <div>
-                  <h3 className="text-2xl md:text-3xl font-bold font-heading mb-1.5">
+                  <h3 className="text-xl md:text-3xl font-bold font-heading mb-1.5">
                     Royal Dry Fruits &amp; Superfoods
                   </h3>
                   <p className="text-white/80 text-xs md:text-sm max-w-md">
@@ -78,7 +78,7 @@ export function CategoryBento() {
           </motion.div>
 
           {/* Main Tile 2: Chai Masalas & Artisanal Blends (Col 5, Row 1) */}
-          <motion.div variants={itemVariants} className="md:col-span-5 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[260px] md:min-h-[220px]">
+          <motion.div variants={itemVariants} className="md:col-span-5 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[200px] md:min-h-[220px]">
             <Link href="/category/masalas" className="block w-full h-full">
               <Image
                 src="/jar3.jpg"
@@ -87,13 +87,13 @@ export function CategoryBento() {
                 className="object-cover transition-transform duration-700 group-hover:scale-108"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-300" />
-              <div className="absolute top-5 left-5">
+              <div className="absolute top-3 left-3 md:top-5 md:left-5">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-600 dark:bg-amber-500 text-white text-xs font-bold shadow-md backdrop-blur-sm">
                   <Flame className="w-3.5 h-3.5" />
                   Slow-Roasted Heritage
                 </span>
               </div>
-              <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end text-white">
+              <div className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 flex justify-between items-end text-white">
                 <div>
                   <h3 className="text-2xl font-bold font-heading mb-1.5">
                     Chai &amp; Artisanal Masalas
@@ -119,7 +119,7 @@ export function CategoryBento() {
                 className="object-cover transition-transform duration-700 group-hover:scale-108"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-300" />
-              <div className="absolute bottom-5 left-5 right-5 flex justify-between items-end text-white">
+              <div className="absolute bottom-4 left-4 right-4 md:bottom-5 md:left-5 md:right-5 flex justify-between items-end text-white">
                 <div>
                   <div className="flex items-center gap-1.5 text-amber-400 text-xs font-bold mb-1">
                     <Sparkles className="w-3.5 h-3.5" />
@@ -149,7 +149,7 @@ export function CategoryBento() {
                 className="object-cover transition-transform duration-700 group-hover:scale-108"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-300" />
-              <div className="absolute bottom-5 left-5 right-5 flex justify-between items-end text-white">
+              <div className="absolute bottom-4 left-4 right-4 md:bottom-5 md:left-5 md:right-5 flex justify-between items-end text-white">
                 <div>
                   <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-bold mb-1">
                     <Leaf className="w-3.5 h-3.5" />

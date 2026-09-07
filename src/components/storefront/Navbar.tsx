@@ -50,7 +50,7 @@ export function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300">
       <PromoBanner />
-      <div className="bg-background/90 backdrop-blur-2xl w-full border-b border-amber-500/20 shadow-sm shadow-primary/5 h-16 md:h-20 transition-all duration-300">
+      <div className="bg-background/90 backdrop-blur-2xl w-full border-b border-amber-500/20 shadow-sm shadow-primary/5 h-14 md:h-20 transition-all duration-300">
         <div className="container mx-auto h-full px-3 md:px-6 flex items-center justify-between">
 
         {/* Left: Mobile Menu Trigger + Brand Identity */}
@@ -68,7 +68,7 @@ export function Navbar() {
                 <div>
                   <div className="p-6 pb-5 bg-gradient-to-b from-emerald-950/10 dark:from-emerald-950/50 to-transparent border-b border-amber-500/15">
                     <div className="flex items-center gap-3">
-                      <div className="relative h-10 w-[90px] flex-shrink-0">
+                      <div className="relative h-9 w-[80px] flex-shrink-0">
                         <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" fill className="object-contain object-left dark:brightness-110" />
                       </div>
                     </div>
@@ -154,7 +154,7 @@ export function Navbar() {
 
           {/* Logo & Wordmark */}
           <Link href="/" className="flex items-center group -ml-2">
-            <div className="relative h-10 md:h-[72px] w-[90px] md:w-[140px] flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+            <div className="relative h-9 md:h-[72px] w-[80px] md:w-[140px] flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
               <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" fill className="object-contain object-left dark:brightness-110" priority />
             </div>
           </Link>

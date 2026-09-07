@@ -90,7 +90,7 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
         className="relative rounded-2xl md:rounded-3xl overflow-hidden flex flex-col h-full bg-white dark:bg-zinc-900 border border-amber-500/20 hover:border-amber-500/60 shadow-sm hover:shadow-xl transition-all duration-300"
       >
         {/* Product Image Showcase */}
-        <div className="relative aspect-[4/3.6] sm:aspect-square overflow-hidden bg-[#FAF8F4] dark:bg-zinc-950">
+        <div className="relative aspect-square overflow-hidden bg-[#FAF8F4] dark:bg-zinc-950">
           <div className="w-full h-full transform transition-transform duration-700 group-hover:scale-105">
             <img
               src={imageUrl}
@@ -124,7 +124,7 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
         </div>
 
         {/* Content Details */}
-        <div className="p-3 sm:p-4 flex flex-col flex-1 relative z-20 bg-white dark:bg-zinc-900 border-t border-border/40">
+        <div className="p-2 sm:p-4 flex flex-col flex-1 relative z-20 bg-white dark:bg-zinc-900 border-t border-border/40">
           {/* Rating & Origin / Weight */}
           <div className="flex items-center justify-between gap-1 mb-1.5 text-[11px] text-muted-foreground">
             <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold">
@@ -136,7 +136,7 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
 
           {/* Title */}
           <div className="mb-2">
-            <h3 className="font-heading text-sm sm:text-base font-bold text-foreground leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+            <h3 className="font-heading text-xs sm:text-base font-bold text-foreground leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
               {product.name}
             </h3>
           </div>
@@ -146,11 +146,11 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
             <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-1.5 min-w-0">
               {product.salePrice ? (
                 <>
-                  <span className="text-sm sm:text-base md:text-lg font-black text-amber-800 dark:text-amber-400 tnum truncate">₹{product.salePrice}</span>
+                  <span className="text-xs sm:text-base md:text-lg font-black text-amber-800 dark:text-amber-400 tnum truncate">₹{product.salePrice}</span>
                   <span className="text-[10px] sm:text-xs text-muted-foreground line-through tnum">₹{product.price}</span>
                 </>
               ) : (
-                <span className="text-sm sm:text-base md:text-lg font-black text-foreground tnum truncate">₹{product.price}</span>
+                <span className="text-xs sm:text-base md:text-lg font-black text-foreground tnum truncate">₹{product.price}</span>
               )}
             </div>
 

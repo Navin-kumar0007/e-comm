@@ -92,7 +92,7 @@ export function SilkRouteMap() {
   const [activeLoc, setActiveLoc] = useState<OriginLocation>(PROVENANCE_LOCATIONS[0]);
 
   return (
-    <section className="py-16 md:py-24 bg-[#FAF7F2] dark:bg-[#06140F] border-b border-amber-500/20 relative overflow-hidden transition-colors duration-300">
+    <section className="py-10 md:py-24 bg-[#FAF7F2] dark:bg-[#06140F] border-b border-amber-500/20 relative overflow-hidden transition-colors duration-300">
       {/* Background glow & subtle coordinate lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55rem] h-[55rem] bg-gradient-to-br from-amber-200/40 dark:from-amber-950/20 via-emerald-200/20 to-transparent rounded-full blur-3xl" />
@@ -101,13 +101,13 @@ export function SilkRouteMap() {
 
       <div className="container relative z-10 px-4 md:px-6 mx-auto">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-14">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-14">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider mb-3">
               <Compass className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
               <span>Historical Provenance</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading text-foreground tracking-tight leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold font-heading text-foreground tracking-tight leading-tight">
               The Royal Silk &amp; Spice Route
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base mt-2.5 max-w-xl leading-relaxed">
@@ -226,7 +226,7 @@ export function SilkRouteMap() {
               </div>
 
               {/* Card Body Details */}
-              <div className="p-6 md:p-8 flex flex-col justify-between flex-1 gap-6">
+              <div className="p-4 md:p-8 flex flex-col justify-between flex-1 gap-4 md:gap-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 rounded-2xl bg-[#FAF8F4] dark:bg-zinc-950 border border-border/50">
                     <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block mb-1">

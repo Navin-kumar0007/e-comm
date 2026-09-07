@@ -27,7 +27,7 @@ export function MobileBottomNav() {
         aria-label="Mobile Navigation"
         className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/95 backdrop-blur-2xl border-t border-amber-500/25 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_-8px_30px_rgba(0,0,0,0.6)] safe-area-bottom transition-all duration-300"
       >
-        <div className="grid grid-cols-5 h-16 items-center px-2 max-w-md mx-auto">
+        <div className="grid grid-cols-5 h-[58px] items-center px-2 max-w-md mx-auto">
           {/* 1. Home */}
           <Link
             href="/"

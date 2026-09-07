@@ -40,7 +40,7 @@ const GIFT_SETS = [
 
 export function RoyalGiftingShowcase() {
   return (
-    <section className="py-16 md:py-24 bg-white dark:bg-zinc-950 border-b border-amber-500/20 relative overflow-hidden transition-colors duration-300">
+    <section className="py-10 md:py-24 bg-white dark:bg-zinc-950 border-b border-amber-500/20 relative overflow-hidden transition-colors duration-300">
       {/* Background Ambience */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-200/20 dark:bg-amber-900/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-200/20 dark:bg-emerald-950/10 rounded-full blur-3xl pointer-events-none" />
@@ -48,13 +48,13 @@ export function RoyalGiftingShowcase() {
       <div className="container relative z-10 px-4 md:px-6 mx-auto">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-12">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider mb-3">
               <Gift className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
               <span>Royal Gifting Atelier</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading text-foreground tracking-tight leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold font-heading text-foreground tracking-tight leading-tight">
               Bespoke Imperial Caskets &amp; Hampers
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base mt-2.5 max-w-xl leading-relaxed">
@@ -110,7 +110,7 @@ export function RoyalGiftingShowcase() {
                 </div>
 
                 {/* Content */}
-                <div className="p-5 md:p-6 flex flex-col gap-2">
+                <div className="p-3 md:p-6 flex flex-col gap-2">
                   <h3 className="font-heading font-bold text-lg md:text-xl text-foreground group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
                     {gift.name}
                   </h3>
@@ -124,7 +124,7 @@ export function RoyalGiftingShowcase() {
               </div>
 
               {/* Bottom Action */}
-              <div className="p-5 md:p-6 pt-0">
+              <div className="p-3 md:p-6 pt-0">
                 <Link href="/shop">
                   <Button className="w-full bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white rounded-xl h-11 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-95">
                     <span>Reserve Gift Casket</span>
