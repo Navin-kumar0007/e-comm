@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import { 
@@ -200,7 +201,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-primary/10 border border-border/40 overflow-hidden flex items-center justify-center shrink-0">
                           {cat.image ? (
-                            <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
+                            <Image width={800} height={800} unoptimized={false} src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
                           ) : (
                             <Layers className="w-5 h-5 text-primary" />
                           )}

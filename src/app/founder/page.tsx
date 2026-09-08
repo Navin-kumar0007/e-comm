@@ -63,8 +63,8 @@ export default function FounderPage() {
             </div>
 
             <div className="pt-8">
-              <p className="font-heading text-2xl font-bold mb-2">Mahesh Jain</p>
-              <p className="text-zinc-500 italic">Founder, Spicy Nuts</p>
+              <p className="font-heading text-2xl font-bold mb-2">Mahesh</p>
+              <p className="text-zinc-500 italic">Proprietor, B.M.V. Spices & Dry Fruits</p>
             </div>
           </div>
         </div>

@@ -64,7 +64,7 @@ export function RoyalGiftingShowcase() {
 
           <div className="mt-4 md:mt-0 flex items-center gap-3">
             <a
-              href="https://wa.me/919876543210?text=Hello%20Nutty%20World%2C%20I%20am%20interested%20in%20Bespoke%20Corporate%20Gifting"
+              href="mailto:contact@spicynuts.com?subject=Bespoke Corporate Gifting"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -153,7 +153,7 @@ export function RoyalGiftingShowcase() {
           </div>
 
           <a
-            href="https://wa.me/919876543210?text=Hi%2C%20I%20would%20like%20a%20quote%20for%20Bulk%20Gifting%20Hampers"
+            href="mailto:contact@spicynuts.com?subject=Bulk Gifting Hampers"
             target="_blank"
             rel="noopener noreferrer"
             className="shrink-0 w-full md:w-auto"

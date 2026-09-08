@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -315,7 +316,7 @@ export default function CheckoutPage() {
               <div className="divide-y divide-border/40 max-h-60 overflow-y-auto">
                 {items.map((item) => (
                   <div key={`${item.productId}-${item.weight}`} className="py-2.5 flex items-center gap-3">
-                    <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover border border-border/40 shrink-0" />
+                    <Image width={800} height={800} unoptimized={false} src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover border border-border/40 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{item.name}</p>
                       <p className="text-xs text-muted-foreground">{item.weight} × {item.quantity}</p>
@@ -502,7 +503,7 @@ export default function CheckoutPage() {
                 {items.map((item) => (
                   <div key={`${item.productId}-${item.weight}`} className="pt-3 first:pt-0 flex items-center gap-3">
                     <div className="w-14 h-14 rounded-xl bg-muted/40 border border-border/50 overflow-hidden shrink-0">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      <Image width={800} height={800} unoptimized={false} src={item.image} alt={item.name} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-sm line-clamp-1 text-foreground">{item.name}</h3>

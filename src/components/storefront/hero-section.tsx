@@ -124,11 +124,11 @@ export function HeroSection() {
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-row gap-2 w-full sm:w-auto mb-6 md:mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mb-6 md:mb-8">
               <Link href="/shop" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white h-10 md:h-12 px-4 md:px-7 rounded-2xl shadow-lg shadow-emerald-950/20 hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm font-bold w-full sm:w-auto flex items-center justify-center gap-2 border border-amber-500/30"
+                  className="bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white h-10 md:h-12 px-4 md:px-7 rounded-2xl shadow-lg shadow-emerald-950/20 hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm font-bold w-full flex items-center justify-center gap-2 border border-amber-500/30"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>Explore Royal Harvests</span>
@@ -138,7 +138,7 @@ export function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-10 md:h-12 px-4 md:px-6 rounded-2xl border-amber-500/40 hover:bg-amber-500/10 text-zinc-900 dark:text-zinc-100 backdrop-blur-sm text-sm font-semibold w-full sm:w-auto flex items-center justify-center gap-2"
+                  className="h-10 md:h-12 px-4 md:px-6 rounded-2xl border-amber-500/40 hover:bg-amber-500/10 text-zinc-900 dark:text-zinc-100 backdrop-blur-sm text-sm font-semibold w-full flex items-center justify-center gap-2"
                 >
                   <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   <span>Custom Blend Atelier</span>

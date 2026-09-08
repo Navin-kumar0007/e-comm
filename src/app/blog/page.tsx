@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from 'next/link';
 import { getBlogPosts } from '@/app/actions/blog';
 
@@ -16,7 +17,7 @@ export default async function BlogPage() {
           <div key={post.id} className="group cursor-pointer">
             <div className="aspect-[4/3] bg-zinc-100 dark:bg-zinc-900 rounded-2xl mb-4 overflow-hidden relative">
               {post.image ? (
-                <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+                <Image width={800} height={800} unoptimized={false} src={post.image} alt={post.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10" />
               )}

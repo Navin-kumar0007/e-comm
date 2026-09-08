@@ -77,7 +77,7 @@ export async function sendOrderConfirmation(email: string, orderId: string, tota
         <p style="margin: 4px 0;"><strong>Total:</strong> ₹${total.toFixed(2)}</p>
       </div>
       <p>We're preparing your order with care. You'll receive updates as we ship it.</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— The Mahesh Jain</p>
+      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -98,7 +98,7 @@ export async function sendOrderShipped(email: string, orderId: string, trackingN
       <p>Great news! Your order <strong>#${orderNum}</strong> is on its way.</p>
       ${trackingHtml}
       <p>Your package will arrive within 3-7 business days.</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— The Mahesh Jain</p>
+      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -112,12 +112,12 @@ export async function sendOrderDelivered(email: string, orderId: string) {
       <p>Your order <strong>#${orderNum}</strong> has been delivered successfully!</p>
       <p>We hope you enjoy your Spicy Nuts products. If you love them, we'd appreciate a review!</p>
       <div style="text-align: center; margin: 24px 0;">
-        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://nuttyworld.com'}/account/orders" 
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicy-nuts.vercel.app'}/account/orders" 
            style="display: inline-block; background: #052c1e; color: #fcfbf7; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
           Leave a Review
         </a>
       </div>
-      <p style="color: #8a6d1f; font-size: 13px;">— The Mahesh Jain</p>
+      <p style="color: #8a6d1f; font-size: 13px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -131,7 +131,7 @@ export async function sendOrderCancelled(email: string, orderId: string) {
       <p>Your order <strong>#${orderNum}</strong> has been cancelled.</p>
       <p>If you paid online, a refund will be processed within 5-7 business days.</p>
       <p>If this was a mistake or you'd like to reorder, visit our store anytime.</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— The Mahesh Jain</p>
+      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -151,7 +151,7 @@ export async function notifyAdminNewOrder(orderId: string, total: number, custom
         <p style="margin: 4px 0;"><strong>Amount:</strong> ₹${total.toFixed(2)}</p>
         <p style="margin: 4px 0;"><strong>Payment:</strong> ${payLabel}</p>
       </div>
-      <p><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://nuttyworld.com'}/admin/orders" style="color: #c59b27; font-weight: bold;">View in Admin Panel →</a></p>
+      <p><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicy-nuts.vercel.app'}/admin/orders" style="color: #c59b27; font-weight: bold;">View in Admin Panel →</a></p>
     </div>
   `);
 }

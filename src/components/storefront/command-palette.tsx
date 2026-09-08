@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import { useState, useEffect } from 'react';
 import { Search, ChefHat, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -76,7 +77,7 @@ export function CommandPalette({ open, setOpen }: { open: boolean, setOpen: (ope
                 return (
                   <div key={p.id} onClick={() => handleSelect(`/product/${p.slug}`)} className="flex items-center gap-3 p-2 rounded-xl hover:bg-primary/5 cursor-pointer group">
                     <div className="w-10 h-10 rounded-lg bg-muted overflow-hidden shrink-0">
-                      <img src={img || ''} className="w-full h-full object-cover" />
+                      <Image width={800} height={800} unoptimized={false} src={img || ''} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1">
                       <div className="text-sm font-medium group-hover:text-primary transition-colors">{p.name}</div>
@@ -94,7 +95,7 @@ export function CommandPalette({ open, setOpen }: { open: boolean, setOpen: (ope
               {results.recipes.map(r => (
                 <div key={r.id} onClick={() => handleSelect(`/recipes/${r.slug}`)} className="flex items-center gap-3 p-2 rounded-xl hover:bg-primary/5 cursor-pointer group">
                   <div className="w-10 h-10 rounded-lg bg-muted overflow-hidden shrink-0 flex items-center justify-center">
-                    {r.image ? <img src={r.image} className="w-full h-full object-cover" /> : <ChefHat className="w-5 h-5 text-muted-foreground" />}
+                    {r.image ? <Image width={800} height={800} unoptimized={false} src={r.image} className="w-full h-full object-cover" /> : <ChefHat className="w-5 h-5 text-muted-foreground" />}
                   </div>
                   <div className="flex-1">
                     <div className="text-sm font-medium group-hover:text-primary transition-colors">{r.title}</div>

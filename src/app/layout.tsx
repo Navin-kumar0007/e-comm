@@ -43,37 +43,124 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nuttyworld.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicy-nuts.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Spicy Nuts | Pure, Natural, Organic",
+    default: "Spicy Nuts — Premium Dry Fruits, Nuts & Organic Spices | Buy Online India",
     template: "%s | Spicy Nuts",
   },
   description:
-    "Bringing pure, natural, and organic food directly from our trusted farms to your table. Artisanal masalas, pickles, and dry fruits.",
+    "Buy premium dry fruits, organic spices, Mamra almonds, Kashmiri walnuts, cashews, pistachios, and handcrafted masalas online. Free shipping above ₹999. From B.M.V. Spices & Dry Fruits, Bidar, Karnataka.",
   keywords: [
-    "organic food",
-    "natural masala",
-    "homemade pickles",
-    "dry fruits",
+    "buy dry fruits online",
+    "premium dry fruits India",
+    "organic spices online",
+    "Mamra almonds",
+    "Kashmiri walnuts",
+    "cashew nuts online",
+    "pistachio online India",
+    "organic masala",
+    "handmade masala",
+    "dry fruits shop near me",
+    "dry fruits online store",
+    "premium nuts India",
+    "cold pressed oils",
+    "organic food online",
     "Spicy Nuts",
+    "B.M.V. Spices",
+    "dry fruits Bidar Karnataka",
+    "natural spices India",
+    "whole spices online",
+    "turmeric powder organic",
+    "saffron online India",
+    "dry fruits gift box",
+    "corporate gifting dry fruits",
+    "healthy snacks online",
+    "sugar free dry fruits",
+    "kaju online",
+    "badam online",
+    "akhrot online",
+    "pista online",
+    "kishmish online",
+    "anjeer online",
+    "mixed dry fruits pack",
+    "spice box online",
+    "masala powder online",
+    "garam masala organic",
   ],
   openGraph: {
     type: "website",
     siteName: "Spicy Nuts",
-    title: "Spicy Nuts | Pure, Natural, Organic",
+    title: "Spicy Nuts — Premium Dry Fruits, Nuts & Organic Spices | Buy Online",
     description:
-      "Pure, natural, and organic food directly from our trusted farms to your table.",
+      "Shop premium Mamra almonds, Kashmiri walnuts, organic masalas, and royal dry fruits. Free delivery above ₹999. From trusted farms to your table.",
     url: siteUrl,
+    locale: "en_IN",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Spicy Nuts | Pure, Natural, Organic",
+    title: "Spicy Nuts — Premium Dry Fruits & Organic Spices Online",
     description:
-      "Pure, natural, and organic food directly from our trusted farms to your table.",
+      "Premium dry fruits, organic spices & handcrafted masalas. Free shipping above ₹999. Shop now!",
   },
+  alternates: {
+    canonical: siteUrl,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Store",
+  name: "Spicy Nuts",
+  alternateName: "B.M.V. Spices & Dry Fruits",
+  description: "Premium dry fruits, organic spices, Mamra almonds, Kashmiri walnuts, and handcrafted masalas. Online store delivering across India.",
+  url: siteUrl,
+  telephone: "+91-spicynuts1973",
+  email: "spicynuts1973@gmail.com",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Shop No 1/206/1, Bhaskar Nagar Chitguppa",
+    addressLocality: "Chitgoppa, Bidar",
+    addressRegion: "Karnataka",
+    postalCode: "585412",
+    addressCountry: "IN",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: "17.718",
+    longitude: "77.091",
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      opens: "09:00",
+      closes: "20:00",
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: "Sunday",
+      opens: "10:00",
+      closes: "18:00",
+    },
+  ],
+  priceRange: "₹₹",
+  currenciesAccepted: "INR",
+  paymentAccepted: "Cash, UPI, Credit Card, Debit Card, Net Banking",
+  taxID: "29FCBPM9871D1Z6",
+  sameAs: [],
 };
 
 export default function RootLayout({
@@ -83,6 +170,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${inter.variable} ${playfair.variable} antialiased min-h-screen flex flex-col font-sans`}
       >

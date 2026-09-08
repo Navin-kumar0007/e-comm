@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Printer, Clock, Users, ChefHat, Type } from "lucide-react";
@@ -44,7 +45,7 @@ export default function RecipePrintClient({ recipe }: { recipe: any }) {
             {/* Header Image Area */}
             <div className="h-40 relative shrink-0">
               {recipe.image ? (
-                 <img src={recipe.image} className="w-full h-full object-cover" />
+                 <Image width={800} height={800} unoptimized={false} src={recipe.image} className="w-full h-full object-cover" />
               ) : (
                  <div className="w-full h-full bg-orange-100 flex items-center justify-center">
                    <ChefHat className="w-12 h-12 text-orange-300" />
@@ -115,7 +116,7 @@ export default function RecipePrintClient({ recipe }: { recipe: any }) {
             <div className="w-[2.5in] shrink-0 flex flex-col bg-orange-900 text-white relative">
               <div className="h-40 relative shrink-0">
                 {recipe.image ? (
-                   <img src={recipe.image} className="w-full h-full object-cover opacity-90" />
+                   <Image width={800} height={800} unoptimized={false} src={recipe.image} className="w-full h-full object-cover opacity-90" />
                 ) : (
                    <div className="w-full h-full bg-orange-100/10 flex items-center justify-center">
                      <ChefHat className="w-12 h-12 text-orange-300" />

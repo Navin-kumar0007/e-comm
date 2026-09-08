@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Plus, Search, Edit, Trash2, CheckSquare, Square, Printer } from "lucide-react";
@@ -205,7 +206,7 @@ export default function AdminProductsClient({ initialProducts }: { initialProduc
                     </td>
                     <td className="px-4 py-4 font-medium flex items-center gap-3 min-w-[200px]">
                       <div className="w-10 h-10 rounded-lg bg-muted overflow-hidden shrink-0">
-                        {product.images[0] && <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />}
+                        {product.images[0] && <Image width={800} height={800} unoptimized={false} src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />}
                       </div>
                       <div>
                         <div className="line-clamp-1 font-semibold">{product.name}</div>

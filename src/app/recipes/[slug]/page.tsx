@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, ChefHat, Users, ShoppingCart } from "lucide-react";
@@ -34,7 +35,7 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
     <div className="min-h-screen pb-20">
       {/* Hero */}
       <div className="relative h-[40vh] md:h-[50vh] overflow-hidden mt-16 md:mt-20">
-        <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+        <Image width={800} height={800} unoptimized={false} src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
           <div className="container mx-auto max-w-4xl">
@@ -91,7 +92,7 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
                       {recipe.products.map(p => (
                         <Link href={`/product/${p.slug}`} key={p.id} className="flex items-center gap-3 group">
                           <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border">
-                            <img src={JSON.parse(p.images)[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                            <Image width={800} height={800} unoptimized={false} src={JSON.parse(p.images)[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate group-hover:text-primary transition-colors">{p.name}</p>

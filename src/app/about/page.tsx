@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Leaf, Heart, ShieldCheck, Globe, Award, Sprout } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,7 @@ export default function AboutPage() {
       <section className="relative py-12 md:py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-            <Leaf className="w-4 h-4" /> Est. 2024
+            <Leaf className="w-4 h-4" /> Est. 2023
           </div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-3">Our Story</h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed text-sm">
@@ -38,8 +39,7 @@ export default function AboutPage() {
         <div className="container mx-auto max-w-6xl px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="rounded-2xl overflow-hidden shadow-lg">
-              <img
-                src="/mamra-almonds.jpg"
+              <Image width={800} height={800} unoptimized={false} src="/mamra-almonds.jpg"
                 alt="Kitchen preparation"
                 className="w-full h-64 md:h-72 object-cover"
               />

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import { useState, useEffect } from 'react';
 import { Plus, Calendar, ShoppingCart, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -75,7 +76,7 @@ export default function MealPlannerPage() {
             <div className="flex-1 space-y-3">
               {(plan[day] || []).map((recipe, i) => (
                 <div key={i} className="relative group rounded-xl overflow-hidden border border-border/50 bg-background">
-                  <img src={recipe.image} alt={recipe.title} className="w-full h-20 object-cover opacity-80" />
+                  <Image width={800} height={800} unoptimized={false} src={recipe.image} alt={recipe.title} className="w-full h-20 object-cover opacity-80" />
                   <div className="absolute inset-0 bg-black/40 flex items-end p-2">
                     <p className="text-white text-xs font-semibold leading-tight line-clamp-2">{recipe.title}</p>
                   </div>
@@ -112,7 +113,7 @@ export default function MealPlannerPage() {
                 onClick={() => addRecipeToDay(recipe)}
                 className="flex items-center gap-3 p-2 rounded-xl border border-border/50 hover:bg-primary/5 cursor-pointer transition-colors"
               >
-                <img src={recipe.image} alt={recipe.title} className="w-16 h-16 rounded-lg object-cover" />
+                <Image width={800} height={800} unoptimized={false} src={recipe.image} alt={recipe.title} className="w-16 h-16 rounded-lg object-cover" />
                 <div>
                   <h4 className="font-semibold text-sm">{recipe.title}</h4>
                   <p className="text-xs text-muted-foreground">{recipe.prepTime} prep</p>

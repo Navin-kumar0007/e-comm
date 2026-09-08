@@ -87,7 +87,7 @@ export default function HelpSupportPage() {
           <p className="text-muted-foreground mb-8">Our customer support team is available Monday to Saturday, 9 AM to 6 PM.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/contact" className="inline-flex h-11 items-center justify-center rounded-full bg-[#C85B43] px-8 text-sm font-medium text-white hover:bg-[#8B4513]"><Mail className="w-4 h-4 mr-2" /> Email Support</Link>
-            <Link href="tel:+919876543210" className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-200 bg-white px-8 text-sm font-medium hover:bg-zinc-100 text-zinc-900"><Phone className="w-4 h-4 mr-2" /> Call Us</Link>
+            <Link href="mailto:contact@spicynuts.com" className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-200 bg-white px-8 text-sm font-medium hover:bg-zinc-100 text-zinc-900"><Phone className="w-4 h-4 mr-2" /> Email Us</Link>
           </div>
         </div>
       </div>

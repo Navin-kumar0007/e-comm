@@ -91,7 +91,7 @@ export default function NewOrderForm({ products, settings }: { products: any[], 
               <div className="space-y-2"><Label>Full Name *</Label><Input name="customer" required placeholder="John Doe" className="rounded-xl" /></div>
               <div className="space-y-2"><Label>Email *</Label><Input name="email" required type="email" placeholder="john@example.com" className="rounded-xl" /></div>
             </div>
-            <div className="space-y-2"><Label>Phone</Label><Input name="phone" placeholder="+91 98765 43210" className="rounded-xl" /></div>
+            <div className="space-y-2"><Label>Phone</Label><Input name="phone" placeholder="e.g. 98765 43210" className="rounded-xl" /></div>
             <div className="space-y-2"><Label>Shipping Address *</Label><Textarea name="address" required placeholder="Full address with pincode" rows={2} className="rounded-xl" /></div>
             <div className="space-y-2"><Label>Notes</Label><Input name="notes" placeholder="Special instructions..." className="rounded-xl" /></div>
           </div>

@@ -1,4 +1,5 @@
 'use client';
+import Image from "next/image";
 import { useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader } from 'three';
@@ -48,7 +49,7 @@ export function Product3DImage({ src, alt }: { src: string, alt: string }) {
 
   // Fallback to normal image if no src or src is invalid
   if (!src || src.startsWith('data:')) {
-    return <img src={src} alt={alt} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />;
+    return <Image width={800} height={800} unoptimized={false} src={src} alt={alt} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />;
   }
 
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -241,7 +242,7 @@ export default function NewProductForm({ categories, dietaryTags }: { categories
               </div>
             </div>
             <div className="aspect-square bg-muted rounded-xl border-2 border-dashed border-border/50 flex items-center justify-center text-muted-foreground overflow-hidden">
-              {imageUrl ? <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" /> : <span className="text-sm">Image Preview</span>}
+              {imageUrl ? <Image width={800} height={800} unoptimized={false} src={imageUrl} alt="Preview" className="w-full h-full object-cover" /> : <span className="text-sm">Image Preview</span>}
             </div>
           </div>
         </div>

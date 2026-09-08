@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { WishlistButton } from "./wishlist-button";
@@ -92,8 +93,7 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
         {/* Product Image Showcase */}
         <div className="relative aspect-square overflow-hidden bg-[#FAF8F4] dark:bg-zinc-950">
           <div className="w-full h-full transform transition-transform duration-700 group-hover:scale-105">
-            <img
-              src={imageUrl}
+            <Image width={800} height={800} unoptimized={false} src={imageUrl}
               alt={product.name}
               className="object-cover w-full h-full"
               loading="lazy"

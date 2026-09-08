@@ -74,7 +74,7 @@ export default function LoginPage() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="spicynuts1973@gmail.com"
+                  placeholder="your@email.com"
                   required
                   className="pl-10 h-11 rounded-xl"
                 />
@@ -92,7 +92,7 @@ export default function LoginPage() {
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="demo123"
+                  placeholder="••••••••"
                   required
                   className="pl-10 pr-10 h-11 rounded-xl"
                 />
@@ -121,13 +121,6 @@ export default function LoginPage() {
               )}
             </Button>
           </form>
-
-          {/* Demo hint */}
-          <div className="mt-6 p-3 rounded-xl bg-muted/50 border border-border/30 text-center">
-            <p className="text-xs text-muted-foreground">
-              <strong>Demo:</strong> spicynuts1973@gmail.com / demo123
-            </p>
-          </div>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Don&apos;t have an account?{" "}

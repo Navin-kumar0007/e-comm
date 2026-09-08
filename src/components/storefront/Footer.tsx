@@ -21,6 +21,7 @@ const footerLinks = {
     { label: "Shipping Policy", href: "/shipping-policy" },
     { label: "Returns & Refunds", href: "/returns" },
     { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms & Conditions", href: "/terms" },
   ],
 };
 
@@ -47,7 +48,7 @@ export function Footer() {
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               Purveyors of Imperial Dry Fruits, Royal Nuts, and Rare Whole Spices sourced directly from single-estate farms.
             </p>
-            <p className="text-xs text-muted-foreground">GSTIN: 27AABCU9603R1ZM</p>
+            <p className="text-xs text-muted-foreground">GSTIN: 29FCBPM9871D1Z6</p>
           </div>
 
           {/* Shop */}

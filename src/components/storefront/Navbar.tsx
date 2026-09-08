@@ -144,7 +144,7 @@ export function Navbar() {
                 <div className="p-5 border-t border-border/40 bg-white/40 dark:bg-zinc-900/40 text-xs text-muted-foreground">
                   <div className="flex items-center gap-2 mb-2 text-foreground font-semibold">
                     <Phone className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Direct Concierge: +91 98765 43210</span>
+                    <span>Contact us via email</span>
                   </div>
                   <p className="text-[11px] leading-relaxed">Sourced directly from certified organic farms &amp; Kashmir valleys.</p>
                 </div>
