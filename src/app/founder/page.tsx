@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function FounderPage() {
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 pt-28 md:pt-36">
       {/* Hero */}
       <div className="bg-[#FAF7F2] py-10 md:py-12 px-4 border-b border-border/40">
         <div className="max-w-6xl mx-auto text-center space-y-6">

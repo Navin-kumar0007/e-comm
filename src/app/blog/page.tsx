@@ -6,7 +6,7 @@ export default async function BlogPage() {
   const posts = await getBlogPosts();
 
   return (
-    <div className="container max-w-4xl py-10 md:py-12">
+    <div className="container max-w-4xl py-10 md:py-12 pt-28 md:pt-36">
       <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-3">The Spice Journal</h1>
         <p className="text-xl text-zinc-500">Stories, recipes, and insights from Spicy Nuts.</p>

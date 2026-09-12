@@ -28,7 +28,7 @@ export default function SubmitRecipe() {
   };
 
   return (
-    <div className="container max-w-2xl py-12">
+    <div className="container max-w-2xl py-12 pt-28 md:pt-36">
       <h1 className="text-4xl font-heading font-bold mb-2">Share Your Recipe</h1>
       <p className="text-zinc-500 mb-8">Got a secret family recipe using our masalas? Share it with the community!</p>
       

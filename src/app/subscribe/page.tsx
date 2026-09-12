@@ -41,7 +41,7 @@ export default function SubscribePage() {
   };
 
   return (
-    <div className="container max-w-6xl py-12 md:py-16 px-4 min-h-[60vh]">
+    <div className="container max-w-6xl py-12 md:py-16 px-4 min-h-[60vh] pt-28 md:pt-36">
       <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20">
           <Leaf className="w-4 h-4" /> Organic & Homemade

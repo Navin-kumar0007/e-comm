@@ -54,7 +54,7 @@ export default function OrderConfirmationPage() {
 
   if (!order) {
     return (
-      <div className="container mx-auto max-w-3xl px-4 py-32 text-center min-h-[65vh] flex flex-col items-center justify-center">
+      <div className="container mx-auto max-w-3xl px-4 py-32 text-center min-h-[65vh] flex flex-col items-center justify-center pt-28 md:pt-36">
         <div className="w-16 h-16 rounded-full bg-muted/60 flex items-center justify-center mb-4 text-muted-foreground">
           <ShoppingBag className="w-8 h-8" />
         </div>

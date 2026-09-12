@@ -133,7 +133,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
+    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 pt-28 md:pt-36">
       {/* Background */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-brand-terracotta/10 rounded-full blur-3xl" />

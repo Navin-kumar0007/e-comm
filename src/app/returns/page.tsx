@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function ReturnsPage() {
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-10 md:py-12">
+    <div className="container mx-auto max-w-4xl px-4 pt-28 pb-10 md:pt-36 md:pb-12">
       <h1 className="text-2xl sm:text-3xl font-heading font-bold mb-2">Returns & Refunds Policy</h1>
       <p className="text-sm text-muted-foreground mb-8">Last updated: September 2026</p>
 
