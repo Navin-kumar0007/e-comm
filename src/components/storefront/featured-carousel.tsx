@@ -160,7 +160,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                               src={primaryImage}
                               alt={product.name}
                               fill
-                              className="object-cover transition-transform duration-700 group-hover:scale-106"
+                              className="object-cover transition-transform duration-700 group-hover:scale-106" priority
                             />
                           </Link>
                         </div>

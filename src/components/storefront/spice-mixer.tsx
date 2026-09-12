@@ -88,30 +88,12 @@ export function SpiceMixer() {
 
   // Smooth interpolation helper
   const animateToRatios = (targetBase: number, targetHeat: number, targetAromatic: number) => {
-    if (animationIntervalRef.current) clearInterval(animationIntervalRef.current);
-    
-    let frames = 0;
-    const maxFrames = 30;
-    const startBase = baseVal;
-    const startHeat = heatVal;
-    const startAromatic = aromaticVal;
-
-    animationIntervalRef.current = setInterval(() => {
-      frames++;
-      const progress = frames / maxFrames;
-      const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-      
-      setBaseVal(Math.round(startBase + (targetBase - startBase) * ease));
-      setHeatVal(Math.round(startHeat + (targetHeat - startHeat) * ease));
-      setAromaticVal(Math.round(startAromatic + (targetAromatic - startAromatic) * ease));
-
-      if (frames >= maxFrames) {
-        if (animationIntervalRef.current) clearInterval(animationIntervalRef.current);
-        setBaseVal(targetBase);
-        setHeatVal(targetHeat);
-        setAromaticVal(targetAromatic);
-      }
-    }, 16);
+    // The SVG layers already have CSS transitions (transition-all duration-700 ease-out)
+    // So we don't need a heavy 60fps setInterval which causes massive React re-render lag.
+    // We just set the state directly and let CSS handle the smooth animation!
+    setBaseVal(targetBase);
+    setHeatVal(targetHeat);
+    setAromaticVal(targetAromatic);
   };
 
   const handleAskSommelier = async () => {
@@ -244,10 +226,10 @@ export function SpiceMixer() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       
       {/* Left Column: SVG Jar Preview */}
-      <div className="lg:col-span-5 relative h-[520px] w-full rounded-3xl bg-secondary/5 overflow-hidden border border-border/40 shadow-inner flex flex-col justify-center items-center p-4">
+      <div className="lg:col-span-5 relative h-[350px] md:h-[520px] w-full rounded-3xl bg-secondary/5 overflow-hidden border border-border/40 shadow-inner flex flex-col justify-center items-center p-4">
         
         {/* Beautiful High-fidelity SVG Glass Jar with CSS transitions */}
-        <svg width="220" height="360" viewBox="0 0 220 360" className="drop-shadow-2xl">
+        <svg width="220" height="360" viewBox="0 0 220 360" className="drop-shadow-2xl w-full max-w-[160px] md:max-w-[220px] h-auto">
           <defs>
             <clipPath id="jar-clip">
               <rect x="30" y="70" width="160" height="260" rx="20" />

@@ -6,10 +6,7 @@ import { submitContact } from '@/app/actions/contact';
 import { toast } from 'sonner';
 import { MapPin, Mail, Clock, Phone } from 'lucide-react';
 
-export const metadata = {
-  title: "Contact Us — B.M.V. Spices & Dry Fruits, Bidar, Karnataka",
-  description: "Get in touch with Spicy Nuts (B.M.V. Spices & Dry Fruits). Visit us at Shop No 1/206/1, Bhaskar Nagar Chitguppa, Bidar, Karnataka 585412. Email: spicynuts1973@gmail.com",
-};
+
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false);
