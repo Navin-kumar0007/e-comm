@@ -27,7 +27,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-10 md:py-12">
+    <div className="container mx-auto max-w-4xl px-4 pt-28 pb-10 md:pt-36 md:pb-12">
       <div className="grid md:grid-cols-2 gap-8 items-start">
         <div>
           <h1 className="text-2xl sm:text-3xl font-heading font-bold mb-3">Get in Touch</h1>

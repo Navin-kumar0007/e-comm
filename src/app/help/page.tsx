@@ -24,7 +24,7 @@ export default function HelpSupportPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-20">
+    <div className="min-h-screen bg-gray-50/50 pt-24 md:pt-32 pb-20">
       {/* Hero Section */}
       <div className="bg-[#C85B43] text-white py-10 md:py-12 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-6">
