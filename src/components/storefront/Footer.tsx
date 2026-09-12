@@ -48,8 +48,14 @@ export function Footer() {
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               Purveyors of Imperial Dry Fruits, Royal Nuts, and Rare Whole Spices sourced directly from single-estate farms.
             </p>
-            <p className="text-xs text-muted-foreground">GSTIN: 29FCBPM9871D1Z6</p>
-            <p className="text-xs text-muted-foreground mt-1">📧 spicynuts1973@gmail.com</p>
+            <div className="text-xs text-muted-foreground space-y-1 mt-4">
+              <p className="font-semibold text-foreground">B.M.V. SPICES & DRY FRUITS</p>
+              <p>Shop No 1/206/1, Bhaskar Nagar Chitguppa,</p>
+              <p>Chitguppa Sub Post Office, Chitgoppa,</p>
+              <p>Bidar, Karnataka – 585412</p>
+              <p className="mt-2 text-primary font-medium">GSTIN: 29FCBPM9871D1Z6</p>
+              <p>📧 spicynuts1973@gmail.com</p>
+            </div>
           </div>
 
           {/* Shop */}

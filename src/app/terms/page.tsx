@@ -1,84 +1,31 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions | Spicy Nuts",
-  description: "Terms and Conditions for using the Spicy Nuts website. Read our terms governing purchases, accounts, and use of services.",
 };
 
-export default function TermsPage() {
+export default function TermsConditions() {
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-10 md:py-12">
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold mb-2">Terms & Conditions</h1>
-      <p className="text-sm text-muted-foreground mb-8">Last updated: September 2026</p>
+    <div className="container mx-auto max-w-4xl py-16 px-4">
+      <h1 className="text-3xl font-heading font-bold mb-8">Terms & Conditions</h1>
+      <div className="prose prose-sm sm:prose-base prose-amber dark:prose-invert">
+        <p><strong>Last Updated: {new Date().toLocaleDateString()}</strong></p>
+        <p>Welcome to Spicy Nuts (operated by B.M.V. SPICES & DRY FRUITS).</p>
+        
+        <h3>1. General Terms</h3>
+        <p>By accessing our website and placing an order, you agree to be bound by these terms. We reserve the right to refuse service to anyone for any reason at any time.</p>
 
-      <div className="prose prose-stone dark:prose-invert max-w-none prose-headings:font-heading prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-sm">
+        <h3>2. Product Information</h3>
+        <p>We make every effort to display the colors and images of our products accurately. However, natural products (spices and dry fruits) may vary in appearance, size, and color from batch to batch.</p>
 
-        <h2>1. About Us</h2>
-        <p>This website is owned and operated by <strong>B.M.V. Spices & Dry Fruits</strong> (trading as &ldquo;Spicy Nuts&rdquo;), a Proprietorship firm registered under the laws of India, with GSTIN 29FCBPM9871D1Z6, having its registered office at Shop No 1/206/1, Bhaskar Nagar Chitguppa, Chitgoppa, Bidar, Karnataka &ndash; 585412.</p>
+        <h3>3. Pricing & Payments</h3>
+        <p>All prices are in INR and are inclusive of GST. We reserve the right to modify prices without prior notice. Payments are securely processed via authorized payment gateways.</p>
 
-        <h2>2. Acceptance of Terms</h2>
-        <p>By accessing or using our website, creating an account, or placing an order, you agree to be bound by these Terms & Conditions. If you do not agree, please do not use our services.</p>
+        <h3>4. Limitation of Liability</h3>
+        <p>Spicy Nuts shall not be liable for any special or consequential damages that result from the use of, or the inability to use, the materials on this site or the performance of the products.</p>
 
-        <h2>3. Account Registration</h2>
-        <ul>
-          <li>You must provide accurate and complete information during registration.</li>
-          <li>You are responsible for maintaining the confidentiality of your account credentials.</li>
-          <li>You must be at least 18 years of age to create an account.</li>
-          <li>We reserve the right to suspend or terminate accounts that violate these terms.</li>
-        </ul>
-
-        <h2>4. Products & Pricing</h2>
-        <ul>
-          <li>All prices are listed in Indian Rupees (INR) and are inclusive of applicable GST.</li>
-          <li>Product images are for illustration purposes. Actual products may vary slightly in appearance.</li>
-          <li>We reserve the right to modify prices without prior notice.</li>
-          <li>In case of a pricing error, we will contact you before processing your order.</li>
-        </ul>
-
-        <h2>5. Orders & Payment</h2>
-        <ul>
-          <li>Placing an order constitutes an offer to purchase. We reserve the right to accept or reject any order.</li>
-          <li>We accept payments via Razorpay (UPI, Credit/Debit Cards, Net Banking) and Cash on Delivery (COD).</li>
-          <li>All online payments are processed securely through Razorpay&apos;s PCI DSS compliant gateway.</li>
-          <li>Orders are confirmed only after successful payment (or acceptance of COD).</li>
-        </ul>
-
-        <h2>6. Shipping & Delivery</h2>
-        <p>Please refer to our <Link href="/shipping-policy" className="text-primary hover:underline">Shipping Policy</Link> for detailed information about delivery times, charges, and procedures.</p>
-
-        <h2>7. Returns & Refunds</h2>
-        <p>Please refer to our <Link href="/returns" className="text-primary hover:underline">Returns & Refunds Policy</Link> for detailed information about our return and refund procedures.</p>
-
-        <h2>8. Intellectual Property</h2>
-        <p>All content on this website, including but not limited to text, images, logos, product descriptions, recipes, and design, is the property of B.M.V. Spices & Dry Fruits and is protected by Indian copyright and trademark laws. You may not reproduce, distribute, or use any content without our prior written consent.</p>
-
-        <h2>9. User Content</h2>
-        <p>By submitting reviews, recipes, or other content on our platform, you grant us a non-exclusive, royalty-free license to use, display, and share that content on our website and marketing materials.</p>
-
-        <h2>10. Limitation of Liability</h2>
-        <ul>
-          <li>We strive for accuracy but do not guarantee that all product descriptions, nutritional information, or images are error-free.</li>
-          <li>Our liability is limited to the value of the product purchased.</li>
-          <li>We are not liable for delays caused by shipping partners, natural disasters, or force majeure events.</li>
-        </ul>
-
-        <h2>11. Privacy</h2>
-        <p>Your use of our website is also governed by our <Link href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>, which describes how we collect, use, and protect your personal data in compliance with the Digital Personal Data Protection Act, 2023.</p>
-
-        <h2>12. Governing Law & Jurisdiction</h2>
-        <p>These terms shall be governed by and construed in accordance with the laws of India. Any disputes arising from these terms shall be subject to the exclusive jurisdiction of the courts in <strong>Bidar, Karnataka, India</strong>.</p>
-
-        <h2>13. Changes to Terms</h2>
-        <p>We reserve the right to modify these Terms & Conditions at any time. Changes will be effective upon posting on this page. Continued use of the website after changes constitutes acceptance of the updated terms.</p>
-
-        <h2>14. Contact</h2>
-        <p>For questions about these terms, contact us at:</p>
-        <ul>
-          <li><strong>Email:</strong> spicynuts1973@gmail.com</li>
-          <li><strong>Address:</strong> Shop No 1/206/1, Bhaskar Nagar Chitguppa, Chitgoppa, Bidar, Karnataka &ndash; 585412</li>
-        </ul>
-
+        <h3>5. Governing Law</h3>
+        <p>These terms shall be governed by and construed in accordance with the laws of India. Any disputes will be subject to the exclusive jurisdiction of the courts in Bidar, Karnataka.</p>
       </div>
     </div>
   );

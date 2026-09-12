@@ -155,3 +155,22 @@ export async function notifyAdminNewOrder(orderId: string, total: number, custom
     </div>
   `);
 }
+
+
+export async function notifyAdminContact(name: string, email: string, message: string) {
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM?.match(/<(.+)>/)?.[1] || 'spicynuts1973@gmail.com';
+  
+  return sendEmail(adminEmail, `📬 New Contact Message from ${name}`, `
+    <div style="${baseStyles}">
+      ${headerHtml}
+      <h1 style="color: #052c1e; font-size: 20px;">New Message Received 📬</h1>
+      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
+        <p style="margin: 4px 0;"><strong>Name:</strong> ${name}</p>
+        <p style="margin: 4px 0;"><strong>Email:</strong> ${email}</p>
+        <hr style="border: 0; border-top: 1px solid #e3dec9; margin: 12px 0;" />
+        <p style="margin: 4px 0; white-space: pre-wrap;">${message}</p>
+      </div>
+      <p>Reply directly to the customer at <a href="mailto:${email}" style="color: #c59b27;">${email}</a>.</p>
+    </div>
+  `);
+}

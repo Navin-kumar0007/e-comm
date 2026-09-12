@@ -1,5 +1,6 @@
 'use server';
 import { prisma } from '@/lib/db/prisma';
+import { notifyAdminContact } from '@/lib/email';
 
 // Simple server-side rate limit for contact form (per-email, 3 messages per 15 min)
 const contactBuckets = new Map<string, { count: number; resetAt: number }>();
@@ -42,6 +43,7 @@ export async function submitContact(data: { name: string, email: string, message
         message: sanitize(data.message),
       }
     });
+    try { await notifyAdminContact(data.name, data.email, data.message); } catch(e) { console.error('Admin notification failed', e); }
     return { success: true };
   } catch (error: any) {
     return { error: 'Failed to send message' };
