@@ -138,19 +138,21 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           </div>
 
           {products.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-5">
-              {products.map((product: any) => (
-                <ProductCard key={product.id} product={product} userDietaryTagIds={userDietaryTagIds} />
-              ))}
-            </div>
-            
-            {products.length >= 12 && (
-              <div className="mt-12 flex justify-center">
-                <button className="px-8 py-3 rounded-full border border-border/50 font-bold text-sm hover:bg-muted transition-colors">
-                  Load More Harvests
-                </button>
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-5">
+                {products.map((product: any) => (
+                  <ProductCard key={product.id} product={product} userDietaryTagIds={userDietaryTagIds} />
+                ))}
               </div>
-            )}
+              
+              {products.length >= 12 && (
+                <div className="mt-12 flex justify-center">
+                  <button className="px-8 py-3 rounded-full border border-border/50 font-bold text-sm hover:bg-muted transition-colors">
+                    Load More Harvests
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="py-20 text-center border border-border/50 rounded-2xl bg-muted/20">
               <h3 className="text-xl font-bold mb-2">No products found</h3>
