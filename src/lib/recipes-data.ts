@@ -18,7 +18,7 @@ export const recipes: Recipe[] = [
     slug: "tandoori-kulhad-chai",
     title: "Authentic Tandoori Kulhad Chai",
     description: "Brew a rich, aromatic royal cup with our 9-spice slow-roasted Tandoori Chai Masala and fresh milk.",
-    image: "/jar3.jpg",
+    image: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
     category: "Beverages",
     prepTime: "2 min",
     cookTime: "8 min",

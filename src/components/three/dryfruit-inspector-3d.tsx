@@ -17,7 +17,7 @@ const NUT_DATA = {
     origin: "Kandahar Valley, Afghanistan",
     price: "₹1,050",
     weight: "500g",
-    textureUrl: "/mamra-almonds.jpg",
+    textureUrl: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
     hotspots: [
       { pos: [0.75, 0.4, 0.12] as [number, number, number], label: "Natural Oil (Up to 50%)", desc: "Twice the essential fatty acids of California almonds" },
       { pos: [-0.75, -0.3, 0.12] as [number, number, number], label: "Concave Shape", desc: "Signature curve of authentic high-altitude harvest" },
@@ -30,7 +30,7 @@ const NUT_DATA = {
     origin: "Organic Coastal Farms, Goa",
     price: "₹799",
     weight: "500g",
-    textureUrl: "/jumbo-cashews.jpg",
+    textureUrl: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
     hotspots: [
       { pos: [0.75, 0.35, 0.12] as [number, number, number], label: "Grade W180 King Size", desc: "Only top 2% of annual harvest qualifies" },
       { pos: [-0.75, 0.2, 0.12] as [number, number, number], label: "Unroasted & Unbleached", desc: "No sulfur treatment or artificial whitening" },
@@ -43,7 +43,7 @@ const NUT_DATA = {
     origin: "Shopian & Pampore Valleys, Kashmir",
     price: "₹720",
     weight: "400g",
-    textureUrl: "/kashmiri-walnuts.jpg",
+    textureUrl: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
     hotspots: [
       { pos: [0.75, 0.45, 0.12] as [number, number, number], label: "Plant Omega-3 ALA", desc: "Clinically proven brain & cardiovascular booster" },
       { pos: [-0.75, -0.25, 0.12] as [number, number, number], label: "Zero Bitterness", desc: "Fresh valley cracking preserves mild, creamy taste" },

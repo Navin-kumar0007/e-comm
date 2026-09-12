@@ -30,7 +30,7 @@ function Scene() {
       <ParallaxRig>
         <Float speed={1.6} rotationIntensity={0.4} floatIntensity={0.8}>
           <group position={[0, 0.1, 0]} scale={1.15}>
-            <SpiceJar spiceColor="#6b4423" spin={0.3} bobOffset={0} textureUrl="/jar3.jpg" productName="Tandoori Chai Masala" />
+            <SpiceJar spiceColor="#6b4423" spin={0.3} bobOffset={0} textureUrl="https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon" productName="Tandoori Chai Masala" />
           </group>
         </Float>
 

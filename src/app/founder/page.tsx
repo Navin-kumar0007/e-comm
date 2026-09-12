@@ -25,7 +25,7 @@ export default function FounderPage() {
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
           {/* Image */}
           <div className="relative aspect-[4/3.8] rounded-2xl overflow-hidden shadow-lg border border-border/40">
-            <Image src="/mamra-almonds.jpg" alt="Spicy Nuts - Pure Origin Harvest" fill className="object-cover" priority />
+            <Image src="https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon" alt="Spicy Nuts - Pure Origin Harvest" fill className="object-cover" priority />
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
               <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 font-mono">Founding Vision</span>
               <p className="font-heading font-bold text-xl">Spicy Nuts</p>

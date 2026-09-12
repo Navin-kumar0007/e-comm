@@ -81,7 +81,7 @@ export function CategoryBento() {
           <motion.div variants={itemVariants} className="md:col-span-5 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[150px] md:min-h-[220px]">
             <Link href="/category/masalas" className="block w-full h-full">
               <Image
-                src="/jar3.jpg"
+                src="https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon"
                 alt="Tandoori Chai Masala and Blends"
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-108"

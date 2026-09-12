@@ -93,7 +93,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
             {products.map((product) => {
               const basePrice = product.salePrice ?? product.price;
               const hasDiscount = product.salePrice && product.salePrice < product.price;
-              const primaryImage = (product.images && product.images.length > 0) ? product.images[0] : "/jar3.jpg";
+              const primaryImage = (product.images && product.images.length > 0) ? product.images[0] : "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon";
 
               // Determine weight options
               const isSpice = product.slug.includes("chai") || product.slug.includes("garam") || product.slug.includes("turmeric");

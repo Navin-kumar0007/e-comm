@@ -14,7 +14,7 @@ const GIFT_SETS = [
     price: "₹3,499",
     mrp: "₹3,999",
     badge: "👑 Most Prestigious",
-    image: "/jar1.jpg",
+    image: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
   },
   {
     id: "spice-route-chest",
@@ -24,7 +24,7 @@ const GIFT_SETS = [
     price: "₹2,499",
     mrp: "₹2,850",
     badge: "🌿 Heirloom Edition",
-    image: "/jar2.jpg",
+    image: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
   },
   {
     id: "grand-celebration-hamper",
@@ -34,7 +34,7 @@ const GIFT_SETS = [
     price: "₹4,999",
     mrp: "₹5,500",
     badge: "✨ Festive Grandeur",
-    image: "/jar3.jpg",
+    image: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
   },
 ];
 

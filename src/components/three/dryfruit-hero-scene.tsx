@@ -138,7 +138,7 @@ function Scene() {
         {/* Centerpiece: Real Afghan Mamra Almonds */}
         <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.28}>
           <FloatingNutPod
-            textureUrl="/mamra-almonds.jpg"
+            textureUrl="https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon"
             position={[0, 0.05, 0.4]}
             initialRotation={[0.05, 0.05, 0]}
             scale={0.62}
@@ -152,7 +152,7 @@ function Scene() {
         {/* Left: Real Goan Jumbo Cashews */}
         <Float speed={1.8} rotationIntensity={0.12} floatIntensity={0.32}>
           <FloatingNutPod
-            textureUrl="/jumbo-cashews.jpg"
+            textureUrl="https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon"
             position={[-1.35, -0.15, -0.2]}
             initialRotation={[0.08, -0.12, 0.04]}
             scale={0.48}
@@ -165,7 +165,7 @@ function Scene() {
         {/* Right: Real Kashmiri Walnut Kernels */}
         <Float speed={1.7} rotationIntensity={0.12} floatIntensity={0.32}>
           <FloatingNutPod
-            textureUrl="/kashmiri-walnuts.jpg"
+            textureUrl="https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon"
             position={[1.35, 0.18, -0.18]}
             initialRotation={[-0.06, 0.14, -0.04]}
             scale={0.50}

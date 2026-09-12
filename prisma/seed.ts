@@ -8,6 +8,13 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('Start seeding...')
 
+  // Wipe existing products and categories
+  await prisma.orderItem.deleteMany()
+  await prisma.review.deleteMany()
+  await prisma.priceAlert.deleteMany()
+  await prisma.product.deleteMany()
+  await prisma.category.deleteMany()
+
   // 1. Seed Admin User
   const hashedPassword = await bcrypt.hash('admin123', 10)
   const admin = await prisma.user.upsert({
@@ -24,10 +31,8 @@ async function main() {
 
   // 2. Seed Categories
   for (const c of mockCategories) {
-    const category = await prisma.category.upsert({
-      where: { slug: c.slug },
-      update: {},
-      create: {
+    const category = await prisma.category.create({
+      data: {
         id: c.id,
         name: c.name,
         slug: c.slug,
@@ -40,16 +45,14 @@ async function main() {
 
   // 3. Seed Products
   for (const p of mockProducts) {
-    const product = await prisma.product.upsert({
-      where: { slug: p.slug },
-      update: {},
-      create: {
+    const product = await prisma.product.create({
+      data: {
         id: p.id,
         name: p.name,
         slug: p.slug,
         description: p.description,
         price: Number(p.price),
-        salePrice: p.salePrice ? Number(p.salePrice) : null,
+        salePrice: (p as any).salePrice ? Number((p as any).salePrice) : null,
         images: JSON.stringify(p.images),
         weight: p.weight,
         isOrganic: p.isOrganic,
@@ -59,29 +62,6 @@ async function main() {
       },
     })
     console.log(`Created product: ${product.name}`)
-  }
-
-  // 4. Seed Recipes
-  for (const r of recipes) {
-    const recipe = await prisma.recipe.upsert({
-      where: { slug: r.slug },
-      update: {},
-      create: {
-        slug: r.slug,
-        title: r.title,
-        description: r.description,
-        image: r.image,
-        category: r.category,
-        prepTime: r.prepTime,
-        cookTime: r.cookTime,
-        servings: r.servings,
-        difficulty: r.difficulty,
-        ingredients: JSON.stringify(r.ingredients),
-        steps: JSON.stringify(r.steps),
-        tags: (r.tags || []).join(','),
-      },
-    })
-    console.log(`Created recipe: ${recipe.title}`)
   }
 
   console.log('Seeding finished.')
