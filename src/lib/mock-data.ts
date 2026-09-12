@@ -628,4 +628,274 @@ export const mockProducts = [
     "isOrganic": true,
     "status": "ACTIVE"
   },
+  {
+    "id": "df-18",
+    "name": "Sonora Almond",
+    "slug": "sonora-almond",
+    "description": "Premium quality Sonora Almond, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Sonora Almond.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Sonora+Almond"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-19",
+    "name": "California Almond",
+    "slug": "california-almond",
+    "description": "Premium quality California Almond, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy California Almond.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=California+Almond"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-20",
+    "name": "Premium Cashew W180",
+    "slug": "premium-cashew-w180",
+    "description": "Premium quality Premium Cashew W180, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Premium Cashew W180.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Premium+Cashew+W180"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-21",
+    "name": "Whole Cashew Regular",
+    "slug": "whole-cashew-regular",
+    "description": "Premium quality Whole Cashew Regular, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Whole Cashew Regular.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Whole+Cashew+Regular"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-22",
+    "name": "Black Resins (Kishmish)",
+    "slug": "black-resins-kishmish",
+    "description": "Premium quality Black Resins (Kishmish), carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Black Resins (Kishmish).",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Black+Resins+(Kishmish)"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-23",
+    "name": "Green Raisins",
+    "slug": "green-raisins",
+    "description": "Premium quality Green Raisins, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Green Raisins.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Green+Raisins"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-24",
+    "name": "Golden Raisins",
+    "slug": "golden-raisins",
+    "description": "Premium quality Golden Raisins, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Golden Raisins.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Golden+Raisins"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-25",
+    "name": "Salted Pistachios",
+    "slug": "salted-pistachios",
+    "description": "Premium quality Salted Pistachios, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Salted Pistachios.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Salted+Pistachios"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-26",
+    "name": "Apricot",
+    "slug": "apricot",
+    "description": "Premium quality Apricot, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Apricot.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Apricot"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-27",
+    "name": "Munakka",
+    "slug": "munakka",
+    "description": "Premium quality Munakka, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Munakka.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Munakka"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-28",
+    "name": "Gondh Katira",
+    "slug": "gondh-katira",
+    "description": "Premium quality Gondh Katira, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Gondh Katira.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Gondh+Katira"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-29",
+    "name": "Dry Fruits Mix Breakfast",
+    "slug": "dry-fruits-mix-breakfast",
+    "description": "Premium quality Dry Fruits Mix Breakfast, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Dry Fruits Mix Breakfast.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Dry+Fruits+Mix+Breakfast"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-30",
+    "name": "Panch Mewa Mix",
+    "slug": "panch-mewa-mix",
+    "description": "Premium quality Panch Mewa Mix, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Panch Mewa Mix.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Panch+Mewa+Mix"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-31",
+    "name": "Sabja Seeds",
+    "slug": "sabja-seeds",
+    "description": "Premium quality Sabja Seeds, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Sabja Seeds.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Sabja+Seeds"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  },
+  {
+    "id": "df-32",
+    "name": "Black Dry Dates",
+    "slug": "black-dry-dates",
+    "description": "Premium quality Black Dry Dates, carefully sourced and packed to retain maximum freshness and nutritional value.",
+    "aiDescription": "Rich and healthy Black Dry Dates.",
+    "price": "500.00",
+    "images": [
+      "https://placehold.co/600x600/f4f3ea/052c1e?text=Black+Dry+Dates"
+    ],
+    "categoryId": "cat-dry-fruits",
+    "stock": 100,
+    "weight": "250g",
+    "tags": ["dry-fruits", "healthy"],
+    "isFeatured": false,
+    "isOrganic": true,
+    "status": "ACTIVE"
+  }
 ];
