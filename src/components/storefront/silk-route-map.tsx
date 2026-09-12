@@ -92,7 +92,7 @@ export function SilkRouteMap() {
   const [activeLoc, setActiveLoc] = useState<OriginLocation>(PROVENANCE_LOCATIONS[0]);
 
   return (
-    <section className="py-10 md:py-24 bg-[#FAF7F2] dark:bg-[#06140F] border-b border-amber-500/20 relative overflow-hidden transition-colors duration-300">
+    <section className="py-6 md:py-24 bg-[#FAF7F2] dark:bg-[#06140F] border-b border-amber-500/20 relative overflow-hidden transition-colors duration-300">
       {/* Background glow & subtle coordinate lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55rem] h-[55rem] bg-gradient-to-br from-amber-200/40 dark:from-amber-950/20 via-emerald-200/20 to-transparent rounded-full blur-3xl" />

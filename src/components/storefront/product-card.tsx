@@ -124,7 +124,7 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
         </div>
 
         {/* Content Details */}
-        <div className="p-2 sm:p-4 flex flex-col flex-1 relative z-20 bg-white dark:bg-zinc-900 border-t border-border/40">
+        <div className="p-3 sm:p-4 flex flex-col flex-1 relative z-20 bg-white dark:bg-zinc-900 border-t border-border/40">
           {/* Rating & Origin / Weight */}
           <div className="flex items-center justify-between gap-1 mb-1.5 text-[11px] text-muted-foreground">
             <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold">
@@ -136,7 +136,7 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
 
           {/* Title */}
           <div className="mb-2">
-            <h3 className="font-heading text-xs sm:text-base font-bold text-foreground leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+            <h3 className="font-heading text-sm sm:text-base font-bold text-foreground leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
               {product.name}
             </h3>
           </div>
@@ -154,16 +154,20 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
               )}
             </div>
 
-            <Button
-              size="sm"
-              aria-label={`Add ${product.name} to cart`}
-              className="rounded-xl h-8 sm:h-9 px-2 sm:px-3 bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition-transform active:scale-95 shrink-0"
-              onClick={handleAddToCart}
-              disabled={isAdding}
-            >
-              <ShoppingBag className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Add</span>
-            </Button>
+            {product.stock !== undefined && product.stock <= 0 ? (
+              <span className="text-[10px] sm:text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-lg">Out of Stock</span>
+            ) : (
+              <Button
+                size="sm"
+                aria-label={`Add ${product.name} to cart`}
+                className="rounded-xl h-8 sm:h-9 px-2 sm:px-3 bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition-transform active:scale-95 shrink-0"
+                onClick={handleAddToCart}
+                disabled={isAdding}
+              >
+                <ShoppingBag className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Add</span>
+              </Button>
+            )}
           </div>
         </div>
 

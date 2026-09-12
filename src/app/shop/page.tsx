@@ -6,8 +6,9 @@ import { unstable_cache } from 'next/cache';
 import { auth } from '@/lib/auth';
 
 export const metadata = {
-  title: 'Shop | Spicy Nuts',
-  description: 'Browse our collection of premium organic spices, lentils, and cold-pressed oils.',
+  title: 'Buy Premium Dry Fruits & Organic Spices Online — Spicy Nuts Shop',
+  description: 'Shop Afghan Mamra almonds, Kashmiri walnuts, Goan W180 cashews, organic turmeric, handcrafted masalas, and trail mixes. Free shipping above ₹999. 100% natural, no chemical processing.',
+  keywords: ['buy dry fruits online', 'organic spices shop', 'Mamra almonds', 'Kashmiri walnuts', 'cashew nuts online'],
 };
 
 export default async function ShopPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
@@ -137,7 +138,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           </div>
 
           {products.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-5">
               {products.map((product: any) => (
                 <ProductCard key={product.id} product={product} userDietaryTagIds={userDietaryTagIds} />
               ))}

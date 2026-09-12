@@ -4,6 +4,11 @@ import { ArrowRight, Clock, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/db/prisma";
 
+export const metadata = {
+  title: "Traditional Indian Recipes — Dry Fruits, Masalas & Healthy Cooking",
+  description: "Explore authentic Indian recipes featuring premium dry fruits, handcrafted masalas, and organic spices. From golden milk to masala chai, cook with the finest ingredients.",
+};
+
 export default async function RecipesPage() {
   const recipes = await prisma.recipe.findMany({
     where: { status: 'APPROVED' },

@@ -35,11 +35,11 @@ const CRAFT_STEPS = [
 
 export function ScrollytellingSection() {
   return (
-    <section className="py-12 md:py-14 bg-white dark:bg-zinc-900 border-b border-zinc-200/80 dark:border-zinc-800">
+    <section className="py-6 md:py-14 bg-white dark:bg-zinc-900 border-b border-zinc-200/80 dark:border-zinc-800">
       <div className="container px-4 md:px-6 mx-auto">
         
         {/* Header */}
-        <div className="flex flex-col items-center text-center space-y-3 mb-8 max-w-2xl mx-auto">
+        <div className="flex flex-col items-center text-center space-y-3 mb-5 md:mb-8 max-w-2xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono">
             Purity &amp; Heritage
           </span>
@@ -61,7 +61,7 @@ export function ScrollytellingSection() {
                 className="relative p-4 sm:p-6 rounded-3xl bg-[#FAF7F2] dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group hover:-translate-y-1"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center justify-between mb-3 md:mb-5">
                     <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-sm ${step.color}`}>
                       <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>

@@ -12,7 +12,7 @@ const REVIEWS = [
 
 export function ReviewsTicker() {
   return (
-    <section className="py-10 md:py-12 bg-[#1E3A2B] text-white overflow-hidden border-t border-emerald-950">
+    <section className="py-6 md:py-12 bg-[#1E3A2B] text-white overflow-hidden border-t border-emerald-950">
       <div className="container px-4 md:px-6 mb-5 text-center">
         <span className="text-xs font-bold uppercase tracking-widest text-emerald-400 font-mono mb-2 block">
           Community Love
@@ -25,7 +25,7 @@ export function ReviewsTicker() {
       <div className="relative flex overflow-x-hidden group">
         <div className="py-4 animate-marquee whitespace-nowrap flex gap-6 items-center">
           {[...REVIEWS, ...REVIEWS].map((review, i) => (
-            <div key={`${review.id}-${i}`} className="w-64 md:w-80 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/15 inline-flex flex-col whitespace-normal shrink-0 shadow-lg">
+            <div key={`${review.id}-${i}`} className="w-56 md:w-80 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/15 inline-flex flex-col whitespace-normal shrink-0 shadow-lg">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex gap-1 text-amber-400">
                   {[...Array(review.rating)].map((_, i) => (
@@ -46,18 +46,7 @@ export function ReviewsTicker() {
         </div>
       </div>
       
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 30s linear infinite;
-        }
-        .group:hover .animate-marquee {
-          animation-play-state: paused;
-        }
-      `}} />
+
     </section>
   );
 }

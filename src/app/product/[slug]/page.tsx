@@ -1,4 +1,28 @@
 import { StickyMobileBuyBar } from '@/components/storefront/sticky-mobile-buy-bar';
+import type { Metadata } from 'next';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://spicy-nuts.vercel.app';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  const product = await prisma.product.findUnique({ where: { slug: resolvedParams.slug } });
+  if (!product) return { title: 'Product Not Found' };
+
+  let images: string[] = [];
+  try { images = JSON.parse(product.images); } catch { images = []; }
+
+  return {
+    title: `${product.name} — Buy Online at Spicy Nuts`,
+    description: product.description?.slice(0, 160) || `Buy ${product.name} online. Premium quality, 100% natural. Free shipping above ₹999.`,
+    openGraph: {
+      title: `${product.name} — Spicy Nuts`,
+      description: product.description?.slice(0, 160) || `Buy ${product.name} online.`,
+      images: images.length > 0 ? [images[0]] : [],
+      url: `${siteUrl}/product/${product.slug}`,
+      type: 'website',
+    },
+  };
+}
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ShieldCheck, Truck, ArrowLeft, Star } from 'lucide-react';
@@ -38,11 +62,21 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     name: product.name,
     image: product.images[0],
     description: product.description,
+    brand: {
+      '@type': 'Brand',
+      name: 'Spicy Nuts',
+    },
+    sku: product.slug,
     offers: {
       '@type': 'Offer',
       price: product.salePrice || product.price,
       priceCurrency: 'INR',
       availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'B.M.V. Spices & Dry Fruits',
+      },
+      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     },
     ...(reviewCount > 0 && {
       aggregateRating: {
@@ -51,6 +85,16 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         reviewCount,
       },
     }),
+  };
+
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://spicy-nuts.vercel.app' },
+      { '@type': 'ListItem', position: 2, name: 'Shop', item: 'https://spicy-nuts.vercel.app/shop' },
+      { '@type': 'ListItem', position: 3, name: product.name },
+    ],
   };
 
   return (

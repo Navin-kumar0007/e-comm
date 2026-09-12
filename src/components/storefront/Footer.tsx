@@ -7,7 +7,7 @@ const footerLinks = {
     { label: "All Products", href: "/shop" },
     { label: "Authentic Masalas", href: "/category/masalas" },
     { label: "Royal Dry Fruits", href: "/category/dry-fruits" },
-    { label: "Premium Dry Fruits", href: "/category/dry-fruits" },
+    { label: "Gift Hampers", href: "/shop?category=gifts" },
   ],
   company: [
     { label: "Our Story", href: "/about" },
@@ -49,6 +49,7 @@ export function Footer() {
               Purveyors of Imperial Dry Fruits, Royal Nuts, and Rare Whole Spices sourced directly from single-estate farms.
             </p>
             <p className="text-xs text-muted-foreground">GSTIN: 29FCBPM9871D1Z6</p>
+            <p className="text-xs text-muted-foreground mt-1">📧 spicynuts1973@gmail.com</p>
           </div>
 
           {/* Shop */}
@@ -97,7 +98,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-border/40 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-muted-foreground">
-            &copy; {2026} Spicy Nuts. All rights reserved.
+            &copy; {new Date().getFullYear()} Spicy Nuts. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <span>UPI</span>

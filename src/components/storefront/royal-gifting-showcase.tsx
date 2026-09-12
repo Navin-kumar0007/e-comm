@@ -40,7 +40,7 @@ const GIFT_SETS = [
 
 export function RoyalGiftingShowcase() {
   return (
-    <section className="py-10 md:py-24 bg-white dark:bg-zinc-950 border-b border-amber-500/20 relative overflow-hidden transition-colors duration-300">
+    <section className="py-6 md:py-24 bg-white dark:bg-zinc-950 border-b border-amber-500/20 relative overflow-hidden transition-colors duration-300">
       {/* Background Ambience */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-200/20 dark:bg-amber-900/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-200/20 dark:bg-emerald-950/10 rounded-full blur-3xl pointer-events-none" />
@@ -48,7 +48,7 @@ export function RoyalGiftingShowcase() {
       <div className="container relative z-10 px-4 md:px-6 mx-auto">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-4 md:mb-12">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider mb-3">
               <Gift className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />

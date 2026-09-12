@@ -29,6 +29,7 @@ import { Footer } from "@/components/storefront/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/storefront/auth-provider";
 import { AIConcierge } from "@/components/storefront/ai-concierge";
+import { WhatsAppButton } from "@/components/storefront/whatsapp-button";
 import { AccessibilityToolbar } from "@/components/accessibility/accessibility-toolbar";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
@@ -191,7 +192,7 @@ export default function RootLayout({
                 {children}
               </PageTransition>
             </main>
-            <div className="print:hidden"><Footer /><MobileBottomNav /><AIConcierge /><AccessibilityToolbar /></div><ScrollReveal />
+            <div className="print:hidden"><Footer /><MobileBottomNav /><AIConcierge /><WhatsAppButton /><AccessibilityToolbar /></div><ScrollReveal />
             <Toaster />
           </ThemeProvider>
         </AuthProvider>

@@ -55,7 +55,7 @@ const HEALTH_GOALS = [
 
 export function DryFruitsSpotlight() {
   return (
-    <section className="py-12 md:py-14 bg-gradient-to-b from-[#FAF7F2] to-white dark:from-zinc-950 dark:to-zinc-900 overflow-hidden relative border-y border-zinc-200/80 dark:border-zinc-800">
+    <section className="py-6 md:py-14 bg-gradient-to-b from-[#FAF7F2] to-white dark:from-zinc-950 dark:to-zinc-900 overflow-hidden relative border-y border-zinc-200/80 dark:border-zinc-800">
       {/* Decorative background circle */}
       <div className="absolute -top-40 -right-40 w-96 h-96 bg-amber-100 dark:bg-amber-950/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-100 dark:bg-emerald-950/40 rounded-full blur-3xl pointer-events-none" />
@@ -63,7 +63,7 @@ export function DryFruitsSpotlight() {
       <div className="container px-4 md:px-6 mx-auto relative z-10">
         
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-8">
+        <div className="max-w-3xl mx-auto text-center mb-5 md:mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider mb-4">
             <Award className="w-3.5 h-3.5" />
             <span>Purity Standard</span>
@@ -77,7 +77,7 @@ export function DryFruitsSpotlight() {
         </div>
 
         {/* 4 Pillars Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-5 mb-5 md:mb-8">
           {PILLARS.map((p) => (
             <div
               key={p.step}
@@ -102,7 +102,7 @@ export function DryFruitsSpotlight() {
         </div>
 
         {/* 360 Degree 3D Interactive Nut Inspector Centerpiece */}
-        <div className="max-w-4xl mx-auto mb-8">
+        <div className="hidden md:block max-w-4xl mx-auto mb-8">
           <DryFruitInspector3D />
         </div>
 

@@ -86,7 +86,7 @@ export function HeroSection() {
   const activeProduct = HERO_PRODUCTS[activeIdx];
 
   return (
-    <section className="relative overflow-hidden bg-[#FAF8F4] dark:bg-[#071510] pt-16 pb-8 md:pt-28 md:pb-20 transition-colors duration-500">
+    <section className="relative overflow-hidden bg-[#FAF8F4] dark:bg-[#071510] pt-10 pb-4 md:pt-28 md:pb-20 transition-colors duration-500">
       {/* Background ambient lighting */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[40rem] h-[40rem] bg-gradient-to-br from-amber-200/30 dark:from-amber-900/10 via-emerald-200/20 to-transparent rounded-full blur-3xl -translate-y-1/2" />
@@ -111,7 +111,7 @@ export function HeroSection() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-[3.25rem] font-bold font-heading text-zinc-900 dark:text-zinc-50 leading-[1.15] mb-4 tracking-tight">
+            <h1 className="text-xl sm:text-2xl md:text-5xl lg:text-[3.25rem] font-bold font-heading text-zinc-900 dark:text-zinc-50 leading-[1.15] mb-4 tracking-tight">
               The Finest Dry Fruits, Royal Nuts{" "}
               <span className="gold-gradient-text block mt-1">
                 &amp; Rare Exotic Spices.
@@ -119,7 +119,7 @@ export function HeroSection() {
             </h1>
 
             {/* Appetite & Provenance Narrative */}
-            <p className="text-zinc-600 dark:text-zinc-300 text-xs sm:text-sm md:text-base leading-relaxed mb-4 md:mb-6 max-w-xl">
+            <p className="text-zinc-600 dark:text-zinc-300 text-xs sm:text-sm md:text-base leading-relaxed mb-3 md:mb-6 max-w-xl">
               Harvested from the snow-capped orchards of Kashmir and the ancient spice hills of Malabar. Hand-graded, unpolished, and locked fresh in luxury glass canisters.
             </p>
 
@@ -147,7 +147,7 @@ export function HeroSection() {
             </div>
 
             {/* Royal Trust Metrics Bar */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-4 md:pt-6 border-t border-amber-500/20 w-full">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-4 pt-3 md:pt-6 border-t border-amber-500/20 w-full">
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs sm:text-sm md:text-base font-heading">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />

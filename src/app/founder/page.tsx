@@ -3,6 +3,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Leaf, Award, Heart } from 'lucide-react';
 
+export const metadata = {
+  title: "Meet the Founder — Mahesh, Proprietor of B.M.V. Spices & Dry Fruits",
+  description: "Meet Mahesh, the founder and proprietor of B.M.V. Spices & Dry Fruits. His passion for pure, unprocessed food drives Spicy Nuts' mission to deliver farm-fresh quality.",
+};
+
 export default function FounderPage() {
   return (
     <div className="min-h-screen pb-20">

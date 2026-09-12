@@ -19,7 +19,7 @@ export function CategoryBento() {
   };
 
   return (
-    <section className="py-8 md:py-14 bg-white dark:bg-zinc-900 border-b border-zinc-200/80 dark:border-zinc-800">
+    <section className="py-5 md:py-14 bg-white dark:bg-zinc-900 border-b border-zinc-200/80 dark:border-zinc-800">
       <div className="container px-4 md:px-6 mx-auto">
         
         {/* Section Title */}
@@ -46,7 +46,7 @@ export function CategoryBento() {
           className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-5"
         >
           {/* Main Tile 1: Royal Dry Fruits & Superfoods (Col 7, Row 2) */}
-          <motion.div variants={itemVariants} className="md:col-span-7 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[200px] md:min-h-[220px]">
+          <motion.div variants={itemVariants} className="md:col-span-7 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[150px] md:min-h-[220px]">
             <Link href="/category/dry-fruits" className="block w-full h-full">
               <Image
                 src="https://images.unsplash.com/photo-1607349913338-fca9f7fc42d0?q=80&w=800&auto=format&fit=crop"
@@ -78,7 +78,7 @@ export function CategoryBento() {
           </motion.div>
 
           {/* Main Tile 2: Chai Masalas & Artisanal Blends (Col 5, Row 1) */}
-          <motion.div variants={itemVariants} className="md:col-span-5 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[200px] md:min-h-[220px]">
+          <motion.div variants={itemVariants} className="md:col-span-5 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[150px] md:min-h-[220px]">
             <Link href="/category/masalas" className="block w-full h-full">
               <Image
                 src="/jar3.jpg"
@@ -110,7 +110,7 @@ export function CategoryBento() {
           </motion.div>
 
           {/* Tile 3: Single-Origin Organic Spices (Col 6, Row 2) */}
-          <motion.div variants={itemVariants} className="md:col-span-6 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[240px]">
+          <motion.div variants={itemVariants} className="md:col-span-6 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[150px] md:min-h-[240px]">
             <Link href="/category/masalas" className="block w-full h-full">
               <Image
                 src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=800&auto=format&fit=crop"
@@ -140,7 +140,7 @@ export function CategoryBento() {
           </motion.div>
 
           {/* Tile 4: Traditional Healthy Snacks (Col 6, Row 2) */}
-          <motion.div variants={itemVariants} className="md:col-span-6 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[240px]">
+          <motion.div variants={itemVariants} className="md:col-span-6 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[150px] md:min-h-[240px]">
             <Link href="/category/snacks" className="block w-full h-full">
               <Image
                 src="https://images.unsplash.com/photo-1599490659213-e2b9527bd087?q=80&w=800&auto=format&fit=crop"

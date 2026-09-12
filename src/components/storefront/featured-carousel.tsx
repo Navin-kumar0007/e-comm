@@ -59,11 +59,11 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
   };
 
   return (
-    <section className="py-10 md:py-24 bg-[#FAF7F2] dark:bg-zinc-950">
+    <section className="py-6 md:py-24 bg-[#FAF7F2] dark:bg-zinc-950">
       <div className="container px-4 md:px-6 mx-auto">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 md:mb-12">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono mb-2 block">
               Handpicked Essentials
