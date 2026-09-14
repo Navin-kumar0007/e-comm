@@ -222,15 +222,20 @@ export async function POST(req: Request) {
     }
 
     // Online payment via Razorpay.
+    console.log("[Checkout] Order created in DB:", order.id, "Total:", finalTotal);
     const options = {
       amount: Math.round(finalTotal * 100),
       currency: "INR",
       receipt: order.id,
     };
 
+    console.log("[Checkout] RAZORPAY_KEY_ID value prefix:", process.env.RAZORPAY_KEY_ID?.substring(0, 10));
+    console.log("[Checkout] Taking real Razorpay path:", !!(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_ID !== "rzp_test_mockedkey123"));
     if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_ID !== "rzp_test_mockedkey123") {
       try {
+        console.log("[Checkout] Calling Razorpay orders.create with amount:", options.amount);
         const rzpOrder = await getRazorpay().orders.create(options);
+        console.log("[Checkout] Razorpay order created:", rzpOrder.id);
         return NextResponse.json({
           success: true,
           orderId: order.id,
@@ -250,7 +255,9 @@ export async function POST(req: Request) {
       });
     }
   } catch (error: any) {
-    console.error("Checkout Error:", error?.message || error);
-    return NextResponse.json({ error: error?.message || "Internal Server Error" }, { status: 500 });
+    const errMsg = error?.message || error?.description || (typeof error === "string" ? error : JSON.stringify(error));
+    console.error("[Checkout] FULL ERROR:", errMsg);
+    console.error("[Checkout] Error stack:", error?.stack);
+    return NextResponse.json({ error: errMsg || "Unknown checkout error" }, { status: 500 });
   }
 }
