@@ -225,13 +225,18 @@ export async function POST(req: Request) {
     };
 
     if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_ID !== "rzp_test_mockedkey123") {
-      const rzpOrder = await razorpay.orders.create(options);
-      return NextResponse.json({
-        success: true,
-        orderId: order.id,
-        razorpayOrderId: rzpOrder.id,
-        amount: rzpOrder.amount,
-      });
+      try {
+        const rzpOrder = await razorpay.orders.create(options);
+        return NextResponse.json({
+          success: true,
+          orderId: order.id,
+          razorpayOrderId: rzpOrder.id,
+          amount: rzpOrder.amount,
+        });
+      } catch (rzpError: any) {
+        console.error("Razorpay Error:", rzpError);
+        return NextResponse.json({ error: `Razorpay Error: ${rzpError.message || rzpError.description || "Invalid API keys"}` }, { status: 400 });
+      }
     } else {
       return NextResponse.json({
         success: true,
@@ -242,6 +247,6 @@ export async function POST(req: Request) {
     }
   } catch (error: any) {
     console.error("Checkout Error:", error?.message || error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Internal Server Error" }, { status: 500 });
   }
 }
