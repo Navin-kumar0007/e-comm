@@ -12,7 +12,7 @@ function hashOTP(otp: string): string {
 
 async function sendOTPEmail(email: string, otp: string) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM || "Spicy Nuts <spicynuts1973@gmail.com>";
+  const from = process.env.EMAIL_FROM || "Spicy Nuts <onboarding@resend.dev>";
 
   if (apiKey) {
     try {
@@ -46,12 +46,12 @@ async function sendOTPEmail(email: string, otp: string) {
       if (!res.ok) {
         const detail = await res.text();
         console.error(`[OTP EMAIL] Resend responded ${res.status}: ${detail}`);
-        return false;
+        return { success: false, error: detail };
       }
-      return true;
-    } catch (err) {
+      return { success: true };
+    } catch (err: any) {
       console.error("[OTP EMAIL] Failed:", err);
-      return false;
+      return { success: false, error: err.message };
     }
   }
 
@@ -59,7 +59,7 @@ async function sendOTPEmail(email: string, otp: string) {
   console.log("====================================");
   console.log(`[DEV OTP] Code for ${email}: ${otp}`);
   console.log("====================================");
-  return true;
+  return { success: true };
 }
 
 export async function POST(req: Request) {
@@ -97,14 +97,14 @@ export async function POST(req: Request) {
     });
 
     // Send the OTP
-    const sent = await sendOTPEmail(normalizedEmail, otp);
-    if (!sent) {
-      return NextResponse.json({ error: "Failed to send OTP" }, { status: 500 });
+    const result = await sendOTPEmail(normalizedEmail, otp);
+    if (!result.success) {
+      return NextResponse.json({ error: `Resend Error: ${result.error || "Failed to send OTP"}` }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, message: "OTP sent to your email" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Send OTP error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }
