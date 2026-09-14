@@ -112,7 +112,7 @@ export async function sendOrderDelivered(email: string, orderId: string) {
       <p>Your order <strong>#${orderNum}</strong> has been delivered successfully!</p>
       <p>We hope you enjoy your Spicy Nuts products. If you love them, we'd appreciate a review!</p>
       <div style="text-align: center; margin: 24px 0;">
-        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicy-nuts.vercel.app'}/account/orders" 
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicynuts.in'}/account/orders" 
            style="display: inline-block; background: #052c1e; color: #fcfbf7; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
           Leave a Review
         </a>
@@ -151,7 +151,7 @@ export async function notifyAdminNewOrder(orderId: string, total: number, custom
         <p style="margin: 4px 0;"><strong>Amount:</strong> ₹${total.toFixed(2)}</p>
         <p style="margin: 4px 0;"><strong>Payment:</strong> ${payLabel}</p>
       </div>
-      <p><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicy-nuts.vercel.app'}/admin/orders" style="color: #c59b27; font-weight: bold;">View in Admin Panel →</a></p>
+      <p><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicynuts.in'}/admin/orders" style="color: #c59b27; font-weight: bold;">View in Admin Panel →</a></p>
     </div>
   `);
 }

@@ -1,45 +1,69 @@
-import { StickyMobileBuyBar } from '@/components/storefront/sticky-mobile-buy-bar';
-import type { Metadata } from 'next';
+import { StickyMobileBuyBar } from "@/components/storefront/sticky-mobile-buy-bar";
+import type { Metadata } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://spicy-nuts.vercel.app';
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const resolvedParams = await params;
-  const product = await prisma.product.findUnique({ where: { slug: resolvedParams.slug } });
-  if (!product) return { title: 'Product Not Found' };
+  const product = await prisma.product.findUnique({
+    where: { slug: resolvedParams.slug },
+  });
+  if (!product) return { title: "Product Not Found" };
 
   let images: string[] = [];
-  try { images = JSON.parse(product.images); } catch { images = []; }
+  try {
+    images = JSON.parse(product.images);
+  } catch {
+    images = [];
+  }
 
   return {
     title: `${product.name} — Buy Online at Spicy Nuts`,
-    description: product.description?.slice(0, 160) || `Buy ${product.name} online. Premium quality, 100% natural. Free shipping above ₹999.`,
+    description:
+      product.description?.slice(0, 160) ||
+      `Buy ${product.name} online. Premium quality, 100% natural. Free shipping above ₹999.`,
     openGraph: {
       title: `${product.name} — Spicy Nuts`,
-      description: product.description?.slice(0, 160) || `Buy ${product.name} online.`,
+      description:
+        product.description?.slice(0, 160) || `Buy ${product.name} online.`,
       images: images.length > 0 ? [images[0]] : [],
       url: `${siteUrl}/product/${product.slug}`,
-      type: 'website',
+      type: "website",
     },
   };
 }
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { ShieldCheck, Truck, ArrowLeft, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { prisma } from '@/lib/db/prisma';
-import { AddToCartButton } from '@/components/storefront/add-to-cart-button';
-import { WishlistButton } from '@/components/storefront/wishlist-button';
-import { ProductReviews } from './product-reviews';
-import { ProductGallery } from '@/components/storefront/product-gallery';
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ShieldCheck, Truck, ArrowLeft, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { prisma } from "@/lib/db/prisma";
+import { AddToCartButton } from "@/components/storefront/add-to-cart-button";
+import { WishlistButton } from "@/components/storefront/wishlist-button";
+import { ProductReviews } from "./product-reviews";
+import { ProductGallery } from "@/components/storefront/product-gallery";
 
-
-
-export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const resolvedParams = await params;
-  const rawProduct = await prisma.product.findUnique({ where: { slug: resolvedParams.slug } });
-  const product = rawProduct ? {...rawProduct, images: JSON.parse(rawProduct.images), tags: rawProduct.tags ? rawProduct.tags.split(',') : []} : null;
+  const rawProduct = await prisma.product.findUnique({
+    where: { slug: resolvedParams.slug },
+  });
+  const product = rawProduct
+    ? {
+        ...rawProduct,
+        images: JSON.parse(rawProduct.images),
+        tags: rawProduct.tags ? rawProduct.tags.split(",") : [],
+      }
+    : null;
 
   if (!product) {
     notFound();
@@ -47,7 +71,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   // Real review aggregate (only rendered when reviews exist)
   const reviewStats = await prisma.review.aggregate({
-    where: { productId: product.id, status: 'APPROVED' },
+    where: { productId: product.id, status: "APPROVED" },
     _avg: { rating: true },
     _count: { rating: true },
   });
@@ -55,45 +79,90 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const avgRating = reviewCount > 0 ? Number(reviewStats._avg.rating ?? 0) : 0;
   const roundedRating = Math.round(avgRating);
 
-
   const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
+    "@context": "https://schema.org",
+    "@type": "Product",
     name: product.name,
     image: product.images[0],
     description: product.description,
     brand: {
-      '@type': 'Brand',
-      name: 'Spicy Nuts',
+      "@type": "Brand",
+      name: "Spicy Nuts",
     },
     sku: product.slug,
     offers: {
-      '@type': 'Offer',
+      "@type": "Offer",
       price: product.salePrice || product.price,
-      priceCurrency: 'INR',
-      availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      priceCurrency: "INR",
+      availability:
+        product.stock > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
       seller: {
-        '@type': 'Organization',
-        name: 'B.M.V. Spices & Dry Fruits',
+        "@type": "Organization",
+        name: "B.M.V. Spices & Dry Fruits",
       },
-      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
     },
     ...(reviewCount > 0 && {
       aggregateRating: {
-        '@type': 'AggregateRating',
+        "@type": "AggregateRating",
         ratingValue: avgRating.toFixed(1),
         reviewCount,
       },
     }),
   };
 
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: `Is ${product.name} 100% natural and organic?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `Yes, our ${product.name} is ${product.isOrganic ? "certified organic" : "100% natural"}, free from any artificial colors, preservatives, or additives. We source directly from trusted partner farms.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `How should I store the ${product.name}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `For maximum freshness and shelf life, store your ${product.name} in an airtight container in a cool, dry place away from direct sunlight.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `What is the delivery time for ${product.name}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "We typically process and dispatch orders within 24 hours. Delivery across India usually takes 3-7 business days depending on your location.",
+        },
+      },
+    ],
+  };
+
   const breadcrumbLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://spicy-nuts.vercel.app' },
-      { '@type': 'ListItem', position: 2, name: 'Shop', item: 'https://spicy-nuts.vercel.app/shop' },
-      { '@type': 'ListItem', position: 3, name: product.name },
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://spicynuts.in",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Shop",
+        item: "https://spicynuts.in/shop",
+      },
+      { "@type": "ListItem", position: 3, name: product.name },
     ],
   };
 
@@ -101,18 +170,23 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-8 md:pt-28 md:pb-10">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([jsonLd, breadcrumbLd, faqLd]),
+        }}
       />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-        <Link href="/shop" className="hover:text-primary transition-colors flex items-center gap-1">
+        <Link
+          href="/shop"
+          className="hover:text-primary transition-colors flex items-center gap-1"
+        >
           <ArrowLeft className="w-4 h-4" /> Back to Shop
         </Link>
         <span>/</span>
         <span className="text-foreground">{product.name}</span>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
+      <article className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
         {/* Product Visuals (Left Col) */}
         <div className="space-y-6">
           <ProductGallery
@@ -128,34 +202,48 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-foreground tracking-tight mb-2">
               {product.name}
             </h1>
-            
+
             <div className="flex items-center gap-4 mb-4">
               {reviewCount > 0 ? (
                 <div className="flex items-center gap-1 text-brand-gold">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-4 h-4 ${i < roundedRating ? 'fill-current' : 'text-muted-foreground/30'}`}
+                      className={`w-4 h-4 ${i < roundedRating ? "fill-current" : "text-muted-foreground/30"}`}
                     />
                   ))}
                   <span className="text-muted-foreground text-sm ml-1">
-                    ({avgRating.toFixed(1)}/5 from {reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})
+                    ({avgRating.toFixed(1)}/5 from {reviewCount}{" "}
+                    {reviewCount === 1 ? "review" : "reviews"})
                   </span>
                 </div>
               ) : (
-                <span className="text-muted-foreground text-sm">No reviews yet — be the first to review</span>
+                <span className="text-muted-foreground text-sm">
+                  No reviews yet — be the first to review
+                </span>
               )}
             </div>
 
             <div className="flex items-baseline gap-4 mb-6">
               {product.salePrice ? (
                 <>
-                  <span className="text-3xl font-bold text-primary">₹{product.salePrice}</span>
-                  <span className="text-xl text-muted-foreground line-through">₹{product.price}</span>
-                  <Badge variant="destructive" className="ml-2">Save ₹{(Number(product.price) - Number(product.salePrice)).toFixed(0)}</Badge>
+                  <span className="text-3xl font-bold text-primary">
+                    ₹{product.salePrice}
+                  </span>
+                  <span className="text-xl text-muted-foreground line-through">
+                    ₹{product.price}
+                  </span>
+                  <Badge variant="destructive" className="ml-2">
+                    Save ₹
+                    {(
+                      Number(product.price) - Number(product.salePrice)
+                    ).toFixed(0)}
+                  </Badge>
                 </>
               ) : (
-                <span className="text-3xl font-bold text-primary">₹{product.price}</span>
+                <span className="text-3xl font-bold text-primary">
+                  ₹{product.price}
+                </span>
               )}
             </div>
 
@@ -168,7 +256,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
           {/* Options */}
           <div className="mb-4 space-y-4">
-            <h3 className="font-medium text-foreground">Select Quantity/Weight</h3>
+            <h3 className="font-medium text-foreground">
+              Select Quantity/Weight
+            </h3>
             <div className="flex flex-wrap gap-3">
               <button className="px-4 py-2 rounded-full border border-primary bg-primary/10 text-primary text-sm font-medium">
                 {product.weight || "Standard"}
@@ -184,9 +274,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   id: product.id,
                   name: product.name,
                   slug: product.slug,
-                  price: product.salePrice ? Number(product.salePrice) : Number(product.price),
+                  price: product.salePrice
+                    ? Number(product.salePrice)
+                    : Number(product.price),
                   image: product.images[0],
-                  weight: product.weight || 'Standard',
+                  weight: product.weight || "Standard",
                 }}
                 size="lg"
                 fullWidth
@@ -204,50 +296,79 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <ShieldCheck className="w-6 h-6 text-primary shrink-0" />
               <div>
                 <h4 className="font-semibold text-sm">Certified Quality</h4>
-                <p className="text-xs text-muted-foreground">Lab tested for purity</p>
+                <p className="text-xs text-muted-foreground">
+                  Lab tested for purity
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3 p-4 rounded-xl bg-muted/30 border border-border/50">
               <Truck className="w-6 h-6 text-primary shrink-0" />
               <div>
                 <h4 className="font-semibold text-sm">Fast Delivery</h4>
-                <p className="text-xs text-muted-foreground">Free shipping over ₹999</p>
+                <p className="text-xs text-muted-foreground">
+                  Free shipping over ₹999
+                </p>
               </div>
             </div>
           </div>
-
         </div>
-      </div>
+      </article>
 
       {/* Full Description & Nutrition */}
       <div className="mt-16 pt-12 border-t border-border/50">
         <div className="max-w-3xl mx-auto space-y-12">
           <section>
-            <h2 className="text-2xl font-heading font-bold mb-4">About this product</h2>
-            <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+            <h2 className="text-2xl font-heading font-bold mb-4">
+              About this product
+            </h2>
+            <p className="text-muted-foreground leading-relaxed">
+              {product.description}
+            </p>
           </section>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8">
             <section className="bg-muted/30 p-6 rounded-2xl border border-border/50">
-              <h2 className="text-xl font-heading font-bold mb-4">Ingredients & Sourcing</h2>
+              <h2 className="text-xl font-heading font-bold mb-4">
+                Ingredients & Sourcing
+              </h2>
               <ul className="space-y-2 text-muted-foreground text-sm">
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> 100% Pure, Unadulterated Product</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> Sourced directly from partner farms</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> No artificial colors or preservatives</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> Ethically harvested</li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" /> 100%
+                  Pure, Unadulterated Product
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />{" "}
+                  Sourced directly from partner farms
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" /> No
+                  artificial colors or preservatives
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />{" "}
+                  Ethically harvested
+                </li>
               </ul>
             </section>
-            
+
             <section className="bg-muted/30 p-6 rounded-2xl border border-border/50">
-              <h2 className="text-xl font-heading font-bold mb-4">Product Details</h2>
+              <h2 className="text-xl font-heading font-bold mb-4">
+                Product Details
+              </h2>
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between border-b border-border/50 pb-2">
                   <span className="text-muted-foreground">Net Weight</span>
-                  <span className="font-medium">{product.weight || 'See pack'}</span>
+                  <span className="font-medium">
+                    {product.weight || "See pack"}
+                  </span>
                 </li>
                 <li className="flex justify-between border-b border-border/50 pb-2">
                   <span className="text-muted-foreground">Sourcing</span>
-                  <span className="font-medium">{product.isOrganic ? 'Certified Organic' : 'Naturally sourced'}</span>
+                  <span className="font-medium">
+                    {product.isOrganic
+                      ? "Certified Organic"
+                      : "Naturally sourced"}
+                  </span>
                 </li>
                 <li className="flex justify-between border-b border-border/50 pb-2">
                   <span className="text-muted-foreground">Preservatives</span>
@@ -260,17 +381,47 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               </ul>
             </section>
           </div>
-          
-          <section className="pt-4">
+
+          <section className="pt-12 border-t border-border/50">
+            <h2 className="text-2xl font-heading font-bold mb-6">
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-foreground mb-2">
+                  Is {product.name} 100% natural?
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Yes, our {product.name} is{" "}
+                  {product.isOrganic ? "certified organic" : "100% natural"},
+                  free from any artificial colors, preservatives, or additives.
+                  We source directly from trusted partner farms.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-2">
+                  How should I store this?
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  For maximum freshness and shelf life, store in an airtight
+                  container in a cool, dry place away from direct sunlight.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section className="pt-12 border-t border-border/50">
             <h2 className="text-2xl font-heading font-bold mb-4">How to Use</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              Add a touch of authentic flavor to your daily meals. For best results, store in a cool, dry place away from direct sunlight. 
-              Ensure the jar is tightly sealed after every use to maintain freshness and aroma.
+              Add a touch of authentic flavor to your daily meals. For best
+              results, store in a cool, dry place away from direct sunlight.
+              Ensure the jar is tightly sealed after every use to maintain
+              freshness and aroma.
             </p>
           </section>
         </div>
       </div>
-      
+
       {/* Product Reviews Section */}
       <div className="mt-20 border-t border-border/50 pt-16">
         <ProductReviews productId={product.id} />
@@ -285,7 +436,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           price: Number(product.price),
           salePrice: product.salePrice ? Number(product.salePrice) : null,
           image: product.images[0],
-          weight: product.weight || 'Standard',
+          weight: product.weight || "Standard",
         }}
       />
     </div>

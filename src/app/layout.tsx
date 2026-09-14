@@ -44,7 +44,7 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicy-nuts.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
