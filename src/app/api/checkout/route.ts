@@ -5,13 +5,17 @@ import type { Prisma, Product } from "@prisma/client";
 import Razorpay from "razorpay";
 import { sendOrderConfirmation, notifyAdminNewOrder } from "@/lib/email";
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "mock_key_id",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "mock_key_secret",
-});
+function getRazorpay() {
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  });
+}
 
 export async function POST(req: Request) {
   try {
+    console.log("[Checkout] RAZORPAY_KEY_ID exists:", !!process.env.RAZORPAY_KEY_ID);
+    console.log("[Checkout] RAZORPAY_KEY_SECRET exists:", !!process.env.RAZORPAY_KEY_SECRET);
     const session = await auth();
     let user = null;
     if (session?.user?.email) {
@@ -226,7 +230,7 @@ export async function POST(req: Request) {
 
     if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_ID !== "rzp_test_mockedkey123") {
       try {
-        const rzpOrder = await razorpay.orders.create(options);
+        const rzpOrder = await getRazorpay().orders.create(options);
         return NextResponse.json({
           success: true,
           orderId: order.id,
