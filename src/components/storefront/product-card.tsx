@@ -124,9 +124,9 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
         </div>
 
         {/* Content Details */}
-        <div className="p-3 sm:p-4 flex flex-col flex-1 relative z-20 bg-white dark:bg-zinc-900 border-t border-border/40">
+        <div className="p-2.5 sm:p-4 flex flex-col flex-1 relative z-20 bg-white dark:bg-zinc-900 border-t border-border/40">
           {/* Rating & Origin / Weight */}
-          <div className="flex items-center justify-between gap-1 mb-1.5 text-[11px] text-muted-foreground">
+          <div className="flex items-center justify-between gap-1 mb-1 text-[10px] text-muted-foreground">
             <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold">
               <Star className="w-3 h-3 fill-current" />
               <span>4.9</span>
@@ -136,13 +136,13 @@ export function ProductCard({ product, userDietaryTagIds = [] }: { product: any,
 
           {/* Title */}
           <div className="mb-2">
-            <h3 className="font-heading text-sm sm:text-base font-bold text-foreground leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+            <h3 className="font-heading text-[13px] sm:text-base font-bold text-foreground leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
               {product.name}
             </h3>
           </div>
 
           {/* Price & Action */}
-          <div className="mt-auto pt-2.5 sm:pt-3 border-t border-border/20 flex items-center justify-between gap-1.5">
+          <div className="mt-auto pt-2 sm:pt-3 border-t border-border/20 flex items-center justify-between gap-1.5">
             <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-1.5 min-w-0">
               {product.salePrice ? (
                 <>

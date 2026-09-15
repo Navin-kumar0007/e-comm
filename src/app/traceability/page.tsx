@@ -53,7 +53,7 @@ export default function TraceabilityPage() {
   };
 
   return (
-    <div className="min-h-screen pt-32 pb-20 bg-background relative overflow-hidden">
+    <div className="min-h-screen pt-28 pb-20 md:pt-36 bg-background relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -z-10 animate-pulse" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-3xl -z-10 animate-pulse delay-1000" />
       

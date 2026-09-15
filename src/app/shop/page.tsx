@@ -113,7 +113,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   }));
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-8 md:pt-28 md:pb-10">
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-8 md:pt-36 md:pb-10">
       <div className="mb-6 text-center md:text-left">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">
           The Imperial Harvests & Pantry

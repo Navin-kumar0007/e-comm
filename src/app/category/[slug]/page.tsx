@@ -24,7 +24,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const categoryProducts = rawProducts.map((p: any) => ({...p, weight: p.weight || undefined, images: JSON.parse(p.images), tags: p.tags ? p.tags.split(',') : []}));
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-8 md:pt-28 md:pb-10">
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-8 md:pt-36 md:pb-10">
       <div className="mb-6 text-center">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-primary mb-2">
           {category.name}

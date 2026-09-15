@@ -86,7 +86,7 @@ export function HeroSection() {
   const activeProduct = HERO_PRODUCTS[activeIdx];
 
   return (
-    <section className="relative overflow-hidden bg-[#FAF8F4] dark:bg-[#071510] pt-10 pb-4 md:pt-28 md:pb-20 transition-colors duration-500">
+    <section className="relative overflow-hidden bg-[#FAF8F4] dark:bg-[#071510] pt-20 pb-4 md:pt-28 md:pb-20 transition-colors duration-500">
       {/* Background ambient lighting */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[40rem] h-[40rem] bg-gradient-to-br from-amber-200/30 dark:from-amber-900/10 via-emerald-200/20 to-transparent rounded-full blur-3xl -translate-y-1/2" />
@@ -105,13 +105,13 @@ export function HeroSection() {
             className="lg:col-span-6 flex flex-col items-start text-left"
           >
             {/* Top Brand Pill with Gold Sheen */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/15 px-3 py-1 text-[11px] md:text-xs font-semibold text-amber-800 dark:text-amber-300 mb-4 backdrop-blur-sm">
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/15 px-3 py-1 text-[11px] md:text-xs font-semibold text-amber-800 dark:text-amber-300 mb-3 backdrop-blur-sm">
               <Sparkles className="h-3 w-3 text-amber-600 dark:text-amber-400 animate-pulse" />
               <span>Imperial Royal Pantry • Certified Single-Origin</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-xl sm:text-2xl md:text-5xl lg:text-[3.25rem] font-bold font-heading text-zinc-900 dark:text-zinc-50 leading-[1.15] mb-4 tracking-tight">
+            <h1 className="text-lg sm:text-xl md:text-5xl lg:text-[3.25rem] font-bold font-heading text-zinc-900 dark:text-zinc-50 leading-[1.15] mb-3 tracking-tight">
               The Finest Dry Fruits, Royal Nuts{" "}
               <span className="gold-gradient-text block mt-1">
                 &amp; Rare Exotic Spices.
@@ -119,16 +119,16 @@ export function HeroSection() {
             </h1>
 
             {/* Appetite & Provenance Narrative */}
-            <p className="text-zinc-600 dark:text-zinc-300 text-xs sm:text-sm md:text-base leading-relaxed mb-3 md:mb-6 max-w-xl">
+            <p className="text-zinc-600 dark:text-zinc-300 text-xs sm:text-sm md:text-base leading-relaxed mb-2 md:mb-6 max-w-xl">
               Harvested from the snow-capped orchards of Kashmir and the ancient spice hills of Malabar. Hand-graded, unpolished, and locked fresh in luxury glass canisters.
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mb-6 md:mb-8">
+            <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto mb-4 md:mb-8">
               <Link href="/shop" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white h-10 md:h-12 px-4 md:px-7 rounded-2xl shadow-lg shadow-emerald-950/20 hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm font-bold w-full flex items-center justify-center gap-2 border border-amber-500/30"
+                  className="bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white h-9 md:h-12 px-3.5 md:px-7 rounded-2xl shadow-lg shadow-emerald-950/20 hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm font-bold w-full flex items-center justify-center gap-2 border border-amber-500/30"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>Explore Royal Harvests</span>
@@ -138,7 +138,7 @@ export function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-10 md:h-12 px-4 md:px-6 rounded-2xl border-amber-500/40 hover:bg-amber-500/10 text-zinc-900 dark:text-zinc-100 backdrop-blur-sm text-sm font-semibold w-full flex items-center justify-center gap-2"
+                  className="h-9 md:h-12 px-3.5 md:px-6 rounded-2xl border-amber-500/40 hover:bg-amber-500/10 text-zinc-900 dark:text-zinc-100 backdrop-blur-sm text-sm font-semibold w-full flex items-center justify-center gap-2"
                 >
                   <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   <span>Custom Blend Atelier</span>
@@ -147,27 +147,27 @@ export function HeroSection() {
             </div>
 
             {/* Royal Trust Metrics Bar */}
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-4 pt-3 md:pt-6 border-t border-amber-500/20 w-full">
+            <div className="grid grid-cols-3 gap-1 sm:gap-4 pt-2 md:pt-6 border-t border-amber-500/20 w-full">
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs sm:text-sm md:text-base font-heading">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>Grade AAA</span>
                 </div>
-                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">High-Oil Natural Kernels</span>
+                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">High-Oil Natural Kernels</span>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs sm:text-sm md:text-base font-heading">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>Zero Polish</span>
                 </div>
-                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">100% Unadulterated</span>
+                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">100% Unadulterated</span>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs sm:text-sm md:text-base font-heading">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>Glass Sealed</span>
                 </div>
-                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">Aroma &amp; Oil Lock</span>
+                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">Aroma &amp; Oil Lock</span>
               </div>
             </div>
 

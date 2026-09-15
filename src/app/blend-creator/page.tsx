@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function BlendCreatorPage() {
   return (
-    <div className="min-h-screen pt-32 pb-20 bg-background overflow-hidden relative">
+    <div className="min-h-screen pt-28 pb-20 md:pt-36 bg-background overflow-hidden relative">
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -z-10 animate-pulse delay-1000" />
       

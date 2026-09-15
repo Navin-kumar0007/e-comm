@@ -16,7 +16,7 @@ export default async function RecipesPage() {
   });
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-8 md:pt-28 md:pb-10">
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-8 md:pt-36 md:pb-10">
       <div className="max-w-3xl mx-auto text-center mb-8">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-3 text-foreground">
           Authentic <span className="text-primary italic">Recipes</span>
