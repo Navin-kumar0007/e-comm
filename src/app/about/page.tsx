@@ -39,7 +39,7 @@ export default function AboutPage() {
         <div className="container mx-auto max-w-6xl px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="rounded-2xl overflow-hidden shadow-lg">
-              <Image width={800} height={800} unoptimized={false} src="https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon"
+              <Image width={800} height={800} unoptimized={false} src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=800&auto=format&fit=crop"
                 alt="Kitchen preparation"
                 className="w-full h-64 md:h-72 object-cover"
               />

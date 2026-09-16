@@ -1,3 +1,4 @@
+import { sendWhatsAppMessage, buildOrderConfirmationWhatsAppMessage } from "@/lib/whatsapp";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
@@ -100,6 +101,24 @@ export async function POST(req: Request) {
         await sendOrderConfirmation(order.customerEmail, order.id, order.total);
       } catch (err) {
         console.error("Failed to send order email:", err);
+      }
+
+      if (order.customerPhone) {
+        try {
+          const items = await prisma.orderItem.findMany({ where: { orderId: order.id } });
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
+          const waMsg = buildOrderConfirmationWhatsAppMessage({
+            orderId: order.id,
+            customerName: order.customerName,
+            total: order.total,
+            paymentMethod: "Online Payment (Prepaid)",
+            items: items.map((i: any) => ({ name: i.productName, quantity: i.quantity, weight: i.weight })),
+            trackingUrl: `${siteUrl}/track/${order.id}`,
+          });
+          await sendWhatsAppMessage({ to: order.customerPhone, message: waMsg, type: "ORDER_UPDATE" });
+        } catch (waErr) {
+          console.error("WhatsApp Online order confirmation error:", waErr);
+        }
       }
       // Notify admin of new paid order
       try { await notifyAdminNewOrder(order.id, order.total, order.customerName, "ONLINE"); } catch (e) { console.error("Admin notification failed:", e); }

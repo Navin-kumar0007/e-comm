@@ -31,7 +31,7 @@ const HERO_PRODUCTS = [
     price: "₹1,050",
     mrp: "₹1,200",
     weight: "500g Luxury Glass Jar",
-    image: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
+    image: "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?q=80&w=800&auto=format&fit=crop",
     badge: "👑 Royal Superfood",
     origin: "Kandahar Valleys",
     bgPill: "bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-300/50",
@@ -45,7 +45,7 @@ const HERO_PRODUCTS = [
     price: "₹720",
     mrp: "₹799",
     weight: "500g Luxury Glass Jar",
-    image: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
+    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=800&auto=format&fit=crop",
     badge: "❄️ Snow-White Kernels",
     origin: "Kishtwar, Kashmir",
     bgPill: "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 border-emerald-300/50",
@@ -59,7 +59,7 @@ const HERO_PRODUCTS = [
     price: "₹799",
     mrp: "₹850",
     weight: "500g Luxury Glass Jar",
-    image: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
+    image: "https://images.unsplash.com/photo-1536599018102-9f803c140fc1?q=80&w=800&auto=format&fit=crop",
     badge: "💎 King Size W180",
     origin: "Goan Coastal Groves",
     bgPill: "bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-300/50",
@@ -73,7 +73,7 @@ const HERO_PRODUCTS = [
     price: "₹220",
     mrp: "₹250",
     weight: "100g Aroma-Lock Jar",
-    image: "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=800&auto=format&fit=crop",
     badge: "🔥 Slow-Roasted Aroma",
     origin: "Malabar & Idukki",
     bgPill: "bg-orange-100 dark:bg-orange-950/60 text-orange-900 dark:text-orange-300 border-orange-300/50",
@@ -86,7 +86,7 @@ export function HeroSection() {
   const activeProduct = HERO_PRODUCTS[activeIdx];
 
   return (
-    <section className="relative overflow-hidden bg-[#FAF8F4] dark:bg-[#071510] pt-20 pb-4 md:pt-28 md:pb-20 transition-colors duration-500">
+    <section className="relative overflow-hidden bg-[#FAF8F4] dark:bg-[#071510] pt-20 pb-2 md:pt-28 md:pb-20 transition-colors duration-500">
       {/* Background ambient lighting */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[40rem] h-[40rem] bg-gradient-to-br from-amber-200/30 dark:from-amber-900/10 via-emerald-200/20 to-transparent rounded-full blur-3xl -translate-y-1/2" />
@@ -95,7 +95,69 @@ export function HeroSection() {
       </div>
 
       <div className="container relative z-10 px-4 md:px-6 mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        {/* Mobile Compact D2C Hero Banner (Nutraj / 20-20 Dry Fruits style) */}
+        <div className="md:hidden mb-2">
+          <div className="relative rounded-2xl overflow-hidden shadow-lg border border-amber-500/25 bg-gradient-to-br from-[#052C1E] via-[#0A3D2A] to-[#041F15] p-4 text-white">
+            {/* Background product photography */}
+            <div className="absolute inset-0 opacity-25 pointer-events-none">
+              <Image
+                src="https://images.unsplash.com/photo-1508061253366-f7da158b6d46?q=80&w=800&auto=format&fit=crop"
+                alt="Royal Dry Fruits"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#052C1E]/90 via-[#0A3D2A]/80 to-transparent pointer-events-none" />
+
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/25 border border-amber-400/40 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider mb-2">
+                <Sparkles className="w-3 h-3 text-amber-400" />
+                Royal Harvest • Single-Origin
+              </div>
+
+              <h1 className="text-xl font-bold font-heading leading-tight tracking-tight text-white mb-1.5">
+                The Finest Dry Fruits &amp; Rare Exotic Spices
+              </h1>
+
+              <p className="text-white/80 text-[11px] leading-snug mb-3">
+                Hand-graded Afghan Mamra, Kashmiri walnuts &amp; custom-crafted masalas in glass canisters.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
+                <Link href="/shop" className="flex-1">
+                  <Button size="sm" className="w-full h-9 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs rounded-xl shadow-md">
+                    <ShoppingBag className="w-3.5 h-3.5 mr-1.5" />
+                    Shop Now
+                  </Button>
+                </Link>
+                <Link href="/blend-creator" className="flex-1">
+                  <Button size="sm" variant="outline" className="w-full h-9 bg-white/10 hover:bg-white/20 text-white border-white/25 font-bold text-xs rounded-xl backdrop-blur-xs">
+                    <Sparkles className="w-3.5 h-3.5 mr-1 text-amber-300" />
+                    Custom Blend
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Micro Trust Strip */}
+              <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-white/10 text-[9px] text-amber-200/90 font-medium">
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-amber-400" /> Grade AAA
+                </span>
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-amber-400" /> Zero Polish
+                </span>
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-amber-400" /> Glass Sealed
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop View: Preserved with full 3D Vault and spacious copy */}
+        <div className="hidden md:grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
           {/* Left Column: Brand Story, Prestige & Call to Action */}
           <motion.div

@@ -83,6 +83,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return false;
         }
       }
+      // Dispatch welcome WhatsApp notification upon sign-in if phone exists and not yet greeted
+      if (user?.email) {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: user.email.toLowerCase().trim() },
+            select: { phone: true, name: true, whatsappOptIn: true },
+          });
+          if (dbUser?.phone && dbUser.whatsappOptIn) {
+            const welcomeCount = await prisma.whatsAppLog.count({
+              where: { phone: dbUser.phone, type: "WELCOME" },
+            });
+            if (welcomeCount === 0) {
+              const { sendWhatsAppMessage } = await import("@/lib/whatsapp");
+              await sendWhatsAppMessage({
+                to: dbUser.phone,
+                type: "WELCOME",
+                message: `🎉 *WELCOME TO SPICY NUTS* 🎉
+
+Namaste ${dbUser.name}! You have successfully signed in.
+
+🎁 *Here is your Welcome Gift:*
+Use coupon code *ROYAL10* at checkout for *10% OFF* on your next purchase!
+
+🛍️ Explore our harvests: https://spicynuts.in/shop`,
+              });
+            }
+          }
+        } catch (e) {
+          console.warn("Sign-in WhatsApp trigger notice:", e);
+        }
+      }
+
       return true;
     },
     async jwt({ token, user, account }) {

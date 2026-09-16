@@ -15,7 +15,8 @@ import {
   Sparkles,
   Repeat,
   FolderTree,
-  MessageSquare
+  MessageSquare,
+  MessageCircle
 } from "lucide-react";
 import { ThemeToggle } from "@/components/storefront/ThemeToggle";
 
@@ -26,6 +27,7 @@ const sidebarLinks = [
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/messages", label: "Customer Inquiries", icon: MessageSquare },
+  { href: "/admin/whatsapp", label: "WhatsApp Marketing", icon: MessageCircle },
   { href: "/admin/coupons", label: "Coupons", icon: Ticket },
   { href: "/admin/recipes", label: "Recipes", icon: ChefHat },
   { href: "/admin/dietary", label: "Dietary Profiles", icon: ListChecks },

@@ -132,6 +132,7 @@ export default function RegisterPage() {
 
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
+    const phone = (formData.get("phone") as string) || "";
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
 
@@ -141,7 +142,7 @@ export default function RegisterPage() {
       return;
     }
 
-    const result = await registerUser({ name, email, password });
+    const result = await registerUser({ name, email, password, phone });
 
     if (result.error) {
       toast.error(result.error);
@@ -149,8 +150,8 @@ export default function RegisterPage() {
       return;
     }
 
-    toast.success("Account created!", {
-      description: "Please sign in with your new credentials.",
+    toast.success("Account created! 🎉", {
+      description: phone ? "Check your WhatsApp for your 10% welcome coupon (ROYAL10)!" : "Please sign in with your new credentials.",
     });
     router.push("/login");
   };
@@ -292,6 +293,26 @@ export default function RegisterPage() {
                   <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input id="name" name="name" placeholder="Your full name" required className="pl-10 h-11 rounded-xl" />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">WhatsApp Mobile Number</Label>
+                <div className="flex items-center rounded-xl border border-border bg-background overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500">
+                  <span className="px-3 py-2.5 text-xs font-semibold bg-muted text-muted-foreground border-r border-border">
+                    🇮🇳 +91
+                  </span>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="Enter 10-digit WhatsApp number"
+                    className="flex-1 px-3 py-2 text-sm bg-transparent outline-none placeholder:text-muted-foreground/60"
+                    maxLength={15}
+                  />
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Get your instant 10% welcome coupon (ROYAL10) and order tracking on WhatsApp.
+                </p>
               </div>
 
               <div className="space-y-2">

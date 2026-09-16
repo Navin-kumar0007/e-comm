@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { useCartStore } from '@/lib/store/cart-store';
+import { getCleanProductImage } from "@/lib/utils";
 
 export function CartDrawer() {
   const items = useCartStore((s) => s.items);
@@ -88,7 +89,7 @@ export function CartDrawer() {
                   {/* Image */}
                   <Link href={`/product/${item.slug}`} onClick={() => setIsOpen(false)} className="relative w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-muted">
                     <Image
-                      src={item.image}
+                      src={getCleanProductImage(item.image, item.name)}
                       alt={item.name}
                       fill
                       className="object-cover"

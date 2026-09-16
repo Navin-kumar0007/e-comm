@@ -54,7 +54,7 @@ export function AIConcierge() {
       <Button
         onClick={() => setIsOpen(true)}
         aria-label="Open AI Shopping Concierge"
-        className={`fixed bottom-20 right-4 md:bottom-6 md:right-6 rounded-full w-12 h-12 md:w-14 md:h-14 shadow-2xl z-40 bg-gradient-to-br from-[#052C1E] to-[#0A3D2A] hover:from-[#0A3D2A] hover:to-[#052C1E] text-amber-300 border border-amber-500/40 hover:scale-105 active:scale-95 transition-all ${
+        className={`fixed bottom-[136px] right-3.5 md:bottom-24 md:right-6 rounded-full w-11 h-11 md:w-14 md:h-14 shadow-2xl z-40 bg-gradient-to-br from-[#052C1E] to-[#0A3D2A] hover:from-[#0A3D2A] hover:to-[#052C1E] text-amber-300 border border-amber-500/40 hover:scale-105 active:scale-95 transition-all ${
           isOpen ? "hidden" : "flex"
         }`}
       >

@@ -1,3 +1,4 @@
+import { sendWhatsAppMessage, buildOrderConfirmationWhatsAppMessage } from "@/lib/whatsapp";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
@@ -215,6 +216,23 @@ export async function POST(req: Request) {
         await sendOrderConfirmation(email, order.id, finalTotal);
       } catch (err) {
         console.error("Failed to send order email:", err);
+      }
+
+      if (phone) {
+        try {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
+          const waMsg = buildOrderConfirmationWhatsAppMessage({
+            orderId: order.id,
+            customerName: name,
+            total: finalTotal,
+            paymentMethod: "Cash on Delivery",
+            items: orderItems.map((i) => ({ name: i.productName, quantity: i.quantity, weight: i.weight })),
+            trackingUrl: `${siteUrl}/track/${order.id}`,
+          });
+          await sendWhatsAppMessage({ to: phone, message: waMsg, type: "ORDER_UPDATE" });
+        } catch (waErr) {
+          console.error("WhatsApp COD order confirmation error:", waErr);
+        }
       }
       // Notify admin of new order
       try { await notifyAdminNewOrder(order.id, finalTotal, name, "COD"); } catch (e) { console.error("Admin notification failed:", e); }

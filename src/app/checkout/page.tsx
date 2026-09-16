@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCartStore } from "@/lib/store/cart-store";
+import { getCleanProductImage } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -316,7 +317,7 @@ export default function CheckoutPage() {
               <div className="divide-y divide-border/40 max-h-60 overflow-y-auto">
                 {items.map((item) => (
                   <div key={`${item.productId}-${item.weight}`} className="py-2.5 flex items-center gap-3">
-                    <Image width={800} height={800} unoptimized={false} src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover border border-border/40 shrink-0" />
+                    <Image width={800} height={800} unoptimized={false} src={getCleanProductImage(item.image, item.name)} alt={item.name} className="w-12 h-12 rounded-lg object-cover border border-border/40 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{item.name}</p>
                       <p className="text-xs text-muted-foreground">{item.weight} × {item.quantity}</p>

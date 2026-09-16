@@ -14,7 +14,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, Check, ShoppingBag, Star } from "lucide-react";
+import { ArrowRight, Check, ShoppingBag, Star, Sparkles } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart-store";
 import { toast } from "sonner";
 
@@ -32,7 +32,7 @@ interface Product {
 export function FeaturedCarousel({ products }: { products: Product[] }) {
   const addItem = useCartStore((s) => s.addItem);
   
-  // Track selected weight for each product: "250g" | "500g" | "1kg"
+  // Track selected weight for desktop: "250g" | "500g" | "1kg"
   const [selectedWeights, setSelectedWeights] = useState<Record<string, string>>({});
   const [addedIds, setAddedIds] = useState<Record<string, boolean>>({});
 
@@ -59,212 +59,254 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
   };
 
   return (
-    <section className="py-6 md:py-24 bg-[#FAF7F2] dark:bg-zinc-950">
-      <div className="container px-4 md:px-6 mx-auto">
+    <section className="py-4 md:py-24 bg-[#FAF7F2] dark:bg-zinc-950">
+      <div className="container px-3 md:px-6 mx-auto">
         
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 md:mb-12">
+        {/* Section Header */}
+        <div className="flex justify-between items-end mb-3 md:mb-12">
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono mb-2 block">
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono block">
               Handpicked Essentials
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 font-heading">
+            <h2 className="text-xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 font-heading">
               Our Bestselling Stars
             </h2>
-            <p className="text-zinc-600 dark:text-zinc-400 text-sm mt-1">
+            <p className="text-zinc-600 dark:text-zinc-400 text-xs md:text-sm mt-0.5 hidden md:block">
               Royal dry fruits, hand-ground masalas, and nutritious superfoods loved by our patrons.
             </p>
           </div>
-          <Link href="/shop" className="mt-4 md:mt-0 inline-flex items-center gap-1.5 text-sm font-bold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors">
-            <span>View All Products</span>
-            <ArrowRight className="w-4 h-4" />
+          <Link href="/shop" className="inline-flex items-center gap-1 text-xs md:text-sm font-bold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors">
+            <span>View All</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        {/* Carousel */}
-        <Carousel
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-3 md:-ml-5">
-            {products.map((product) => {
-              const basePrice = product.salePrice ?? product.price;
-              const hasDiscount = product.salePrice && product.salePrice < product.price;
-              const primaryImage = (product.images && product.images.length > 0) ? product.images[0] : "https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon";
+        {/* MOBILE VIEW: High-Density 2-Column E-Commerce Grid (Nutraj / Orika / 20-20 style) */}
+        <div className="grid grid-cols-2 gap-2.5 md:hidden">
+          {products.slice(0, 6).map((product) => {
+            const basePrice = product.salePrice ?? product.price;
+            const hasDiscount = product.salePrice && product.salePrice < product.price;
+            const primaryImage = (product.images && product.images.length > 0) ? product.images[0] : "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=800&auto=format&fit=crop";
 
-              // Determine weight options
-              const isSpice = product.slug.includes("chai") || product.slug.includes("garam") || product.slug.includes("turmeric");
-              const weightOptions = isSpice
-                ? ["50g", "100g", "250g"]
-                : ["250g", "500g", "1kg"];
+            return (
+              <div 
+                key={product.id}
+                className="group relative rounded-2xl bg-white dark:bg-zinc-900 border border-amber-900/10 dark:border-amber-500/15 overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between p-2"
+              >
+                <div>
+                  {/* Square Product Image */}
+                  <Link href={`/product/${product.slug}`} className="block relative aspect-square w-full rounded-xl overflow-hidden bg-amber-50 dark:bg-zinc-800/80 mb-1.5">
+                    <Image
+                      src={primaryImage}
+                      alt={product.name}
+                      fill
+                      sizes="50vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-108"
+                    />
+                    {/* Badge */}
+                    {hasDiscount ? (
+                      <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-red-600 text-white text-[8px] font-extrabold uppercase shadow-xs">
+                        SALE
+                      </span>
+                    ) : product.isOrganic ? (
+                      <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-emerald-700 text-white text-[8px] font-extrabold uppercase shadow-xs">
+                        ORGANIC
+                      </span>
+                    ) : (
+                      <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-amber-600 text-white text-[8px] font-extrabold uppercase shadow-xs">
+                        ROYAL
+                      </span>
+                    )}
+                  </Link>
 
-              const currentWeight = selectedWeights[product.id] || (isSpice ? "100g" : "500g");
+                  {/* Title & Details */}
+                  <Link href={`/product/${product.slug}`}>
+                    <h3 className="text-[11.5px] font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1 leading-tight group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
+                      {product.name}
+                    </h3>
+                  </Link>
+                  <span className="text-[9.5px] text-zinc-500 dark:text-zinc-400 block mt-0.5">
+                    500g Luxury Pack
+                  </span>
 
-              // Compute scaled price
-              let multiplier = 1;
-              if (currentWeight === "250g" && !isSpice) multiplier = 0.55;
-              if (currentWeight === "1kg" && !isSpice) multiplier = 1.9;
-              if (currentWeight === "50g" && isSpice) multiplier = 0.55;
-              if (currentWeight === "250g" && isSpice) multiplier = 2.2;
+                  {/* Pricing Row */}
+                  <div className="flex items-baseline gap-1.5 mt-1">
+                    <span className="text-xs font-extrabold text-zinc-900 dark:text-zinc-100">
+                      ₹{basePrice}
+                    </span>
+                    {hasDiscount && (
+                      <span className="text-[10px] text-zinc-400 line-through">
+                        ₹{product.price}
+                      </span>
+                    )}
+                  </div>
+                </div>
 
-              const activePrice = Math.round(basePrice * multiplier);
-              const activeMrp = Math.round(product.price * multiplier);
+                {/* 1-Tap Quick Add Button */}
+                <Button 
+                  size="sm" 
+                  onClick={() => handleAddToCart(product, basePrice, "500g", primaryImage)}
+                  className="w-full h-7 mt-2 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-black shadow-xs flex items-center justify-center gap-1 active:scale-95 transition-transform"
+                >
+                  {addedIds[product.id] ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-950 stroke-[3]" />
+                      <span>Added</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="w-3 h-3" />
+                      <span>Add</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+            );
+          })}
+        </div>
 
-              let badgeText = "Bestseller";
-              let badgeColor = "bg-amber-500 text-black";
+        {/* DESKTOP VIEW: Preserved Full Carousel with weight switches and arrows */}
+        <div className="hidden md:block">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-3 md:-ml-5">
+              {products.map((product) => {
+                const currentWeight = selectedWeights[product.id] || "500g";
+                const weightMultiplier = currentWeight === "250g" ? 0.55 : currentWeight === "1kg" ? 1.9 : 1.0;
+                const basePrice = Math.round((product.salePrice ?? product.price) * weightMultiplier);
+                const hasDiscount = product.salePrice && product.salePrice < product.price;
+                const primaryImage = (product.images && product.images.length > 0) ? product.images[0] : "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=800&auto=format&fit=crop";
 
-              if (product.slug.includes("mamra") || product.slug.includes("almond")) {
-                badgeText = "👑 High Oil Mamra";
-                badgeColor = "bg-amber-600 text-white";
-              } else if (product.slug.includes("cashew")) {
-                badgeText = "🌿 King W180";
-                badgeColor = "bg-emerald-700 text-white";
-              } else if (product.slug.includes("walnut")) {
-                badgeText = "🧠 Omega-3 Rich";
-                badgeColor = "bg-teal-700 text-white";
-              } else if (product.slug.includes("chai")) {
-                badgeText = "🔥 Slow-Roasted";
-                badgeColor = "bg-orange-700 text-white";
-              } else if (product.slug.includes("turmeric")) {
-                badgeText = "✨ 8-12% Curcumin";
-                badgeColor = "bg-amber-700 text-white";
-              } else if (product.isOrganic) {
-                badgeText = "🌿 100% Organic";
-                badgeColor = "bg-emerald-800 text-white";
-              }
-
-              const isAdded = addedIds[product.id];
-
-              return (
-                <CarouselItem key={product.id} className="pl-3 md:pl-5 basis-[75%] sm:basis-1/2 lg:basis-1/3">
-                  <div className="p-1 h-full">
-                    <Card className="h-full overflow-hidden border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 rounded-3xl group flex flex-col justify-between">
-                      <CardContent className="p-0">
-                        {/* Image Container */}
-                        <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-950">
-                          <Badge className={`absolute top-4 left-4 z-20 font-bold uppercase text-[10px] tracking-wider border-none shadow-md ${badgeColor}`}>
-                            {badgeText}
-                          </Badge>
-
-                          {hasDiscount && (
-                            <span className="absolute top-4 right-4 z-20 bg-amber-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow">
-                              SAVE ₹{activeMrp - activePrice}
-                            </span>
-                          )}
-
+                return (
+                  <CarouselItem
+                    key={product.id}
+                    className="pl-3 md:pl-5 basis-full sm:basis-1/2 lg:basis-1/4"
+                  >
+                    <Card className="h-full border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                      <div>
+                        {/* Product Image Container */}
+                        <div className="relative aspect-4/3 w-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
                           <Link href={`/product/${product.slug}`}>
                             <Image
                               src={primaryImage}
                               alt={product.name}
                               fill
-                              className="object-cover transition-transform duration-700 group-hover:scale-106" priority
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
                             />
                           </Link>
+
+                          {/* Top Badges */}
+                          <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
+                            {product.isOrganic && (
+                              <Badge className="bg-emerald-600/90 text-white text-[10px] font-bold tracking-wider uppercase border-none backdrop-blur-xs">
+                                100% Organic
+                              </Badge>
+                            )}
+                            {hasDiscount && (
+                              <Badge className="bg-amber-600/90 text-white text-[10px] font-bold tracking-wider uppercase border-none backdrop-blur-xs">
+                                Special Harvest
+                              </Badge>
+                            )}
+                          </div>
                         </div>
 
                         {/* Product Info */}
-                        <div className="p-3 sm:p-5 flex flex-col gap-2 sm:gap-2.5">
-                          <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1 text-amber-500">
-                              {[...Array(5)].map((_, i) => (
-                                <Star key={i} className="w-3 h-3 fill-current" />
-                              ))}
-                              <span className="text-zinc-400 text-[10px] ml-1 font-medium">(4.9)</span>
-                            </div>
-                            <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
-                              100% Unadulterated
-                            </span>
+                        <CardContent className="p-5">
+                          <div className="flex items-center gap-1 text-amber-500 mb-2">
+                            <Star className="w-3.5 h-3.5 fill-current" />
+                            <Star className="w-3.5 h-3.5 fill-current" />
+                            <Star className="w-3.5 h-3.5 fill-current" />
+                            <Star className="w-3.5 h-3.5 fill-current" />
+                            <Star className="w-3.5 h-3.5 fill-current" />
+                            <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 ml-1">4.9</span>
+                            <span className="text-zinc-300 dark:text-zinc-700 mx-1">•</span>
+                            <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">100% Unadulterated</span>
                           </div>
 
                           <Link href={`/product/${product.slug}`}>
-                            <h3 className="text-base font-bold font-heading text-zinc-900 dark:text-zinc-100 group-hover:text-amber-700 dark:text-amber-400 transition-colors line-clamp-1">
+                            <h3 className="font-bold text-zinc-900 dark:text-zinc-50 text-base group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
                               {product.name}
                             </h3>
                           </Link>
 
-                          {/* Weight Selector Pills */}
-                          <div className="flex items-center gap-1.5 pt-1">
-                            <span className="text-[11px] font-medium text-zinc-400 mr-1">Size:</span>
-                            {weightOptions.map((w) => (
-                              <button
-                                key={w}
-                                onClick={() => setSelectedWeights((prev) => ({ ...prev, [product.id]: w }))}
-                                className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold transition-all ${
-                                  currentWeight === w
-                                    ? "bg-[#0A261D] dark:bg-amber-500 dark:text-zinc-950 text-white shadow-sm"
-                                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200"
-                                }`}
-                              >
-                                {w}
-                              </button>
-                            ))}
-                          </div>
-
-                          {/* Price Display */}
-                          <div className="flex items-baseline gap-2 mt-1">
-                            <span className="text-xl sm:text-2xl font-extrabold text-amber-700 dark:text-amber-400">
-                              ₹{activePrice}
+                          {/* Desktop Weight Selector */}
+                          <div className="mt-3">
+                            <span className="text-[10px] uppercase font-bold text-zinc-400 dark:text-zinc-500 block mb-1">
+                              Size / Packaging:
                             </span>
-                            {hasDiscount && (
-                              <span className="text-xs text-zinc-400 line-through">
-                                ₹{activeMrp}
+                            <div className="grid grid-cols-3 gap-1 bg-zinc-100 dark:bg-zinc-800/60 p-0.5 rounded-xl text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+                              {(["250g", "500g", "1kg"] as const).map((wt) => (
+                                <button
+                                  key={wt}
+                                  onClick={() => setSelectedWeights((prev) => ({ ...prev, [product.id]: wt }))}
+                                  className={`py-1 text-center rounded-lg transition-all ${
+                                    currentWeight === wt
+                                      ? "bg-white dark:bg-zinc-700 text-amber-800 dark:text-amber-300 shadow-xs font-bold"
+                                      : "hover:text-zinc-900 dark:hover:text-zinc-200"
+                                  }`}
+                                >
+                                  {wt}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </div>
+
+                      {/* Desktop Bottom Action & Price */}
+                      <div className="p-5 pt-0">
+                        <div className="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                          <div>
+                            <span className="text-[10px] text-zinc-400 uppercase font-mono block">Direct Farm Rate</span>
+                            <div className="flex items-baseline gap-1.5">
+                              <span className="text-lg font-black text-zinc-900 dark:text-zinc-50">
+                                ₹{basePrice}
                               </span>
-                            )}
-                            <span className="text-[11px] text-zinc-400 ml-auto font-mono">
-                              ({currentWeight} Glass Jar)
-                            </span>
+                              {hasDiscount && (
+                                <span className="text-xs text-zinc-400 line-through">
+                                  ₹{Math.round(product.price * weightMultiplier)}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
 
-                      {/* Card Bottom CTA Actions */}
-                      <div className="px-3 pb-3 sm:px-5 sm:pb-5 pt-0 flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleAddToCart(product, activePrice, currentWeight, primaryImage)}
-                          className={`flex-1 rounded-xl h-10 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all ${
-                            isAdded
-                              ? "bg-emerald-700 text-white"
-                              : "bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white"
-                          }`}
-                        >
-                          {isAdded ? (
-                            <>
-                              <Check className="w-3.5 h-3.5" />
-                              <span>Added!</span>
-                            </>
-                          ) : (
-                            <>
-                              <ShoppingBag className="w-3.5 h-3.5" />
-                              <span>Add to Cart</span>
-                            </>
-                          )}
-                        </Button>
-                        <Link href={`/product/${product.slug}`}>
                           <Button
                             size="sm"
-                            variant="outline"
-                            className="rounded-xl h-10 px-3 text-xs border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100"
-                            title="View Details"
+                            onClick={() => handleAddToCart(product, basePrice, currentWeight, primaryImage)}
+                            className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl shadow-md transition-all font-semibold gap-1.5 active:scale-95"
                           >
-                            <ArrowRight className="w-3.5 h-3.5" />
+                            {addedIds[product.id] ? (
+                              <>
+                                <Check className="w-4 h-4" />
+                                <span>Added</span>
+                              </>
+                            ) : (
+                              <>
+                                <ShoppingBag className="w-4 h-4" />
+                                <span>Add</span>
+                              </>
+                            )}
                           </Button>
-                        </Link>
+                        </div>
                       </div>
                     </Card>
-                  </div>
-                </CarouselItem>
-              );
-            })}
-          </CarouselContent>
-          <div className="hidden md:flex justify-end gap-2 mt-6">
-            <CarouselPrevious className="static transform-none border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800" />
-            <CarouselNext className="static transform-none border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800" />
-          </div>
-        </Carousel>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+
+            <div className="flex justify-end gap-2 mt-6">
+              <CarouselPrevious className="static transform-none border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800" />
+              <CarouselNext className="static transform-none border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800" />
+            </div>
+          </Carousel>
+        </div>
       </div>
     </section>
   );

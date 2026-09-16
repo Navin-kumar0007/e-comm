@@ -1,4 +1,6 @@
-'use server'
+'use server';
+
+import { sendWhatsAppMessage, buildPriceDropWhatsAppMessage } from "@/lib/whatsapp";
 
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
@@ -107,7 +109,12 @@ export async function createProductAction(data: any) {
 export async function updateProductAction(id: string, data: any) {
   await requireAdmin();
   const { dietaryTagIds, labelSettings, ...restData } = data;
-  
+
+  const existing = await prisma.product.findUnique({
+    where: { id },
+    select: { price: true, salePrice: true, name: true, slug: true },
+  });
+
   const product = await prisma.product.update({
     where: { id },
     data: {
@@ -124,6 +131,39 @@ export async function updateProductAction(id: string, data: any) {
       }
     }
   });
+
+  // Automated WhatsApp Price Drop Notification Trigger
+  if (existing) {
+    const oldPrice = existing.salePrice || existing.price;
+    const newPrice = product.salePrice || product.price;
+
+    if (newPrice < oldPrice) {
+      (async () => {
+        try {
+          const alerts = await prisma.priceAlert.findMany({
+            where: { productId: id, active: true },
+          });
+
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
+          const msg = buildPriceDropWhatsAppMessage({
+            productName: product.name,
+            oldPrice,
+            newPrice,
+            productUrl: `${siteUrl}/product/${product.slug}`,
+          });
+
+          for (const a of alerts) {
+            if (a.phone) {
+              await sendWhatsAppMessage({ to: a.phone, message: msg, type: "PRICE_UPDATE" });
+            }
+          }
+        } catch (e) {
+          console.error("Automated WhatsApp Price Drop failed:", e);
+        }
+      })();
+    }
+  }
+
   revalidatePath('/admin/products');
   revalidatePath('/shop');
   return product;

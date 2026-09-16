@@ -69,6 +69,8 @@ model User {
   city            String?
   state           String?
   pincode         String?
+  phone           String?
+  whatsappOptIn   Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   orders          Order[]
@@ -161,6 +163,7 @@ model Settings {
 model PriceAlert {
   id        String   @id @default(cuid())
   email     String
+  phone     String?
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   active    Boolean  @default(true)
@@ -173,9 +176,12 @@ model Review {
   id        String   @id @default(cuid())
   rating    Int
   comment   String?
-  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images    String?  // Stored as JSON string array of image URLs
+  userName  String?  // Reviewer display name (supports guest reviews)
+  userEmail String?  // Optional email for verified badge
+  status    String   @default("APPROVED") // PENDING, APPROVED, REJECTED
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
@@ -298,4 +304,27 @@ model OtpVerification {
   createdAt DateTime @default(now())
 
   @@index([email])
+}
+
+model WhatsAppSubscriber {
+  id                     String   @id @default(cuid())
+  phone                  String   @unique
+  name                   String?
+  subscribedOffers       Boolean  @default(true)
+  subscribedNewReleases  Boolean  @default(true)
+  subscribedPriceDrops   Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model WhatsAppLog {
+  id        String   @id @default(cuid())
+  phone     String
+  message   String
+  type      String   // "OFFER", "NEW_RELEASE", "PRICE_UPDATE", "ORDER_UPDATE", "WELCOME"
+  status    String   // "SENT", "SIMULATED", "FAILED"
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+  @@index([type])
 }

@@ -25,7 +25,7 @@ export default function FounderPage() {
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
           {/* Image */}
           <div className="relative aspect-[4/3.8] rounded-2xl overflow-hidden shadow-lg border border-border/40">
-            <Image src="https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon" alt="Spicy Nuts - Pure Origin Harvest" fill className="object-cover" priority />
+            <Image src="https://images.unsplash.com/photo-1508061253366-f7da158b6d46?q=80&w=800&auto=format&fit=crop" alt="Spicy Nuts - Pure Origin Harvest" fill className="object-cover" priority />
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
               <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 font-mono">Founding Vision</span>
               <p className="font-heading font-bold text-xl">Spicy Nuts</p>
@@ -75,8 +75,8 @@ export default function FounderPage() {
         </div>
 
         {/* CTA */}
-        <div className="mt-32 text-center bg-[#2C3E2D] text-white rounded-[3rem] p-16">
-          <h2 className="text-4xl font-heading font-bold mb-6">Taste the Difference</h2>
+        <div className="mt-12 md:mt-20 text-center bg-[#2C3E2D] text-white rounded-2xl md:rounded-[2.5rem] p-6 sm:p-10 md:p-14">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-3 md:mb-5">Taste the Difference</h2>
           <p className="text-sm text-white/80 max-w-2xl mx-auto mb-10">
             Experience the authentic flavors of India with our premium range of organic spices, handcrafted masalas, and royal dry fruits.
           </p>

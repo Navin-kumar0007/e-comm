@@ -1,5 +1,17 @@
-import { StickyMobileBuyBar } from "@/components/storefront/sticky-mobile-buy-bar";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ShieldCheck, Truck, ArrowLeft, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { prisma } from "@/lib/db/prisma";
+import { AddToCartButton } from "@/components/storefront/add-to-cart-button";
+import { WishlistButton } from "@/components/storefront/wishlist-button";
+import { ProductReviews } from "./product-reviews";
+import { ProductGallery } from "@/components/storefront/product-gallery";
+import { ProductDescriptionRenderer, extractProductShortSummary } from "@/components/storefront/product-description-renderer";
+import { WhatsAppPriceAlertModal } from "@/components/storefront/whatsapp-price-alert-modal";
+import { getCleanProductImage } from "@/lib/utils";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
@@ -37,16 +49,6 @@ export async function generateMetadata({
     },
   };
 }
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ShieldCheck, Truck, ArrowLeft, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { prisma } from "@/lib/db/prisma";
-import { AddToCartButton } from "@/components/storefront/add-to-cart-button";
-import { WishlistButton } from "@/components/storefront/wishlist-button";
-import { ProductReviews } from "./product-reviews";
-import { ProductGallery } from "@/components/storefront/product-gallery";
 
 export default async function ProductPage({
   params,
@@ -57,10 +59,11 @@ export default async function ProductPage({
   const rawProduct = await prisma.product.findUnique({
     where: { slug: resolvedParams.slug },
   });
+  const cleanCover = rawProduct ? getCleanProductImage(rawProduct.images, rawProduct.name) : "/placeholder.jpg";
   const product = rawProduct
     ? {
         ...rawProduct,
-        images: JSON.parse(rawProduct.images),
+        images: [cleanCover],
         tags: rawProduct.tags ? rawProduct.tags.split(",") : [],
       }
     : null;
@@ -83,7 +86,7 @@ export default async function ProductPage({
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    image: product.images[0],
+    image: cleanCover,
     description: product.description,
     brand: {
       "@type": "Brand",
@@ -166,6 +169,14 @@ export default async function ProductPage({
     ],
   };
 
+  const rawList = Array.isArray(product.images)
+    ? product.images
+    : (typeof product.images === "string" ? (() => { try { return JSON.parse(product.images); } catch { return [product.images]; } })() : []);
+  const displayImages = [
+    cleanCover,
+    ...rawList.filter((img: string) => img && !img.includes("placehold.co") && img !== cleanCover)
+  ];
+
   return (
     <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-8 md:pt-36 md:pb-10">
       <script
@@ -190,7 +201,7 @@ export default async function ProductPage({
         {/* Product Visuals (Left Col) */}
         <div className="space-y-6">
           <ProductGallery
-            images={product.images}
+            images={displayImages}
             productName={product.name}
             isOrganic={product.isOrganic}
           />
@@ -224,31 +235,38 @@ export default async function ProductPage({
               )}
             </div>
 
-            <div className="flex items-baseline gap-4 mb-6">
-              {product.salePrice ? (
-                <>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+              <div className="flex items-baseline gap-4">
+                {product.salePrice ? (
+                  <>
+                    <span className="text-3xl font-bold text-primary">
+                      ₹{product.salePrice}
+                    </span>
+                    <span className="text-xl text-muted-foreground line-through">
+                      ₹{product.price}
+                    </span>
+                    <Badge variant="destructive" className="ml-2">
+                      Save ₹
+                      {(
+                        Number(product.price) - Number(product.salePrice)
+                      ).toFixed(0)}
+                    </Badge>
+                  </>
+                ) : (
                   <span className="text-3xl font-bold text-primary">
-                    ₹{product.salePrice}
-                  </span>
-                  <span className="text-xl text-muted-foreground line-through">
                     ₹{product.price}
                   </span>
-                  <Badge variant="destructive" className="ml-2">
-                    Save ₹
-                    {(
-                      Number(product.price) - Number(product.salePrice)
-                    ).toFixed(0)}
-                  </Badge>
-                </>
-              ) : (
-                <span className="text-3xl font-bold text-primary">
-                  ₹{product.price}
-                </span>
-              )}
+                )}
+              </div>
+              <WhatsAppPriceAlertModal
+                productId={product.id}
+                productName={product.name}
+                currentPrice={product.salePrice || product.price}
+              />
             </div>
 
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              {product.description}
+            <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+              {extractProductShortSummary(product.description)}
             </p>
           </div>
 
@@ -321,9 +339,7 @@ export default async function ProductPage({
             <h2 className="text-2xl font-heading font-bold mb-4">
               About this product
             </h2>
-            <p className="text-muted-foreground leading-relaxed">
-              {product.description}
-            </p>
+            <ProductDescriptionRenderer description={product.description} productName={product.name} />
           </section>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8">
@@ -427,18 +443,6 @@ export default async function ProductPage({
         <ProductReviews productId={product.id} />
       </div>
 
-      {/* Sticky Bottom Buy Bar on Mobile */}
-      <StickyMobileBuyBar
-        product={{
-          id: product.id,
-          name: product.name,
-          slug: product.slug,
-          price: Number(product.price),
-          salePrice: product.salePrice ? Number(product.salePrice) : null,
-          image: product.images[0],
-          weight: product.weight || "Standard",
-        }}
-      />
     </div>
   );
 }
