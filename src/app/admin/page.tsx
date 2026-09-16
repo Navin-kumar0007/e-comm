@@ -8,17 +8,22 @@ export default async function AdminDashboard() {
   const products = await getAdminProducts();
   const orders = await getAdminOrders();
 
-  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+  const completedOrders = orders.filter(o => ['Delivered', 'Shipped'].includes(o.status));
+  const totalRevenue = completedOrders.reduce((sum, o) => sum + o.total, 0);
+  
+  const pendingOrdersList = orders.filter(o => ['Pending', 'Confirmed'].includes(o.status));
+  const pendingRevenue = pendingOrdersList.reduce((sum, o) => sum + o.total, 0);
+
   const activeProducts = products.filter(p => p.status === 'ACTIVE').length;
   const lowStockProducts = products.filter(p => p.stock !== undefined && p.stock < 20 && p.status === 'ACTIVE');
-  const pendingOrders = orders.filter(o => o.status === 'Pending').length;
+  const pendingOrdersCount = pendingOrdersList.length;
   const recentOrders = orders.slice(0, 5);
 
   const stats = [
-    { label: "Total Revenue", value: `₹${totalRevenue.toLocaleString('en-IN')}`, icon: DollarSign, color: "text-green-600 bg-green-500/10" },
+    { label: "Completed Revenue", value: `₹${totalRevenue.toLocaleString('en-IN')}`, icon: DollarSign, color: "text-green-600 bg-green-500/10" },
+    { label: "Pending Value", value: `₹${pendingRevenue.toLocaleString('en-IN')}`, icon: DollarSign, color: "text-amber-600 bg-amber-500/10" },
     { label: "Total Orders", value: String(orders.length), icon: ShoppingCart, color: "text-blue-600 bg-blue-500/10" },
-    { label: "Active Products", value: String(activeProducts), icon: Package, color: "text-purple-600 bg-purple-500/10" },
-    { label: "Pending Orders", value: String(pendingOrders), icon: AlertTriangle, color: "text-amber-600 bg-amber-500/10" },
+    { label: "Pending Orders", value: String(pendingOrdersCount), icon: AlertTriangle, color: "text-orange-600 bg-orange-500/10" },
   ];
 
   const getStatusColor = (status: string) => {

@@ -2,11 +2,11 @@
 
 import { useState, useMemo, Fragment } from "react";
 import Link from "next/link";
-import { Search, FileText, Trash2, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, FileText, Trash2, Plus, ChevronDown, ChevronUp, CheckSquare, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { updateOrderStatusAction, deleteOrderAction, updateOrderTrackingAction } from "@/app/actions/admin-orders";
+import { updateOrderStatusAction, deleteOrderAction, updateOrderTrackingAction, bulkUpdateOrderStatusAction } from "@/app/actions/admin-orders";
 import { toast } from "sonner";
 
 export default function OrdersClient({ initialOrders }: { initialOrders: any[] }) {
@@ -17,6 +17,8 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
   const [trackingNumber, setTrackingNumber] = useState("");
   const [trackingUrl, setTrackingUrl] = useState("");
   const [isSavingTracking, setIsSavingTracking] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isPending, setIsPending] = useState(false);
 
   const handleExpand = (order: any) => {
     if (expandedId === order.id) {
@@ -42,25 +44,51 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
   };
 
   const handleStatusChange = async (id: string, newStatus: string) => {
+    setIsPending(true);
     try {
       await updateOrderStatusAction(id, newStatus);
       setOrders(orders.map(o => o.id === id ? { ...o, status: newStatus } : o));
       toast.success(`Order ${id} status updated to ${newStatus}`);
     } catch (err) {
       toast.error("Failed to update status");
+    } finally {
+      setIsPending(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (confirm(`Delete order ${id}? This cannot be undone.`)) {
+      setIsPending(true);
       try {
         await deleteOrderAction(id);
         setOrders(orders.filter(o => o.id !== id));
+        setSelectedIds(prev => prev.filter(sid => sid !== id));
         toast.success(`Order ${id} deleted`);
       } catch (err) {
         toast.error("Failed to delete order");
+      } finally {
+        setIsPending(false);
       }
     }
+  };
+
+  const handleBulkStatus = async (status: string) => {
+    if (selectedIds.length === 0) return;
+    setIsPending(true);
+    try {
+      await bulkUpdateOrderStatusAction(selectedIds, status);
+      setOrders(orders.map(o => selectedIds.includes(o.id) ? { ...o, status } : o));
+      toast.success(`${selectedIds.length} order(s) updated to ${status}`);
+      setSelectedIds([]);
+    } catch (err) {
+      toast.error("Failed to update orders");
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]);
   };
 
   const filteredOrders = useMemo(() => {
@@ -72,6 +100,14 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
     if (activeTab !== 'all') list = list.filter(o => o.status === activeTab);
     return list;
   }, [orders, searchQuery, activeTab]);
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === filteredOrders.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredOrders.map(o => o.id));
+    }
+  };
 
   const getStatusColor = (status: string) => {
     const m: Record<string, string> = {
@@ -94,7 +130,7 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
   ];
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-heading font-bold text-foreground">Orders</h1>
@@ -107,12 +143,24 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
 
       <div className="flex gap-1 p-1 bg-muted/50 rounded-xl w-fit flex-wrap">
         {tabs.map(tab => (
-          <button key={tab.key} onClick={() => setActiveTab(tab.key)}
+          <button key={tab.key} onClick={() => { setActiveTab(tab.key); setSelectedIds([]); }}
             className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.key ? 'bg-card shadow-sm text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground'}`}>
             {tab.label} <span className="ml-1 text-xs opacity-60">({tab.count})</span>
           </button>
         ))}
       </div>
+
+      {selectedIds.length > 0 && (
+        <div className="flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-xl flex-wrap">
+          <span className="text-sm font-medium">{selectedIds.length} selected</span>
+          <div className="h-4 w-px bg-border" />
+          <Button variant="outline" size="sm" className="rounded-lg text-xs" onClick={() => handleBulkStatus('Confirmed')}>Confirm</Button>
+          <Button variant="outline" size="sm" className="rounded-lg text-xs" onClick={() => handleBulkStatus('Shipped')}>Mark Shipped</Button>
+          <Button variant="outline" size="sm" className="rounded-lg text-xs" onClick={() => handleBulkStatus('Delivered')}>Mark Delivered</Button>
+          <Button variant="outline" size="sm" className="rounded-lg text-xs text-red-600 hover:bg-red-50" onClick={() => handleBulkStatus('Cancelled')}>Cancel</Button>
+          <Button variant="ghost" size="sm" className="rounded-lg text-xs ml-auto" onClick={() => setSelectedIds([])}>Clear</Button>
+        </div>
+      )}
 
       <div className="p-6 rounded-2xl bg-card border border-border/50 shadow-sm">
         <div className="flex items-center gap-4 mb-6">
@@ -126,11 +174,18 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
               <tr>
-                <th className="px-4 py-3 rounded-l-xl w-8"></th>
+                <th className="px-3 py-3 rounded-l-xl w-10">
+                  <button onClick={toggleSelectAll} className="text-muted-foreground hover:text-foreground">
+                    {selectedIds.length === filteredOrders.length && filteredOrders.length > 0
+                      ? <CheckSquare className="w-4 h-4" />
+                      : <Square className="w-4 h-4" />
+                    }
+                  </button>
+                </th>
+                <th className="px-2 py-3 w-8"></th>
                 <th className="px-4 py-3">Order ID</th>
                 <th className="px-4 py-3">Customer</th>
                 <th className="px-4 py-3">Date</th>
-                <th className="px-4 py-3">Items</th>
                 <th className="px-4 py-3">Total</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Update</th>
@@ -144,19 +199,26 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
                 filteredOrders.map(order => (
                   <Fragment key={order.id}>
                     <tr className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
-                      <td className="px-4 py-4">
+                      <td className="px-3 py-4">
+                        <button onClick={() => toggleSelect(order.id)} className="text-muted-foreground hover:text-foreground">
+                          {selectedIds.includes(order.id)
+                            ? <CheckSquare className="w-4 h-4 text-primary" />
+                            : <Square className="w-4 h-4" />
+                          }
+                        </button>
+                      </td>
+                      <td className="px-2 py-4">
                         <button onClick={() => handleExpand(order)} className="text-muted-foreground hover:text-foreground">
                           {expandedId === order.id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </button>
                       </td>
-                      <td className="px-4 py-4 font-bold text-foreground">{order.id}</td>
+                      <td className="px-4 py-4 font-bold text-foreground line-clamp-1 break-all">{order.id}</td>
                       <td className="px-4 py-4">
                         <div className="font-semibold text-foreground">{order.customer}</div>
                         <div className="text-xs text-muted-foreground">{order.email}</div>
                       </td>
-                      <td className="px-4 py-4 text-muted-foreground">{order.date}</td>
-                      <td className="px-4 py-4 text-muted-foreground">{order.items.length} item(s)</td>
-                      <td className="px-4 py-4 font-medium text-foreground">₹{order.total.toFixed(2)}</td>
+                      <td className="px-4 py-4 text-muted-foreground whitespace-nowrap">{order.date}</td>
+                      <td className="px-4 py-4 font-medium text-foreground whitespace-nowrap">₹{order.total.toFixed(2)}</td>
                       <td className="px-4 py-4"><Badge variant="outline" className={getStatusColor(order.status)}>{order.status}</Badge></td>
                       <td className="px-4 py-4">
                         <select className="text-sm bg-transparent border rounded-lg px-2 py-1 font-medium focus:ring-1 focus:ring-primary cursor-pointer text-foreground" value={order.status} onChange={e => handleStatusChange(order.id, e.target.value)}>

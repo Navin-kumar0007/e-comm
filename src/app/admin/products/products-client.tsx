@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Plus, Search, Edit, Trash2, CheckSquare, Square, Printer } from "lucide-react";
+import { Plus, Search, Edit, Trash2, CheckSquare, Square, Printer, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,8 @@ import {
   deleteProductAction, 
   bulkDeleteProductsAction, 
   updateProductStatusAction, 
-  bulkUpdateProductStatusAction 
+  bulkUpdateProductStatusAction,
+  updateProductQuickAction
 } from "@/app/actions/admin-products";
 
 type FilterTab = 'all' | 'ACTIVE' | 'DRAFT' | 'lowstock';
@@ -23,6 +24,10 @@ export default function AdminProductsClient({ initialProducts }: { initialProduc
   const [activeTab, setActiveTab] = useState<FilterTab>("all");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isPending, setIsPending] = useState(false);
+  
+  // Quick Edit State
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ stock: 0, salePrice: 0 });
 
   const filteredProducts = useMemo(() => {
     let list = products;
@@ -94,6 +99,25 @@ export default function AdminProductsClient({ initialProducts }: { initialProduc
     }
   };
 
+  const startEdit = (p: any) => {
+    setEditingId(p.id);
+    setEditForm({ stock: p.stock || 0, salePrice: p.salePrice || p.price });
+  };
+
+  const saveEdit = async (id: string) => {
+    setIsPending(true);
+    try {
+      await updateProductQuickAction(id, { stock: editForm.stock, salePrice: editForm.salePrice });
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, stock: editForm.stock, salePrice: editForm.salePrice } : p));
+      toast.success("Product updated");
+      setEditingId(null);
+    } catch (e) {
+      toast.error("Failed to update");
+    } finally {
+      setIsPending(false);
+    }
+  };
+
   const getStockBadge = (stock: number | undefined) => {
     const s = stock ?? 0;
     if (s >= 50) return <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 text-xs">{s} in stock</Badge>;
@@ -128,8 +152,7 @@ export default function AdminProductsClient({ initialProducts }: { initialProduc
         </Link>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex gap-1 p-1 bg-muted/50 rounded-xl w-fit">
+      <div className="flex gap-1 p-1 bg-muted/50 rounded-xl w-fit flex-wrap">
         {tabs.map(tab => (
           <button
             key={tab.key}
@@ -145,9 +168,8 @@ export default function AdminProductsClient({ initialProducts }: { initialProduc
         ))}
       </div>
 
-      {/* Bulk Actions Bar */}
       {selectedIds.length > 0 && (
-        <div className="flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-xl">
+        <div className="flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-xl flex-wrap">
           <span className="text-sm font-medium">{selectedIds.length} selected</span>
           <div className="h-4 w-px bg-border" />
           <Button variant="outline" size="sm" className="rounded-lg text-xs" onClick={() => handleBulkStatus('ACTIVE')}>Set Active</Button>
@@ -218,33 +240,78 @@ export default function AdminProductsClient({ initialProducts }: { initialProduc
                       </div>
                     </td>
                     <td className="px-4 py-4 text-muted-foreground capitalize">{(product.categoryId || 'Uncategorized').replace('-id', '').replace(/-/g, ' ')}</td>
-                    <td className="px-4 py-4">
-                      <div className="font-medium">₹{product.salePrice || product.price}</div>
-                      {product.salePrice && <div className="text-xs text-muted-foreground line-through">₹{product.price}</div>}
-                    </td>
-                    <td className="px-4 py-4">{getStockBadge(product.stock)}</td>
-                    <td className="px-4 py-4">
-                      <button onClick={() => toggleProductStatus(product.id, product.status || 'ACTIVE')}>
-                        {getStatusBadge(product.status || 'ACTIVE')}
-                      </button>
-                    </td>
-                    <td className="px-4 py-4 text-right">
-                      <div className="flex justify-end gap-1">
-                        <Link href={`/admin/products/label/${product.id}`} target="_blank">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" title="Print Label">
-                            <Printer className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        <Link href={`/admin/products/edit/${product.id}`}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" title="Edit">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(product.id, product.name)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </td>
+                    
+                    {editingId === product.id ? (
+                      <>
+                        <td className="px-4 py-4">
+                          <div className="flex items-center gap-1">
+                            <span className="text-muted-foreground">₹</span>
+                            <Input 
+                              type="number" 
+                              className="w-20 h-8 px-2" 
+                              value={editForm.salePrice} 
+                              onChange={e => setEditForm({...editForm, salePrice: Number(e.target.value)})} 
+                            />
+                          </div>
+                        </td>
+                        <td className="px-4 py-4">
+                          <Input 
+                            type="number" 
+                            className="w-20 h-8 px-2" 
+                            value={editForm.stock} 
+                            onChange={e => setEditForm({...editForm, stock: Number(e.target.value)})} 
+                          />
+                        </td>
+                        <td className="px-4 py-4">
+                           {getStatusBadge(product.status || 'ACTIVE')}
+                        </td>
+                        <td className="px-4 py-4 text-right">
+                          <div className="flex justify-end gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:bg-green-50" onClick={() => saveEdit(product.id)} title="Save">
+                              <Save className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-muted" onClick={() => setEditingId(null)} title="Cancel">
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td className="px-4 py-4 cursor-pointer hover:bg-muted/50 rounded" onClick={() => startEdit(product)}>
+                          <div className="font-medium">₹{product.salePrice || product.price}</div>
+                          {product.salePrice && <div className="text-xs text-muted-foreground line-through">₹{product.price}</div>}
+                        </td>
+                        <td className="px-4 py-4 cursor-pointer hover:bg-muted/50 rounded" onClick={() => startEdit(product)}>
+                          {getStockBadge(product.stock)}
+                        </td>
+                        <td className="px-4 py-4">
+                          <button onClick={() => toggleProductStatus(product.id, product.status || 'ACTIVE')}>
+                            {getStatusBadge(product.status || 'ACTIVE')}
+                          </button>
+                        </td>
+                        <td className="px-4 py-4 text-right">
+                          <div className="flex justify-end gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" title="Quick Edit" onClick={() => startEdit(product)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Link href={`/admin/products/label/${product.id}`} target="_blank">
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" title="Print Label">
+                                <Printer className="h-4 w-4" />
+                              </Button>
+                            </Link>
+                            <Link href={`/admin/products/edit/${product.id}`}>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" title="Full Edit">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </Link>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(product.id, product.name)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </>
+                    )}
                   </tr>
                 ))
               )}

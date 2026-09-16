@@ -209,3 +209,20 @@ export async function updateInvoiceNotesAction(id: string, invoiceNotes: string)
   revalidatePath('/admin/orders/invoice/[id]', 'page');
   return { success: true };
 }
+
+export async function bulkUpdateOrderStatusAction(ids: string[], status: string) {
+  await requireAdmin();
+  
+  // We can just loop and use the single update function to ensure stock & emails are handled correctly
+  for (const id of ids) {
+    try {
+      await updateOrderStatusAction(id, status);
+    } catch (e) {
+      console.error("Failed to update order in bulk: ", id, e);
+    }
+  }
+
+  revalidatePath('/admin/orders');
+  revalidatePath('/admin');
+  return { success: true };
+}

@@ -168,3 +168,17 @@ export async function updateProductAction(id: string, data: any) {
   revalidatePath('/shop');
   return product;
 }
+
+export async function updateProductQuickAction(id: string, data: { stock: number, salePrice: number | null }) {
+  await requireAdmin();
+  await prisma.product.update({
+    where: { id },
+    data: {
+      stock: data.stock,
+      salePrice: data.salePrice
+    }
+  });
+  revalidatePath('/admin/products');
+  revalidatePath('/shop');
+  return { success: true };
+}
