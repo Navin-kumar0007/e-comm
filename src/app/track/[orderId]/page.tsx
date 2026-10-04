@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db/prisma";
+import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Package, Truck, CheckCircle2, Clock, XCircle, ArrowLeft, MapPin } from "lucide-react";
@@ -14,6 +15,19 @@ const statusSteps = [
   { key: "SHIPPED", label: "Shipped", icon: Truck, color: "text-purple-600" },
   { key: "DELIVERED", label: "Delivered", icon: CheckCircle2, color: "text-green-600" },
 ];
+
+// Anyone with the tracking link can see this page, so personal details are
+// masked unless the viewer is the signed-in owner or an admin.
+function maskPhone(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  return digits.length >= 4 ? `••••••${digits.slice(-4)}` : "••••";
+}
+
+function maskAddress(address: string) {
+  // Stored as "street, city, state, pincode" — show only the last three parts.
+  const parts = address.split(",").map((p) => p.trim()).filter(Boolean);
+  return parts.slice(-3).join(", ");
+}
 
 const statusOrder: Record<string, number> = {
   PENDING: 0,
@@ -39,7 +53,12 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
     notFound();
   }
 
-  const isCancelled = order.status === "CANCELLED";
+  const session = await auth();
+  const canSeeDetails =
+    !!session?.user &&
+    ((session.user as any).role === "ADMIN" || (!!order.userId && order.userId === (session.user as any).id));
+
+  const isCancelled = order.status === "CANCELLED" || order.status === "EXPIRED";
   const currentStep = statusOrder[order.status] ?? 0;
 
   return (
@@ -72,8 +91,16 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
             <div className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
               <XCircle className="w-6 h-6 text-destructive" />
               <div>
-                <p className="font-semibold text-destructive">Order Cancelled</p>
-                <p className="text-sm text-muted-foreground">This order has been cancelled. If you paid online, a refund will be processed within 5-7 business days.</p>
+                <p className="font-semibold text-destructive">
+                  {order.status === "EXPIRED" ? "Payment Not Completed" : "Order Cancelled"}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {order.status === "EXPIRED"
+                    ? "We didn't receive payment for this order, so it was released. No money was charged."
+                    : order.paymentId
+                    ? "This order has been cancelled. Your refund will be processed within 5-7 business days."
+                    : "This order has been cancelled."}
+                </p>
               </div>
             </div>
           ) : (
@@ -153,9 +180,13 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
             <MapPin className="w-5 h-5 text-primary" />
             Shipping Address
           </h2>
-          <p className="text-muted-foreground">{order.shippingAddress}</p>
+          <p className="text-muted-foreground">
+            {canSeeDetails ? order.shippingAddress : maskAddress(order.shippingAddress)}
+          </p>
           <p className="text-sm text-muted-foreground mt-2">
-            {order.customerName} · {order.customerPhone}
+            {canSeeDetails
+              ? `${order.customerName} · ${order.customerPhone}`
+              : `${order.customerName.split(" ")[0]} · ${maskPhone(order.customerPhone)}`}
           </p>
         </div>
 

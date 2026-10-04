@@ -22,7 +22,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const spiceFilters = Array.isArray(params.spice) ? params.spice : typeof params.spice === 'string' ? params.spice.split(',') : [];
 
   // Build Prisma Where Clause
-  let where: any = {};
+  let where: any = { status: 'ACTIVE' };
   
   if (categoryFilter && categoryFilter !== 'all') {
     where.category = { slug: categoryFilter };

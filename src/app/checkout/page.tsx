@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import Script from "next/script";
-import { validateCoupon } from "@/app/actions/coupons";
+import { getCheckoutQuote, type CheckoutQuoteResult } from "@/app/actions/checkout-quote";
 import { getUserPoints, getUserProfile } from "@/app/actions/user";
 import { AddressMapSelector } from "@/components/storefront/address-map-selector";
 import { useSession } from "next-auth/react";
@@ -35,7 +35,8 @@ export default function CheckoutPage() {
   const cartTotal = getTotal();
   
   const [couponCode, setCouponCode] = useState("");
-  const [discount, setDiscount] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState("");
+  const [quote, setQuote] = useState<CheckoutQuoteResult | null>(null);
   const [usePoints, setUsePoints] = useState(false);
   const [userPoints, setUserPoints] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
@@ -60,23 +61,43 @@ export default function CheckoutPage() {
     }
   }, [session]);
   
-  const pointsDiscount = usePoints ? Math.floor(userPoints / 10) : 0; // 10 points = 1 Rupee
-  const total = Math.max(0, cartTotal - discount - pointsDiscount);
+  const quoteItems = () =>
+    items.map(item => ({
+      productId: item.productId,
+      quantity: item.quantity,
+      weight: item.weight,
+      name: item.name,
+      blend: item.blend,
+    }));
+
+  // Server-calculated totals (shipping, GST, discounts) — same logic as the charge.
+  useEffect(() => {
+    if (items.length === 0) return;
+    let cancelled = false;
+    getCheckoutQuote({ items: quoteItems(), couponCode: appliedCoupon, usePoints }).then((res) => {
+      if (!cancelled) setQuote(res);
+    });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, appliedCoupon, usePoints]);
+
+  const discount = quote?.couponDiscount ?? 0;
+  const pointsDiscount = quote?.pointsDiscount ?? 0;
+  const shippingFee = quote?.shippingFee ?? 0;
+  const total = quote?.total ?? cartTotal;
+  const quoteReady = !!quote && !quote.error;
 
   const applyCoupon = async () => {
-    if (!couponCode.trim()) return;
-    const res = await validateCoupon(couponCode.trim().toUpperCase(), cartTotal);
-    if (res.error) {
-      toast.error(res.error);
-      setDiscount(0);
-    } else if (res.coupon) {
-      toast.success("Coupon applied!");
-      if (res.coupon.discountType === 'PERCENTAGE') {
-        setDiscount(cartTotal * (res.coupon.discountValue / 100));
-      } else {
-        setDiscount(res.coupon.discountValue);
-      }
+    const code = couponCode.trim().toUpperCase();
+    if (!code) return;
+    const res = await getCheckoutQuote({ items: quoteItems(), couponCode: code, usePoints });
+    if (res.error || res.couponError) {
+      toast.error(res.error || res.couponError);
+      return;
     }
+    setAppliedCoupon(code);
+    setQuote(res);
+    toast.success("Coupon applied!");
   };
   
   const [formData, setFormData] = useState({
@@ -102,7 +123,11 @@ export default function CheckoutPage() {
 
   const handleOrderSubmission = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (total <= 0 && items.length === 0) return;
+    if (items.length === 0) return;
+    if (!quoteReady) {
+      toast.error(quote?.error || "Still calculating your total. Please try again in a moment.");
+      return;
+    }
 
     // Validate phone number format (at least 10 digits)
     const cleanedPhone = formData.phone.replace(/\D/g, '');
@@ -112,25 +137,17 @@ export default function CheckoutPage() {
     }
 
     setIsProcessing(true);
-    
+
     try {
-      // 1. Create order on backend
+      // 1. Create order on backend (server re-prices everything)
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map(item => ({
-            productId: item.productId,
-            slug: item.slug,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            weight: item.weight,
-            image: item.image,
-          })),
+          items: quoteItems(),
           shippingDetails: formData,
           paymentMethod: paymentMethod,
-          couponCode: couponCode,
+          couponCode: appliedCoupon,
           usePoints: usePoints,
         }),
       });
@@ -138,18 +155,16 @@ export default function CheckoutPage() {
 
       if (order.error) throw new Error(order.error);
 
-      // 2. Handle Cash on Delivery (COD) Direct Flow
-      if (paymentMethod === 'cod') {
-        const subtotal = total / 1.05;
-        const tax = total - subtotal;
-        const orderConfirmationData = {
-          orderNumber: order.orderId ? `NW-${order.orderId.slice(-8).toUpperCase()}` : `NW-${Math.floor(100000 + Math.random() * 900000)}`,
+      const saveConfirmation = (paymentLabel: string) => {
+        sessionStorage.setItem('lastOrder', JSON.stringify({
+          orderNumber: `NW-${order.orderId.slice(-8).toUpperCase()}`,
           orderId: order.orderId,
-          subtotal: subtotal,
-          shipping: 0,
-          tax: tax,
-          total: total,
-          paymentMethod: 'Cash on Delivery (COD)',
+          subtotal: order.subtotal,
+          discount: order.discount,
+          shipping: order.shipping,
+          tax: order.tax,
+          total: order.total,
+          paymentMethod: paymentLabel,
           customerName: formData.name,
           customerEmail: formData.email,
           customerPhone: formData.phone,
@@ -161,9 +176,12 @@ export default function CheckoutPage() {
             price: item.price,
             weight: item.weight,
           }))
-        };
-        sessionStorage.setItem('lastOrder', JSON.stringify(orderConfirmationData));
+        }));
+      };
 
+      // 2. Handle Cash on Delivery (COD) Direct Flow
+      if (paymentMethod === 'cod') {
+        saveConfirmation('Cash on Delivery (COD)');
         clearCart();
         toast.success("Order Placed Successfully!");
         router.push("/order-confirmation");
@@ -171,59 +189,55 @@ export default function CheckoutPage() {
       }
 
       // 3. Handle Razorpay Online Payment Flow
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_mockedkey123", 
+      const handler = async (response: any) => {
+        const verifyRes = await fetch("/api/checkout/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            orderId: order.orderId,
+          }),
+        });
+
+        const verifyData = await verifyRes.json();
+        if (verifyData.success) {
+          saveConfirmation('Online Payment (Prepaid)');
+          clearCart();
+          toast.success("Payment Successful! Order confirmed.");
+          router.push("/order-confirmation");
+        } else {
+          toast.error(verifyData.error || "Payment verification failed. If money was debited, your order will be confirmed automatically.");
+          setIsProcessing(false);
+        }
+      };
+
+      // Local development only: the server issues mock ids when ALLOW_MOCK_PAYMENTS is on.
+      if (String(order.razorpayOrderId).startsWith("mock_rzp_")) {
+        console.warn("Mock payment mode: simulating successful payment.");
+        await handler({
+          razorpay_order_id: order.razorpayOrderId,
+          razorpay_payment_id: "pay_mock123",
+          razorpay_signature: "mock_sig",
+        });
+        return;
+      }
+
+      if (typeof (window as any).Razorpay === "undefined") {
+        toast.error("Payment window failed to load. Please check your connection or disable ad-blockers and try again.");
+        setIsProcessing(false);
+        return;
+      }
+
+      const rzp = new (window as any).Razorpay({
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: "INR",
         name: "Spicy Nuts",
         description: "Pure, Natural, Organic Gourmet Spices & Dry Fruits",
-        order_id: order.razorpayOrderId || order.id,
-        handler: async function (response: any) {
-          const verifyRes = await fetch("/api/checkout/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature || "mock_signature",
-              orderId: order.orderId,
-            }),
-          });
-          
-          const verifyData = await verifyRes.json();
-          if (verifyData.success) {
-            const subtotal = total / 1.05;
-            const tax = total - subtotal;
-            const orderConfirmationData = {
-              orderNumber: order.orderId ? `NW-${order.orderId.slice(-8).toUpperCase()}` : `NW-${Math.floor(100000 + Math.random() * 900000)}`,
-              orderId: order.orderId,
-              subtotal: subtotal,
-              shipping: 0,
-              tax: tax,
-              total: total,
-              paymentMethod: 'Online Payment (Prepaid)',
-              customerName: formData.name,
-              customerEmail: formData.email,
-              customerPhone: formData.phone,
-              shippingAddress: `${formData.address}, ${formData.city}, ${formData.state} - ${formData.pincode}`,
-              ecoPackaging: true,
-              items: items.map(item => ({
-                name: item.name,
-                quantity: item.quantity,
-                price: item.price,
-                weight: item.weight,
-              }))
-            };
-            sessionStorage.setItem('lastOrder', JSON.stringify(orderConfirmationData));
-
-            clearCart();
-            toast.success("Payment Successful! Order confirmed.");
-            router.push("/order-confirmation");
-          } else {
-            toast.error("Payment verification failed.");
-            setIsProcessing(false);
-          }
-        },
+        order_id: order.razorpayOrderId,
+        handler,
         prefill: {
           name: formData.name,
           email: formData.email,
@@ -232,23 +246,15 @@ export default function CheckoutPage() {
         theme: {
           color: "#052c1e",
         },
-      };
-
-      if (typeof (window as any).Razorpay === "undefined" || options.key === "rzp_test_mockedkey123") {
-        console.warn("Razorpay SDK not configured, simulating successful test payment...");
-        options.handler({
-           razorpay_order_id: order.razorpayOrderId || "mock_rzp_" + order.orderId,
-           razorpay_payment_id: "pay_mock123",
-           razorpay_signature: "mock_sig_456"
-        });
-      } else {
-        const rzp = new (window as any).Razorpay(options);
-        rzp.on("payment.failed", function (response: any) {
-          toast.error(response.error?.description || "Payment failed");
-          setIsProcessing(false);
-        });
-        rzp.open();
-      }
+        modal: {
+          ondismiss: () => setIsProcessing(false),
+        },
+      });
+      rzp.on("payment.failed", function (response: any) {
+        toast.error(response.error?.description || "Payment failed");
+        setIsProcessing(false);
+      });
+      rzp.open();
 
     } catch (error: any) {
       toast.error(error.message || "Something went wrong during checkout.");
@@ -327,10 +333,10 @@ export default function CheckoutPage() {
                 ))}
               </div>
               <div className="pt-2 border-t border-border/50 text-xs space-y-1.5 text-muted-foreground">
-                <div className="flex justify-between"><span>Subtotal</span><span>₹{cartTotal.toFixed(2)}</span></div>
+                <div className="flex justify-between"><span>Subtotal</span><span>₹{(quote?.subtotal ?? cartTotal).toFixed(2)}</span></div>
                 {discount > 0 && <div className="flex justify-between text-emerald-600 font-medium"><span>Promo Discount</span><span>-₹{discount.toFixed(2)}</span></div>}
                 {pointsDiscount > 0 && <div className="flex justify-between text-emerald-600 font-medium"><span>Points Redeemed</span><span>-₹{pointsDiscount.toFixed(2)}</span></div>}
-                <div className="flex justify-between"><span>Delivery</span><span className="text-emerald-600 font-semibold">FREE</span></div>
+                <div className="flex justify-between"><span>Delivery</span>{shippingFee === 0 ? <span className="text-emerald-600 font-semibold">FREE</span> : <span>₹{shippingFee.toFixed(2)}</span>}</div>
               </div>
             </div>
           )}
@@ -469,7 +475,7 @@ export default function CheckoutPage() {
             <div className="space-y-3">
               <Button 
                 type="submit" 
-                disabled={isProcessing} 
+                disabled={isProcessing || !quoteReady} 
                 className="w-full h-14 text-base md:text-lg font-bold rounded-2xl shadow-xl hover:shadow-primary/25 transition-all"
               >
                 {isProcessing 
@@ -485,7 +491,7 @@ export default function CheckoutPage() {
                 <span>•</span>
                 <span>Direct Terroir Harvest</span>
                 <span>•</span>
-                <span>Free Insured Delivery</span>
+                <span>Insured Delivery</span>
               </div>
             </div>
 
@@ -555,7 +561,7 @@ export default function CheckoutPage() {
               <div className="pt-4 border-t border-border/50 space-y-2.5 text-sm">
                 <div className="flex justify-between text-muted-foreground text-xs">
                   <span>Bag Subtotal</span>
-                  <span className="font-medium text-foreground">₹{cartTotal.toFixed(2)}</span>
+                  <span className="font-medium text-foreground">₹{(quote?.subtotal ?? cartTotal).toFixed(2)}</span>
                 </div>
                 
                 {discount > 0 && (
@@ -573,14 +579,29 @@ export default function CheckoutPage() {
                 )}
 
                 <div className="flex justify-between text-muted-foreground text-xs">
-                  <span>Estimated Courier Shipping</span>
-                  <span className="text-emerald-600 font-semibold">FREE</span>
+                  <span>Courier Shipping</span>
+                  {shippingFee === 0 ? (
+                    <span className="text-emerald-600 font-semibold">FREE</span>
+                  ) : (
+                    <span className="font-medium text-foreground">₹{shippingFee.toFixed(2)}</span>
+                  )}
                 </div>
+
+                {shippingFee > 0 && quote?.freeShippingThreshold ? (
+                  <p className="text-[11px] text-muted-foreground">Free shipping on orders of ₹{quote.freeShippingThreshold} or more.</p>
+                ) : null}
+
+                {quote?.error && (
+                  <p className="text-xs text-destructive font-medium">{quote.error}</p>
+                )}
 
                 <div className="border-t border-border/60 pt-3 flex justify-between font-bold text-base md:text-lg text-foreground">
                   <span>Grand Total</span>
                   <span className="text-primary text-xl">₹{total.toFixed(2)}</span>
                 </div>
+                {quoteReady && (quote?.taxAmount ?? 0) > 0 && (
+                  <p className="text-[11px] text-muted-foreground text-right">Inclusive of GST (₹{quote!.taxAmount!.toFixed(2)})</p>
+                )}
               </div>
 
               {/* Terroir / Eco Packaging Badge */}

@@ -11,7 +11,8 @@ export default async function AdminDashboard() {
   const completedOrders = orders.filter(o => ['Delivered', 'Shipped'].includes(o.status));
   const totalRevenue = completedOrders.reduce((sum, o) => sum + o.total, 0);
   
-  const pendingOrdersList = orders.filter(o => ['Pending', 'Confirmed'].includes(o.status));
+  // Orders to fulfil (paid online or COD). 'Pending' = unpaid online checkout, not counted.
+  const pendingOrdersList = orders.filter(o => ['Processing', 'Confirmed'].includes(o.status));
   const pendingRevenue = pendingOrdersList.reduce((sum, o) => sum + o.total, 0);
 
   const activeProducts = products.filter(p => p.status === 'ACTIVE').length;

@@ -1,132 +1,80 @@
-import { sendWhatsAppMessage, buildOrderConfirmationWhatsAppMessage } from "@/lib/whatsapp";
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db/prisma";
 import crypto from "crypto";
-import { sendOrderConfirmation, notifyAdminNewOrder } from "@/lib/email";
+import { prisma } from "@/lib/db/prisma";
+import { getRazorpay, mockPaymentsAllowed, markOrderPaid, toPaise } from "@/lib/orders";
+
+function safeEqual(a: string, b: string) {
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  return ab.length === bb.length && crypto.timingSafeEqual(ab, bb);
+}
 
 export async function POST(req: Request) {
   try {
-    const session = await auth();
-    const body = await req.json();
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = await req.json();
+    if (typeof orderId !== "string" || typeof razorpay_order_id !== "string" || typeof razorpay_payment_id !== "string") {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
 
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    if (!order || order.paymentMethod !== "ONLINE" || !order.razorpayOrderId) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    // The payment must be for the Razorpay order we created for THIS order.
+    // Without this, a valid signature from a cheap order could confirm an expensive one.
+    if (razorpay_order_id !== order.razorpayOrderId) {
+      return NextResponse.json({ error: "Payment does not match this order" }, { status: 400 });
+    }
+
+    const razorpay = getRazorpay();
     const secret = process.env.RAZORPAY_KEY_SECRET;
 
-    // Explicit, opt-in mock path for local/demo use only. Never active in production.
-    const allowMock =
-      process.env.NODE_ENV !== "production" &&
-      process.env.ALLOW_MOCK_PAYMENTS === "true";
-
-    // Fail closed if payments aren't configured and mock isn't explicitly enabled.
-    if (!secret && !allowMock) {
-      console.error("Payment verification blocked: RAZORPAY_KEY_SECRET is not configured.");
-      return NextResponse.json(
-        { error: "Payment gateway not configured" },
-        { status: 503 }
-      );
-    }
-
-    let signatureValid = false;
-    if (secret) {
-      const generated_signature = crypto
+    if (!razorpay || !secret) {
+      if (!(mockPaymentsAllowed() && order.razorpayOrderId.startsWith("mock_rzp_"))) {
+        console.error("Payment verification blocked: Razorpay is not configured.");
+        return NextResponse.json({ error: "Payment gateway not configured" }, { status: 503 });
+      }
+    } else {
+      const expected = crypto
         .createHmac("sha256", secret)
-        .update(razorpay_order_id + "|" + razorpay_payment_id)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
         .digest("hex");
-      // Constant-time comparison to avoid timing attacks.
-      signatureValid =
-        !!razorpay_signature &&
-        generated_signature.length === razorpay_signature.length &&
-        crypto.timingSafeEqual(
-          Buffer.from(generated_signature),
-          Buffer.from(razorpay_signature)
-        );
-    }
-
-    if (signatureValid || allowMock) {
-      // Verify the order exists before confirming.
-      const existing = await prisma.order.findUnique({ where: { id: orderId } });
-      if (!existing) {
-        return NextResponse.json({ error: "Order not found" }, { status: 404 });
+      if (typeof razorpay_signature !== "string" || !safeEqual(expected, razorpay_signature)) {
+        return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
       }
 
-      let dbUser = null;
-      if (session?.user?.email) {
-        dbUser = await prisma.user.findUnique({ where: { email: session.user.email } });
+      // Confirm with Razorpay that this payment really is for our order and amount.
+      let payment: any = await razorpay.payments.fetch(razorpay_payment_id);
+      if (payment.order_id !== order.razorpayOrderId || Number(payment.amount) !== toPaise(order.total)) {
+        console.error(`[VERIFY] Payment ${razorpay_payment_id} mismatch for order ${order.id}`);
+        return NextResponse.json({ error: "Payment does not match this order" }, { status: 400 });
       }
-
-      // If order was placed with an account, ensure caller matches
-      if (existing.userId && dbUser && existing.userId !== dbUser.id) {
-        console.error("Order verification access denied. Order User ID:", existing.userId, "Session User ID:", dbUser.id);
-        return NextResponse.json({ error: "Access denied" }, { status: 403 });
-      }
-
-      // Idempotency: if already processed, don't re-award points.
-      if (existing.status !== "PENDING") {
-        return NextResponse.json({ success: true, alreadyProcessed: true });
-      }
-
-      const updates: any[] = [
-        prisma.order.update({
-          where: { id: orderId },
-          data: {
-            status: "PROCESSING",
-            razorpayOrderId: razorpay_order_id,
-            paymentId: razorpay_payment_id,
-          },
-        }),
-      ];
-
-      if (dbUser) {
-        updates.push(
-          prisma.user.update({
-            where: { id: dbUser.id },
-            data: { points: { increment: Math.floor(existing.total * 0.05) } }, // 5% cashback
-          }),
-          prisma.notification.create({
-            data: {
-              userId: dbUser.id,
-              title: "Payment Successful",
-              message: `Your payment for order #${existing.id.slice(-8).toUpperCase()} was successful. We are now processing it.`,
-              type: "ORDER",
-              link: "/account/orders",
-            },
-          })
-        );
-      }
-
-      const [order] = await prisma.$transaction(updates);
-
-      try {
-        await sendOrderConfirmation(order.customerEmail, order.id, order.total);
-      } catch (err) {
-        console.error("Failed to send order email:", err);
-      }
-
-      if (order.customerPhone) {
+      if (payment.status === "authorized") {
+        // Capture now (if auto-capture is off, Razorpay refunds uncaptured payments after a few days).
         try {
-          const items = await prisma.orderItem.findMany({ where: { orderId: order.id } });
-          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
-          const waMsg = buildOrderConfirmationWhatsAppMessage({
-            orderId: order.id,
-            customerName: order.customerName,
-            total: order.total,
-            paymentMethod: "Online Payment (Prepaid)",
-            items: items.map((i: any) => ({ name: i.productName, quantity: i.quantity, weight: i.weight })),
-            trackingUrl: `${siteUrl}/track/${order.id}`,
-          });
-          await sendWhatsAppMessage({ to: order.customerPhone, message: waMsg, type: "ORDER_UPDATE" });
-        } catch (waErr) {
-          console.error("WhatsApp Online order confirmation error:", waErr);
+          payment = await razorpay.payments.capture(razorpay_payment_id, toPaise(order.total), "INR");
+        } catch {
+          payment = await razorpay.payments.fetch(razorpay_payment_id);
         }
       }
-      // Notify admin of new paid order
-      try { await notifyAdminNewOrder(order.id, order.total, order.customerName, "ONLINE"); } catch (e) { console.error("Admin notification failed:", e); }
-
-      return NextResponse.json({ success: true, orderId: order.id });
-    } else {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+      if (payment.status !== "captured") {
+        return NextResponse.json({ error: "Payment not completed yet. If money was debited, it will be confirmed shortly." }, { status: 402 });
+      }
     }
+
+    const result = await markOrderPaid({
+      orderId: order.id,
+      razorpayOrderId: razorpay_order_id,
+      paymentId: razorpay_payment_id,
+    });
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: "This order was closed before payment completed. Your payment will be refunded — please contact support." },
+        { status: 409 }
+      );
+    }
+    return NextResponse.json({ success: true, orderId: order.id, alreadyProcessed: result.alreadyProcessed });
   } catch (error) {
     console.error("Verification Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

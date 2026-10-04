@@ -110,10 +110,16 @@ model Order {
   user            User?       @relation(fields: [userId], references: [id])
   items           OrderItem[]
   total           Float
-  status          String      @default("PENDING") // PENDING, PROCESSING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED, DELETED
+  status          String      @default("PENDING") // PENDING, PROCESSING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED, EXPIRED, DELETED
   paymentMethod   String      @default("ONLINE")  // ONLINE, COD
   razorpayOrderId String?
   paymentId       String?
+  paidAt          DateTime?
+  subtotal        Float?      // Item total before discounts (null on legacy orders)
+  shippingFee     Float       @default(0)
+  taxAmount       Float       @default(0) // GST included in total (prices are tax-inclusive)
+  shippingState   String?
+  invoiceNumber   String?     @unique
   discount        Float       @default(0)
   couponCode      String?
   pointsUsed      Int         @default(0)
@@ -131,6 +137,7 @@ model Order {
   @@index([status])
   @@index([createdAt])
   @@index([customerEmail])
+  @@index([razorpayOrderId])
 }
 
 model OrderItem {
@@ -157,6 +164,17 @@ model Settings {
   flatShippingRate      Float
   gstRate               Float
   currency              String @default("INR")
+  gstin                 String?
+  legalName             String?
+  businessAddress       String?
+  businessState         String?
+  invoicePrefix         String @default("SN")
+}
+
+// Sequential GST invoice numbers, one row per financial year (e.g. "2026-27").
+model InvoiceCounter {
+  id  String @id
+  seq Int    @default(0)
 }
 
 
@@ -301,6 +319,7 @@ model OtpVerification {
   otpHash   String
   expiresAt DateTime
   verified  Boolean  @default(false)
+  attempts  Int      @default(0)
   createdAt DateTime @default(now())
 
   @@index([email])

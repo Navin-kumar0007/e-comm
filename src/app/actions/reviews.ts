@@ -3,6 +3,17 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { rateLimit } from "@/lib/rate-limit";
+
+// Only images uploaded through our own review upload endpoint are accepted.
+function isAllowedReviewImage(url: unknown): url is string {
+  if (typeof url !== "string") return false;
+  return (
+    /^\/uploads\/reviews\/review-[\w-]+\.(jpg|png|webp)$/.test(url) ||
+    url.startsWith("https://res.cloudinary.com/")
+  );
+}
 
 export interface AddReviewInput {
   productId: string;
@@ -14,18 +25,28 @@ export interface AddReviewInput {
 }
 
 export async function addReview(input: AddReviewInput) {
-  const { productId, rating, comment, images = [], userName, userEmail } = input;
+  const { productId, rating, comment, userName, userEmail } = input;
 
   if (!productId || !rating || !comment?.trim()) {
     return { error: "Please provide a rating and review details." };
   }
+  if (comment.length > 2000) {
+    return { error: "Review is too long (maximum 2000 characters)." };
+  }
+
+  const ip = ((await headers()).get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+  if (!rateLimit(`review:${ip}`, 5, 10 * 60_000).allowed) {
+    return { error: "You're posting reviews too quickly. Please try again later." };
+  }
+
+  const images = (Array.isArray(input.images) ? input.images : []).filter(isAllowedReviewImage).slice(0, 4);
 
   let session = null;
   try {
     session = await auth();
   } catch {}
   let userId: string | null = null;
-  let reviewerName: string = userName?.trim() || "Customer";
+  let reviewerName: string = userName?.trim().slice(0, 60) || "Customer";
 
   if (session?.user?.email) {
     const user = await prisma.user.findUnique({

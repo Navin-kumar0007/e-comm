@@ -45,7 +45,11 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
         freeShippingThreshold: Number(fd.get("freeThreshold")),
         flatShippingRate: Number(fd.get("flatRate")),
       };
-      await updateAdminSettingsAction(data);
+      const res = await updateAdminSettingsAction(data);
+      if (res && "error" in res) {
+        toast.error(res.error);
+        return;
+      }
       setSettings({ ...settings, ...data });
       toast.success("Shipping settings saved!");
     } catch (err) {
@@ -60,8 +64,19 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     setIsSaving(true);
     const fd = new FormData(e.currentTarget);
     try {
-      const data = { gstRate: Number(fd.get("gstRate")) };
-      await updateAdminSettingsAction(data);
+      const data = {
+        gstRate: Number(fd.get("gstRate")),
+        gstin: ((fd.get("gstin") as string) || "").trim() || null,
+        legalName: ((fd.get("legalName") as string) || "").trim() || null,
+        businessAddress: ((fd.get("businessAddress") as string) || "").trim() || null,
+        businessState: ((fd.get("businessState") as string) || "").trim() || null,
+        invoicePrefix: (fd.get("invoicePrefix") as string) || "SN",
+      };
+      const res = await updateAdminSettingsAction(data);
+      if (res && "error" in res) {
+        toast.error(res.error);
+        return;
+      }
       setSettings({ ...settings, ...data });
       toast.success("Tax settings saved!");
     } catch (err) {
@@ -143,12 +158,32 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                 <div className="space-y-2">
                   <Label>GST Rate (%)</Label>
                   <Input name="gstRate" type="number" step="0.1" defaultValue={settings.gstRate} className="rounded-xl" />
-                  <p className="text-xs text-muted-foreground">Applied to all orders. Standard GST for food items is 5%.</p>
+                  <p className="text-xs text-muted-foreground">Prices are GST-inclusive; this rate is used to show the GST portion on invoices.</p>
                 </div>
-                <div className="p-4 bg-muted/30 rounded-xl text-foreground">
-                  <p className="text-sm font-medium">Current Configuration</p>
-                  <p className="text-xs text-muted-foreground mt-1">GSTIN: 27AABCU9603R1ZM (configured)</p>
-                  <p className="text-xs text-muted-foreground">Currency: {settings.currency}</p>
+                <div className="space-y-2">
+                  <Label>GSTIN</Label>
+                  <Input name="gstin" defaultValue={settings.gstin ?? ""} placeholder="e.g. 29ABCDE1234F1Z5" className="rounded-xl font-mono uppercase" />
+                  <p className="text-xs text-muted-foreground">Leave empty if not GST-registered — invoices will then print as a plain &quot;Invoice&quot;, not a &quot;Tax Invoice&quot;.</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Registered Business Name</Label>
+                  <Input name="legalName" defaultValue={settings.legalName ?? ""} placeholder="As on GST certificate" className="rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Registered Business Address</Label>
+                  <Textarea name="businessAddress" defaultValue={settings.businessAddress ?? ""} rows={2} className="rounded-xl" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Business State</Label>
+                    <Input name="businessState" defaultValue={settings.businessState ?? ""} placeholder="e.g. Karnataka" className="rounded-xl" />
+                    <p className="text-xs text-muted-foreground">Same-state orders show CGST + SGST; others show IGST.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Invoice Number Prefix</Label>
+                    <Input name="invoicePrefix" defaultValue={settings.invoicePrefix ?? "SN"} className="rounded-xl font-mono uppercase" />
+                    <p className="text-xs text-muted-foreground">Invoices are numbered PREFIX/2026-27/00001.</p>
+                  </div>
                 </div>
               </div>
               <div className="pt-4 flex justify-end">

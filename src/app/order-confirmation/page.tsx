@@ -21,6 +21,7 @@ interface OrderData {
   orderNumber: string;
   orderId?: string;
   subtotal: number;
+  discount?: number;
   shipping: number;
   tax: number;
   total: number;
@@ -194,18 +195,25 @@ export default function OrderConfirmationPage() {
                 <span>Items Subtotal</span>
                 <span className="font-medium text-foreground">₹{order.subtotal.toFixed(2)}</span>
               </div>
+              {(order.discount ?? 0) > 0 && (
+                <div className="flex justify-between text-emerald-600 text-xs font-medium">
+                  <span>Discounts</span>
+                  <span>-₹{order.discount!.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-muted-foreground text-xs">
                 <span>Courier Shipping</span>
-                <span className="text-emerald-600 font-semibold">{order.shipping === 0 ? "FREE" : `₹${order.shipping.toFixed(2)}`}</span>
-              </div>
-              <div className="flex justify-between text-muted-foreground text-xs">
-                <span>Estimated GST (5%)</span>
-                <span className="font-medium text-foreground">₹{order.tax.toFixed(2)}</span>
+                {order.shipping === 0 ? (
+                  <span className="text-emerald-600 font-semibold">FREE</span>
+                ) : (
+                  <span className="font-medium text-foreground">₹{order.shipping.toFixed(2)}</span>
+                )}
               </div>
               <div className="border-t border-border/60 pt-2.5 flex justify-between font-bold text-base text-foreground">
-                <span>Total Settled</span>
+                <span>{order.paymentMethod?.startsWith('Cash') ? 'Total Payable' : 'Total Paid'}</span>
                 <span className="text-primary text-lg">₹{order.total.toFixed(2)}</span>
               </div>
+              <p className="text-[11px] text-muted-foreground text-right">Inclusive of GST (₹{order.tax.toFixed(2)})</p>
             </div>
           </div>
 

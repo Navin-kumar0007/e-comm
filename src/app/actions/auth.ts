@@ -22,9 +22,13 @@ export async function registerUser({
       return { error: "Missing required fields" };
     }
 
-    // Check if email was verified via OTP
+    if (password.length < 6) {
+      return { error: "Password must be at least 6 characters" };
+    }
+
+    // Check if email was verified via OTP (recently)
     const otpRecord = await prisma.otpVerification.findFirst({
-      where: { email, verified: true },
+      where: { email, verified: true, createdAt: { gte: new Date(Date.now() - 30 * 60 * 1000) } },
     });
 
     if (!otpRecord) {

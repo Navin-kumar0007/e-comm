@@ -42,8 +42,10 @@ export default function NewOrderForm({ products, settings }: { products: any[], 
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = subtotal >= (settings?.freeShippingThreshold ?? 999) ? 0 : (settings?.flatShippingRate ?? 50);
-  const tax = subtotal * ((settings?.gstRate ?? 5) / 100);
-  const total = subtotal + shipping + tax;
+  const total = subtotal + shipping;
+  // Prices are GST-inclusive; this is the GST portion of the total.
+  const gstRate = settings?.gstRate ?? 5;
+  const tax = (total * gstRate) / (100 + gstRate);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,12 +54,11 @@ export default function NewOrderForm({ products, settings }: { products: any[], 
 
     const fd = new FormData(e.currentTarget);
     try {
-      await createOrderAction({
+      const res = await createOrderAction({
         customerName: fd.get("customer") as string,
         customerEmail: fd.get("email") as string,
         customerPhone: fd.get("phone") as string,
         shippingAddress: fd.get("address") as string,
-        total: Math.round(total * 100) / 100,
         items: items.map(i => ({
           productId: i.productId,
           quantity: i.quantity,
@@ -65,6 +66,11 @@ export default function NewOrderForm({ products, settings }: { products: any[], 
           weight: i.weight
         }))
       });
+      if (res && "error" in res) {
+        toast.error(res.error);
+        setIsSaving(false);
+        return;
+      }
       toast.success("Order created successfully!");
       router.push("/admin/orders");
     } catch (err) {
@@ -152,8 +158,8 @@ export default function NewOrderForm({ products, settings }: { products: any[], 
             <div className="space-y-2 text-sm text-muted-foreground">
               <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="text-foreground">₹{subtotal.toFixed(2)}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Shipping</span><span className="text-foreground">{shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">GST ({settings?.gstRate ?? 5}%)</span><span className="text-foreground">₹{tax.toFixed(2)}</span></div>
               <div className="flex justify-between font-bold text-base pt-2 border-t text-foreground"><span>Total</span><span>₹{total.toFixed(2)}</span></div>
+              <div className="flex justify-between text-xs"><span>incl. GST ({gstRate}%)</span><span>₹{tax.toFixed(2)}</span></div>
             </div>
             <Button type="submit" disabled={isSaving || items.length === 0} className="w-full rounded-full shadow-md mt-4">
               {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}

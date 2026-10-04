@@ -72,6 +72,7 @@ export default function TrackOrderLookup() {
             <input
               id="email"
               type="email"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="The email used during checkout"

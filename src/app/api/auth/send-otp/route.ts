@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import crypto from "crypto";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 function generateOTP(): string {
   return crypto.randomInt(100000, 999999).toString();
@@ -64,10 +65,15 @@ async function sendOTPEmail(email: string, otp: string) {
 
 export async function POST(req: Request) {
   try {
+    const { allowed } = rateLimit(clientKey(req, "send-otp"), 5, 10 * 60_000);
+    if (!allowed) {
+      return NextResponse.json({ error: "Too many requests. Please try again in a few minutes." }, { status: 429 });
+    }
+
     const { email } = await req.json();
 
-    if (!email || typeof email !== "string") {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    if (!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      return NextResponse.json({ error: "A valid email is required" }, { status: 400 });
     }
 
     const normalizedEmail = email.toLowerCase().trim();
@@ -88,8 +94,11 @@ export async function POST(req: Request) {
     const otpHash = hashOTP(otp);
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    // Invalidate any existing OTPs for this email
-    await prisma.otpVerification.deleteMany({ where: { email: normalizedEmail } });
+    // Old codes are kept (so the hourly limit above can count them) — verify only
+    // ever checks the newest one. Clean up anything older than a day.
+    await prisma.otpVerification.deleteMany({
+      where: { email: normalizedEmail, createdAt: { lt: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
+    });
 
     // Create new OTP record
     await prisma.otpVerification.create({
@@ -99,12 +108,12 @@ export async function POST(req: Request) {
     // Send the OTP
     const result = await sendOTPEmail(normalizedEmail, otp);
     if (!result.success) {
-      return NextResponse.json({ error: `Resend Error: ${result.error || "Failed to send OTP"}` }, { status: 500 });
+      return NextResponse.json({ error: "Failed to send verification code. Please try again." }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, message: "OTP sent to your email" });
   } catch (error: any) {
     console.error("Send OTP error:", error);
-    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

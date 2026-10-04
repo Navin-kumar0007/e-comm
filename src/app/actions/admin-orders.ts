@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth-guard';
 import { sendOrderShipped, sendOrderDelivered, sendOrderCancelled } from '@/lib/email';
+import { releaseStaleOrders, allocateInvoiceNumber } from '@/lib/orders';
+import { getStoreSettings } from '@/lib/store-settings';
 
 function mapPrismaStatusToUI(status: string) {
   const m: Record<string, string> = {
@@ -13,6 +15,7 @@ function mapPrismaStatusToUI(status: string) {
     'SHIPPED': 'Shipped',
     'DELIVERED': 'Delivered',
     'CANCELLED': 'Cancelled',
+    'EXPIRED': 'Expired',
     'PAID': 'Confirmed'
   };
   return m[status.toUpperCase()] || 'Pending';
@@ -20,6 +23,8 @@ function mapPrismaStatusToUI(status: string) {
 
 export async function getAdminOrders() {
   await requireAdmin();
+  // Fallback for when no cron is configured: expire abandoned online checkouts.
+  try { await releaseStaleOrders(10); } catch (e) { console.error('Stale order sweep failed:', e); }
   const dbOrders = await prisma.order.findMany({
     where: { status: { not: 'DELETED' } },  // Hide soft-deleted orders
     include: {
@@ -61,6 +66,12 @@ export async function updateOrderStatusAction(id: string, status: string) {
 
   const upperStatus = status.toUpperCase();
 
+  // Expired orders already had their stock/points returned and were never paid.
+  const current = await prisma.order.findUnique({ where: { id }, select: { status: true } });
+  if (current?.status === 'EXPIRED') {
+    throw new Error('Expired orders were never paid and cannot be changed.');
+  }
+
   // If cancelling, restore stock for each order item
   if (upperStatus === 'CANCELLED') {
     const order = await prisma.order.findUnique({
@@ -69,8 +80,14 @@ export async function updateOrderStatusAction(id: string, status: string) {
     });
 
     if (order && order.status !== 'CANCELLED') {
-      // Restore stock atomically
-      await prisma.$transaction(async (tx: any) => {
+      // Claim the cancellation first so a double-click can't restore stock twice.
+      const cancelled = await prisma.$transaction(async (tx: any) => {
+        const claimed = await tx.order.updateMany({
+          where: { id, status: { notIn: ['CANCELLED', 'EXPIRED'] } },
+          data: { status: 'CANCELLED' }
+        });
+        if (claimed.count === 0) return false;
+
         for (const item of order.items) {
           if (item.productId && !item.productId.startsWith('custom-')) {
             await tx.product.update({
@@ -79,11 +96,16 @@ export async function updateOrderStatusAction(id: string, status: string) {
             });
           }
         }
-        await tx.order.update({
-          where: { id },
-          data: { status: 'CANCELLED' }
-        });
+        // Return redeemed loyalty points
+        if (order.userId && order.pointsUsed > 0) {
+          await tx.user.update({
+            where: { id: order.userId },
+            data: { points: { increment: order.pointsUsed } }
+          });
+        }
+        return true;
       });
+      if (!cancelled) return { success: true };
 
       // Notify customer
       if (order.userId) {
@@ -153,40 +175,71 @@ export async function createOrderAction(data: {
   customerEmail: string;
   customerPhone: string;
   shippingAddress: string;
-  total: number;
   items: Array<{ productId: string; quantity: number; price: number; weight: string }>;
 }) {
   await requireAdmin();
 
+  if (!data.items.length || data.items.some(i => !Number.isInteger(i.quantity) || i.quantity < 1 || !(i.price >= 0))) {
+    return { error: 'Invalid items' };
+  }
+
   // Resolve product names for the audit trail
   const productIds = data.items.map(i => i.productId);
   const products = await prisma.product.findMany({ where: { id: { in: productIds } } });
-  const nameById = new Map(products.map(p => [p.id, p.name]));
+  const nameById = new Map(products.map((p: any) => [p.id, p.name]));
 
-  const order = await prisma.order.create({
-    data: {
-      total: data.total,
-      status: "CONFIRMED",
-      paymentMethod: "COD",
-      customerName: data.customerName,
-      customerEmail: data.customerEmail,
-      customerPhone: data.customerPhone,
-      shippingAddress: data.shippingAddress,
-      items: {
-        create: data.items.map(item => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          price: item.price,
-          weight: item.weight,
-          productName: nameById.get(item.productId) || "Product"
-        }))
+  // Same rules as storefront checkout: GST-inclusive prices, shipping from settings.
+  const settings = await getStoreSettings();
+  const round2 = (n: number) => Math.round(n * 100) / 100;
+  const subtotal = round2(data.items.reduce((sum, i) => sum + i.price * i.quantity, 0));
+  const shippingFee = subtotal >= settings.freeShippingThreshold ? 0 : settings.flatShippingRate;
+  const total = round2(subtotal + shippingFee);
+  const taxAmount = round2((total * settings.gstRate) / (100 + settings.gstRate));
+
+  try {
+    const order = await prisma.$transaction(async (tx: any) => {
+      for (const item of data.items) {
+        const res = await tx.product.updateMany({
+          where: { id: item.productId, stock: { gte: item.quantity } },
+          data: { stock: { decrement: item.quantity } }
+        });
+        if (res.count === 0) throw new Error(`STOCK:${nameById.get(item.productId) || 'Product'}`);
       }
-    }
-  });
+      return tx.order.create({
+        data: {
+          subtotal,
+          shippingFee,
+          taxAmount,
+          total,
+          status: "CONFIRMED",
+          paymentMethod: "COD",
+          customerName: data.customerName,
+          customerEmail: data.customerEmail,
+          customerPhone: data.customerPhone,
+          shippingAddress: data.shippingAddress,
+          invoiceNumber: await allocateInvoiceNumber(tx),
+          items: {
+            create: data.items.map(item => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              price: item.price,
+              weight: item.weight,
+              productName: nameById.get(item.productId) || "Product"
+            }))
+          }
+        }
+      });
+    });
 
-  revalidatePath('/admin/orders');
-  revalidatePath('/admin');
-  return order;
+    revalidatePath('/admin/orders');
+    revalidatePath('/admin');
+    return { success: true, orderId: order.id };
+  } catch (e: any) {
+    if (typeof e?.message === 'string' && e.message.startsWith('STOCK:')) {
+      return { error: `Not enough stock for ${e.message.slice(6)}` };
+    }
+    throw e;
+  }
 }
 
 export async function updateOrderTrackingAction(id: string, trackingNumber: string, trackingUrl: string) {

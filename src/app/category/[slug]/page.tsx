@@ -20,7 +20,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     notFound();
   }
 
-  const rawProducts = await prisma.product.findMany({ where: { categoryId: category.id } });
+  const rawProducts = await prisma.product.findMany({ where: { categoryId: category.id, status: 'ACTIVE' } });
   const categoryProducts = rawProducts.map((p: any) => {
     let parsedImages: string[] = [];
     if (Array.isArray(p.images)) {

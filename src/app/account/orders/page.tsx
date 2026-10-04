@@ -88,15 +88,15 @@ export default async function OrdersPage() {
                   <p className="text-xl font-bold text-secondary">₹{order.total.toFixed(2)}</p>
                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mt-2 ${
                     order.status === 'DELIVERED' ? 'bg-primary/20 text-primary border border-primary/30' :
-                    order.status === 'CANCELLED' ? 'bg-destructive/20 text-destructive border border-destructive/30' :
+                    order.status === 'CANCELLED' || order.status === 'EXPIRED' ? 'bg-destructive/20 text-destructive border border-destructive/30' :
                     'bg-secondary/20 text-secondary border border-secondary/30'
                   }`}>
-                    {order.status}
+                    {order.status === 'EXPIRED' ? 'PAYMENT NOT COMPLETED' : order.status === 'PENDING' ? 'AWAITING PAYMENT' : order.status}
                   </span>
                 </div>
               </div>
 
-              {order.status !== 'CANCELLED' && (
+              {order.status !== 'CANCELLED' && order.status !== 'EXPIRED' && (
                 <OrderTimeline status={order.status} />
               )}
               

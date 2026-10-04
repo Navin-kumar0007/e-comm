@@ -25,7 +25,7 @@ export async function generateMetadata({
   const product = await prisma.product.findUnique({
     where: { slug: resolvedParams.slug },
   });
-  if (!product) return { title: "Product Not Found" };
+  if (!product || product.status !== "ACTIVE") return { title: "Product Not Found" };
 
   let images: string[] = [];
   try {
@@ -56,9 +56,11 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = await params;
-  const rawProduct = await prisma.product.findUnique({
+  const found = await prisma.product.findUnique({
     where: { slug: resolvedParams.slug },
   });
+  // Drafts, archived products and custom blends are not publicly viewable.
+  const rawProduct = found?.status === "ACTIVE" ? found : null;
   const cleanCover = rawProduct ? getCleanProductImage(rawProduct.images, rawProduct.name) : "/placeholder.jpg";
   const product = rawProduct
     ? {

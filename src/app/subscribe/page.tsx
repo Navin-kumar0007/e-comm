@@ -31,7 +31,7 @@ export default function SubscribePage() {
       if (data.error) throw new Error(data.error);
 
       toast.success(`Successfully subscribed to ${boxType}! 🎉`);
-      toast.success(`Bonus: Earned 100 Spice Points!`);
+      if (data.bonusPoints > 0) toast.success(`Bonus: Earned ${data.bonusPoints} Spice Points!`);
       router.push('/account/subscriptions');
     } catch (error: any) {
       toast.error(error.message || "Failed to subscribe");

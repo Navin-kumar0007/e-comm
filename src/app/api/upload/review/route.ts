@@ -3,6 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -20,6 +21,12 @@ const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
 
 export async function POST(req: Request) {
   try {
+    // Public endpoint (guest reviews allowed) — cap uploads per IP to stop storage abuse.
+    const { allowed } = rateLimit(clientKey(req, "review-upload"), 12, 10 * 60_000);
+    if (!allowed) {
+      return NextResponse.json({ error: "Too many uploads. Please try again in a few minutes." }, { status: 429 });
+    }
+
     let formData;
     try {
       formData = await req.formData();

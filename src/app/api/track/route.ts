@@ -1,44 +1,39 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
+
+const NOT_FOUND = "No order found with that Order ID and email. Please check both and try again.";
 
 export async function GET(req: Request) {
+  const { allowed } = rateLimit(clientKey(req, "track"), 10, 60_000);
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many attempts. Please wait a minute." }, { status: 429 });
+  }
+
   const url = new URL(req.url);
-  let orderId = url.searchParams.get("orderId")?.trim() || "";
+  const orderId = url.searchParams.get("orderId")?.trim() || "";
   const email = url.searchParams.get("email")?.trim().toLowerCase() || "";
 
-  if (!orderId) {
-    return NextResponse.json({ error: "Order ID is required" }, { status: 400 });
+  if (!orderId || !email) {
+    return NextResponse.json({ error: "Order ID and email are both required" }, { status: 400 });
   }
 
-  // Support both full CUID and short NW-XXXXXXXX format
-  // If the user enters a short format, try to find by suffix match
-  let order = await prisma.order.findUnique({
-    where: { id: orderId },
-    select: { id: true, customerEmail: true, status: true },
+  // Accept the full id, or the short "NW-XXXXXXXX" code (last 8 chars of the id).
+  const short = orderId.replace(/^NW-/i, "").replace(/^#/, "").toLowerCase();
+  const candidates = await prisma.order.findMany({
+    where: {
+      customerEmail: { equals: email, mode: "insensitive" },
+      status: { not: "DELETED" },
+      OR: [{ id: orderId }, ...(short.length === 8 ? [{ id: { endsWith: short } }] : [])],
+    },
+    select: { id: true },
+    take: 2,
   });
 
-  // If not found by exact ID, try suffix match (last 8 chars)
-  if (!order) {
-    const cleanId = orderId.replace(/^NW-/i, "").replace(/^#/, "");
-    const allOrders = await prisma.order.findMany({
-      where: { status: { not: "DELETED" } },
-      select: { id: true, customerEmail: true },
-      orderBy: { createdAt: "desc" },
-      take: 100,
-    });
-    order = allOrders.find(
-      (o) => o.id.slice(-8).toUpperCase() === cleanId.toUpperCase()
-    ) as any;
+  // Same response for "wrong id" and "wrong email" so this can't be used to probe orders.
+  if (candidates.length !== 1) {
+    return NextResponse.json({ error: NOT_FOUND }, { status: 404 });
   }
 
-  if (!order || (order as any).status === "DELETED") {
-    return NextResponse.json({ error: "Order not found. Please check your Order ID." }, { status: 404 });
-  }
-
-  // If email provided, verify it matches (privacy protection)
-  if (email && order.customerEmail.toLowerCase() !== email) {
-    return NextResponse.json({ error: "Email does not match this order." }, { status: 403 });
-  }
-
-  return NextResponse.json({ orderId: order.id });
+  return NextResponse.json({ orderId: candidates[0].id });
 }

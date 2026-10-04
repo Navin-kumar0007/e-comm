@@ -1,281 +1,215 @@
-import { sendWhatsAppMessage, buildOrderConfirmationWhatsAppMessage } from "@/lib/whatsapp";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
-import type { Prisma, Product } from "@prisma/client";
-import Razorpay from "razorpay";
-import { sendOrderConfirmation, notifyAdminNewOrder } from "@/lib/email";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
+import { priceCart, CheckoutError } from "@/lib/pricing";
+import {
+  getRazorpay,
+  mockPaymentsAllowed,
+  toPaise,
+  allocateInvoiceNumber,
+  creditOrderRewards,
+  sendOrderConfirmedNotifications,
+  releaseOrderReservation,
+} from "@/lib/orders";
 
-function getRazorpay() {
-  return new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID!,
-    key_secret: process.env.RAZORPAY_KEY_SECRET!,
-  });
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PINCODE_RE = /^[1-9][0-9]{5}$/;
+
+function cleanText(value: unknown, max: number) {
+  return typeof value === "string" ? value.trim().slice(0, max) : "";
+}
+
+function parseShipping(raw: any) {
+  const name = cleanText(raw?.name, 80);
+  const email = cleanText(raw?.email, 120).toLowerCase();
+  let phone = cleanText(raw?.phone, 20).replace(/\D/g, "");
+  if (phone.length === 12 && phone.startsWith("91")) phone = phone.slice(2);
+  const address = cleanText(raw?.address, 250);
+  const city = cleanText(raw?.city, 60);
+  const state = cleanText(raw?.state, 60);
+  const pincode = cleanText(raw?.pincode, 6);
+
+  if (name.length < 2) throw new CheckoutError("Please enter your full name.");
+  if (!EMAIL_RE.test(email)) throw new CheckoutError("Please enter a valid email address.");
+  if (!/^[6-9][0-9]{9}$/.test(phone)) throw new CheckoutError("Please enter a valid 10-digit Indian mobile number.");
+  if (address.length < 5) throw new CheckoutError("Please enter your full street address.");
+  if (!city || !state) throw new CheckoutError("Please enter your city and state.");
+  if (!PINCODE_RE.test(pincode)) throw new CheckoutError("Please enter a valid 6-digit pincode.");
+
+  return { name, email, phone, address, city, state, pincode };
 }
 
 export async function POST(req: Request) {
+  const { allowed } = rateLimit(clientKey(req, "checkout"), 10, 60_000);
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many attempts. Please wait a minute and try again." }, { status: 429 });
+  }
+
+  let reservedOrderId: string | null = null;
   try {
-    console.log("[Checkout] RAZORPAY_KEY_ID exists:", !!process.env.RAZORPAY_KEY_ID);
-    console.log("[Checkout] RAZORPAY_KEY_SECRET exists:", !!process.env.RAZORPAY_KEY_SECRET);
     const session = await auth();
-    let user = null;
-    if (session?.user?.email) {
-      user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-      });
-    }
+    const user = session?.user?.email
+      ? await prisma.user.findUnique({ where: { email: session.user.email } })
+      : null;
 
     const body = await req.json();
-    const { items, shippingDetails, paymentMethod, couponCode, usePoints } = body;
+    const isCod = body.paymentMethod === "cod";
+    const shipping = parseShipping(body.shippingDetails);
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
+    const razorpay = getRazorpay();
+    if (!isCod && !razorpay && !mockPaymentsAllowed()) {
+      return NextResponse.json({ error: "Online payment is temporarily unavailable. Please choose Cash on Delivery." }, { status: 503 });
     }
 
-    // Basic per-item shape validation.
-    for (const item of items) {
-      if (
-        !item ||
-        typeof item.productId !== "string" ||
-        typeof item.quantity !== "number" ||
-        item.quantity <= 0
-      ) {
-        return NextResponse.json({ error: "Invalid cart item" }, { status: 400 });
+    const quote = await priceCart({
+      items: body.items,
+      couponCode: body.couponCode,
+      usePoints: body.usePoints,
+      userPoints: user?.points ?? 0,
+    });
+    // Don't silently charge more than the customer expected.
+    if (quote.couponError) throw new CheckoutError(quote.couponError);
+    if (!isCod && quote.total < 1) {
+      throw new CheckoutError("Online payments must be at least ₹1. Please use fewer points or choose Cash on Delivery.");
+    }
+
+    const order = await prisma.$transaction(async (tx: any) => {
+      // Points: only deduct if the balance still covers it (guards concurrent checkouts).
+      if (user && quote.pointsToDeduct > 0) {
+        const res = await tx.user.updateMany({
+          where: { id: user.id, points: { gte: quote.pointsToDeduct } },
+          data: { points: { decrement: quote.pointsToDeduct } },
+        });
+        if (res.count === 0) throw new CheckoutError("Your points balance changed. Please review your order.", 409);
       }
-    }
 
-    // Ensure a default category exists for custom blends.
-    let defaultCategory = await prisma.category.findFirst();
-    if (!defaultCategory) {
-      defaultCategory = await prisma.category.create({
-        data: {
-          name: "Custom Blends",
-          slug: "custom-blends",
-          description: "Signature bespoke formulations",
-        },
-      });
-    }
+      // Stock: conditional decrement so two buyers can't both take the last unit.
+      for (const line of quote.lines) {
+        if (!line.productId) continue;
+        const res = await tx.product.updateMany({
+          where: { id: line.productId, status: "ACTIVE", stock: { gte: line.quantity } },
+          data: { stock: { decrement: line.quantity } },
+        });
+        if (res.count === 0) throw new CheckoutError(`${line.name} just sold out. Please update your cart.`, 409);
+      }
 
-    // Persist any custom-blend products so orders can reference them.
-    for (const item of items) {
-      if (item.productId.startsWith("custom-")) {
-        const exists = await prisma.product.findUnique({ where: { id: item.productId } });
-        if (!exists) {
-          await prisma.product.create({
+      // Custom blends become hidden (status CUSTOM) products so order history can reference them.
+      const orderItems = [];
+      let blendCategoryId: string | null = null;
+      for (const line of quote.lines) {
+        let productId = line.productId;
+        if (!productId) {
+          if (!blendCategoryId) {
+            const category = await tx.category.upsert({
+              where: { slug: "custom-blends" },
+              update: {},
+              create: { name: "Custom Blends", slug: "custom-blends", description: "Signature bespoke formulations" },
+            });
+            blendCategoryId = category.id;
+          }
+          const id = `custom-${crypto.randomUUID()}`;
+          await tx.product.create({
             data: {
-              id: item.productId,
-              name: item.name || "Custom Spice Blend",
-              slug: item.slug || item.productId,
+              id,
+              name: line.name,
+              slug: id,
               description: "Custom Spice Blend formulation.",
-              price: Number(item.price) || 0,
-              images: JSON.stringify([
-                item.image || "https://placehold.co/600x400.png?text=Custom+Spice+Blend",
-              ]),
-              stock: 9999,
-              status: "ACTIVE",
-              categoryId: defaultCategory.id,
+              price: line.unitPrice,
+              images: JSON.stringify(["https://placehold.co/600x400.png?text=Custom+Spice+Blend"]),
+              weight: line.weight,
+              stock: 0,
+              status: "CUSTOM",
+              categoryId: blendCategoryId,
               tags: "custom,spice,blend",
             },
           });
+          productId = id;
         }
-      }
-    }
-
-    // Resolve authoritative prices from the DB (never trust client prices for
-    // catalogue products). Custom blends fall back to their created price.
-    const productIds = items.map((i: any) => i.productId);
-    const dbProducts = await prisma.product.findMany({
-      where: { id: { in: productIds } },
-    });
-    const priceById = new Map<string, Product>(
-      dbProducts.map((p: Product) => [p.id, p] as const)
-    );
-
-    let subtotal = 0;
-    const orderItems: Array<{ productId: string; quantity: number; price: number; weight: string; productName: string }> = [];
-    for (const item of items) {
-      const product = priceById.get(item.productId);
-      if (!product) {
-        return NextResponse.json(
-          { error: `Product not found: ${item.productId}` },
-          { status: 400 }
-        );
-      }
-      // Enforce stock for catalogue products.
-      if (!item.productId.startsWith("custom-") && product.stock < item.quantity) {
-        return NextResponse.json(
-          { error: `Insufficient stock for ${product.name}` },
-          { status: 409 }
-        );
-      }
-      const unitPrice = (product as any).salePrice ?? product.price;
-      subtotal += unitPrice * item.quantity;
-      orderItems.push({
-        productId: item.productId,
-        quantity: item.quantity,
-        price: unitPrice,
-        weight: item.weight || "150g",
-        productName: product.name, // Persist product name for audit trail
-      });
-    }
-
-    // Loyalty points discount (validated, applied inside the transaction).
-    let discount = 0;
-    let pointsToDeduct = 0;
-    if (usePoints && user && user.points > 0) {
-      const maxPointsDiscount = Math.floor(user.points / 10);
-      const applicablePointsDiscount = Math.min(maxPointsDiscount, subtotal);
-      discount += applicablePointsDiscount;
-      pointsToDeduct = applicablePointsDiscount * 10;
-    }
-
-    // Coupon (validate active + expiry + minimum purchase).
-    let appliedCouponCode: string | null = null;
-    if (couponCode) {
-      const coupon = await prisma.coupon.findUnique({ where: { code: couponCode } });
-      if (coupon && coupon.active) {
-        const notExpired = !coupon.expiryDate || new Date() <= coupon.expiryDate;
-        const meetsMin = !coupon.minPurchase || subtotal >= coupon.minPurchase;
-        if (notExpired && meetsMin) {
-          discount +=
-            coupon.discountType === "PERCENTAGE"
-              ? subtotal * (coupon.discountValue / 100)
-              : coupon.discountValue;
-          appliedCouponCode = coupon.code;
-        }
-      }
-    }
-
-    const finalTotal = Math.max(0, subtotal - discount);
-
-    const name = shippingDetails?.name || user?.name || "Customer";
-    const email = shippingDetails?.email || user?.email || "customer@example.com";
-    const phone = shippingDetails?.phone || "0000000000";
-    const address = shippingDetails?.address || "Address";
-    const city = shippingDetails?.city || "City";
-    const state = shippingDetails?.state || "State";
-    const pincode = shippingDetails?.pincode || "000000";
-
-    // Create the order, decrement stock, and deduct points atomically.
-    const order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      // Deduct loyalty points if applicable
-      if (user && pointsToDeduct > 0) {
-        await tx.user.update({
-          where: { id: user.id },
-          data: { points: { decrement: pointsToDeduct } },
+        orderItems.push({
+          productId,
+          productName: line.name,
+          quantity: line.quantity,
+          price: line.unitPrice,
+          weight: line.weight,
         });
       }
 
-      // Decrement stock for each catalogue product
-      for (const item of orderItems) {
-        if (!item.productId.startsWith("custom-")) {
-          await tx.product.update({
-            where: { id: item.productId },
-            data: { stock: { decrement: item.quantity } },
-          });
-        }
-      }
-
-      return tx.order.create({
+      const created = await tx.order.create({
         data: {
-          userId: user?.id || null,
-          total: finalTotal,
-          status: paymentMethod === "cod" ? "PROCESSING" : "PENDING",
-          paymentMethod: paymentMethod === "cod" ? "COD" : "ONLINE",
-          discount: discount,
-          couponCode: appliedCouponCode,
-          pointsUsed: pointsToDeduct,
-          customerName: name,
-          customerEmail: email,
-          customerPhone: phone,
-          shippingAddress: `${address}, ${city}, ${state}, ${pincode}`,
+          userId: user?.id ?? null,
+          status: isCod ? "PROCESSING" : "PENDING",
+          paymentMethod: isCod ? "COD" : "ONLINE",
+          subtotal: quote.subtotal,
+          discount: quote.couponDiscount + quote.pointsDiscount,
+          couponCode: quote.appliedCouponCode,
+          pointsUsed: quote.pointsToDeduct,
+          shippingFee: quote.shippingFee,
+          taxAmount: quote.taxAmount,
+          total: quote.total,
+          customerName: shipping.name,
+          customerEmail: shipping.email,
+          customerPhone: shipping.phone,
+          shippingAddress: `${shipping.address}, ${shipping.city}, ${shipping.state}, ${shipping.pincode}`,
+          shippingState: shipping.state,
+          invoiceNumber: isCod ? await allocateInvoiceNumber(tx) : null,
           items: { create: orderItems },
         },
       });
+
+      if (isCod) await creditOrderRewards(tx, created);
+      return created;
     });
 
-    if (paymentMethod === "cod") {
-      if (user) {
-        await prisma.$transaction([
-          prisma.user.update({
-            where: { id: user.id },
-            data: { points: { increment: Math.floor(finalTotal * 0.05) } },
-          }),
-          prisma.notification.create({
-            data: {
-              userId: user.id,
-              title: "Order Placed Successfully",
-              message: `Your Cash on Delivery order #${order.id.slice(-8).toUpperCase()} is confirmed.`,
-              type: "ORDER",
-              link: "/account/orders",
-            },
-          }),
-        ]);
-      }
-      try {
-        await sendOrderConfirmation(email, order.id, finalTotal);
-      } catch (err) {
-        console.error("Failed to send order email:", err);
-      }
-
-      if (phone) {
-        try {
-          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
-          const waMsg = buildOrderConfirmationWhatsAppMessage({
-            orderId: order.id,
-            customerName: name,
-            total: finalTotal,
-            paymentMethod: "Cash on Delivery",
-            items: orderItems.map((i) => ({ name: i.productName, quantity: i.quantity, weight: i.weight })),
-            trackingUrl: `${siteUrl}/track/${order.id}`,
-          });
-          await sendWhatsAppMessage({ to: phone, message: waMsg, type: "ORDER_UPDATE" });
-        } catch (waErr) {
-          console.error("WhatsApp COD order confirmation error:", waErr);
-        }
-      }
-      // Notify admin of new order
-      try { await notifyAdminNewOrder(order.id, finalTotal, name, "COD"); } catch (e) { console.error("Admin notification failed:", e); }
-      return NextResponse.json({ success: true, orderId: order.id });
-    }
-
-    // Online payment via Razorpay.
-    console.log("[Checkout] Order created in DB:", order.id, "Total:", finalTotal);
-    const options = {
-      amount: Math.round(finalTotal * 100),
-      currency: "INR",
-      receipt: order.id,
+    const breakdown = {
+      subtotal: quote.subtotal,
+      discount: quote.couponDiscount + quote.pointsDiscount,
+      shipping: quote.shippingFee,
+      tax: quote.taxAmount,
+      total: quote.total,
     };
 
-    console.log("[Checkout] RAZORPAY_KEY_ID value prefix:", process.env.RAZORPAY_KEY_ID?.substring(0, 10));
-    console.log("[Checkout] Taking real Razorpay path:", !!(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_ID !== "rzp_test_mockedkey123"));
-    if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_ID !== "rzp_test_mockedkey123") {
-      try {
-        console.log("[Checkout] Calling Razorpay orders.create with amount:", options.amount);
-        const rzpOrder = await getRazorpay().orders.create(options);
-        console.log("[Checkout] Razorpay order created:", rzpOrder.id);
-        return NextResponse.json({
-          success: true,
-          orderId: order.id,
-          razorpayOrderId: rzpOrder.id,
-          amount: rzpOrder.amount,
-        });
-      } catch (rzpError: any) {
-        console.error("Razorpay Error:", rzpError);
-        return NextResponse.json({ error: `Razorpay Error: ${rzpError.message || rzpError.description || "Invalid API keys"}` }, { status: 400 });
-      }
-    } else {
-      return NextResponse.json({
-        success: true,
-        orderId: order.id,
-        razorpayOrderId: "mock_rzp_" + order.id,
-        amount: options.amount,
-      });
+    if (isCod) {
+      await sendOrderConfirmedNotifications(order.id);
+      return NextResponse.json({ success: true, orderId: order.id, ...breakdown });
     }
+
+    // Online payment: from here on, any failure must release the reservation.
+    reservedOrderId = order.id;
+
+    if (!razorpay) {
+      // Local/dev mock (mockPaymentsAllowed() was checked above).
+      const mockId = `mock_rzp_${order.id}`;
+      await prisma.order.update({ where: { id: order.id }, data: { razorpayOrderId: mockId } });
+      return NextResponse.json({ success: true, orderId: order.id, razorpayOrderId: mockId, amount: toPaise(quote.total), ...breakdown });
+    }
+
+    const rzpOrder = await razorpay.orders.create({
+      amount: toPaise(quote.total),
+      currency: "INR",
+      receipt: order.id,
+      notes: { orderId: order.id },
+    });
+    // Bind the Razorpay order to ours; verify + webhook only accept this id.
+    await prisma.order.update({ where: { id: order.id }, data: { razorpayOrderId: rzpOrder.id } });
+
+    return NextResponse.json({
+      success: true,
+      orderId: order.id,
+      razorpayOrderId: rzpOrder.id,
+      amount: rzpOrder.amount,
+      ...breakdown,
+    });
   } catch (error: any) {
-    const errMsg = error?.message || error?.description || (typeof error === "string" ? error : JSON.stringify(error));
-    console.error("[Checkout] FULL ERROR:", errMsg);
-    console.error("[Checkout] Error stack:", error?.stack);
-    return NextResponse.json({ error: errMsg || "Unknown checkout error" }, { status: 500 });
+    if (reservedOrderId) {
+      await releaseOrderReservation(reservedOrderId, "CANCELLED").catch((e) =>
+        console.error("[Checkout] Failed to release reservation:", e)
+      );
+    }
+    if (error instanceof CheckoutError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    console.error("[Checkout] Unexpected error:", error);
+    return NextResponse.json({ error: "We couldn't place your order. Please try again." }, { status: 500 });
   }
 }

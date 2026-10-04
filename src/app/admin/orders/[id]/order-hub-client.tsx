@@ -2,23 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Save, Loader2, Printer, Leaf, MapPin, Phone, Mail, Box, IndianRupee } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Printer, MapPin, Phone, Mail, Box, IndianRupee } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { updateInvoiceNotesAction } from "@/app/actions/admin-orders";
 import Barcode from "@/components/ui/barcode";
+import { InvoiceDocument } from "@/components/invoice/invoice-document";
+import { computeInvoice, type InvoiceSettings } from "@/lib/invoice";
 
-export default function OrderHubClient({ order }: { order: any }) {
+export default function OrderHubClient({ order, settings }: { order: any; settings: InvoiceSettings }) {
   const [activeTab, setActiveTab] = useState<"DETAILS" | "INVOICE" | "DISPATCH">("INVOICE");
   const [invoiceSize, setInvoiceSize] = useState<"A4" | "THERMAL">("A4");
   const [invoiceNotes, setInvoiceNotes] = useState(order.invoiceNotes || "");
   const [isSaving, setIsSaving] = useState(false);
 
-  const subtotal = order.items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
-  const tax = subtotal * 0.05;
-  const shipping = subtotal > 999 ? 0 : 50;
-  const discount = Math.max(0, (subtotal + shipping + tax) - order.total);
+  const inv = computeInvoice(order, settings);
 
   const handleSaveNotes = async () => {
     setIsSaving(true);
@@ -139,107 +138,20 @@ export default function OrderHubClient({ order }: { order: any }) {
             
             {/* A4 INVOICE LAYOUT */}
             {invoiceSize === "A4" && (
-              <div className="w-full max-w-[210mm] min-h-[297mm] bg-white text-black p-10 sm:p-12 rounded-xl shadow-lg border print:shadow-none print:border-none print:p-0 print:mx-auto">
-                <div className="flex justify-between items-start border-b pb-8 mb-8">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2 text-green-700">
-                      <Leaf className="h-8 w-8" />
-                      <span className="font-heading text-3xl font-bold">Spicy Nuts</span>
-                    </div>
-                    <p className="text-sm text-gray-500">Pure, Natural, Organic Spices</p>
-                    <p className="text-sm text-gray-500">GSTIN: 27AABCU9603R1ZM</p>
-                  </div>
-                  <div className="text-right">
-                    <h1 className="text-4xl font-heading font-black text-gray-900 uppercase tracking-wider mb-2">TAX INVOICE</h1>
-                    <p className="text-sm"><span className="font-bold text-gray-500">Invoice #:</span> INV-{order.id.slice(-8).toUpperCase()}</p>
-                    <p className="text-sm"><span className="font-bold text-gray-500">Date:</span> {new Date(order.createdAt).toLocaleDateString('en-IN')}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-8 mb-10 bg-gray-50/50 p-6 rounded-xl">
-                  <div>
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Billed To</h3>
-                    <p className="font-bold text-lg text-gray-900">{order.customerName}</p>
-                    <p className="text-sm text-gray-600">{order.customerEmail}</p>
-                    <p className="text-sm text-gray-600">{order.customerPhone}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Shipped To</h3>
-                    <p className="text-sm text-gray-800 font-medium whitespace-pre-line leading-relaxed">{order.shippingAddress}</p>
-                  </div>
-                </div>
-
-                <table className="w-full text-left mb-8 border-collapse">
-                  <thead>
-                    <tr className="border-b-2 border-black/10">
-                      <th className="py-3 px-2 text-sm font-bold text-gray-500 uppercase tracking-wider">Item Description</th>
-                      <th className="py-3 px-2 text-sm font-bold text-gray-500 uppercase tracking-wider text-center">Qty</th>
-                      <th className="py-3 px-2 text-sm font-bold text-gray-500 uppercase tracking-wider text-right">Price</th>
-                      <th className="py-3 px-2 text-sm font-bold text-gray-500 uppercase tracking-wider text-right">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {order.items.map((item: any, i: number) => (
-                      <tr key={i}>
-                        <td className="py-4 px-2">
-                          <p className="font-bold text-gray-900">{item.product?.name || "Single Estate Gourmet Item"}</p>
-                          <p className="text-xs font-medium text-gray-500">Weight: {item.weight}</p>
-                        </td>
-                        <td className="py-4 px-2 text-center font-medium text-gray-700">{item.quantity}</td>
-                        <td className="py-4 px-2 text-right text-gray-600">₹{item.price.toFixed(2)}</td>
-                        <td className="py-4 px-2 text-right font-bold text-gray-900">
-                          ₹{(item.price * item.quantity).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                <div className="flex justify-end pt-4 mb-16">
-                  <div className="w-72 space-y-3 bg-gray-50 p-6 rounded-xl">
-                    <div className="flex justify-between text-sm text-gray-600 font-medium">
-                      <span>Subtotal</span>
-                      <span>₹{subtotal.toFixed(2)}</span>
-                    </div>
-                    {discount > 0 && (
-                      <div className="flex justify-between text-sm text-emerald-700 font-bold">
-                        <span>Discount / Coupon</span>
-                        <span>-₹{discount.toFixed(2)}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-sm text-gray-600 font-medium">
-                      <span>Shipping</span>
-                      <span>{shipping === 0 ? "Free" : `₹${shipping.toFixed(2)}`}</span>
-                    </div>
-                    <div className="flex justify-between text-sm text-gray-600 font-medium pb-3 border-b border-gray-200">
-                      <span>GST (5%)</span>
-                      <span>₹{tax.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-xl font-black text-gray-900 pt-1">
-                      <span>Total</span>
-                      <span>₹{order.total.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-8 border-t-2 border-black/10 text-center space-y-2">
-                  <p className="font-medium text-gray-800 text-lg">{invoiceNotes || "Thank you for your order!"}</p>
-                  <p className="text-xs text-gray-500">For support, email us at spicynuts1973@gmail.com</p>
-                </div>
-              </div>
+              <InvoiceDocument order={order} settings={settings} notes={invoiceNotes} />
             )}
 
             {/* THERMAL RECEIPT LAYOUT */}
             {invoiceSize === "THERMAL" && (
               <div className="w-[80mm] min-h-[150mm] bg-white text-black p-4 rounded-xl shadow-lg border print:shadow-none print:border-none print:p-0 font-mono text-sm leading-tight mx-auto">
                 <div className="text-center mb-6 border-b border-dashed border-gray-400 pb-4">
-                  <h1 className="font-black text-xl mb-1 uppercase tracking-tight">Spicy Nuts</h1>
-                  <p className="text-xs">Organic Spices</p>
-                  <p className="text-xs">GST: 27AABCU9603R1ZM</p>
+                  <h1 className="font-black text-xl mb-1 uppercase tracking-tight">{settings.storeName}</h1>
+                  {settings.legalName && <p className="text-xs">{settings.legalName}</p>}
+                  {settings.gstin && <p className="text-xs">GSTIN: {settings.gstin}</p>}
                 </div>
 
                 <div className="mb-4 text-xs">
-                  <p><strong>Order:</strong> INV-{order.id.slice(-6).toUpperCase()}</p>
+                  <p><strong>{inv.isFinalInvoice ? "Invoice" : "Order"}:</strong> {inv.invoiceNumber}</p>
                   <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString('en-IN')} {new Date(order.createdAt).toLocaleTimeString('en-IN', {hour: '2-digit', minute:'2-digit'})}</p>
                   <p className="mt-2"><strong>Customer:</strong> {order.customerName}</p>
                   <p><strong>Phone:</strong> {order.customerPhone}</p>
@@ -255,7 +167,7 @@ export default function OrderHubClient({ order }: { order: any }) {
                   {order.items.map((item: any, i: number) => (
                     <div key={i} className="flex justify-between text-xs mb-1.5 items-start">
                       <div className="w-1/2 pr-1">
-                        <span className="block truncate">{item.product?.name || "Single Estate Gourmet Item"}</span>
+                        <span className="block truncate">{item.productName || item.product?.name || "Product"}</span>
                         <span className="text-[10px] text-gray-500">{item.weight} @ {item.price}</span>
                       </div>
                       <span className="w-1/4 text-center mt-1">{item.quantity}</span>
@@ -265,13 +177,15 @@ export default function OrderHubClient({ order }: { order: any }) {
                 </div>
 
                 <div className="space-y-1 mb-4 text-xs border-b border-dashed border-gray-400 pb-4">
-                  <div className="flex justify-between"><span>Subtotal:</span><span>{subtotal.toFixed(2)}</span></div>
-                  {discount > 0 && <div className="flex justify-between font-bold"><span>Discount:</span><span>-{discount.toFixed(2)}</span></div>}
-                  <div className="flex justify-between"><span>Shipping:</span><span>{shipping.toFixed(2)}</span></div>
-                  <div className="flex justify-between"><span>Tax (5%):</span><span>{tax.toFixed(2)}</span></div>
+                  <div className="flex justify-between"><span>Subtotal:</span><span>{inv.subtotal.toFixed(2)}</span></div>
+                  {inv.discount > 0 && <div className="flex justify-between font-bold"><span>Discount:</span><span>-{inv.discount.toFixed(2)}</span></div>}
+                  <div className="flex justify-between"><span>Shipping:</span><span>{inv.shipping.toFixed(2)}</span></div>
                   <div className="flex justify-between text-base font-black mt-2 pt-2 border-t border-gray-200">
-                    <span>TOTAL:</span><span>₹{order.total.toFixed(2)}</span>
+                    <span>TOTAL:</span><span>₹{inv.total.toFixed(2)}</span>
                   </div>
+                  {inv.taxLines.map(line => (
+                    <div key={line.label} className="flex justify-between text-[10px]"><span>incl. {line.label}:</span><span>{line.amount.toFixed(2)}</span></div>
+                  ))}
                 </div>
 
                 <div className="text-center text-xs space-y-3">

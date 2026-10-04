@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { BlendSpec } from '@/lib/blend-pricing';
 
 export interface CartItem {
   productId: string;
@@ -11,6 +12,7 @@ export interface CartItem {
   image: string;
   quantity: number;
   weight: string;
+  blend?: BlendSpec; // Only for custom blends; the server re-prices from this.
 }
 
 interface CartState {

@@ -7,30 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useCartStore } from '@/lib/store/cart-store';
-
-const BASES = [
-  { id: 'turmeric', name: 'Golden Turmeric', hex: '#EAB308', rate: 2.5 },
-  { id: 'coriander', name: 'Roasted Coriander', hex: '#B45309', rate: 2.0 },
-  { id: 'cumin', name: 'Earthy Cumin', hex: '#57534E', rate: 3.0 },
-  { id: 'fennel', name: 'Fennel Seed', hex: '#A3E635', rate: 2.8 },
-  { id: 'mustard', name: 'Black Mustard', hex: '#3F3F46', rate: 3.2 },
-];
-
-const HEATS = [
-  { id: 'mild', name: 'Mild Paprika', hex: '#F87171', rate: 3.0 },
-  { id: 'medium', name: 'Kashmiri Chili', hex: '#DC2626', rate: 3.5 },
-  { id: 'hot', name: 'Guntur Chili', hex: '#991B1B', rate: 4.0 },
-  { id: 'ghost', name: 'Ghost Pepper', hex: '#EA580C', rate: 5.5 },
-  { id: 'pepper', name: 'Black Pepper', hex: '#18181B', rate: 3.8 },
-];
-
-const AROMATICS = [
-  { id: 'cardamom', name: 'Green Cardamom', hex: '#86EFAC', rate: 5.0 },
-  { id: 'clove', name: 'Rich Clove', hex: '#292524', rate: 6.0 },
-  { id: 'cinnamon', name: 'Sweet Cinnamon', hex: '#9A3412', rate: 4.5 },
-  { id: 'anise', name: 'Star Anise', hex: '#78350F', rate: 5.8 },
-  { id: 'nutmeg', name: 'Royal Nutmeg', hex: '#7C2D12', rate: 6.2 },
-];
+import { BASES, HEATS, AROMATICS, BLEND_WEIGHT, calculateBlendPrice, blendDisplayName, parseBlendSpec } from '@/lib/blend-pricing';
 
 const FLAVOR_COEFFS: Record<string, { earthy: number; spicy: number; sweet: number; herbal: number; pungent: number }> = {
   turmeric: { earthy: 0.9, spicy: 0.2, sweet: 0.1, herbal: 0.3, pungent: 0.8 },
@@ -171,27 +148,36 @@ export function SpiceMixer() {
   }, [base, heat, aromatic, basePct, heatPct, aromaticPct]);
 
   // Compute Dynamic Price based on spice premium weights & ratio shares
-  const calculatedPrice = useMemo(() => {
-    const baseCost = basePct * base.rate;
-    const heatCost = heatPct * heat.rate;
-    const aromaticCost = aromaticPct * aromatic.rate;
-    const rawPrice = Math.round(baseCost + heatCost + aromaticCost);
-    return Math.max(249, rawPrice); // packaging baseline floor is 249
-  }, [basePct, heatPct, aromaticPct, base, heat, aromatic]);
+  const calculatedPrice = useMemo(
+    () => calculateBlendPrice({ base: base.id, heat: heat.id, aromatic: aromatic.id, basePct, heatPct, aromaticPct }) ?? 0,
+    [basePct, heatPct, aromaticPct, base, heat, aromatic]
+  );
 
   const handleAddToCart = () => {
-    if (!blendName.trim()) {
-      toast.error('Please name your custom blend!');
+    // Same validation the server applies at checkout.
+    const parsed = parseBlendSpec({
+      blendName,
+      base: base.id,
+      heat: heat.id,
+      aromatic: aromatic.id,
+      basePct,
+      heatPct,
+      aromaticPct,
+    });
+    if (!parsed) {
+      toast.error('Please name your custom blend (letters and numbers only)!');
       return;
     }
-    
+
+    const id = 'custom-' + Date.now();
     addItem({
-      productId: 'custom-' + Date.now(),
-      slug: 'custom-' + Date.now(),
-      name: 'Custom Blend: ' + blendName + ' (' + basePct + '% ' + base.name + ' / ' + heatPct + '% ' + heat.name + ' / ' + aromaticPct + '% ' + aromatic.name + ')',
-      price: calculatedPrice,
-      weight: '150g',
-      image: 'https://placehold.co/600x400.png?text=Custom+Spice+Blend'
+      productId: id,
+      slug: id,
+      name: blendDisplayName(parsed.spec),
+      price: parsed.price,
+      weight: BLEND_WEIGHT,
+      image: 'https://placehold.co/600x400.png?text=Custom+Spice+Blend',
+      blend: parsed.spec,
     });
     
     toast.success(blendName + ' added to cart!');

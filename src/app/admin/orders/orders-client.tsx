@@ -115,6 +115,8 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
       Shipped: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400",
       Confirmed: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400",
       Cancelled: "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400",
+      Processing: "bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400",
+      Expired: "bg-zinc-100 text-zinc-500 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-500",
       Pending: "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-400",
     };
     return m[status] || m.Pending;
@@ -122,11 +124,13 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
 
   const tabs = [
     { key: 'all', label: 'All', count: orders.length },
-    { key: 'Pending', label: 'Pending', count: orders.filter(o => o.status === 'Pending').length },
+    { key: 'Pending', label: 'Awaiting Payment', count: orders.filter(o => o.status === 'Pending').length },
+    { key: 'Processing', label: 'Processing', count: orders.filter(o => o.status === 'Processing').length },
     { key: 'Confirmed', label: 'Confirmed', count: orders.filter(o => o.status === 'Confirmed').length },
     { key: 'Shipped', label: 'Shipped', count: orders.filter(o => o.status === 'Shipped').length },
     { key: 'Delivered', label: 'Delivered', count: orders.filter(o => o.status === 'Delivered').length },
     { key: 'Cancelled', label: 'Cancelled', count: orders.filter(o => o.status === 'Cancelled').length },
+    { key: 'Expired', label: 'Expired', count: orders.filter(o => o.status === 'Expired').length },
   ];
 
   return (
@@ -221,12 +225,14 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
                       <td className="px-4 py-4 font-medium text-foreground whitespace-nowrap">₹{order.total.toFixed(2)}</td>
                       <td className="px-4 py-4"><Badge variant="outline" className={getStatusColor(order.status)}>{order.status}</Badge></td>
                       <td className="px-4 py-4">
-                        <select className="text-sm bg-transparent border rounded-lg px-2 py-1 font-medium focus:ring-1 focus:ring-primary cursor-pointer text-foreground" value={order.status} onChange={e => handleStatusChange(order.id, e.target.value)}>
-                          <option value="Pending">Pending</option>
+                        <select disabled={order.status === 'Expired'} className="text-sm bg-transparent border rounded-lg px-2 py-1 font-medium focus:ring-1 focus:ring-primary cursor-pointer text-foreground disabled:opacity-60" value={order.status} onChange={e => handleStatusChange(order.id, e.target.value)}>
+                          <option value="Pending" disabled>Awaiting Payment</option>
+                          <option value="Processing">Processing</option>
                           <option value="Confirmed">Confirmed</option>
                           <option value="Shipped">Shipped</option>
                           <option value="Delivered">Delivered</option>
                           <option value="Cancelled">Cancelled</option>
+                          {order.status === 'Expired' && <option value="Expired">Expired</option>}
                         </select>
                       </td>
                       <td className="px-4 py-4 text-right">

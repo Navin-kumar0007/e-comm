@@ -21,6 +21,7 @@ export async function POST(req: Request) {
 
     const products = await prisma.product.findMany({
       where: {
+        status: 'ACTIVE',
         OR: keywords.map(kw => ({ name: { contains: kw } }))
       }
     });

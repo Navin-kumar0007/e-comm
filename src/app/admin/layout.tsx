@@ -90,10 +90,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
            <div className="flex items-center gap-4">
              {/* Mobile Hamburger */}
              <Sheet>
-               <SheetTrigger asChild>
-                 <button className="md:hidden p-2 -ml-2 text-muted-foreground hover:text-foreground">
-                   <Menu className="w-5 h-5" />
-                 </button>
+               <SheetTrigger
+                 aria-label="Open menu"
+                 className="md:hidden p-2 -ml-2 text-muted-foreground hover:text-foreground"
+               >
+                 <Menu className="w-5 h-5" />
                </SheetTrigger>
                <SheetContent side="left" className="w-64 p-0 flex flex-col border-r-0" showCloseButton={false}>
                  <div className="p-6 border-b border-border/50 flex items-center gap-2">
