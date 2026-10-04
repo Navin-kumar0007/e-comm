@@ -3,11 +3,10 @@ import { prisma } from "@/lib/db/prisma";
 import { sendOrderConfirmation, notifyAdminNewOrder } from "@/lib/email";
 import { sendWhatsAppMessage, buildOrderConfirmationWhatsAppMessage } from "@/lib/whatsapp";
 import { getStoreSettings } from "@/lib/store-settings";
+import { logOrderEvent } from "@/lib/order-events";
 
 /** How long an unpaid online order keeps its stock reserved. */
 export const PAYMENT_WINDOW_MINUTES = 30;
-
-const CASHBACK_RATE = 0.05;
 
 export function getRazorpay() {
   const key_id = process.env.RAZORPAY_KEY_ID;
@@ -84,13 +83,20 @@ export async function sendOrderConfirmedNotifications(orderId: string) {
   }
 }
 
-/** Cashback points + in-app notification for a confirmed order (inside a tx). */
+/**
+ * In-app notification for a confirmed order (inside a tx). Cashback is NOT
+ * credited here — it's credited on delivery (see lib/order-status.ts), so
+ * cancelled / refused COD orders never earn points.
+ */
 export async function creditOrderRewards(tx: any, order: { id: string; userId: string | null; total: number; paymentMethod: string }) {
-  if (!order.userId) return;
-  await tx.user.update({
-    where: { id: order.userId },
-    data: { points: { increment: Math.floor(order.total * CASHBACK_RATE) } },
+  await logOrderEvent(tx, {
+    orderId: order.id,
+    type: "PAYMENT",
+    toStatus: "PROCESSING",
+    message: order.paymentMethod === "COD" ? "Cash on Delivery order placed" : "Online payment received",
+    actor: "system",
   });
+  if (!order.userId) return;
   await tx.notification.create({
     data: {
       userId: order.userId,
@@ -166,6 +172,20 @@ export async function markOrderPaid(params: { orderId: string; razorpayOrderId: 
   if (result.ok && !result.alreadyProcessed) {
     await sendOrderConfirmedNotifications(result.orderId);
   }
+
+  if (!result.ok && result.reason === "ORDER_CLOSED") {
+    // Customer paid for an order that was already cancelled: give the money back automatically.
+    const order = await prisma.order.findUnique({ where: { id: params.orderId } });
+    if (order && !order.paymentId) {
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { paymentId: params.paymentId, razorpayOrderId: params.razorpayOrderId, paidAt: new Date() },
+      });
+      const { issueRefund } = await import("@/lib/refunds"); // dynamic: refunds.ts imports this file
+      const refund = await issueRefund({ orderId: order.id, reason: "Payment received after order was closed", actor: "system" });
+      if (!refund.ok) console.error(`[PAYMENT] Auto-refund failed for closed order ${order.id}: ${refund.error}`);
+    }
+  }
   return result;
 }
 
@@ -178,9 +198,17 @@ export async function releaseOrderReservation(orderId: string, newStatus: "EXPIR
   return prisma.$transaction(async (tx: any) => {
     const claimed = await tx.order.updateMany({
       where: { id: orderId, status: "PENDING", paymentId: null },
-      data: { status: newStatus },
+      data: { status: newStatus, cashbackPending: false },
     });
     if (claimed.count === 0) return false;
+    await logOrderEvent(tx, {
+      orderId,
+      type: "STATUS",
+      fromStatus: "PENDING",
+      toStatus: newStatus,
+      message: newStatus === "EXPIRED" ? "Payment not completed in time — stock released" : "Checkout failed — stock released",
+      actor: "system",
+    });
 
     const order = await tx.order.findUnique({ where: { id: orderId }, include: { items: true } });
     for (const item of order.items) {

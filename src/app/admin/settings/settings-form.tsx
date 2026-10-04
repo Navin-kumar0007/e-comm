@@ -11,7 +11,9 @@ import { toast } from "sonner";
 
 type SettingsTab = 'general' | 'shipping' | 'tax';
 
-export default function SettingsForm({ initialSettings }: { initialSettings: any }) {
+type ProviderInfo = { id: string; name: string; configured: boolean };
+
+export default function SettingsForm({ initialSettings, providers }: { initialSettings: any; providers: ProviderInfo[] }) {
   const [settings, setSettings] = useState(initialSettings);
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
   const [isSaving, setIsSaving] = useState(false);
@@ -41,9 +43,24 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     setIsSaving(true);
     const fd = new FormData(e.currentTarget);
     try {
+      const text = (k: string) => ((fd.get(k) as string) || "").trim() || null;
       const data = {
         freeShippingThreshold: Number(fd.get("freeThreshold")),
         flatShippingRate: Number(fd.get("flatRate")),
+        shippingProvider: (fd.get("shippingProvider") as string) || "MANUAL",
+        pickupName: text("pickupName"),
+        pickupPhone: text("pickupPhone"),
+        pickupAddress: text("pickupAddress"),
+        pickupCity: text("pickupCity"),
+        pickupState: text("pickupState"),
+        pickupPincode: text("pickupPincode"),
+        defaultPackageWeightGrams: Number(fd.get("defaultPackageWeightGrams")),
+        packageLengthCm: Number(fd.get("packageLengthCm")),
+        packageBreadthCm: Number(fd.get("packageBreadthCm")),
+        packageHeightCm: Number(fd.get("packageHeightCm")),
+        codEnabled: fd.get("codEnabled") === "on",
+        codMaxOrderValue: Number(fd.get("codMaxOrderValue")),
+        returnWindowHours: Number(fd.get("returnWindowHours")),
       };
       const res = await updateAdminSettingsAction(data);
       if (res && "error" in res) {
@@ -141,6 +158,53 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                   <Label>Flat Shipping Rate (₹)</Label>
                   <Input name="flatRate" type="number" defaultValue={settings.flatShippingRate} className="rounded-xl" />
                   <p className="text-xs text-muted-foreground">Applied to orders below the free shipping threshold</p>
+                </div>
+
+                <h3 className="font-semibold pt-4 border-t">Delivery Partner</h3>
+                <div className="space-y-2">
+                  <Label>Default partner for booking &amp; pincode checks</Label>
+                  <select name="shippingProvider" defaultValue={settings.shippingProvider ?? "MANUAL"} className="w-full h-10 px-3 rounded-xl border border-input bg-background text-sm">
+                    {providers.map(p => (
+                      <option key={p.id} value={p.id} disabled={!p.configured}>
+                        {p.name}{p.configured ? "" : " — add API credentials to enable"}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-muted-foreground">Manual = you book with any courier and paste the AWB. API partners book, print labels and track automatically.</p>
+                </div>
+
+                <h3 className="font-semibold pt-4 border-t">Pickup Address (warehouse)</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2"><Label>Contact / Warehouse Name</Label><Input name="pickupName" defaultValue={settings.pickupName ?? ""} className="rounded-xl" /></div>
+                  <div className="space-y-2"><Label>Pickup Phone</Label><Input name="pickupPhone" defaultValue={settings.pickupPhone ?? ""} className="rounded-xl" /></div>
+                  <div className="space-y-2 sm:col-span-2"><Label>Address</Label><Input name="pickupAddress" defaultValue={settings.pickupAddress ?? ""} className="rounded-xl" /></div>
+                  <div className="space-y-2"><Label>City</Label><Input name="pickupCity" defaultValue={settings.pickupCity ?? ""} className="rounded-xl" /></div>
+                  <div className="space-y-2"><Label>State</Label><Input name="pickupState" defaultValue={settings.pickupState ?? ""} className="rounded-xl" /></div>
+                  <div className="space-y-2"><Label>Pincode</Label><Input name="pickupPincode" inputMode="numeric" maxLength={6} defaultValue={settings.pickupPincode ?? ""} className="rounded-xl" /></div>
+                </div>
+
+                <h3 className="font-semibold pt-4 border-t">Package Defaults</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="space-y-2"><Label>Min weight (g)</Label><Input name="defaultPackageWeightGrams" type="number" min={50} defaultValue={settings.defaultPackageWeightGrams ?? 500} className="rounded-xl" /></div>
+                  <div className="space-y-2"><Label>Length (cm)</Label><Input name="packageLengthCm" type="number" min={1} defaultValue={settings.packageLengthCm ?? 20} className="rounded-xl" /></div>
+                  <div className="space-y-2"><Label>Breadth (cm)</Label><Input name="packageBreadthCm" type="number" min={1} defaultValue={settings.packageBreadthCm ?? 15} className="rounded-xl" /></div>
+                  <div className="space-y-2"><Label>Height (cm)</Label><Input name="packageHeightCm" type="number" min={1} defaultValue={settings.packageHeightCm ?? 10} className="rounded-xl" /></div>
+                </div>
+
+                <h3 className="font-semibold pt-4 border-t">Cash on Delivery &amp; Returns</h3>
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" name="codEnabled" defaultChecked={settings.codEnabled ?? true} className="w-4 h-4" /> Offer Cash on Delivery
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Max COD order value (₹)</Label>
+                    <Input name="codMaxOrderValue" type="number" min={0} defaultValue={settings.codMaxOrderValue ?? 5000} className="rounded-xl" />
+                    <p className="text-xs text-muted-foreground">Bigger orders must pay online (limits RTO losses).</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Return window (hours after delivery)</Label>
+                    <Input name="returnWindowHours" type="number" min={0} defaultValue={settings.returnWindowHours ?? 48} className="rounded-xl" />
+                  </div>
                 </div>
               </div>
               <div className="pt-4 flex justify-end">

@@ -58,6 +58,13 @@ const baseStyles = `
   border-radius: 12px;
 `;
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.spicynuts.in';
+
+/** Escape customer-provided text before putting it into email HTML. */
+function esc(value: string) {
+  return value.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+}
+
 const headerHtml = `
   <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #c59b27;">
     <h2 style="margin: 0; color: #052c1e; font-size: 24px;">✦ Spicy Nuts ✦</h2>
@@ -122,14 +129,14 @@ export async function sendOrderDelivered(email: string, orderId: string) {
   `);
 }
 
-export async function sendOrderCancelled(email: string, orderId: string) {
+export async function sendOrderCancelled(email: string, orderId: string, wasPrepaid = true) {
   const orderNum = orderId.slice(-8).toUpperCase();
   return sendEmail(email, `Order Cancelled — #${orderNum}`, `
     <div style="${baseStyles}">
       ${headerHtml}
       <h1 style="color: #052c1e; font-size: 20px;">Order Cancelled</h1>
       <p>Your order <strong>#${orderNum}</strong> has been cancelled.</p>
-      <p>If you paid online, a refund will be processed within 5-7 business days.</p>
+      ${wasPrepaid ? '<p>Your refund has been initiated and will reach your original payment method within 5-7 business days.</p>' : ''}
       <p>If this was a mistake or you'd like to reorder, visit our store anytime.</p>
       <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
     </div>
@@ -147,7 +154,7 @@ export async function notifyAdminNewOrder(orderId: string, total: number, custom
       <h1 style="color: #052c1e; font-size: 20px;">New Order Received! 🛒</h1>
       <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
         <p style="margin: 4px 0;"><strong>Order:</strong> #${orderNum}</p>
-        <p style="margin: 4px 0;"><strong>Customer:</strong> ${customerName}</p>
+        <p style="margin: 4px 0;"><strong>Customer:</strong> ${esc(customerName)}</p>
         <p style="margin: 4px 0;"><strong>Amount:</strong> ₹${total.toFixed(2)}</p>
         <p style="margin: 4px 0;"><strong>Payment:</strong> ${payLabel}</p>
       </div>
@@ -165,12 +172,85 @@ export async function notifyAdminContact(name: string, email: string, message: s
       ${headerHtml}
       <h1 style="color: #052c1e; font-size: 20px;">New Message Received 📬</h1>
       <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
-        <p style="margin: 4px 0;"><strong>Name:</strong> ${name}</p>
-        <p style="margin: 4px 0;"><strong>Email:</strong> ${email}</p>
+        <p style="margin: 4px 0;"><strong>Name:</strong> ${esc(name)}</p>
+        <p style="margin: 4px 0;"><strong>Email:</strong> ${esc(email)}</p>
         <hr style="border: 0; border-top: 1px solid #e3dec9; margin: 12px 0;" />
-        <p style="margin: 4px 0; white-space: pre-wrap;">${message}</p>
+        <p style="margin: 4px 0; white-space: pre-wrap;">${esc(message)}</p>
       </div>
-      <p>Reply directly to the customer at <a href="mailto:${email}" style="color: #c59b27;">${email}</a>.</p>
+      <p>Reply directly to the customer at ${esc(email)}.</p>
     </div>
   `);
+}
+
+export async function sendRefundInitiated(email: string, orderId: string, amount: number, method: 'RAZORPAY' | 'MANUAL') {
+  const orderNum = orderId.slice(-8).toUpperCase();
+  return sendEmail(email, `Refund Initiated — #${orderNum}`, `
+    <div style="${baseStyles}">
+      ${headerHtml}
+      <h1 style="color: #052c1e; font-size: 20px;">Refund Initiated</h1>
+      <p>We have initiated a refund of <strong>₹${amount.toFixed(2)}</strong> for order <strong>#${orderNum}</strong>.</p>
+      <p>${method === 'RAZORPAY'
+        ? 'It will reach your original payment method within 5-7 business days.'
+        : 'As this was a Cash on Delivery order, our team will contact you for your UPI / bank details and transfer it within 7-10 business days.'}</p>
+      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
+    </div>
+  `);
+}
+
+export async function sendReturnUpdate(email: string, orderId: string, status: 'REQUESTED' | 'APPROVED' | 'REJECTED' | 'RESOLVED', note?: string | null) {
+  const orderNum = orderId.slice(-8).toUpperCase();
+  const lines: Record<typeof status, string> = {
+    REQUESTED: 'We have received your return request and will review it within 24 hours.',
+    APPROVED: 'Your return request has been approved. We will arrange a refund or replacement shortly.',
+    REJECTED: 'Unfortunately we could not approve your return request.',
+    RESOLVED: 'Your return request has been resolved.',
+  };
+  return sendEmail(email, `Return Request ${status === 'REQUESTED' ? 'Received' : status.charAt(0) + status.slice(1).toLowerCase()} — #${orderNum}`, `
+    <div style="${baseStyles}">
+      ${headerHtml}
+      <h1 style="color: #052c1e; font-size: 20px;">Return Request Update</h1>
+      <p>Order <strong>#${orderNum}</strong>: ${lines[status]}</p>
+      ${note ? `<p style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #e3dec9;">${esc(note)}</p>` : ''}
+      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
+    </div>
+  `);
+}
+
+export async function sendPasswordReset(email: string, resetUrl: string) {
+  return sendEmail(email, 'Reset your Spicy Nuts password', `
+    <div style="${baseStyles}">
+      ${headerHtml}
+      <h1 style="color: #052c1e; font-size: 20px; text-align: center;">Reset Your Password</h1>
+      <p>We received a request to reset your password. This link is valid for <strong>1 hour</strong>.</p>
+      <div style="text-align: center; margin: 24px 0;">
+        <a href="${resetUrl}" style="display: inline-block; background: #052c1e; color: #fcfbf7; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+          Reset Password
+        </a>
+      </div>
+      <p style="color: #666; font-size: 13px;">If you didn't request this, you can ignore this email — your password won't change.</p>
+      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
+    </div>
+  `);
+}
+
+export async function notifyAdminReturnRequest(orderId: string, customerName: string, reason: string, details: string) {
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM?.match(/<(.+)>/)?.[1] || 'spicynuts1973@gmail.com';
+  const orderNum = orderId.slice(-8).toUpperCase();
+  return sendEmail(adminEmail, `↩️ Return request — #${orderNum}`, `
+    <div style="${baseStyles}">
+      ${headerHtml}
+      <h1 style="color: #052c1e; font-size: 20px;">New Return Request</h1>
+      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
+        <p style="margin: 4px 0;"><strong>Order:</strong> #${orderNum}</p>
+        <p style="margin: 4px 0;"><strong>Customer:</strong> ${esc(customerName)}</p>
+        <p style="margin: 4px 0;"><strong>Reason:</strong> ${esc(reason)}</p>
+        <p style="margin: 4px 0; white-space: pre-wrap;">${esc(details)}</p>
+      </div>
+      <p><a href="${SITE_URL}/admin/returns" style="color: #c59b27; font-weight: bold;">Review in Admin →</a></p>
+    </div>
+  `);
+}
+
+export function siteUrl() {
+  return SITE_URL;
 }

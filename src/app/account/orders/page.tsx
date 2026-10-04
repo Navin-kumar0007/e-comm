@@ -1,7 +1,11 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { redirect } from 'next/navigation';
-import { Package, Truck, CheckCircle, Clock } from 'lucide-react';
+import { Package, Truck, CheckCircle, Clock, RotateCcw, IndianRupee } from 'lucide-react';
+import { OrderActions } from './order-actions';
+import { getStoreSettings } from '@/lib/store-settings';
+import { CUSTOMER_CANCELLABLE, ORDER_STATUS_LABELS, type OrderStatus } from '@/lib/order-status-rules';
+import { SHIPMENT_STATUS_LABELS, type ShipmentStatus } from '@/lib/shipping/status';
 
 export const metadata = {
   title: 'My Orders - Spicy Nuts',
@@ -11,11 +15,12 @@ function OrderTimeline({ status }: { status: string }) {
   const steps = [
     { id: 'PENDING', label: 'Order Placed', icon: Clock },
     { id: 'PROCESSING', label: 'Processing', icon: Package },
+    { id: 'CONFIRMED', label: 'Packed', icon: Package },
     { id: 'SHIPPED', label: 'Shipped', icon: Truck },
     { id: 'DELIVERED', label: 'Delivered', icon: CheckCircle },
   ];
 
-  const currentIndex = steps.findIndex(s => s.id === status) || 0;
+  const currentIndex = Math.max(0, steps.findIndex(s => s.id === status));
 
   return (
     <div className="relative mt-6 mb-8">
@@ -47,6 +52,10 @@ function OrderTimeline({ status }: { status: string }) {
   );
 }
 
+function withinReturnWindow(deliveredAt: Date, windowMs: number) {
+  return Date.now() - new Date(deliveredAt).getTime() <= windowMs;
+}
+
 export default async function OrdersPage() {
   const session = await auth();
 
@@ -54,10 +63,19 @@ export default async function OrdersPage() {
     redirect('/login');
   }
 
-  const orders = await prisma.order.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: 'desc' },
-  });
+  const [orders, settings] = await Promise.all([
+    prisma.order.findMany({
+      where: { userId: session.user.id, status: { not: 'DELETED' } },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        shipments: { where: { status: { not: 'CANCELLED' } }, orderBy: { createdAt: 'desc' }, take: 1 },
+        refunds: { orderBy: { createdAt: 'desc' } },
+        returnRequests: { orderBy: { createdAt: 'desc' }, take: 1 },
+      },
+    }),
+    getStoreSettings(),
+  ]);
+  const windowMs = settings.returnWindowHours * 60 * 60 * 1000;
 
   return (
     <div>
@@ -88,15 +106,15 @@ export default async function OrdersPage() {
                   <p className="text-xl font-bold text-secondary">₹{order.total.toFixed(2)}</p>
                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mt-2 ${
                     order.status === 'DELIVERED' ? 'bg-primary/20 text-primary border border-primary/30' :
-                    order.status === 'CANCELLED' || order.status === 'EXPIRED' ? 'bg-destructive/20 text-destructive border border-destructive/30' :
+                    ['CANCELLED', 'EXPIRED', 'RTO', 'RETURNED'].includes(order.status) ? 'bg-destructive/20 text-destructive border border-destructive/30' :
                     'bg-secondary/20 text-secondary border border-secondary/30'
                   }`}>
-                    {order.status === 'EXPIRED' ? 'PAYMENT NOT COMPLETED' : order.status === 'PENDING' ? 'AWAITING PAYMENT' : order.status}
+                    {(ORDER_STATUS_LABELS[order.status as OrderStatus] ?? order.status).toUpperCase()}
                   </span>
                 </div>
               </div>
 
-              {order.status !== 'CANCELLED' && order.status !== 'EXPIRED' && (
+              {!['CANCELLED', 'EXPIRED', 'RTO', 'RETURNED'].includes(order.status) && (
                 <OrderTimeline status={order.status} />
               )}
               
@@ -107,6 +125,11 @@ export default async function OrdersPage() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase font-semibold">Tracking Information</p>
+                    {order.shipments[0] && (
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {order.shipments[0].courierName} · {SHIPMENT_STATUS_LABELS[order.shipments[0].status as ShipmentStatus] ?? order.shipments[0].status}
+                      </p>
+                    )}
                     <div className="mt-1 flex items-center gap-2">
                       {order.trackingUrl ? (
                         <a 
@@ -125,8 +148,40 @@ export default async function OrdersPage() {
                 </div>
               )}
 
+              {order.refunds.length > 0 && (
+                <div className="mt-4 p-4 bg-emerald-500/5 rounded-lg border border-emerald-500/20 text-sm space-y-1">
+                  <p className="text-xs uppercase font-semibold text-muted-foreground flex items-center gap-1"><IndianRupee className="w-3 h-3" /> Refunds</p>
+                  {order.refunds.map((r) => (
+                    <p key={r.id}>
+                      ₹{r.amount.toFixed(2)} — {r.status === 'PROCESSED' ? 'Refunded' : r.status === 'FAILED' ? 'Failed (we are retrying)' : r.method === 'MANUAL' ? 'Pending — we will contact you for bank/UPI details' : 'Processing (5-7 business days)'}
+                    </p>
+                  ))}
+                </div>
+              )}
+
+              {order.returnRequests[0] && (
+                <div className="mt-4 p-4 bg-primary/5 rounded-lg border border-primary/20 text-sm">
+                  <p className="text-xs uppercase font-semibold text-muted-foreground flex items-center gap-1"><RotateCcw className="w-3 h-3" /> Return Request</p>
+                  <p className="mt-1">
+                    {({ REQUESTED: 'Under review', APPROVED: 'Approved — refund/replacement on the way', REJECTED: 'Not approved', RESOLVED: order.returnRequests[0].resolution === 'REPLACEMENT' ? 'Replacement sent' : 'Refund issued' } as Record<string, string>)[order.returnRequests[0].status] ?? order.returnRequests[0].status}
+                  </p>
+                  {order.returnRequests[0].adminNote && <p className="text-xs text-muted-foreground mt-1">{order.returnRequests[0].adminNote}</p>}
+                </div>
+              )}
+
+              <OrderActions
+                orderId={order.id}
+                canCancel={CUSTOMER_CANCELLABLE.includes(order.status as OrderStatus) && !order.shipments.some((s) => !['CREATED', 'PICKUP_SCHEDULED'].includes(s.status))}
+                canReturn={
+                  order.status === 'DELIVERED' &&
+                  withinReturnWindow(order.deliveredAt ?? order.updatedAt, windowMs) &&
+                  !order.returnRequests.some((r) => ['REQUESTED', 'APPROVED'].includes(r.status))
+                }
+                returnHours={settings.returnWindowHours}
+              />
+
               <div className="mt-6 flex gap-4">
-                <button className="text-sm font-medium text-primary hover:underline underline-offset-4">View Details</button>
+                <a href={`/track/${order.id}`} className="text-sm font-medium text-primary hover:underline underline-offset-4">Track Order</a>
                 <a href={`/account/orders/invoice/${order.id}`} target="_blank" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Download Invoice</a>
               </div>
             </div>

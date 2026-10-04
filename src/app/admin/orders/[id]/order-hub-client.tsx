@@ -10,9 +10,18 @@ import { updateInvoiceNotesAction } from "@/app/actions/admin-orders";
 import Barcode from "@/components/ui/barcode";
 import { InvoiceDocument } from "@/components/invoice/invoice-document";
 import { computeInvoice, type InvoiceSettings } from "@/lib/invoice";
+import { FulfilmentPanel } from "./fulfilment-panel";
 
-export default function OrderHubClient({ order, settings }: { order: any; settings: InvoiceSettings }) {
-  const [activeTab, setActiveTab] = useState<"DETAILS" | "INVOICE" | "DISPATCH">("INVOICE");
+export default function OrderHubClient({
+  order,
+  settings,
+  fulfilment,
+}: {
+  order: any;
+  settings: InvoiceSettings;
+  fulfilment: Omit<React.ComponentProps<typeof FulfilmentPanel>, "order">;
+}) {
+  const [activeTab, setActiveTab] = useState<"DETAILS" | "INVOICE" | "DISPATCH">("DETAILS");
   const [invoiceSize, setInvoiceSize] = useState<"A4" | "THERMAL">("A4");
   const [invoiceNotes, setInvoiceNotes] = useState(order.invoiceNotes || "");
   const [isSaving, setIsSaving] = useState(false);
@@ -56,7 +65,7 @@ export default function OrderHubClient({ order, settings }: { order: any; settin
             onClick={() => setActiveTab(tab as any)}
             className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${activeTab === tab ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
           >
-            {tab === "DETAILS" ? "Order Details" : tab === "INVOICE" ? "Invoice Generator" : "Dispatch Note"}
+            {tab === "DETAILS" ? "Fulfilment" : tab === "INVOICE" ? "Invoice Generator" : "Dispatch Note"}
           </button>
         ))}
       </div>
@@ -71,7 +80,7 @@ export default function OrderHubClient({ order, settings }: { order: any; settin
                 {order.items.map((item: any, i: number) => (
                   <div key={i} className="flex justify-between items-center py-3 border-b last:border-0">
                     <div>
-                      <p className="font-medium">{item.product?.name || "Single Estate Gourmet Item"}</p>
+                      <p className="font-medium">{item.productName || item.product?.name || "Product"}</p>
                       <p className="text-sm text-gray-500">Weight: {item.weight}</p>
                     </div>
                     <div className="text-right">
@@ -82,6 +91,7 @@ export default function OrderHubClient({ order, settings }: { order: any; settin
                 ))}
               </div>
             </div>
+            <FulfilmentPanel order={order} {...fulfilment} />
           </div>
           <div className="space-y-6">
             <div className="p-6 rounded-2xl bg-white border border-border/50 shadow-sm space-y-4">

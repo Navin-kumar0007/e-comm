@@ -13,6 +13,20 @@ export const DEFAULT_STORE_SETTINGS = {
   businessAddress: null as string | null,
   businessState: null as string | null,
   invoicePrefix: "SN",
+  shippingProvider: "MANUAL",
+  pickupName: null as string | null,
+  pickupPhone: null as string | null,
+  pickupAddress: null as string | null,
+  pickupCity: null as string | null,
+  pickupState: null as string | null,
+  pickupPincode: null as string | null,
+  defaultPackageWeightGrams: 500,
+  packageLengthCm: 20,
+  packageBreadthCm: 15,
+  packageHeightCm: 10,
+  codEnabled: true,
+  codMaxOrderValue: 5000,
+  returnWindowHours: 48,
 };
 
 export type StoreSettings = typeof DEFAULT_STORE_SETTINGS;

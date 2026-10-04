@@ -3,9 +3,11 @@
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth-guard';
-import { sendOrderShipped, sendOrderDelivered, sendOrderCancelled } from '@/lib/email';
 import { releaseStaleOrders, allocateInvoiceNumber } from '@/lib/orders';
 import { getStoreSettings } from '@/lib/store-settings';
+import { transitionOrder } from '@/lib/order-status';
+import { nextAdminStatuses, ORDER_STATUSES, type OrderStatus } from '@/lib/order-status-rules';
+import { logOrderEvent } from '@/lib/order-events';
 
 function mapPrismaStatusToUI(status: string) {
   const m: Record<string, string> = {
@@ -16,9 +18,22 @@ function mapPrismaStatusToUI(status: string) {
     'DELIVERED': 'Delivered',
     'CANCELLED': 'Cancelled',
     'EXPIRED': 'Expired',
+    'RTO': 'RTO',
+    'RETURNED': 'Returned',
     'PAID': 'Confirmed'
   };
   return m[status.toUpperCase()] || 'Pending';
+}
+
+async function adminActor() {
+  const session = await requireAdmin();
+  return `admin:${session.user?.email ?? 'unknown'}`;
+}
+
+function revalidateOrder(id?: string) {
+  revalidatePath('/admin/orders');
+  revalidatePath('/admin');
+  if (id) revalidatePath(`/admin/orders/${id}`);
 }
 
 export async function getAdminOrders() {
@@ -37,7 +52,7 @@ export async function getAdminOrders() {
     orderBy: { createdAt: 'desc' }
   });
 
-  return dbOrders.map(o => ({
+  return dbOrders.map((o: any) => ({
     id: o.id,
     customer: o.customerName,
     email: o.customerEmail,
@@ -45,11 +60,13 @@ export async function getAdminOrders() {
     date: o.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     total: o.total,
     status: mapPrismaStatusToUI(o.status) as any,
-    paymentMethod: (o as any).paymentMethod || 'ONLINE',
-    discount: (o as any).discount || 0,
-    couponCode: (o as any).couponCode || null,
-    items: o.items.map(item => ({
-      name: item.product?.name || (item as any).productName || "Deleted Product",
+    rawStatus: o.status as string,
+    nextStatuses: nextAdminStatuses(o.status) as string[],
+    paymentMethod: o.paymentMethod || 'ONLINE',
+    discount: o.discount || 0,
+    couponCode: o.couponCode || null,
+    items: o.items.map((item: any) => ({
+      name: item.product?.name || item.productName || "Deleted Product",
       quantity: item.quantity,
       price: item.price,
       weight: item.weight
@@ -61,112 +78,31 @@ export async function getAdminOrders() {
   }));
 }
 
-export async function updateOrderStatusAction(id: string, status: string) {
-  await requireAdmin();
+/** Changes order status through the lifecycle rules (stock, refunds, cashback, notifications). */
+export async function updateOrderStatusAction(id: string, status: string, reason?: string) {
+  const actor = await adminActor();
+  const upper = status.toUpperCase() as OrderStatus;
+  if (!ORDER_STATUSES.includes(upper)) return { error: 'Unknown status' };
 
-  const upperStatus = status.toUpperCase();
-
-  // Expired orders already had their stock/points returned and were never paid.
-  const current = await prisma.order.findUnique({ where: { id }, select: { status: true } });
-  if (current?.status === 'EXPIRED') {
-    throw new Error('Expired orders were never paid and cannot be changed.');
-  }
-
-  // If cancelling, restore stock for each order item
-  if (upperStatus === 'CANCELLED') {
-    const order = await prisma.order.findUnique({
-      where: { id },
-      include: { items: true }
-    });
-
-    if (order && order.status !== 'CANCELLED') {
-      // Claim the cancellation first so a double-click can't restore stock twice.
-      const cancelled = await prisma.$transaction(async (tx: any) => {
-        const claimed = await tx.order.updateMany({
-          where: { id, status: { notIn: ['CANCELLED', 'EXPIRED'] } },
-          data: { status: 'CANCELLED' }
-        });
-        if (claimed.count === 0) return false;
-
-        for (const item of order.items) {
-          if (item.productId && !item.productId.startsWith('custom-')) {
-            await tx.product.update({
-              where: { id: item.productId },
-              data: { stock: { increment: item.quantity } }
-            });
-          }
-        }
-        // Return redeemed loyalty points
-        if (order.userId && order.pointsUsed > 0) {
-          await tx.user.update({
-            where: { id: order.userId },
-            data: { points: { increment: order.pointsUsed } }
-          });
-        }
-        return true;
-      });
-      if (!cancelled) return { success: true };
-
-      // Notify customer
-      if (order.userId) {
-        await prisma.notification.create({
-          data: {
-            userId: order.userId,
-            title: "Order Cancelled",
-            message: `Your order #${order.id.slice(-6).toUpperCase()} has been cancelled.`,
-            type: "ORDER",
-            link: "/account/orders"
-          }
-        });
-      }
-
-      // Send cancellation email
-      try { await sendOrderCancelled(order.customerEmail, order.id); } catch (e) { console.error('Cancel email failed:', e); }
-
-      revalidatePath('/admin/orders');
-      revalidatePath('/admin');
-      return { success: true };
-    }
-  }
-
-  const order = await prisma.order.update({
-    where: { id },
-    data: { status: upperStatus }
-  });
-  
-  if (order.userId) {
-    await prisma.notification.create({
-      data: {
-        userId: order.userId,
-        title: "Order Update",
-        message: `Your order #${order.id.slice(-6).toUpperCase()} is now ${mapPrismaStatusToUI(status)}.`,
-        type: "ORDER",
-        link: "/account/orders"
-      }
-    });
-  }
-
-  // Send lifecycle emails
-  if (upperStatus === 'SHIPPED') {
-    try { await sendOrderShipped(order.customerEmail, order.id, order.trackingNumber || undefined, order.trackingUrl || undefined); } catch (e) { console.error('Shipped email failed:', e); }
-  } else if (upperStatus === 'DELIVERED') {
-    try { await sendOrderDelivered(order.customerEmail, order.id); } catch (e) { console.error('Delivered email failed:', e); }
-  }
-
-  revalidatePath('/admin/orders');
-  revalidatePath('/admin');
-  return { success: true };
+  const res = await transitionOrder(id, upper, { actor, reason });
+  revalidateOrder(id);
+  return res.ok ? { success: true } : { error: res.error };
 }
 
 export async function deleteOrderAction(id: string) {
-  await requireAdmin();
-  // Soft-delete: set status to DELETED instead of destroying audit trail
-  await prisma.order.update({
-    where: { id },
-    data: { status: 'DELETED' }
-  });
-  revalidatePath('/admin/orders');
-  revalidatePath('/admin');
+  const actor = await adminActor();
+  // Soft-delete only closed orders (cancelled / expired / returned); keeps the audit trail.
+  const res = await transitionOrder(id, 'DELETED', { actor });
+  revalidateOrder(id);
+  return res.ok ? { success: true } : { error: 'Only cancelled, expired or returned orders can be deleted.' };
+}
+
+export async function addOrderNoteAction(id: string, note: string) {
+  const actor = await adminActor();
+  const text = note.trim().slice(0, 1000);
+  if (!text) return { error: 'Note is empty' };
+  await logOrderEvent(null, { orderId: id, type: 'NOTE', message: text, actor });
+  revalidateOrder(id);
   return { success: true };
 }
 
@@ -265,17 +201,13 @@ export async function updateInvoiceNotesAction(id: string, invoiceNotes: string)
 
 export async function bulkUpdateOrderStatusAction(ids: string[], status: string) {
   await requireAdmin();
-  
-  // We can just loop and use the single update function to ensure stock & emails are handled correctly
+  let updated = 0;
+  const failed: string[] = [];
   for (const id of ids) {
-    try {
-      await updateOrderStatusAction(id, status);
-    } catch (e) {
-      console.error("Failed to update order in bulk: ", id, e);
-    }
+    const res = await updateOrderStatusAction(id, status);
+    if ('error' in res) failed.push(`#${id.slice(-8).toUpperCase()}: ${res.error}`);
+    else updated++;
   }
-
-  revalidatePath('/admin/orders');
-  revalidatePath('/admin');
-  return { success: true };
+  revalidateOrder();
+  return { success: failed.length === 0, updated, failed };
 }

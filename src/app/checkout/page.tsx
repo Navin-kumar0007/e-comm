@@ -61,6 +61,19 @@ export default function CheckoutPage() {
     }
   }, [session]);
   
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+  });
+
+  // Only ask the server about complete, valid pincodes.
+  const validPincode = /^[1-9]\d{5}$/.test(formData.pincode.trim()) ? formData.pincode.trim() : "";
+
   const quoteItems = () =>
     items.map(item => ({
       productId: item.productId,
@@ -74,12 +87,21 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (items.length === 0) return;
     let cancelled = false;
-    getCheckoutQuote({ items: quoteItems(), couponCode: appliedCoupon, usePoints }).then((res) => {
+    getCheckoutQuote({ items: quoteItems(), couponCode: appliedCoupon, usePoints, pincode: validPincode }).then((res) => {
       if (!cancelled) setQuote(res);
     });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, appliedCoupon, usePoints]);
+  }, [items, appliedCoupon, usePoints, validPincode]);
+
+  const delivery = validPincode ? quote?.delivery ?? null : null;
+  const codBlocked = !!delivery && !delivery.codAvailable;
+  const notServiceable = !!delivery && !delivery.serviceable;
+
+  // Switch away from COD when it isn't available for this pincode / order value.
+  useEffect(() => {
+    if (codBlocked && paymentMethod === 'cod') setPaymentMethod('razorpay');
+  }, [codBlocked, paymentMethod]);
 
   const discount = quote?.couponDiscount ?? 0;
   const pointsDiscount = quote?.pointsDiscount ?? 0;
@@ -90,7 +112,7 @@ export default function CheckoutPage() {
   const applyCoupon = async () => {
     const code = couponCode.trim().toUpperCase();
     if (!code) return;
-    const res = await getCheckoutQuote({ items: quoteItems(), couponCode: code, usePoints });
+    const res = await getCheckoutQuote({ items: quoteItems(), couponCode: code, usePoints, pincode: validPincode });
     if (res.error || res.couponError) {
       toast.error(res.error || res.couponError);
       return;
@@ -100,16 +122,6 @@ export default function CheckoutPage() {
     toast.success("Coupon applied!");
   };
   
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
-  });
-
   useEffect(() => {
     if (items.length === 0 && !isProcessing) {
       router.push("/shop");
@@ -126,6 +138,10 @@ export default function CheckoutPage() {
     if (items.length === 0) return;
     if (!quoteReady) {
       toast.error(quote?.error || "Still calculating your total. Please try again in a moment.");
+      return;
+    }
+    if (notServiceable) {
+      toast.error("Sorry, we don't deliver to this pincode yet.");
       return;
     }
 
@@ -397,7 +413,10 @@ export default function CheckoutPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="pincode" className="text-xs font-semibold">Pincode (6-digits) *</Label>
-                  <Input id="pincode" name="pincode" maxLength={6} required value={formData.pincode} onChange={handleInputChange} placeholder="e.g. 560001" className="rounded-xl h-11" />
+                  <Input id="pincode" name="pincode" inputMode="numeric" maxLength={6} required value={formData.pincode} onChange={handleInputChange} placeholder="e.g. 560001" className="rounded-xl h-11" />
+                  {delivery && (
+                    <p className={`text-xs font-medium ${delivery.serviceable ? 'text-emerald-600' : 'text-destructive'}`}>{delivery.message}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -443,16 +462,19 @@ export default function CheckoutPage() {
 
                 {/* Cash on Delivery Option */}
                 <label 
-                  className={`relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-                    paymentMethod === 'cod'
-                      ? 'border-primary bg-primary/5 shadow-sm'
-                      : 'border-border/60 hover:border-primary/40 bg-card'
+                  className={`relative flex flex-col p-4 rounded-2xl border-2 transition-all ${
+                    codBlocked
+                      ? 'border-border/40 bg-muted/30 opacity-60 cursor-not-allowed'
+                      : paymentMethod === 'cod'
+                      ? 'border-primary bg-primary/5 shadow-sm cursor-pointer'
+                      : 'border-border/60 hover:border-primary/40 bg-card cursor-pointer'
                   }`}
                 >
                   <input
                     type="radio"
                     name="paymentMethod"
                     value="cod"
+                    disabled={codBlocked}
                     checked={paymentMethod === 'cod'}
                     onChange={() => setPaymentMethod('cod')}
                     className="sr-only"
@@ -466,7 +488,9 @@ export default function CheckoutPage() {
                     </span>
                   </div>
                   <span className="font-bold text-sm text-foreground">Cash on Delivery (COD)</span>
-                  <span className="text-xs text-muted-foreground mt-0.5">Pay in cash or UPI when package arrives at doorstep</span>
+                  <span className="text-xs text-muted-foreground mt-0.5">
+                    {codBlocked ? 'Not available for this pincode / order value' : 'Pay in cash or UPI when package arrives at doorstep'}
+                  </span>
                 </label>
               </div>
             </div>
@@ -475,7 +499,7 @@ export default function CheckoutPage() {
             <div className="space-y-3">
               <Button 
                 type="submit" 
-                disabled={isProcessing || !quoteReady} 
+                disabled={isProcessing || !quoteReady || notServiceable} 
                 className="w-full h-14 text-base md:text-lg font-bold rounded-2xl shadow-xl hover:shadow-primary/25 transition-all"
               >
                 {isProcessing 

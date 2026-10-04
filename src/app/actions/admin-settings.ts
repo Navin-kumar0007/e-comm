@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth-guard';
 import { getStoreSettings, DEFAULT_STORE_SETTINGS } from '@/lib/store-settings';
+import { getProvider } from '@/lib/shipping';
 
 const GSTIN_RE = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
 
@@ -24,6 +25,20 @@ export async function updateAdminSettingsAction(data: {
   businessAddress?: string | null;
   businessState?: string | null;
   invoicePrefix?: string;
+  shippingProvider?: string;
+  pickupName?: string | null;
+  pickupPhone?: string | null;
+  pickupAddress?: string | null;
+  pickupCity?: string | null;
+  pickupState?: string | null;
+  pickupPincode?: string | null;
+  defaultPackageWeightGrams?: number;
+  packageLengthCm?: number;
+  packageBreadthCm?: number;
+  packageHeightCm?: number;
+  codEnabled?: boolean;
+  codMaxOrderValue?: number;
+  returnWindowHours?: number;
 }) {
   await requireAdmin();
 
@@ -34,7 +49,16 @@ export async function updateAdminSettingsAction(data: {
   if (data.invoicePrefix !== undefined) {
     data.invoicePrefix = data.invoicePrefix.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 10) || DEFAULT_STORE_SETTINGS.invoicePrefix;
   }
-  for (const n of [data.freeShippingThreshold, data.flatShippingRate, data.gstRate]) {
+  if (data.pickupPincode && !/^[1-9][0-9]{5}$/.test(data.pickupPincode)) return { error: 'Pickup pincode must be 6 digits' };
+  if (data.shippingProvider) {
+    const provider = getProvider(data.shippingProvider);
+    if (!provider) return { error: 'Unknown delivery partner' };
+    if (!provider.isConfigured()) return { error: `${provider.name} needs API credentials in environment variables first.` };
+  }
+  for (const k of ['defaultPackageWeightGrams', 'packageLengthCm', 'packageBreadthCm', 'packageHeightCm', 'returnWindowHours'] as const) {
+    if (data[k] !== undefined) data[k] = Math.round(Number(data[k]));
+  }
+  for (const n of [data.freeShippingThreshold, data.flatShippingRate, data.gstRate, data.codMaxOrderValue, data.defaultPackageWeightGrams, data.packageLengthCm, data.packageBreadthCm, data.packageHeightCm, data.returnWindowHours]) {
     if (n !== undefined && (!Number.isFinite(n) || n < 0)) return { error: 'Amounts must be zero or more' };
   }
   const existing = await prisma.settings.findFirst();
@@ -44,6 +68,7 @@ export async function updateAdminSettingsAction(data: {
     where: { id },
     update: data,
     create: {
+      ...data,
       id,
       storeName: data.storeName || "Spicy Nuts",
       contactEmail: data.contactEmail || 'spicynuts1973@gmail.com',

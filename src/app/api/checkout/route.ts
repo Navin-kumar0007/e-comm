@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { priceCart, CheckoutError } from "@/lib/pricing";
+import { checkDelivery } from "@/lib/shipping/service";
 import {
   getRazorpay,
   mockPaymentsAllowed,
@@ -70,6 +71,11 @@ export async function POST(req: Request) {
     });
     // Don't silently charge more than the customer expected.
     if (quote.couponError) throw new CheckoutError(quote.couponError);
+    const delivery = await checkDelivery(shipping.pincode, { orderValue: quote.total });
+    if (!delivery.serviceable) throw new CheckoutError("Sorry, we don't deliver to this pincode yet.");
+    if (isCod && !delivery.codAvailable) {
+      throw new CheckoutError("Cash on Delivery isn't available for this pincode or order value. Please pay online.");
+    }
     if (!isCod && quote.total < 1) {
       throw new CheckoutError("Online payments must be at least ₹1. Please use fewer points or choose Cash on Delivery.");
     }
@@ -153,6 +159,7 @@ export async function POST(req: Request) {
           shippingAddress: `${shipping.address}, ${shipping.city}, ${shipping.state}, ${shipping.pincode}`,
           shippingState: shipping.state,
           invoiceNumber: isCod ? await allocateInvoiceNumber(tx) : null,
+          cashbackPending: !!user,
           items: { create: orderItems },
         },
       });

@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { priceCart, CheckoutError } from '@/lib/pricing';
+import { checkDelivery } from '@/lib/shipping/service';
 
 export interface CheckoutQuoteResult {
   error?: string;
@@ -16,6 +17,7 @@ export interface CheckoutQuoteResult {
   taxAmount?: number;
   gstRate?: number;
   total?: number;
+  delivery?: { serviceable: boolean; codAvailable: boolean; message: string } | null;
 }
 
 /** Same pricing the checkout API uses, so the preview always matches the charge. */
@@ -23,6 +25,7 @@ export async function getCheckoutQuote(input: {
   items: Array<{ productId: string; quantity: number; weight?: string; name?: string; blend?: unknown }>;
   couponCode?: string;
   usePoints?: boolean;
+  pincode?: string;
 }): Promise<CheckoutQuoteResult> {
   try {
     const session = await auth();
@@ -37,7 +40,12 @@ export async function getCheckoutQuote(input: {
       userPoints: user?.points ?? 0,
     });
 
+    const delivery = input.pincode && /^[1-9]\d{5}$/.test(input.pincode)
+      ? await checkDelivery(input.pincode, { orderValue: quote.total })
+      : null;
+
     return {
+      delivery: delivery && { serviceable: delivery.serviceable, codAvailable: delivery.codAvailable, message: delivery.message },
       couponError: quote.couponError,
       appliedCouponCode: quote.appliedCouponCode,
       subtotal: quote.subtotal,

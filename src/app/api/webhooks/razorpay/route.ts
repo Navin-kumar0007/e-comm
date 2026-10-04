@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/db/prisma";
 import { markOrderPaid, toPaise } from "@/lib/orders";
+import { applyRazorpayRefundEvent } from "@/lib/refunds";
 
 /**
  * Razorpay webhook. Confirms orders even when the customer closes the browser
@@ -10,7 +11,7 @@ import { markOrderPaid, toPaise } from "@/lib/orders";
  * Razorpay Dashboard → Settings → Webhooks:
  *   URL:    https://<your-domain>/api/webhooks/razorpay
  *   Secret: same value as RAZORPAY_WEBHOOK_SECRET
- *   Events: payment.captured, order.paid
+ *   Events: payment.captured, order.paid, refund.processed, refund.failed
  */
 export async function POST(req: Request) {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -34,6 +35,19 @@ export async function POST(req: Request) {
     event = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: "Bad payload" }, { status: 400 });
+  }
+
+  if (event.event === "refund.processed" || event.event === "refund.failed") {
+    const refundId = event.payload?.refund?.entity?.id;
+    if (refundId) {
+      try {
+        await applyRazorpayRefundEvent(refundId, event.event);
+      } catch (e) {
+        console.error("[RZP WEBHOOK] Refund event failed:", e);
+        return NextResponse.json({ error: "Processing failed" }, { status: 500 });
+      }
+    }
+    return NextResponse.json({ ok: true });
   }
 
   if (event.event !== "payment.captured" && event.event !== "order.paid") {

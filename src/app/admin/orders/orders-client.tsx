@@ -2,6 +2,8 @@
 
 import { useState, useMemo, Fragment } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/order-status-rules";
 import { Search, FileText, Trash2, Plus, ChevronDown, ChevronUp, CheckSquare, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +12,14 @@ import { updateOrderStatusAction, deleteOrderAction, updateOrderTrackingAction, 
 import { toast } from "sonner";
 
 export default function OrdersClient({ initialOrders }: { initialOrders: any[] }) {
+  const router = useRouter();
   const [orders, setOrders] = useState(initialOrders);
+  // Server data is the source of truth after every change (stock, refunds, next statuses).
+  const [prevInitial, setPrevInitial] = useState(initialOrders);
+  if (initialOrders !== prevInitial) {
+    setPrevInitial(initialOrders);
+    setOrders(initialOrders);
+  }
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<string>("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -46,9 +55,13 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
   const handleStatusChange = async (id: string, newStatus: string) => {
     setIsPending(true);
     try {
-      await updateOrderStatusAction(id, newStatus);
-      setOrders(orders.map(o => o.id === id ? { ...o, status: newStatus } : o));
-      toast.success(`Order ${id} status updated to ${newStatus}`);
+      const res = await updateOrderStatusAction(id, newStatus);
+      if ('error' in res) {
+        toast.error(res.error);
+        return;
+      }
+      toast.success(`Order #${id.slice(-8).toUpperCase()} → ${ORDER_STATUS_LABELS[newStatus as OrderStatus] ?? newStatus}`);
+      router.refresh();
     } catch (err) {
       toast.error("Failed to update status");
     } finally {
@@ -60,7 +73,11 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
     if (confirm(`Delete order ${id}? This cannot be undone.`)) {
       setIsPending(true);
       try {
-        await deleteOrderAction(id);
+        const res = await deleteOrderAction(id);
+        if ('error' in res) {
+          toast.error(res.error);
+          return;
+        }
         setOrders(orders.filter(o => o.id !== id));
         setSelectedIds(prev => prev.filter(sid => sid !== id));
         toast.success(`Order ${id} deleted`);
@@ -76,10 +93,11 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
     if (selectedIds.length === 0) return;
     setIsPending(true);
     try {
-      await bulkUpdateOrderStatusAction(selectedIds, status);
-      setOrders(orders.map(o => selectedIds.includes(o.id) ? { ...o, status } : o));
-      toast.success(`${selectedIds.length} order(s) updated to ${status}`);
+      const res = await bulkUpdateOrderStatusAction(selectedIds, status);
+      if (res.updated > 0) toast.success(`${res.updated} order(s) updated`);
+      if (res.failed.length > 0) toast.error(`${res.failed.length} skipped — ${res.failed.slice(0, 3).join('; ')}`);
       setSelectedIds([]);
+      router.refresh();
     } catch (err) {
       toast.error("Failed to update orders");
     } finally {
@@ -116,6 +134,8 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
       Confirmed: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400",
       Cancelled: "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400",
       Processing: "bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400",
+      RTO: "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400",
+      Returned: "bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-rose-400",
       Expired: "bg-zinc-100 text-zinc-500 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-500",
       Pending: "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-400",
     };
@@ -130,6 +150,8 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
     { key: 'Shipped', label: 'Shipped', count: orders.filter(o => o.status === 'Shipped').length },
     { key: 'Delivered', label: 'Delivered', count: orders.filter(o => o.status === 'Delivered').length },
     { key: 'Cancelled', label: 'Cancelled', count: orders.filter(o => o.status === 'Cancelled').length },
+    { key: 'RTO', label: 'RTO', count: orders.filter(o => o.status === 'RTO').length },
+    { key: 'Returned', label: 'Returned', count: orders.filter(o => o.status === 'Returned').length },
     { key: 'Expired', label: 'Expired', count: orders.filter(o => o.status === 'Expired').length },
   ];
 
@@ -158,10 +180,10 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
         <div className="flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-xl flex-wrap">
           <span className="text-sm font-medium">{selectedIds.length} selected</span>
           <div className="h-4 w-px bg-border" />
-          <Button variant="outline" size="sm" className="rounded-lg text-xs" onClick={() => handleBulkStatus('Confirmed')}>Confirm</Button>
-          <Button variant="outline" size="sm" className="rounded-lg text-xs" onClick={() => handleBulkStatus('Shipped')}>Mark Shipped</Button>
-          <Button variant="outline" size="sm" className="rounded-lg text-xs" onClick={() => handleBulkStatus('Delivered')}>Mark Delivered</Button>
-          <Button variant="outline" size="sm" className="rounded-lg text-xs text-red-600 hover:bg-red-50" onClick={() => handleBulkStatus('Cancelled')}>Cancel</Button>
+          <Button variant="outline" size="sm" className="rounded-lg text-xs" onClick={() => handleBulkStatus('CONFIRMED')}>Confirm</Button>
+          <Button variant="outline" size="sm" className="rounded-lg text-xs" onClick={() => handleBulkStatus('SHIPPED')}>Mark Shipped</Button>
+          <Button variant="outline" size="sm" className="rounded-lg text-xs" onClick={() => handleBulkStatus('DELIVERED')}>Mark Delivered</Button>
+          <Button variant="outline" size="sm" className="rounded-lg text-xs text-red-600 hover:bg-red-50" onClick={() => handleBulkStatus('CANCELLED')}>Cancel</Button>
           <Button variant="ghost" size="sm" className="rounded-lg text-xs ml-auto" onClick={() => setSelectedIds([])}>Clear</Button>
         </div>
       )}
@@ -225,14 +247,16 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
                       <td className="px-4 py-4 font-medium text-foreground whitespace-nowrap">₹{order.total.toFixed(2)}</td>
                       <td className="px-4 py-4"><Badge variant="outline" className={getStatusColor(order.status)}>{order.status}</Badge></td>
                       <td className="px-4 py-4">
-                        <select disabled={order.status === 'Expired'} className="text-sm bg-transparent border rounded-lg px-2 py-1 font-medium focus:ring-1 focus:ring-primary cursor-pointer text-foreground disabled:opacity-60" value={order.status} onChange={e => handleStatusChange(order.id, e.target.value)}>
-                          <option value="Pending" disabled>Awaiting Payment</option>
-                          <option value="Processing">Processing</option>
-                          <option value="Confirmed">Confirmed</option>
-                          <option value="Shipped">Shipped</option>
-                          <option value="Delivered">Delivered</option>
-                          <option value="Cancelled">Cancelled</option>
-                          {order.status === 'Expired' && <option value="Expired">Expired</option>}
+                        <select
+                          disabled={order.nextStatuses.length === 0}
+                          className="text-sm bg-transparent border rounded-lg px-2 py-1 font-medium focus:ring-1 focus:ring-primary cursor-pointer text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
+                          value={order.rawStatus}
+                          onChange={e => handleStatusChange(order.id, e.target.value)}
+                        >
+                          <option value={order.rawStatus}>{ORDER_STATUS_LABELS[order.rawStatus as OrderStatus] ?? order.rawStatus}</option>
+                          {order.nextStatuses.map((st: string) => (
+                            <option key={st} value={st}>→ {ORDER_STATUS_LABELS[st as OrderStatus] ?? st}</option>
+                          ))}
                         </select>
                       </td>
                       <td className="px-4 py-4 text-right">

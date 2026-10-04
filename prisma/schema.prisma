@@ -50,6 +50,7 @@ model Product {
   recipes     Recipe[]      @relation("RecipeProducts")
   dietaryTags DietaryTag[]  @relation("ProductDietaryTags")
   labelSettings String?
+  shippingWeightGrams Int? // Packed weight for courier booking; falls back to parsing `weight`
 
   @@index([categoryId])
   @@index([status])
@@ -109,6 +110,17 @@ model Order {
   userId          String?
   user            User?       @relation(fields: [userId], references: [id])
   items           OrderItem[]
+  shipments       Shipment[]
+  events          OrderEvent[]
+  refunds         Refund[]
+  returnRequests  ReturnRequest[]
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  cancelledAt     DateTime?
+  cancelReason    String?
+  refundedAmount  Float       @default(0)
+  cashbackPending Boolean     @default(false) // true until delivery credits the cashback
+  cashbackPoints  Int         @default(0)     // cashback credited (reversed on return)
   total           Float
   status          String      @default("PENDING") // PENDING, PROCESSING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED, EXPIRED, DELETED
   paymentMethod   String      @default("ONLINE")  // ONLINE, COD
@@ -169,6 +181,22 @@ model Settings {
   businessAddress       String?
   businessState         String?
   invoicePrefix         String @default("SN")
+
+  // Shipping / delivery partner
+  shippingProvider          String  @default("MANUAL") // MANUAL, XPRESSBEES, ...
+  pickupName                String?
+  pickupPhone               String?
+  pickupAddress             String?
+  pickupCity                String?
+  pickupState               String?
+  pickupPincode             String?
+  defaultPackageWeightGrams Int     @default(500)
+  packageLengthCm           Int     @default(20)
+  packageBreadthCm          Int     @default(15)
+  packageHeightCm           Int     @default(10)
+  codEnabled                Boolean @default(true)
+  codMaxOrderValue          Float   @default(5000)
+  returnWindowHours         Int     @default(48)
 }
 
 // Sequential GST invoice numbers, one row per financial year (e.g. "2026-27").
@@ -346,4 +374,91 @@ model WhatsAppLog {
 
   @@index([phone])
   @@index([type])
+}
+
+model Shipment {
+  id                 String    @id @default(cuid())
+  orderId            String
+  order              Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider           String    // MANUAL, XPRESSBEES, ...
+  type               String    @default("FORWARD") // FORWARD, RETURN
+  status             String    @default("CREATED") // see src/lib/shipping/status.ts
+  awb                String?
+  courierName        String?
+  trackingUrl        String?
+  labelUrl           String?
+  providerShipmentId String?
+  weightGrams        Int?
+  codAmount          Float     @default(0)
+  charge             Float?
+  events             String    @default("[]") // JSON array of tracking events
+  lastSyncedAt       DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([orderId])
+  @@index([awb])
+  @@index([status])
+}
+
+// Audit trail for everything that happens to an order.
+model OrderEvent {
+  id         String   @id @default(cuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  type       String   // STATUS, PAYMENT, SHIPMENT, REFUND, RETURN, NOTE
+  fromStatus String?
+  toStatus   String?
+  message    String
+  actor      String   // "system", "customer", "admin:<email>", "courier:<provider>"
+  createdAt  DateTime @default(now())
+
+  @@index([orderId])
+}
+
+model Refund {
+  id               String   @id @default(cuid())
+  orderId          String
+  order            Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount           Float
+  method           String   // RAZORPAY, MANUAL (COD: bank/UPI transfer by admin)
+  status           String   @default("PENDING") // PENDING, PROCESSED, FAILED
+  reason           String
+  razorpayRefundId String?
+  reference        String?  // UTR / transfer reference for manual refunds
+  actor            String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([razorpayRefundId])
+}
+
+model ReturnRequest {
+  id         String   @id @default(cuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  userId     String?
+  reason     String   // DAMAGED, WRONG_ITEM, MISSING_ITEM, QUALITY, OTHER
+  details    String
+  images     String   @default("[]") // JSON array of photo URLs
+  status     String   @default("REQUESTED") // REQUESTED, APPROVED, REJECTED, RESOLVED
+  resolution String?  // REFUND, REPLACEMENT
+  adminNote  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }

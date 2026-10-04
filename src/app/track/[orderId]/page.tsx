@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
+import { SHIPMENT_STATUS_LABELS, type ShipmentStatus } from "@/lib/shipping/status";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Package, Truck, CheckCircle2, Clock, XCircle, ArrowLeft, MapPin } from "lucide-react";
@@ -46,6 +47,7 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
       items: {
         include: { product: true },
       },
+      shipments: { where: { status: { not: "CANCELLED" } }, orderBy: { createdAt: "desc" }, take: 1 },
     },
   });
 
@@ -58,7 +60,12 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
     !!session?.user &&
     ((session.user as any).role === "ADMIN" || (!!order.userId && order.userId === (session.user as any).id));
 
-  const isCancelled = order.status === "CANCELLED" || order.status === "EXPIRED";
+  const isCancelled = ["CANCELLED", "EXPIRED", "RTO", "RETURNED"].includes(order.status);
+  const shipment = order.shipments[0];
+  let courierEvents: Array<{ at: string; status: ShipmentStatus; location?: string; message?: string }> = [];
+  try {
+    courierEvents = shipment ? JSON.parse(shipment.events || "[]").slice(-6).reverse() : [];
+  } catch {}
   const currentStep = statusOrder[order.status] ?? 0;
 
   return (
@@ -92,11 +99,15 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
               <XCircle className="w-6 h-6 text-destructive" />
               <div>
                 <p className="font-semibold text-destructive">
-                  {order.status === "EXPIRED" ? "Payment Not Completed" : "Order Cancelled"}
+                  {{ EXPIRED: "Payment Not Completed", RTO: "Returned to Sender", RETURNED: "Order Returned" }[order.status as string] ?? "Order Cancelled"}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {order.status === "EXPIRED"
                     ? "We didn't receive payment for this order, so it was released. No money was charged."
+                    : order.status === "RTO"
+                    ? "The courier couldn't deliver this order and returned it to us." + (order.paymentId ? " Your refund has been initiated." : "")
+                    : order.status === "RETURNED"
+                    ? "This order was returned and refunded."
                     : order.paymentId
                     ? "This order has been cancelled. Your refund will be processed within 5-7 business days."
                     : "This order has been cancelled."}
@@ -157,8 +168,13 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
             </h2>
             <div className="flex items-center gap-4">
               <div>
-                <p className="text-sm text-muted-foreground">Tracking Number</p>
+                <p className="text-sm text-muted-foreground">{shipment?.courierName || "Tracking Number"}</p>
                 <p className="font-mono font-semibold">{order.trackingNumber}</p>
+                {shipment && (
+                  <p className="text-sm text-primary font-medium mt-1">
+                    {SHIPMENT_STATUS_LABELS[shipment.status as ShipmentStatus] ?? shipment.status}
+                  </p>
+                )}
               </div>
               {order.trackingUrl && (
                 <a
@@ -171,6 +187,19 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
                 </a>
               )}
             </div>
+            {courierEvents.length > 0 && (
+              <ul className="mt-4 space-y-2 border-l-2 border-primary/20 pl-4">
+                {courierEvents.map((ev, i) => (
+                  <li key={i} className="text-sm">
+                    <span className="font-medium">{SHIPMENT_STATUS_LABELS[ev.status] ?? ev.status}</span>
+                    {ev.location && <span className="text-muted-foreground"> · {ev.location}</span>}
+                    <span className="block text-xs text-muted-foreground">
+                      {new Date(ev.at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
 

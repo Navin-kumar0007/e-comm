@@ -17,7 +17,8 @@ import {
   FolderTree,
   MessageSquare,
   MessageCircle,
-  Menu
+  Menu,
+  RotateCcw
 } from "lucide-react";
 import { ThemeToggle } from "@/components/storefront/ThemeToggle";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -27,6 +28,7 @@ const sidebarLinks = [
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/categories", label: "Categories", icon: FolderTree },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
+  { href: "/admin/returns", label: "Returns", icon: RotateCcw },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/messages", label: "Customer Inquiries", icon: MessageSquare },
   { href: "/admin/whatsapp", label: "WhatsApp Marketing", icon: MessageCircle },

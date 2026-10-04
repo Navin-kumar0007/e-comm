@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PincodeChecker } from "@/components/storefront/pincode-checker";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ShieldCheck, Truck, ArrowLeft, Star } from "lucide-react";
@@ -308,6 +309,11 @@ export default async function ProductPage({
             <div className="h-14 shrink-0 flex items-center justify-center">
               <WishlistButton productId={product.id} variant="outline" />
             </div>
+          </div>
+
+          {/* Delivery check */}
+          <div className="mb-6">
+            <PincodeChecker price={product.salePrice ? Number(product.salePrice) : Number(product.price)} />
           </div>
 
           {/* Trust Badges */}
