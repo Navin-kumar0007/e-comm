@@ -31,7 +31,7 @@ export const CURRENT_CATEGORIES: MobileCategoryItem[] = [
     title: "Mixes & Seeds",
     subtitle: "Daily Vitality",
     href: "/category/dry-fruits",
-    image: "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=400&auto=format&fit=crop",
+    image: "/products/panch-mewa-mix.jpg",
     badge: "Superfood",
     badgeBg: "bg-gradient-to-r from-emerald-600 to-teal-600",
   },

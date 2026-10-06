@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { Search, ChefHat, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { getCleanProductImage } from '@/lib/utils';
 
 export function CommandPalette({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
   const [query, setQuery] = useState('');
@@ -77,7 +78,7 @@ export function CommandPalette({ open, setOpen }: { open: boolean, setOpen: (ope
                 return (
                   <div key={p.id} onClick={() => handleSelect(`/product/${p.slug}`)} className="flex items-center gap-3 p-2 rounded-xl hover:bg-primary/5 cursor-pointer group">
                     <div className="w-10 h-10 rounded-lg bg-muted overflow-hidden shrink-0">
-                      <Image width={800} height={800} unoptimized={false} alt={p.name} src={img || "/placeholder.jpg"} className="w-full h-full object-cover" />
+                      <Image width={800} height={800} unoptimized={false} alt={p.name} src={getCleanProductImage(img ? [img] : [], p.name)} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1">
                       <div className="text-sm font-medium group-hover:text-primary transition-colors">{p.name}</div>

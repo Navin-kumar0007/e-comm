@@ -17,6 +17,7 @@ import Link from "next/link";
 import { ArrowRight, Check, ShoppingBag, Star, Sparkles } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart-store";
 import { toast } from "sonner";
+import { fallbackProductPhoto } from "@/lib/product-images";
 
 interface Product {
   id: string;
@@ -86,7 +87,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
           {products.slice(0, 6).map((product) => {
             const basePrice = product.salePrice ?? product.price;
             const hasDiscount = product.salePrice && product.salePrice < product.price;
-            const primaryImage = (product.images && product.images.length > 0) ? product.images[0] : "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=800&auto=format&fit=crop";
+            const primaryImage = (product.images && product.images.length > 0) ? product.images[0] : fallbackProductPhoto(product.name);
 
             return (
               <div 
@@ -180,7 +181,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                 const weightMultiplier = currentWeight === "250g" ? 0.55 : currentWeight === "1kg" ? 1.9 : 1.0;
                 const basePrice = Math.round((product.salePrice ?? product.price) * weightMultiplier);
                 const hasDiscount = product.salePrice && product.salePrice < product.price;
-                const primaryImage = (product.images && product.images.length > 0) ? product.images[0] : "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=800&auto=format&fit=crop";
+                const primaryImage = (product.images && product.images.length > 0) ? product.images[0] : fallbackProductPhoto(product.name);
 
                 return (
                   <CarouselItem

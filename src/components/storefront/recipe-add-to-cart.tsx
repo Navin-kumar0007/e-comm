@@ -5,6 +5,7 @@ import { ShoppingCart, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/lib/store/cart-store';
 import { toast } from 'sonner';
+import { getCleanProductImage } from '@/lib/utils';
 
 export function RecipeAddToCart({ products }: { products: any[] }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +21,7 @@ export function RecipeAddToCart({ products }: { products: any[] }) {
           slug: p.slug,
           price: p.salePrice || p.price,
           weight: p.weight || '100g',
-          image: p.images ? JSON.parse(p.images)[0] : '/placeholder.jpg'
+          image: getCleanProductImage(p.images, p.name)
         });
       });
       toast.success(`Added ${products.length} ingredients to your cart!`);

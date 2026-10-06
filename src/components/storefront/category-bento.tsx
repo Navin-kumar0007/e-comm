@@ -49,7 +49,7 @@ export function CategoryBento() {
           <motion.div variants={itemVariants} className="md:col-span-7 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[140px] md:min-h-[220px]">
             <Link href="/category/dry-fruits" className="block w-full h-full">
               <Image
-                src="https://images.unsplash.com/photo-1607349913338-fca9f7fc42d0?q=80&w=800&auto=format&fit=crop"
+                src="/products/panch-mewa-mix.jpg"
                 alt="Royal Dry Fruits and Superfoods"
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-108"
@@ -81,7 +81,7 @@ export function CategoryBento() {
           <motion.div variants={itemVariants} className="md:col-span-5 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[140px] md:min-h-[220px]">
             <Link href="/category/masalas" className="block w-full h-full">
               <Image
-                src="https://placehold.co/800x600/f4f3ea/052c1e?text=Image+Coming+Soon"
+                src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=800&auto=format&fit=crop"
                 alt="Tandoori Chai Masala and Blends"
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-108"
@@ -113,7 +113,7 @@ export function CategoryBento() {
           <motion.div variants={itemVariants} className="md:col-span-6 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[140px] md:min-h-[240px]">
             <Link href="/category/masalas" className="block w-full h-full">
               <Image
-                src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=800&auto=format&fit=crop"
+                src="https://images.unsplash.com/photo-1532336414038-cf19250c5757?q=80&w=800&auto=format&fit=crop"
                 alt="Lakadong Turmeric and Spices"
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-108"
@@ -143,7 +143,7 @@ export function CategoryBento() {
           <motion.div variants={itemVariants} className="md:col-span-6 relative rounded-3xl overflow-hidden group shadow-md hover:shadow-2xl transition-all duration-500 min-h-[140px] md:min-h-[240px]">
             <Link href="/category/snacks" className="block w-full h-full">
               <Image
-                src="https://images.unsplash.com/photo-1599490659213-e2b9527bd087?q=80&w=800&auto=format&fit=crop"
+                src="/products/dry-fruits-mix-breakfast.jpg"
                 alt="Healthy Snacks and Trail Mix"
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-108"

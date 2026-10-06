@@ -1,0 +1,111 @@
+{
+  "at": "2026-10-06T08:11:51.050Z",
+  "category": {
+    "id": "cat-spices",
+    "name": "Authentic Spices"
+  },
+  "products": [
+    {
+      "id": "sp-0",
+      "slug": "shahjeera",
+      "name": "Shahjeera",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-1",
+      "slug": "long-clove",
+      "name": "Long (Clove)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-2",
+      "slug": "kalimirchi-black-pepper",
+      "name": "Kalimirchi (Black Pepper)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-3",
+      "slug": "elaichi-7mm-cardamom",
+      "name": "Elaichi 7mm (Cardamom)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-4",
+      "slug": "elaichi-8mm-cardamom",
+      "name": "Elaichi 8mm (Cardamom)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-5",
+      "slug": "star-phool-star-anise",
+      "name": "Star Phool (Star Anise)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-6",
+      "slug": "dalchini-cinnamon",
+      "name": "Dalchini (Cinnamon)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-7",
+      "slug": "pencil-dalchini",
+      "name": "Pencil Dalchini",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-8",
+      "slug": "jaivatri-mace",
+      "name": "Jaivatri (Mace)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-9",
+      "slug": "nakeshri",
+      "name": "Nakeshri",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-10",
+      "slug": "dhaniya-coriander-seeds",
+      "name": "Dhaniya (Coriander Seeds)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-11",
+      "slug": "tej-patta-bay-leaf",
+      "name": "Tej Patta (Bay Leaf)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-12",
+      "slug": "black-phool-stone-flower",
+      "name": "Black Phool (Stone Flower)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-13",
+      "slug": "jaipal-nutmeg",
+      "name": "Jaipal (Nutmeg)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-14",
+      "slug": "kolanji-nigella-seeds",
+      "name": "Kolanji (Nigella Seeds)",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "sp-15",
+      "slug": "black-dry-coconut",
+      "name": "Black Dry Coconut",
+      "status": "ACTIVE"
+    }
+  ],
+  "recipes": [
+    {
+      "slug": "golden-turmeric-latte",
+      "previousStatus": "APPROVED"
+    }
+  ]
+}

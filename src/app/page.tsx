@@ -9,6 +9,7 @@ import { ScrollytellingSection } from "@/components/storefront/scrollytelling-se
 import { ReviewsTicker } from "@/components/storefront/reviews-ticker";
 import { NewsletterSignup } from "@/components/storefront/newsletter-signup";
 import { prisma } from "@/lib/db/prisma";
+import { fallbackProductPhoto, isPlaceholderImage } from "@/lib/product-images";
 
 export default async function Home() {
   let rawFeatured: any[] = [];
@@ -36,32 +37,10 @@ export default async function Home() {
       parsedImages = p.images ? [p.images] : [];
     }
 
-    // High quality gourmet fallbacks if image is missing or a placehold.co link
-    parsedImages = parsedImages.map((img: string) => {
-      if (!img || img.includes("placehold.co")) {
-        const nameLower = (p.name || "").toLowerCase();
-        if (nameLower.includes("almond") || nameLower.includes("badam")) {
-          return "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?q=80&w=800&auto=format&fit=crop";
-        }
-        if (nameLower.includes("cashew") || nameLower.includes("kaju")) {
-          return "https://images.unsplash.com/photo-1536599018102-9f803c140fc1?q=80&w=800&auto=format&fit=crop";
-        }
-        if (nameLower.includes("walnut") || nameLower.includes("akhrot")) {
-          return "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=800&auto=format&fit=crop";
-        }
-        if (nameLower.includes("seed") || nameLower.includes("chia") || nameLower.includes("flax")) {
-          return "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?q=80&w=800&auto=format&fit=crop";
-        }
-        if (nameLower.includes("date") || nameLower.includes("kishmish") || nameLower.includes("raisin")) {
-          return "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?q=80&w=800&auto=format&fit=crop";
-        }
-        return "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=800&auto=format&fit=crop";
-      }
-      return img;
-    });
-
+    // Swap missing or placehold.co images for the product's verified catalogue photo
+    parsedImages = parsedImages.filter((img: string) => !isPlaceholderImage(img));
     if (parsedImages.length === 0) {
-      parsedImages = ["https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=800&auto=format&fit=crop"];
+      parsedImages = [fallbackProductPhoto(p.name)];
     }
 
     return {

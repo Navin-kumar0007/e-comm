@@ -43,7 +43,7 @@ export const recipes: Recipe[] = [
     slug: "golden-turmeric-latte",
     title: "Golden Lakadong Turmeric Latte",
     description: "A soothing, high-curcumin anti-inflammatory drink made with our pristine Meghalaya Lakadong Turmeric.",
-    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=800&auto=format&fit=crop",
+    image: "/recipes/golden-turmeric-latte.jpg",
     category: "Beverages",
     prepTime: "2 min",
     cookTime: "5 min",
