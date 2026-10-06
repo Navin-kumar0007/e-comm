@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { PincodeChecker } from "@/components/storefront/pincode-checker";
+import { ProductPurchase } from "@/components/storefront/product-purchase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ShieldCheck, Truck, ArrowLeft, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/db/prisma";
-import { AddToCartButton } from "@/components/storefront/add-to-cart-button";
 import { WishlistButton } from "@/components/storefront/wishlist-button";
 import { ProductReviews } from "./product-reviews";
 import { ProductGallery } from "@/components/storefront/product-gallery";
@@ -59,7 +59,9 @@ export default async function ProductPage({
   const resolvedParams = await params;
   const found = await prisma.product.findUnique({
     where: { slug: resolvedParams.slug },
+    include: { variants: { where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { price: "asc" }] } },
   });
+  const sizes = (found?.variants ?? []).map((v) => ({ id: v.id, label: v.label, price: v.price, salePrice: v.salePrice, stock: v.stock }));
   // Drafts, archived products and custom blends are not publicly viewable.
   const rawProduct = found?.status === "ACTIVE" ? found : null;
   const cleanCover = rawProduct ? getCleanProductImage(rawProduct.images, rawProduct.name) : "/placeholder.jpg";
@@ -275,35 +277,21 @@ export default async function ProductPage({
 
           <div className="h-px w-full bg-border/50 my-6" />
 
-          {/* Options */}
-          <div className="mb-4 space-y-4">
-            <h3 className="font-medium text-foreground">
-              Select Quantity/Weight
-            </h3>
-            <div className="flex flex-wrap gap-3">
-              <button className="px-4 py-2 rounded-full border border-primary bg-primary/10 text-primary text-sm font-medium">
-                {product.weight || "Standard"}
-              </button>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-4 mb-4">
+          {/* Pack size + Actions */}
+          <div className="flex items-end gap-4 mb-4">
             <div className="flex-1">
-              <AddToCartButton
+              <ProductPurchase
                 product={{
                   id: product.id,
                   name: product.name,
                   slug: product.slug,
-                  price: product.salePrice
-                    ? Number(product.salePrice)
-                    : Number(product.price),
                   image: product.images[0],
+                  price: Number(product.price),
+                  salePrice: product.salePrice ? Number(product.salePrice) : null,
+                  stock: product.stock,
                   weight: product.weight || "Standard",
                 }}
-                size="lg"
-                fullWidth
-                className="text-lg h-14"
+                sizes={sizes}
               />
             </div>
             <div className="h-14 shrink-0 flex items-center justify-center">

@@ -251,6 +251,21 @@ export async function notifyAdminReturnRequest(orderId: string, customerName: st
   `);
 }
 
+export async function notifyAdminLowStock(items: Array<{ name: string; stock: number; threshold: number }>) {
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM?.match(/<(.+)>/)?.[1] || 'spicynuts1973@gmail.com';
+  const rows = items
+    .map((i) => `<p style="margin: 4px 0;"><strong>${esc(i.name)}</strong> — ${i.stock <= 0 ? '<span style="color:#b91c1c">OUT OF STOCK</span>' : `${i.stock} left`} (alert at ${i.threshold})</p>`)
+    .join('');
+  return sendEmail(adminEmail, `⚠️ Low stock: ${items.map((i) => i.name).join(', ').slice(0, 80)}`, `
+    <div style="${baseStyles}">
+      ${headerHtml}
+      <h1 style="color: #052c1e; font-size: 20px;">Low Stock Alert</h1>
+      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">${rows}</div>
+      <p><a href="${SITE_URL}/admin/inventory" style="color: #c59b27; font-weight: bold;">Restock in Admin →</a></p>
+    </div>
+  `);
+}
+
 export function siteUrl() {
   return SITE_URL;
 }

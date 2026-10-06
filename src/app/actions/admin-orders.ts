@@ -2,12 +2,14 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requirePermission, staffActor } from '@/lib/auth-guard';
+import type { Permission } from '@/lib/permissions';
 import { releaseStaleOrders, allocateInvoiceNumber } from '@/lib/orders';
 import { getStoreSettings } from '@/lib/store-settings';
 import { transitionOrder } from '@/lib/order-status';
 import { nextAdminStatuses, ORDER_STATUSES, type OrderStatus } from '@/lib/order-status-rules';
 import { logOrderEvent } from '@/lib/order-events';
+import { adjustStock, StockError } from '@/lib/inventory';
 
 function mapPrismaStatusToUI(status: string) {
   const m: Record<string, string> = {
@@ -25,9 +27,9 @@ function mapPrismaStatusToUI(status: string) {
   return m[status.toUpperCase()] || 'Pending';
 }
 
-async function adminActor() {
-  const session = await requireAdmin();
-  return `admin:${session.user?.email ?? 'unknown'}`;
+async function adminActor(permission: Permission) {
+  await requirePermission(permission);
+  return staffActor();
 }
 
 function revalidateOrder(id?: string) {
@@ -36,23 +38,53 @@ function revalidateOrder(id?: string) {
   if (id) revalidatePath(`/admin/orders/${id}`);
 }
 
-export async function getAdminOrders() {
-  await requireAdmin();
+const ORDERS_PAGE_SIZE = 50; // not exported: "use server" files may only export async functions
+
+export async function getAdminOrders(opts: { page?: number; q?: string; status?: string } = {}) {
+  await requirePermission('orders.view');
   // Fallback for when no cron is configured: expire abandoned online checkouts.
   try { await releaseStaleOrders(10); } catch (e) { console.error('Stale order sweep failed:', e); }
-  const dbOrders = await prisma.order.findMany({
-    where: { status: { not: 'DELETED' } },  // Hide soft-deleted orders
-    include: {
-      items: {
-        include: {
-          product: true
-        }
-      }
-    },
-    orderBy: { createdAt: 'desc' }
-  });
 
-  return dbOrders.map((o: any) => ({
+  const page = Math.max(1, Math.floor(opts.page || 1));
+  const rawStatus = Object.entries({
+    Pending: 'PENDING', Processing: 'PROCESSING', Confirmed: 'CONFIRMED', Shipped: 'SHIPPED', Delivered: 'DELIVERED',
+    Cancelled: 'CANCELLED', RTO: 'RTO', Returned: 'RETURNED', Expired: 'EXPIRED',
+  }).find(([label]) => label === opts.status)?.[1];
+
+  const q = opts.q?.trim().replace(/^NW-/i, '').replace(/^#/, '');
+  const search = q
+    ? {
+        OR: [
+          { id: { endsWith: q.toLowerCase() } },
+          { id: q },
+          { customerName: { contains: q, mode: 'insensitive' as const } },
+          { customerEmail: { contains: q, mode: 'insensitive' as const } },
+          { customerPhone: { contains: q } },
+          { trackingNumber: { contains: q } },
+        ],
+      }
+    : {};
+  const where = { status: rawStatus ? rawStatus : { not: 'DELETED' }, ...search };
+
+  const [dbOrders, total, grouped] = await Promise.all([
+    prisma.order.findMany({
+      where,
+      include: { items: { include: { product: true } } },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * ORDERS_PAGE_SIZE,
+      take: ORDERS_PAGE_SIZE,
+    }),
+    prisma.order.count({ where }),
+    prisma.order.groupBy({ by: ['status'], where: { status: { not: 'DELETED' }, ...search }, _count: { _all: true } }),
+  ]);
+
+  const counts: Record<string, number> = { all: 0 };
+  for (const g of grouped as any[]) {
+    counts[mapPrismaStatusToUI(g.status)] = (counts[mapPrismaStatusToUI(g.status)] ?? 0) + g._count._all;
+    counts.all += g._count._all;
+  }
+
+  const orders = dbOrders.map((o: any) => ({
     id: o.id,
     customer: o.customerName,
     email: o.customerEmail,
@@ -76,13 +108,16 @@ export async function getAdminOrders() {
     trackingUrl: o.trackingUrl,
     notes: ''
   }));
+
+  return { orders, total, page, pageSize: ORDERS_PAGE_SIZE, counts };
 }
 
 /** Changes order status through the lifecycle rules (stock, refunds, cashback, notifications). */
 export async function updateOrderStatusAction(id: string, status: string, reason?: string) {
-  const actor = await adminActor();
   const upper = status.toUpperCase() as OrderStatus;
   if (!ORDER_STATUSES.includes(upper)) return { error: 'Unknown status' };
+  // Cancelling / RTO returns stock and refunds money, so it needs its own permission.
+  const actor = await adminActor(upper === 'CANCELLED' || upper === 'RTO' ? 'orders.cancel' : 'orders.update');
 
   const res = await transitionOrder(id, upper, { actor, reason });
   revalidateOrder(id);
@@ -90,7 +125,7 @@ export async function updateOrderStatusAction(id: string, status: string, reason
 }
 
 export async function deleteOrderAction(id: string) {
-  const actor = await adminActor();
+  const actor = await adminActor('orders.delete');
   // Soft-delete only closed orders (cancelled / expired / returned); keeps the audit trail.
   const res = await transitionOrder(id, 'DELETED', { actor });
   revalidateOrder(id);
@@ -98,7 +133,7 @@ export async function deleteOrderAction(id: string) {
 }
 
 export async function addOrderNoteAction(id: string, note: string) {
-  const actor = await adminActor();
+  const actor = await adminActor('orders.update');
   const text = note.trim().slice(0, 1000);
   if (!text) return { error: 'Note is empty' };
   await logOrderEvent(null, { orderId: id, type: 'NOTE', message: text, actor });
@@ -113,7 +148,7 @@ export async function createOrderAction(data: {
   shippingAddress: string;
   items: Array<{ productId: string; quantity: number; price: number; weight: string }>;
 }) {
-  await requireAdmin();
+  const actor = await adminActor('orders.create');
 
   if (!data.items.length || data.items.some(i => !Number.isInteger(i.quantity) || i.quantity < 1 || !(i.price >= 0))) {
     return { error: 'Invalid items' };
@@ -121,8 +156,13 @@ export async function createOrderAction(data: {
 
   // Resolve product names for the audit trail
   const productIds = data.items.map(i => i.productId);
-  const products = await prisma.product.findMany({ where: { id: { in: productIds } } });
+  const products = await prisma.product.findMany({ where: { id: { in: productIds } }, include: { variants: { where: { isActive: true }, orderBy: { sortOrder: 'asc' } } } });
   const nameById = new Map(products.map((p: any) => [p.id, p.name]));
+  // Products with sizes: use the size matching the weight label, else the default size.
+  const variantFor = (productId: string, weight: string) => {
+    const variants: any[] = products.find((p: any) => p.id === productId)?.variants ?? [];
+    return (variants.find((v) => v.label === weight) ?? variants[0])?.id ?? null;
+  };
 
   // Same rules as storefront checkout: GST-inclusive prices, shipping from settings.
   const settings = await getStoreSettings();
@@ -134,14 +174,7 @@ export async function createOrderAction(data: {
 
   try {
     const order = await prisma.$transaction(async (tx: any) => {
-      for (const item of data.items) {
-        const res = await tx.product.updateMany({
-          where: { id: item.productId, stock: { gte: item.quantity } },
-          data: { stock: { decrement: item.quantity } }
-        });
-        if (res.count === 0) throw new Error(`STOCK:${nameById.get(item.productId) || 'Product'}`);
-      }
-      return tx.order.create({
+      const created = await tx.order.create({
         data: {
           subtotal,
           shippingFee,
@@ -157,6 +190,7 @@ export async function createOrderAction(data: {
           items: {
             create: data.items.map(item => ({
               productId: item.productId,
+              variantId: variantFor(item.productId, item.weight),
               quantity: item.quantity,
               price: item.price,
               weight: item.weight,
@@ -165,6 +199,15 @@ export async function createOrderAction(data: {
           }
         }
       });
+      for (const item of data.items) {
+        try {
+          await adjustStock(tx, { productId: item.productId, variantId: variantFor(item.productId, item.weight), delta: -item.quantity, reason: 'ADMIN_ORDER', orderId: created.id, actor });
+        } catch (e) {
+          if (e instanceof StockError) throw new Error(`STOCK:${nameById.get(item.productId) || 'Product'}`);
+          throw e;
+        }
+      }
+      return created;
     });
 
     revalidatePath('/admin/orders');
@@ -179,7 +222,7 @@ export async function createOrderAction(data: {
 }
 
 export async function updateOrderTrackingAction(id: string, trackingNumber: string, trackingUrl: string) {
-  await requireAdmin();
+  await requirePermission('orders.update');
   await prisma.order.update({
     where: { id },
     data: { trackingNumber, trackingUrl }
@@ -190,7 +233,7 @@ export async function updateOrderTrackingAction(id: string, trackingNumber: stri
 }
 
 export async function updateInvoiceNotesAction(id: string, invoiceNotes: string) {
-  await requireAdmin();
+  await requirePermission('orders.update');
   await prisma.order.update({
     where: { id },
     data: { invoiceNotes }
@@ -200,7 +243,7 @@ export async function updateInvoiceNotesAction(id: string, invoiceNotes: string)
 }
 
 export async function bulkUpdateOrderStatusAction(ids: string[], status: string) {
-  await requireAdmin();
+  await requirePermission('orders.update');
   let updated = 0;
   const failed: string[] = [];
   for (const id of ids) {

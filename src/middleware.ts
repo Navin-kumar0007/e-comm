@@ -21,7 +21,6 @@ export async function middleware(req: NextRequest) {
   const isLoggedIn = !!token;
   const isAuthRoute = req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/register');
   const isAdminRoute = req.nextUrl.pathname.startsWith('/admin');
-  const role = token?.role;
 
   if (isAuthRoute) {
     if (isLoggedIn) {
@@ -34,9 +33,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/login', req.nextUrl));
   }
 
-  if (isAdminRoute && role !== "ADMIN") {
-    return NextResponse.redirect(new URL('/', req.nextUrl));
-  }
+  // Staff roles are checked against the database in the admin layout and every
+  // admin action (the role in this token can be stale), so only require login here.
 
   return NextResponse.next();
 }

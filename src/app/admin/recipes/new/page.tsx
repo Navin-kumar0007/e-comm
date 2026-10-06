@@ -1,7 +1,9 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { RecipeForm } from '../recipe-form';
 import { prisma } from '@/lib/db/prisma';
 
 export default async function NewRecipePage() {
+  await requirePagePermission("catalog.manage");
   const products = await prisma.product.findMany({ select: { id: true, name: true } });
   
   return (

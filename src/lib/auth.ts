@@ -99,6 +99,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               await sendWhatsAppMessage({
                 to: dbUser.phone,
                 type: "WELCOME",
+                template: { key: "welcome", params: [dbUser.name, "ROYAL10", "https://www.spicynuts.in/shop"] },
                 message: `🎉 *WELCOME TO SPICY NUTS* 🎉
 
 Namaste ${dbUser.name}! You have successfully signed in.

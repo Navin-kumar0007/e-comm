@@ -46,6 +46,7 @@ export async function addReview(input: AddReviewInput) {
     session = await auth();
   } catch {}
   let userId: string | null = null;
+  let verifiedPurchase = false;
   let reviewerName: string = userName?.trim().slice(0, 60) || "Customer";
 
   if (session?.user?.email) {
@@ -56,6 +57,15 @@ export async function addReview(input: AddReviewInput) {
     if (user) {
       userId = user.id;
       reviewerName = user.name || reviewerName;
+      // "Verified Purchase" only when this account actually received the product.
+      const bought = await prisma.order.count({
+        where: {
+          OR: [{ userId: user.id }, { customerEmail: { equals: session.user.email, mode: "insensitive" } }],
+          status: { in: ["DELIVERED", "RETURNED"] },
+          items: { some: { productId } },
+        },
+      });
+      verifiedPurchase = bought > 0;
     }
   }
 
@@ -74,7 +84,9 @@ export async function addReview(input: AddReviewInput) {
         userName: reviewerName,
         userEmail: userEmail?.trim() || (session?.user?.email ?? null),
         images: JSON.stringify(images),
-        status: "APPROVED",
+        verifiedPurchase,
+        // Verified buyers publish instantly; everyone else is checked by an admin first.
+        status: verifiedPurchase ? "APPROVED" : "PENDING",
       },
       include: {
         user: { select: { name: true } },
@@ -92,9 +104,14 @@ export async function addReview(input: AddReviewInput) {
 
     return {
       success: true,
+      published: verifiedPurchase,
       review: {
-        ...newReview,
-        images: images,
+        id: newReview.id,
+        rating: newReview.rating,
+        comment: newReview.comment,
+        images,
+        verifiedPurchase,
+        createdAt: newReview.createdAt,
         reviewerName: newReview.user?.name || newReview.userName || "Customer",
       },
     };
@@ -114,6 +131,7 @@ export async function getReviews(productId: string) {
       orderBy: { createdAt: "desc" },
     });
 
+    // Only public fields — never send reviewer emails to the browser.
     return reviews.map((r: any) => {
       let parsedImages: string[] = [];
       if (r.images) {
@@ -124,8 +142,12 @@ export async function getReviews(productId: string) {
         }
       }
       return {
-        ...r,
+        id: r.id,
+        rating: r.rating,
+        comment: r.comment,
+        createdAt: r.createdAt,
         images: parsedImages,
+        verifiedPurchase: r.verifiedPurchase,
         reviewerName: r.user?.name || r.userName || "Customer",
       };
     });

@@ -1,9 +1,11 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { RecipeForm } from '../../recipe-form';
 import { prisma } from '@/lib/db/prisma';
 import { getRecipe } from '@/app/actions/admin-recipes';
 import { notFound } from 'next/navigation';
 
 export default async function EditRecipePage({ params }: { params: Promise<{ id: string }> }) {
+  await requirePagePermission("catalog.manage");
   const { id } = await params;
   const recipe = await getRecipe(id);
   if (!recipe) notFound();

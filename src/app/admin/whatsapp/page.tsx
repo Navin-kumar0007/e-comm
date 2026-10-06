@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { TemplateStatus } from "./template-status";
 import { 
   MessageCircle, 
   Send, 
@@ -408,6 +409,8 @@ TWILIO_WHATSAPP_NUMBER="whatsapp:+14155238886"`}
           </div>
         </div>
       )}
+
+      <TemplateStatus />
     </div>
   );
 }

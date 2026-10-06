@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth";
+import { getStaffContext } from "@/lib/auth-guard";
 import { SHIPMENT_STATUS_LABELS, type ShipmentStatus } from "@/lib/shipping/status";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -58,7 +59,7 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
   const session = await auth();
   const canSeeDetails =
     !!session?.user &&
-    ((session.user as any).role === "ADMIN" || (!!order.userId && order.userId === (session.user as any).id));
+    ((!!order.userId && order.userId === (session.user as any).id) || !!(await getStaffContext())?.can("orders.view"));
 
   const isCancelled = ["CANCELLED", "EXPIRED", "RTO", "RETURNED"].includes(order.status);
   const shipment = order.shipments[0];

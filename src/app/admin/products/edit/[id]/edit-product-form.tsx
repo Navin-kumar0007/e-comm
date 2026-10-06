@@ -99,6 +99,8 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
         categoryId: fd.get("category") as string,
         stock: Number(fd.get("stock")) || 0,
         weight: fd.get("weight") as string || "250g",
+        costPrice: fd.get("costPrice") ? Number(fd.get("costPrice")) : null,
+        lowStockThreshold: Number(fd.get("lowStockThreshold")) || 10,
         tags,
         isFeatured,
         isOrganic,
@@ -202,12 +204,25 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="stock">Stock Quantity *</Label>
-                  <Input id="stock" name="stock" required type="number" defaultValue={product.stock} className="rounded-xl" />
+                  <Input id="stock" name="stock" required type="number" defaultValue={product.stock} className="rounded-xl" disabled={product.hasSizes} />
                 </div>
-                <div className="space-y-2 col-span-2 sm:col-span-3">
+                <div className="space-y-2">
                   <Label htmlFor="weight">Weight *</Label>
-                  <Input id="weight" name="weight" required defaultValue={product.weight || "250g"} className="rounded-xl max-w-[200px]" />
+                  <Input id="weight" name="weight" required defaultValue={product.weight || "250g"} className="rounded-xl" disabled={product.hasSizes} />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="costPrice">Cost Price (₹)</Label>
+                  <Input id="costPrice" name="costPrice" type="number" step="0.01" defaultValue={product.costPrice ?? ""} placeholder="for margins" className="rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lowStockThreshold">Low-stock alert at</Label>
+                  <Input id="lowStockThreshold" name="lowStockThreshold" type="number" min={0} defaultValue={product.lowStockThreshold ?? 10} className="rounded-xl" />
+                </div>
+                {product.hasSizes && (
+                  <p className="col-span-2 sm:col-span-3 text-xs text-muted-foreground">
+                    This product has pack sizes — price, stock and weight come from the default size. Edit them under <strong>Pack Sizes</strong> below.
+                  </p>
+                )}
               </div>
             </div>
 

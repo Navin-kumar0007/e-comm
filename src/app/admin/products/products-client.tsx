@@ -107,7 +107,11 @@ export default function AdminProductsClient({ initialProducts }: { initialProduc
   const saveEdit = async (id: string) => {
     setIsPending(true);
     try {
-      await updateProductQuickAction(id, { stock: editForm.stock, salePrice: editForm.salePrice });
+      const res = await updateProductQuickAction(id, { stock: editForm.stock, salePrice: editForm.salePrice });
+      if (res && 'error' in res) {
+        toast.error(res.error);
+        return;
+      }
       setProducts(prev => prev.map(p => p.id === id ? { ...p, stock: editForm.stock, salePrice: editForm.salePrice } : p));
       toast.success("Product updated");
       setEditingId(null);

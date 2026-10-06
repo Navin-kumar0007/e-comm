@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getStaffContext } from "@/lib/auth-guard";
 import { prisma } from "@/lib/db/prisma";
 
 export async function GET() {
-  const session = await auth();
-  const role = (session?.user as any)?.role;
-  if (!session?.user || role !== "ADMIN") {
+  const staff = await getStaffContext();
+  if (!staff?.can("orders.export")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

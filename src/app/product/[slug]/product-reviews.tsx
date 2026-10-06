@@ -16,6 +16,7 @@ interface ReviewItem {
   comment: string | null;
   images: string[];
   reviewerName: string;
+  verifiedPurchase?: boolean;
   createdAt: string | Date;
 }
 
@@ -121,7 +122,11 @@ export function ProductReviews({ productId }: { productId: string }) {
       return;
     }
 
-    toast.success("Thank you! Your verified review has been published.");
+    toast.success(
+      result.published
+        ? "Thank you! Your review has been published."
+        : "Thank you! Your review will appear once our team has checked it."
+    );
     setComment("");
     setGuestName("");
     setGuestEmail("");
@@ -142,7 +147,7 @@ export function ProductReviews({ productId }: { productId: string }) {
       {/* Header Summary */}
       <div className="text-center mb-10">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">
-          Verified Customer Experiences
+          Customer Reviews
         </h2>
         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <div className="flex items-center text-amber-500">
@@ -241,7 +246,7 @@ export function ProductReviews({ productId }: { productId: string }) {
               <div className="flex items-center gap-2 p-2.5 rounded-xl bg-primary/5 border border-primary/10 text-xs text-primary font-medium">
                 <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
                 <span>
-                  Posting as <strong>{session.user?.name || session.user?.email}</strong> (Verified)
+                  Posting as <strong>{session.user?.name || session.user?.email}</strong>
                 </span>
               </div>
             )}
@@ -360,9 +365,11 @@ export function ProductReviews({ productId }: { productId: string }) {
                           <span className="font-bold text-xs sm:text-sm text-foreground">
                             {rev.reviewerName}
                           </span>
-                          <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
-                            Verified
-                          </span>
+                          {rev.verifiedPurchase && (
+                            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
+                              Verified Purchase
+                            </span>
+                          )}
                         </div>
                         <span className="text-[11px] text-muted-foreground">
                           {new Date(rev.createdAt).toLocaleDateString("en-IN", {

@@ -13,28 +13,8 @@ import {
   type ShipmentStatus,
 } from "./status";
 import { ShippingError, type PaymentMode, type TrackingEvent } from "./types";
-
-/** "150g", "1 kg", "500 gm", "1.5KG" → grams. */
-export function parseWeightGrams(weight: string | null | undefined): number | null {
-  if (!weight) return null;
-  const m = weight.toLowerCase().replace(/\s+/g, "").match(/^([\d.]+)(kg|kgs|g|gm|gms|grams?)?$/);
-  if (!m) return null;
-  const n = parseFloat(m[1]);
-  if (!Number.isFinite(n) || n <= 0) return null;
-  return Math.round(m[2]?.startsWith("k") ? n * 1000 : n);
-}
-
-/** Packed weight estimate: product weights + 15% packaging, never below the default box weight. */
-export function estimateOrderWeight(
-  items: Array<{ quantity: number; weight: string; product?: { shippingWeightGrams?: number | null; weight?: string | null } | null }>,
-  settings: StoreSettings
-) {
-  const net = items.reduce((sum, i) => {
-    const per = i.product?.shippingWeightGrams ?? parseWeightGrams(i.product?.weight ?? i.weight) ?? 250;
-    return sum + per * i.quantity;
-  }, 0);
-  return Math.max(settings.defaultPackageWeightGrams, Math.round(net * 1.15));
-}
+import { estimateOrderWeight } from "./weight";
+export { parseWeightGrams, estimateOrderWeight } from "./weight";
 
 function parseAddress(order: { shippingAddress: string; shippingState?: string | null }) {
   // Stored as "street, city, state, pincode"
@@ -212,7 +192,16 @@ async function nudgeCustomer(shipment: any, status: ShipmentStatus) {
       ? `🚚 *Order #${num} is out for delivery today!*${cod}`
       : `⚠️ *We couldn't deliver order #${num}.*\nThe courier will try again. If you need to change the address or time, reply here or call us.\nTrack: ${shipment.trackingUrl || `${siteUrl()}/track/${order.id}`}`;
   try {
-    await sendWhatsAppMessage({ to: order.customerPhone, message, type: "ORDER_UPDATE" });
+    const trackUrl = shipment.trackingUrl || `${siteUrl()}/track/${order.id}`;
+    await sendWhatsAppMessage({
+      to: order.customerPhone,
+      message,
+      type: "ORDER_UPDATE",
+      template:
+        status === "OUT_FOR_DELIVERY"
+          ? { key: "order_out_for_delivery", params: [num, order.paymentMethod === "COD" ? `Please keep ₹${order.total.toFixed(0)} ready (cash or UPI).` : "No payment needed — it's prepaid."] }
+          : { key: "order_delivery_failed", params: [num, trackUrl] },
+    });
   } catch (e) {
     console.error("Delivery nudge failed:", e);
   }

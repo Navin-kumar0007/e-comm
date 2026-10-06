@@ -15,6 +15,7 @@ const MAX_QTY_PER_LINE = 50;
 
 export interface PricedLine {
   productId: string | null; // null => custom blend, product row created at order time
+  variantId?: string; // pack size, when the product has sizes
   name: string;
   unitPrice: number;
   quantity: number;
@@ -49,6 +50,8 @@ export async function priceCart(input: {
   couponCode?: unknown;
   usePoints?: unknown;
   userPoints?: number;
+  /** Identity for per-customer coupon rules (logged-in user and/or checkout email). */
+  customer?: { userId?: string | null; email?: string | null };
   settings?: StoreSettings;
 }): Promise<CartQuote> {
   const { items } = input;
@@ -71,7 +74,10 @@ export async function priceCart(input: {
 
   const catalogueIds = items.filter((i: any) => !i.productId.startsWith("custom-")).map((i: any) => i.productId);
   const products = catalogueIds.length
-    ? await prisma.product.findMany({ where: { id: { in: catalogueIds } } })
+    ? await prisma.product.findMany({
+        where: { id: { in: catalogueIds } },
+        include: { variants: { where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { price: "asc" }] } },
+      })
     : [];
   const productById = new Map<string, any>(products.map((p: any) => [p.id, p]));
 
@@ -99,22 +105,37 @@ export async function priceCart(input: {
     if (!product || product.status !== "ACTIVE") {
       throw new CheckoutError(`"${item.name || "An item"}" is no longer available. Please remove it from your cart.`);
     }
-    const totalQty = (qtyByProduct.get(product.id) ?? 0) + item.quantity;
-    qtyByProduct.set(product.id, totalQty);
-    if (product.stock < totalQty) {
+
+    // Products with pack sizes: price + stock come from the chosen size
+    // (by id, else by label, else the default size).
+    const variants: any[] = product.variants ?? [];
+    const variant = variants.length
+      ? (item.variantId && variants.find((v) => v.id === item.variantId)) ||
+        variants.find((v) => v.label === item.weight) ||
+        (!item.variantId ? variants[0] : null)
+      : null;
+    if (variants.length && !variant) {
+      throw new CheckoutError(`The selected size of ${product.name} is no longer available. Please remove it from your cart.`);
+    }
+
+    const stockKey = variant ? `v:${variant.id}` : product.id;
+    const available = variant ? variant.stock : product.stock;
+    const label = variant ? `${product.name} (${variant.label})` : product.name;
+    const totalQty = (qtyByProduct.get(stockKey) ?? 0) + item.quantity;
+    qtyByProduct.set(stockKey, totalQty);
+    if (available < totalQty) {
       throw new CheckoutError(
-        product.stock > 0
-          ? `Only ${product.stock} left of ${product.name}. Please reduce the quantity.`
-          : `${product.name} is out of stock.`,
+        available > 0 ? `Only ${available} left of ${label}. Please reduce the quantity.` : `${label} is out of stock.`,
         409
       );
     }
     lines.push({
       productId: product.id,
+      variantId: variant?.id,
       name: product.name,
-      unitPrice: product.salePrice ?? product.price,
+      unitPrice: variant ? variant.salePrice ?? variant.price : product.salePrice ?? product.price,
       quantity: item.quantity,
-      weight: product.weight || item.weight || "Standard",
+      weight: variant ? variant.label : product.weight || item.weight || "Standard",
     });
   }
 
@@ -131,10 +152,16 @@ export async function priceCart(input: {
     else if (coupon.expiryDate && new Date() > coupon.expiryDate) couponError = "This coupon has expired.";
     else if (coupon.minPurchase && subtotal < coupon.minPurchase)
       couponError = `Minimum purchase of ₹${coupon.minPurchase} required for this coupon.`;
+    else if (coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit)
+      couponError = "This coupon has been fully redeemed.";
     else {
-      const raw = coupon.discountType === "PERCENTAGE" ? subtotal * (coupon.discountValue / 100) : coupon.discountValue;
-      couponDiscount = round2(Math.min(raw, subtotal));
-      appliedCouponCode = coupon.code;
+      couponError = await customerCouponError(coupon, input.customer);
+      if (!couponError) {
+        let raw = coupon.discountType === "PERCENTAGE" ? subtotal * (coupon.discountValue / 100) : coupon.discountValue;
+        if (coupon.maxDiscount) raw = Math.min(raw, coupon.maxDiscount);
+        couponDiscount = round2(Math.min(raw, subtotal));
+        appliedCouponCode = coupon.code;
+      }
     }
   }
 
@@ -168,4 +195,28 @@ export async function priceCart(input: {
     taxAmount,
     gstRate,
   };
+}
+
+const USED_ORDER_STATUSES = { notIn: ["PENDING", "CANCELLED", "EXPIRED", "DELETED"] };
+
+/** Per-customer coupon rules. Guests are checked by email once it's known at checkout. */
+async function customerCouponError(
+  coupon: { code: string; perUserLimit: number | null; firstOrderOnly: boolean },
+  customer?: { userId?: string | null; email?: string | null }
+): Promise<string | null> {
+  const who = [
+    ...(customer?.userId ? [{ userId: customer.userId }] : []),
+    ...(customer?.email ? [{ customerEmail: { equals: customer.email, mode: "insensitive" as const } }] : []),
+  ];
+  if (who.length === 0) return null;
+
+  if (coupon.firstOrderOnly) {
+    const previous = await prisma.order.count({ where: { OR: who, status: USED_ORDER_STATUSES } });
+    if (previous > 0) return "This coupon is only valid on your first order.";
+  }
+  if (coupon.perUserLimit) {
+    const used = await prisma.order.count({ where: { OR: who, couponCode: coupon.code, status: { notIn: ["CANCELLED", "EXPIRED", "DELETED"] } } });
+    if (used >= coupon.perUserLimit) return "You've already used this coupon.";
+  }
+  return null;
 }

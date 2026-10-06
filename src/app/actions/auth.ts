@@ -83,6 +83,7 @@ export async function registerUser({
         await sendWhatsAppMessage({
           to: cleanPhone,
           type: "WELCOME",
+          template: { key: "welcome", params: [name, "ROYAL10", "https://www.spicynuts.in/shop"] },
           message: `🎉 *WELCOME TO SPICY NUTS* 🎉
 
 Namaste ${name}! Your account is now active. You will receive exclusive harvest offers, price drop alerts, and live order tracking directly on WhatsApp.

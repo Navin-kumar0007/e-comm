@@ -2,10 +2,10 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
-import { requireAdmin, requireUser } from '@/lib/auth-guard';
+import { requirePermission, requireUser } from '@/lib/auth-guard';
 
 export async function approveRecipe(id: string) {
-  await requireAdmin();
+  await requirePermission('catalog.manage');
   await prisma.recipe.update({
     where: { id },
     data: { status: 'APPROVED' }
@@ -14,7 +14,7 @@ export async function approveRecipe(id: string) {
 }
 
 export async function deleteRecipe(id: string) {
-  await requireAdmin();
+  await requirePermission('catalog.manage');
   await prisma.recipe.delete({
     where: { id }
   });
@@ -36,7 +36,7 @@ export async function getRecipe(id: string) {
 }
 
 export async function createRecipe(data: any) {
-  await requireAdmin();
+  await requirePermission('catalog.manage');
   const { productIds, ...recipeData } = data;
   
   const recipe = await prisma.recipe.create({
@@ -53,7 +53,7 @@ export async function createRecipe(data: any) {
 }
 
 export async function updateRecipe(id: string, data: any) {
-  await requireAdmin();
+  await requirePermission('catalog.manage');
   const { productIds, ...recipeData } = data;
   
   const recipe = await prisma.recipe.update({

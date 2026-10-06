@@ -1,11 +1,14 @@
 import { prisma } from "@/lib/db/prisma";
 import { canTransition, ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/order-status-rules";
 import { logOrderEvent } from "@/lib/order-events";
+import { adjustStock } from "@/lib/inventory";
+import { releaseCouponUse } from "@/lib/orders";
 import { issueRefund } from "@/lib/refunds";
 import { getProvider } from "@/lib/shipping";
 import { CANCELLABLE_SHIPMENT_STATUSES, type ShipmentStatus } from "@/lib/shipping/status";
 import { sendOrderShipped, sendOrderDelivered, sendOrderCancelled, siteUrl } from "@/lib/email";
 import { sendWhatsAppMessage } from "@/lib/whatsapp";
+import type { TemplateRef } from "@/lib/whatsapp-templates";
 
 const CASHBACK_RATE = 0.05;
 
@@ -56,10 +59,18 @@ export async function transitionOrder(
     // Goods come back into stock when the order never left, or came back undelivered.
     if (to === "CANCELLED" || to === "RTO") {
       for (const item of order.items) {
-        if (item.productId && !item.productId.startsWith("custom-")) {
-          await tx.product.update({ where: { id: item.productId }, data: { stock: { increment: item.quantity } } });
+        if (item.productId) {
+          await adjustStock(tx, {
+            productId: item.productId,
+            variantId: item.variantId,
+            delta: item.quantity,
+            reason: to === "RTO" ? "RTO_RESTOCK" : "CANCEL_RESTOCK",
+            orderId,
+            actor: opts.actor,
+          });
         }
       }
+      if (to === "CANCELLED") await releaseCouponUse(tx, order.couponCode);
       if (order.userId && order.pointsUsed > 0) {
         await tx.user.update({ where: { id: order.userId }, data: { points: { increment: order.pointsUsed } } });
       }
@@ -169,9 +180,15 @@ async function notifyCustomer(order: any, to: OrderStatus, shipment: any) {
     DELIVERED: `✅ *Order #${orderNum} delivered!*\n\nWe hope you love it. Any issue? Report within 48 hours from My Orders: ${siteUrl()}/account/orders`,
     CANCELLED: `❌ *Order #${orderNum} cancelled.*${order.paymentMethod === "ONLINE" && order.paymentId ? "\n\nYour refund has been initiated (5-7 business days)." : ""}`,
   };
+  const refundLine = order.paymentMethod === "ONLINE" && order.paymentId ? "Your refund has been initiated and will reach you in 5-7 business days." : "No payment was taken.";
+  const templates: Partial<Record<OrderStatus, TemplateRef>> = {
+    SHIPPED: { key: "order_shipped", params: [orderNum, shipment?.courierName || "our courier", shipment?.awb || "-", trackingUrl] },
+    DELIVERED: { key: "order_delivered", params: [orderNum, `${siteUrl()}/account/orders`] },
+    CANCELLED: { key: "order_cancelled", params: [orderNum, refundLine] },
+  };
   if (wa[to] && order.customerPhone) {
     try {
-      await sendWhatsAppMessage({ to: order.customerPhone, message: wa[to]!, type: "ORDER_UPDATE" });
+      await sendWhatsAppMessage({ to: order.customerPhone, message: wa[to]!, type: "ORDER_UPDATE", template: templates[to] });
     } catch (e) {
       console.error("Status WhatsApp failed:", e);
     }

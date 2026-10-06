@@ -1,8 +1,10 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { prisma } from "@/lib/db/prisma";
 import { Package, TrendingUp, Users } from "lucide-react";
 import MarkDeliveredButton from "./mark-delivered-button";
 
 export default async function AdminSubscriptionsPage() {
+  await requirePagePermission("customers.view");
   const subscriptions = await prisma.subscription.findMany({
     include: { user: { select: { name: true, email: true } } },
     orderBy: { createdAt: "desc" }

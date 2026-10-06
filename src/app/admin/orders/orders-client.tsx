@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Fragment } from "react";
+import { useState, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/order-status-rules";
@@ -11,7 +11,23 @@ import { Badge } from "@/components/ui/badge";
 import { updateOrderStatusAction, deleteOrderAction, updateOrderTrackingAction, bulkUpdateOrderStatusAction } from "@/app/actions/admin-orders";
 import { toast } from "sonner";
 
-export default function OrdersClient({ initialOrders }: { initialOrders: any[] }) {
+export default function OrdersClient({
+  initialOrders,
+  total,
+  page,
+  pageSize,
+  counts,
+  status,
+  query,
+}: {
+  initialOrders: any[];
+  total: number;
+  page: number;
+  pageSize: number;
+  counts: Record<string, number>;
+  status: string;
+  query: string;
+}) {
   const router = useRouter();
   const [orders, setOrders] = useState(initialOrders);
   // Server data is the source of truth after every change (stock, refunds, next statuses).
@@ -20,8 +36,20 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
     setPrevInitial(initialOrders);
     setOrders(initialOrders);
   }
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState(query);
+  const activeTab = status;
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  // Filters live in the URL so the server does the work (and links are shareable).
+  const go = (next: { status?: string; q?: string; page?: number }) => {
+    const params = new URLSearchParams();
+    const st = next.status ?? status;
+    const qq = next.q ?? query;
+    if (st && st !== "all") params.set("status", st);
+    if (qq) params.set("q", qq);
+    if (next.page && next.page > 1) params.set("page", String(next.page));
+    setSelectedIds([]);
+    router.push(`/admin/orders${params.size ? `?${params}` : ""}`);
+  };
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [trackingNumber, setTrackingNumber] = useState("");
   const [trackingUrl, setTrackingUrl] = useState("");
@@ -109,15 +137,7 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
     setSelectedIds(prev => prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]);
   };
 
-  const filteredOrders = useMemo(() => {
-    let list = orders;
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(o => o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q) || o.email.toLowerCase().includes(q));
-    }
-    if (activeTab !== 'all') list = list.filter(o => o.status === activeTab);
-    return list;
-  }, [orders, searchQuery, activeTab]);
+  const filteredOrders = orders;
 
   const toggleSelectAll = () => {
     if (selectedIds.length === filteredOrders.length) {
@@ -143,24 +163,24 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
   };
 
   const tabs = [
-    { key: 'all', label: 'All', count: orders.length },
-    { key: 'Pending', label: 'Awaiting Payment', count: orders.filter(o => o.status === 'Pending').length },
-    { key: 'Processing', label: 'Processing', count: orders.filter(o => o.status === 'Processing').length },
-    { key: 'Confirmed', label: 'Confirmed', count: orders.filter(o => o.status === 'Confirmed').length },
-    { key: 'Shipped', label: 'Shipped', count: orders.filter(o => o.status === 'Shipped').length },
-    { key: 'Delivered', label: 'Delivered', count: orders.filter(o => o.status === 'Delivered').length },
-    { key: 'Cancelled', label: 'Cancelled', count: orders.filter(o => o.status === 'Cancelled').length },
-    { key: 'RTO', label: 'RTO', count: orders.filter(o => o.status === 'RTO').length },
-    { key: 'Returned', label: 'Returned', count: orders.filter(o => o.status === 'Returned').length },
-    { key: 'Expired', label: 'Expired', count: orders.filter(o => o.status === 'Expired').length },
-  ];
+    { key: 'all', label: 'All' },
+    { key: 'Pending', label: 'Awaiting Payment' },
+    { key: 'Processing', label: 'Processing' },
+    { key: 'Confirmed', label: 'Confirmed' },
+    { key: 'Shipped', label: 'Shipped' },
+    { key: 'Delivered', label: 'Delivered' },
+    { key: 'Cancelled', label: 'Cancelled' },
+    { key: 'RTO', label: 'RTO' },
+    { key: 'Returned', label: 'Returned' },
+    { key: 'Expired', label: 'Expired' },
+  ].map(t => ({ ...t, count: counts[t.key] ?? 0 }));
 
   return (
     <div className={`space-y-6 ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-heading font-bold text-foreground">Orders</h1>
-          <p className="text-muted-foreground mt-1">Manage and fulfill customer orders ({orders.length} total)</p>
+          <p className="text-muted-foreground mt-1">Manage and fulfill customer orders ({counts.all ?? 0} total)</p>
         </div>
         <Link href="/admin/orders/new">
           <Button className="rounded-full shadow-md"><Plus className="w-4 h-4 mr-2" /> Create Order</Button>
@@ -169,7 +189,7 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
 
       <div className="flex gap-1 p-1 bg-muted/50 rounded-xl w-fit flex-wrap">
         {tabs.map(tab => (
-          <button key={tab.key} onClick={() => { setActiveTab(tab.key); setSelectedIds([]); }}
+          <button key={tab.key} onClick={() => go({ status: tab.key, page: 1 })}
             className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.key ? 'bg-card shadow-sm text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground'}`}>
             {tab.label} <span className="ml-1 text-xs opacity-60">({tab.count})</span>
           </button>
@@ -192,7 +212,9 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
         <div className="flex items-center gap-4 mb-6">
           <div className="relative w-full sm:max-w-sm">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search order ID, customer..." className="pl-10 rounded-xl" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+            <form onSubmit={e => { e.preventDefault(); go({ q: searchQuery.trim(), page: 1 }); }}>
+              <Input placeholder="Search order ID, name, email, phone, AWB… (Enter)" className="pl-10 rounded-xl" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+            </form>
           </div>
         </div>
 
@@ -328,6 +350,18 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
             </tbody>
           </table>
         </div>
+        {pages > 1 && (
+          <div className="flex items-center justify-between pt-4 mt-4 border-t border-border/40 text-sm">
+            <span className="text-muted-foreground">
+              {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)} of {total}
+            </span>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => go({ page: page - 1 })}>Previous</Button>
+              <span className="px-2 py-1 text-muted-foreground">Page {page} / {pages}</span>
+              <Button variant="outline" size="sm" disabled={page >= pages} onClick={() => go({ page: page + 1 })}>Next</Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

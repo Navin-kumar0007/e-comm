@@ -12,6 +12,7 @@ export interface CartItem {
   image: string;
   quantity: number;
   weight: string;
+  variantId?: string; // pack size id, when the product has sizes
   blend?: BlendSpec; // Only for custom blends; the server re-prices from this.
 }
 

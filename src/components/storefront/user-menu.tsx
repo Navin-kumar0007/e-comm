@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
+import { isStaffRole } from "@/lib/permissions";
 import Link from "next/link";
 import { User, LogOut, Package, Settings, LogIn, Shield, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -58,7 +59,7 @@ export function UserMenu() {
             <Package className="w-4 h-4" /> My Orders
           </div>
         </DropdownMenuItem>
-        {(session.user as any).role === "ADMIN" && (
+        {isStaffRole((session.user as any).role) && (
           <DropdownMenuItem render={<Link href="/admin" />} className="rounded-lg cursor-pointer">
             <div className="flex items-center gap-2 text-primary font-medium">
               <Shield className="w-4 h-4" /> Admin Panel

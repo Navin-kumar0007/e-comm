@@ -2,14 +2,14 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requirePermission } from '@/lib/auth-guard';
 import { getStoreSettings, DEFAULT_STORE_SETTINGS } from '@/lib/store-settings';
 import { getProvider } from '@/lib/shipping';
 
 const GSTIN_RE = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
 
 export async function getAdminSettings() {
-  await requireAdmin();
+  await requirePermission('settings.manage');
   return getStoreSettings();
 }
 
@@ -40,7 +40,7 @@ export async function updateAdminSettingsAction(data: {
   codMaxOrderValue?: number;
   returnWindowHours?: number;
 }) {
-  await requireAdmin();
+  await requirePermission('settings.manage');
 
   if (data.gstin) {
     data.gstin = data.gstin.trim().toUpperCase();

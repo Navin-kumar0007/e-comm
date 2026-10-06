@@ -22,7 +22,7 @@ export interface CheckoutQuoteResult {
 
 /** Same pricing the checkout API uses, so the preview always matches the charge. */
 export async function getCheckoutQuote(input: {
-  items: Array<{ productId: string; quantity: number; weight?: string; name?: string; blend?: unknown }>;
+  items: Array<{ productId: string; variantId?: string; quantity: number; weight?: string; name?: string; blend?: unknown }>;
   couponCode?: string;
   usePoints?: boolean;
   pincode?: string;
@@ -30,7 +30,7 @@ export async function getCheckoutQuote(input: {
   try {
     const session = await auth();
     const user = session?.user?.email
-      ? await prisma.user.findUnique({ where: { email: session.user.email }, select: { points: true } })
+      ? await prisma.user.findUnique({ where: { email: session.user.email }, select: { id: true, email: true, points: true } })
       : null;
 
     const quote = await priceCart({
@@ -38,6 +38,7 @@ export async function getCheckoutQuote(input: {
       couponCode: input.couponCode,
       usePoints: input.usePoints,
       userPoints: user?.points ?? 0,
+      customer: { userId: user?.id, email: user?.email },
     });
 
     const delivery = input.pincode && /^[1-9]\d{5}$/.test(input.pincode)

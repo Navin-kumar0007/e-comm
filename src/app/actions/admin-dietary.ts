@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requirePermission } from '@/lib/auth-guard';
 
 export async function getDietaryTags() {
   return prisma.dietaryTag.findMany({
@@ -11,7 +11,7 @@ export async function getDietaryTags() {
 }
 
 export async function createDietaryTag(data: { name: string; slug: string; description?: string }) {
-  await requireAdmin();
+  await requirePermission('catalog.manage');
   const tag = await prisma.dietaryTag.create({
     data
   });
@@ -21,7 +21,7 @@ export async function createDietaryTag(data: { name: string; slug: string; descr
 }
 
 export async function deleteDietaryTag(id: string) {
-  await requireAdmin();
+  await requirePermission('catalog.manage');
   await prisma.dietaryTag.delete({
     where: { id }
   });

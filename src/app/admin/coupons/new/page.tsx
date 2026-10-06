@@ -17,6 +17,11 @@ export default function NewCouponPage() {
     discountType: "PERCENTAGE",
     discountValue: 10,
     minPurchase: 0,
+    maxDiscount: 0,
+    usageLimit: 0,
+    perUserLimit: 1,
+    firstOrderOnly: false,
+    expiryDate: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,7 +29,11 @@ export default function NewCouponPage() {
     setLoading(true);
     
     try {
-      await createCouponAction(formData);
+      const res = await createCouponAction(formData);
+      if (res && "error" in res) {
+        toast.error(res.error);
+        return;
+      }
       toast.success("Coupon created successfully!");
       router.push("/admin/coupons");
     } catch (err) {
@@ -99,6 +108,33 @@ export default function NewCouponPage() {
               onChange={e => setFormData({ ...formData, minPurchase: Number(e.target.value) })}
             />
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {formData.discountType === "PERCENTAGE" && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Max Discount (₹)</label>
+                <Input type="number" min={0} placeholder="No cap" value={formData.maxDiscount || ""} onChange={e => setFormData({ ...formData, maxDiscount: Number(e.target.value) })} />
+                <p className="text-xs text-gray-500">e.g. 10% off, up to ₹200</p>
+              </div>
+            )}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Expires On</label>
+              <Input type="date" value={formData.expiryDate} onChange={e => setFormData({ ...formData, expiryDate: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Total Uses Allowed</label>
+              <Input type="number" min={0} placeholder="Unlimited" value={formData.usageLimit || ""} onChange={e => setFormData({ ...formData, usageLimit: Number(e.target.value) })} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Uses per Customer</label>
+              <Input type="number" min={0} placeholder="Unlimited" value={formData.perUserLimit || ""} onChange={e => setFormData({ ...formData, perUserLimit: Number(e.target.value) })} />
+            </div>
+          </div>
+
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input type="checkbox" checked={formData.firstOrderOnly} onChange={e => setFormData({ ...formData, firstOrderOnly: e.target.checked })} className="w-4 h-4" />
+            Only for a customer&apos;s first order
+          </label>
 
           <div className="pt-4 flex justify-end gap-3">
             <Link href="/admin/coupons">

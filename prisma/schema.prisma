@@ -51,6 +51,10 @@ model Product {
   dietaryTags DietaryTag[]  @relation("ProductDietaryTags")
   labelSettings String?
   shippingWeightGrams Int? // Packed weight for courier booking; falls back to parsing `weight`
+  costPrice           Float?  // Purchase cost per unit, for margin reports
+  lowStockThreshold   Int     @default(10)
+  variants            ProductVariant[]
+  stockMovements      StockMovement[]
 
   @@index([categoryId])
   @@index([status])
@@ -159,6 +163,7 @@ model OrderItem {
   productId   String?
   product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   productName String   @default("Product")
+  variantId   String?
   quantity    Int
   price       Float
   weight      String
@@ -226,6 +231,7 @@ model Review {
   userName  String?  // Reviewer display name (supports guest reviews)
   userEmail String?  // Optional email for verified badge
   status    String   @default("APPROVED") // PENDING, APPROVED, REJECTED
+  verifiedPurchase Boolean @default(false)
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId String
@@ -242,6 +248,11 @@ model Coupon {
   active        Boolean  @default(true)
   expiryDate    DateTime?
   minPurchase   Float?
+  maxDiscount   Float?   // cap for percentage coupons
+  usageLimit    Int?     // total redemptions allowed (null = unlimited)
+  perUserLimit  Int?     // per customer (by account or email)
+  usedCount     Int      @default(0)
+  firstOrderOnly Boolean @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -461,4 +472,47 @@ model PasswordResetToken {
   createdAt DateTime  @default(now())
 
   @@index([userId])
+}
+
+// Optional pack sizes (e.g. 100g / 250g / 500g). When a product has active
+// variants, Product.price/salePrice mirror the default variant and
+// Product.stock is the sum of variant stock, so listings keep working.
+model ProductVariant {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  label      String   // "250g"
+  price      Float
+  salePrice  Float?
+  mrp        Float?
+  costPrice  Float?
+  stock      Int      @default(0)
+  sku        String?
+  weightGrams Int?
+  sortOrder  Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  stockMovements StockMovement[]
+
+  @@index([productId])
+}
+
+// Every stock change, with why it happened. Sum of deltas = current stock.
+model StockMovement {
+  id           String          @id @default(cuid())
+  productId    String
+  product      Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantId    String?
+  variant      ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  delta        Int             // + in, - out
+  balanceAfter Int?
+  reason       String          // SALE, RELEASE, CANCEL_RESTOCK, RTO_RESTOCK, RESTOCK, DAMAGE, CORRECTION, ADMIN_ORDER, OPENING
+  orderId      String?
+  note         String?
+  actor        String
+  createdAt    DateTime        @default(now())
+
+  @@index([productId, createdAt])
+  @@index([orderId])
 }

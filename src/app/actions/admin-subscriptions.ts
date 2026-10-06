@@ -2,10 +2,10 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requirePermission } from '@/lib/auth-guard';
 
 export async function markSubscriptionDeliveredAction(id: string) {
-  await requireAdmin();
+  await requirePermission('orders.update');
   
   const subscription = await prisma.subscription.findUnique({ where: { id } });
   if (!subscription) throw new Error("Subscription not found");
@@ -24,7 +24,7 @@ export async function markSubscriptionDeliveredAction(id: string) {
 }
 
 export async function cancelSubscriptionAction(id: string) {
-  await requireAdmin();
+  await requirePermission('orders.update');
   await prisma.subscription.update({
     where: { id },
     data: { status: 'CANCELLED' }

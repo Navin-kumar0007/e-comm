@@ -2,10 +2,10 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requirePermission } from '@/lib/auth-guard';
 
 export async function awardPointsAction(userId: string, points: number) {
-  await requireAdmin();
+  await requirePermission('marketing.manage');
   
   await prisma.user.update({
     where: { id: userId },

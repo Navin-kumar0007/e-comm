@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db/prisma";
+import { buildTemplatePayload, type TemplateRef } from "@/lib/whatsapp-templates";
 
 export type WhatsAppMessageType =
   | "OFFER"
@@ -11,6 +12,8 @@ export interface SendWhatsAppParams {
   to: string; // phone number e.g. "+919876543210" or "9876543210"
   message: string;
   type: WhatsAppMessageType;
+  /** Approved Meta template to use (falls back to `message` as text if not configured). */
+  template?: TemplateRef;
 }
 
 /**
@@ -32,7 +35,7 @@ export function formatWhatsAppNumber(phone: string): string {
  * 2. Twilio WhatsApp API (if TWILIO_ACCOUNT_SID & TWILIO_AUTH_TOKEN are set)
  * 3. Safe Simulation & Logging Mode (logs to WhatsAppLog in DB with status "SIMULATED")
  */
-export async function sendWhatsAppMessage({ to, message, type }: SendWhatsAppParams): Promise<{
+export async function sendWhatsAppMessage({ to, message, type, template }: SendWhatsAppParams): Promise<{
   success: boolean;
   status: "SENT" | "SIMULATED" | "FAILED";
   error?: string;
@@ -52,6 +55,12 @@ export async function sendWhatsAppMessage({ to, message, type }: SendWhatsAppPar
   try {
     // 1. Meta WhatsApp Cloud API
     if (metaToken && metaPhoneId) {
+      // Business-initiated messages must use an approved template; plain text only
+      // reaches customers who messaged us in the last 24 hours.
+      const tpl = template ? buildTemplatePayload(template) : null;
+      if (template && !tpl) {
+        console.warn(`[WhatsApp] Template '${template.key}' not configured — sending as text (may not be delivered).`);
+      }
       const res = await fetch(`https://graph.facebook.com/v19.0/${metaPhoneId}/messages`, {
         method: "POST",
         headers: {
@@ -62,8 +71,7 @@ export async function sendWhatsAppMessage({ to, message, type }: SendWhatsAppPar
           messaging_product: "whatsapp",
           recipient_type: "individual",
           to: formattedTo,
-          type: "text",
-          text: { preview_url: true, body: message },
+          ...(tpl ? { type: "template", template: tpl } : { type: "text", text: { preview_url: true, body: message } }),
         }),
       });
 

@@ -18,38 +18,51 @@ import {
   MessageSquare,
   MessageCircle,
   Menu,
-  RotateCcw
+  RotateCcw,
+  UserCog,
+  Warehouse,
+  Star
 } from "lucide-react";
 import { ThemeToggle } from "@/components/storefront/ThemeToggle";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { getStaffContext } from "@/lib/auth-guard";
+import { ROLE_LABELS, type Permission } from "@/lib/permissions";
 
-const sidebarLinks = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/products", label: "Products", icon: Package },
-  { href: "/admin/categories", label: "Categories", icon: FolderTree },
-  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
-  { href: "/admin/returns", label: "Returns", icon: RotateCcw },
-  { href: "/admin/customers", label: "Customers", icon: Users },
-  { href: "/admin/messages", label: "Customer Inquiries", icon: MessageSquare },
-  { href: "/admin/whatsapp", label: "WhatsApp Marketing", icon: MessageCircle },
-  { href: "/admin/coupons", label: "Coupons", icon: Ticket },
-  { href: "/admin/recipes", label: "Recipes", icon: ChefHat },
-  { href: "/admin/dietary", label: "Dietary Profiles", icon: ListChecks },
-  { href: "/admin/subscriptions", label: "Subscriptions", icon: Repeat },
-  { href: "/admin/points", label: "Spice Points", icon: Sparkles },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+const allLinks: Array<{ href: string; label: string; icon: any; permission: Permission }> = [
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, permission: "dashboard.view" },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingCart, permission: "orders.view" },
+  { href: "/admin/returns", label: "Returns", icon: RotateCcw, permission: "returns.manage" },
+  { href: "/admin/inventory", label: "Inventory", icon: Warehouse, permission: "inventory.manage" },
+  { href: "/admin/products", label: "Products", icon: Package, permission: "catalog.manage" },
+  { href: "/admin/categories", label: "Categories", icon: FolderTree, permission: "catalog.manage" },
+  { href: "/admin/customers", label: "Customers", icon: Users, permission: "customers.view" },
+  { href: "/admin/reviews", label: "Reviews", icon: Star, permission: "reviews.moderate" },
+  { href: "/admin/messages", label: "Customer Inquiries", icon: MessageSquare, permission: "customers.view" },
+  { href: "/admin/whatsapp", label: "WhatsApp Marketing", icon: MessageCircle, permission: "marketing.manage" },
+  { href: "/admin/coupons", label: "Coupons", icon: Ticket, permission: "marketing.manage" },
+  { href: "/admin/recipes", label: "Recipes", icon: ChefHat, permission: "catalog.manage" },
+  { href: "/admin/dietary", label: "Dietary Profiles", icon: ListChecks, permission: "catalog.manage" },
+  { href: "/admin/subscriptions", label: "Subscriptions", icon: Repeat, permission: "customers.view" },
+  { href: "/admin/points", label: "Spice Points", icon: Sparkles, permission: "marketing.manage" },
+  { href: "/admin/staff", label: "Staff", icon: UserCog, permission: "staff.manage" },
+  { href: "/admin/settings", label: "Settings", icon: Settings, permission: "settings.manage" },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth();
-
-  if (!session?.user || (session.user as any).role !== "ADMIN") {
-    redirect("/");
+  // Role is read fresh from the database, so removed staff lose access immediately.
+  const staff = await getStaffContext();
+  if (!staff) {
+    const session = await auth();
+    redirect(session?.user ? "/" : "/login");
   }
+  const sidebarLinks = allLinks.filter((l) => staff.can(l.permission));
 
   const NavLinks = () => (
     <>
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <p className="px-3 pb-3 text-xs text-muted-foreground">
+          {staff.user.name} · {ROLE_LABELS[staff.role].name}
+        </p>
         {sidebarLinks.map((link) => (
           <Link
             key={link.href}

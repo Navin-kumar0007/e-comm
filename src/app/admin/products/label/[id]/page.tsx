@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { prisma } from "@/lib/db/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -9,6 +10,7 @@ export const metadata = {
 };
 
 export default async function ProductLabelPage({ params }: { params: Promise<{ id: string }> }) {
+  await requirePagePermission("catalog.manage");
   const resolvedParams = await params;
   const product = await prisma.product.findUnique({
     where: { id: resolvedParams.id },

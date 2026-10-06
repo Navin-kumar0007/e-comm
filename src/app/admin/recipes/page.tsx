@@ -1,3 +1,4 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { getRecipes } from '@/app/actions/admin-recipes';
 import { RecipesClient } from './recipes-client';
 import Link from 'next/link';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 export default async function AdminRecipesPage() {
+  await requirePagePermission("catalog.manage");
   const recipes = await getRecipes();
 
   return (

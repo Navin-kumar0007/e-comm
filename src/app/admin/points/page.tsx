@@ -1,8 +1,10 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { prisma } from "@/lib/db/prisma";
 import { Crown, Sparkles, TrendingUp, Medal } from "lucide-react";
 import AwardPointsDialog from "./award-points-dialog";
 
 export default async function AdminPointsPage() {
+  await requirePagePermission("marketing.manage");
   const users = await prisma.user.findMany({
     orderBy: { points: "desc" },
     select: { id: true, name: true, email: true, points: true }

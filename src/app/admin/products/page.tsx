@@ -1,7 +1,9 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { getAdminProducts } from "@/app/actions/admin-products";
 import AdminProductsClient from "./products-client";
 
 export default async function AdminProductsPage() {
+  await requirePagePermission("catalog.manage");
   const products = await getAdminProducts();
   
   // Format the products for the client component

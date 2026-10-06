@@ -1,7 +1,9 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { getDietaryTags } from '@/app/actions/admin-dietary';
 import { DietaryClient } from './dietary-client';
 
 export default async function DietaryAdminPage() {
+  await requirePagePermission("catalog.manage");
   const tags = await getDietaryTags();
 
   return (

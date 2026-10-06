@@ -1,6 +1,8 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { prisma } from '@/lib/db/prisma';
 
 export default async function AdminMessagesPage() {
+  await requirePagePermission("customers.view");
   const messages = await prisma.contactMessage.findMany({
     orderBy: { createdAt: 'desc' }
   });

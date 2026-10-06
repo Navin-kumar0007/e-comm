@@ -2,7 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requirePermission, staffActor } from '@/lib/auth-guard';
+import type { Permission } from '@/lib/permissions';
 import { getStoreSettings } from '@/lib/store-settings';
 import { getProvider, listProviders, ShippingError, SHIPMENT_STATUSES, type ShipmentStatus } from '@/lib/shipping';
 import { createShipmentForOrder, syncShipment, applyShipmentUpdate, estimateOrderWeight } from '@/lib/shipping/service';
@@ -10,9 +11,9 @@ import { CANCELLABLE_SHIPMENT_STATUSES } from '@/lib/shipping/status';
 import { issueRefund, markManualRefundProcessed } from '@/lib/refunds';
 import { logOrderEvent } from '@/lib/order-events';
 
-async function actor() {
-  const session = await requireAdmin();
-  return `admin:${session.user?.email ?? 'unknown'}`;
+async function actor(permission: Permission) {
+  await requirePermission(permission);
+  return staffActor();
 }
 
 function done(orderId: string) {
@@ -28,7 +29,7 @@ function fail(e: unknown) {
 
 /** Providers + package defaults for the "Book shipment" form. */
 export async function getShippingContext(orderId: string) {
-  await requireAdmin();
+  await requirePermission('shipping.manage');
   const settings = await getStoreSettings();
   const order = await prisma.order.findUnique({ where: { id: orderId }, include: { items: { include: { product: true } } } });
   return {
@@ -41,7 +42,7 @@ export async function getShippingContext(orderId: string) {
 
 /** Courier options + rates from a provider for this order's pincode. */
 export async function getCourierOptionsAction(orderId: string, providerId: string, weightGrams: number) {
-  await requireAdmin();
+  await requirePermission('shipping.manage');
   try {
     const provider = getProvider(providerId);
     if (!provider?.checkServiceability || !provider.isConfigured()) return { options: [] };
@@ -69,7 +70,7 @@ export async function bookShipmentAction(
   orderId: string,
   input: { providerId?: string; courierId?: string; weightGrams?: number; manual?: { awb: string; courierName: string; trackingUrl?: string } }
 ) {
-  const who = await actor();
+  const who = await actor('shipping.manage');
   try {
     const shipment = await createShipmentForOrder(orderId, input, who);
     done(orderId);
@@ -80,7 +81,7 @@ export async function bookShipmentAction(
 }
 
 export async function syncShipmentAction(shipmentId: string) {
-  const who = await actor();
+  const who = await actor('shipping.manage');
   try {
     const shipment = await prisma.shipment.findUnique({ where: { id: shipmentId } });
     if (!shipment) return { error: 'Shipment not found' };
@@ -94,7 +95,7 @@ export async function syncShipmentAction(shipmentId: string) {
 
 /** Manual partners: admin records the courier's status (picked up, delivered, RTO...). */
 export async function setShipmentStatusAction(shipmentId: string, status: string, note?: string) {
-  const who = await actor();
+  const who = await actor('shipping.manage');
   if (!SHIPMENT_STATUSES.includes(status as ShipmentStatus)) return { error: 'Unknown shipment status' };
   try {
     const shipment = await prisma.shipment.findUnique({ where: { id: shipmentId } });
@@ -108,7 +109,7 @@ export async function setShipmentStatusAction(shipmentId: string, status: string
 }
 
 export async function cancelShipmentAction(shipmentId: string) {
-  const who = await actor();
+  const who = await actor('shipping.manage');
   try {
     const shipment = await prisma.shipment.findUnique({ where: { id: shipmentId } });
     if (!shipment) return { error: 'Shipment not found' };
@@ -128,7 +129,7 @@ export async function cancelShipmentAction(shipmentId: string) {
 }
 
 export async function issueRefundAction(orderId: string, amount: number, reason: string) {
-  const who = await actor();
+  const who = await actor('refunds.issue');
   if (!reason.trim()) return { error: 'Enter a reason for the refund.' };
   const res = await issueRefund({ orderId, amount, reason: reason.trim(), actor: who });
   done(orderId);
@@ -136,7 +137,7 @@ export async function issueRefundAction(orderId: string, amount: number, reason:
 }
 
 export async function markRefundPaidAction(refundId: string, reference: string) {
-  const who = await actor();
+  const who = await actor('refunds.issue');
   const refund = await prisma.refund.findUnique({ where: { id: refundId } });
   const res = await markManualRefundProcessed(refundId, reference.trim(), who);
   if (refund) done(refund.orderId);

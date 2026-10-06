@@ -11,7 +11,7 @@ export const metadata = {
 export default async function RewardsPage() {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.email) {
     redirect('/login');
   }
 

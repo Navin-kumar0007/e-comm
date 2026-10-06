@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { priceCart, CheckoutError } from "@/lib/pricing";
 import { checkDelivery } from "@/lib/shipping/service";
+import { adjustStock, notifyLowStock, StockError, type StockResult } from "@/lib/inventory";
 import {
   getRazorpay,
   mockPaymentsAllowed,
@@ -68,6 +69,7 @@ export async function POST(req: Request) {
       couponCode: body.couponCode,
       usePoints: body.usePoints,
       userPoints: user?.points ?? 0,
+      customer: { userId: user?.id, email: shipping.email },
     });
     // Don't silently charge more than the customer expected.
     if (quote.couponError) throw new CheckoutError(quote.couponError);
@@ -80,6 +82,7 @@ export async function POST(req: Request) {
       throw new CheckoutError("Online payments must be at least ₹1. Please use fewer points or choose Cash on Delivery.");
     }
 
+    const stockResults: Array<StockResult | null> = [];
     const order = await prisma.$transaction(async (tx: any) => {
       // Points: only deduct if the balance still covers it (guards concurrent checkouts).
       if (user && quote.pointsToDeduct > 0) {
@@ -90,14 +93,14 @@ export async function POST(req: Request) {
         if (res.count === 0) throw new CheckoutError("Your points balance changed. Please review your order.", 409);
       }
 
-      // Stock: conditional decrement so two buyers can't both take the last unit.
-      for (const line of quote.lines) {
-        if (!line.productId) continue;
-        const res = await tx.product.updateMany({
-          where: { id: line.productId, status: "ACTIVE", stock: { gte: line.quantity } },
-          data: { stock: { decrement: line.quantity } },
+      // Coupon redemption counter (atomic, so a limited coupon can't be over-used).
+      if (quote.appliedCouponCode) {
+        const coupon = await tx.coupon.findUnique({ where: { code: quote.appliedCouponCode } });
+        const res = await tx.coupon.updateMany({
+          where: { code: quote.appliedCouponCode, ...(coupon?.usageLimit != null ? { usedCount: { lt: coupon.usageLimit } } : {}) },
+          data: { usedCount: { increment: 1 } },
         });
-        if (res.count === 0) throw new CheckoutError(`${line.name} just sold out. Please update your cart.`, 409);
+        if (res.count === 0) throw new CheckoutError("This coupon has just been fully redeemed.", 409);
       }
 
       // Custom blends become hidden (status CUSTOM) products so order history can reference them.
@@ -134,6 +137,7 @@ export async function POST(req: Request) {
         }
         orderItems.push({
           productId,
+          variantId: line.variantId ?? null,
           productName: line.name,
           quantity: line.quantity,
           price: line.unitPrice,
@@ -164,9 +168,31 @@ export async function POST(req: Request) {
         },
       });
 
+      // Stock: guarded decrement so two buyers can't both take the last unit; every change is logged.
+      for (const line of quote.lines) {
+        if (!line.productId) continue;
+        try {
+          stockResults.push(
+            await adjustStock(tx, {
+              productId: line.productId,
+              variantId: line.variantId,
+              delta: -line.quantity,
+              reason: "SALE",
+              orderId: created.id,
+              actor: user ? `customer:${user.email}` : `guest:${shipping.email}`,
+            })
+          );
+        } catch (e) {
+          if (e instanceof StockError) throw new CheckoutError(`${line.name} (${line.weight}) just sold out. Please update your cart.`, 409);
+          throw e;
+        }
+      }
+
       if (isCod) await creditOrderRewards(tx, created);
       return created;
     });
+
+    await notifyLowStock(stockResults);
 
     const breakdown = {
       subtotal: quote.subtotal,

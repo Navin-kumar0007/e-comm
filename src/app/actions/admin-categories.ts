@@ -2,10 +2,10 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requirePermission } from '@/lib/auth-guard';
 
 export async function getAdminCategories() {
-  await requireAdmin();
+  await requirePermission('catalog.manage');
   const categories = await prisma.category.findMany({
     include: {
       _count: {
@@ -32,7 +32,7 @@ export async function createCategoryAction(data: {
   description: string;
   image?: string;
 }) {
-  await requireAdmin();
+  await requirePermission('catalog.manage');
 
   // Ensure slug uniqueness
   const cleanSlug = data.slug.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
@@ -62,7 +62,7 @@ export async function updateCategoryAction(id: string, data: {
   description: string;
   image?: string;
 }) {
-  await requireAdmin();
+  await requirePermission('catalog.manage');
 
   const cleanSlug = data.slug.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
   
@@ -89,7 +89,7 @@ export async function updateCategoryAction(id: string, data: {
 }
 
 export async function deleteCategoryAction(id: string) {
-  await requireAdmin();
+  await requirePermission('catalog.manage');
 
   // Check if any products belong to this category
   const productCount = await prisma.product.count({ where: { categoryId: id } });

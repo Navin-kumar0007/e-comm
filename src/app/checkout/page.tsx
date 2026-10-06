@@ -77,6 +77,7 @@ export default function CheckoutPage() {
   const quoteItems = () =>
     items.map(item => ({
       productId: item.productId,
+      variantId: item.variantId,
       quantity: item.quantity,
       weight: item.weight,
       name: item.name,

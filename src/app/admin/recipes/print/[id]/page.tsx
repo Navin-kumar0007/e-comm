@@ -1,8 +1,10 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { prisma } from "@/lib/db/prisma";
 import { notFound } from "next/navigation";
 import RecipePrintClient from "./recipe-print-client";
 
 export default async function RecipePrintPage({ params }: { params: Promise<{ id: string }> }) {
+  await requirePagePermission("catalog.manage");
   const resolvedParams = await params;
   const recipe = await prisma.recipe.findUnique({
     where: { id: resolvedParams.id },

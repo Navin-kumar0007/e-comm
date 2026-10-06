@@ -1,11 +1,14 @@
+import { requirePagePermission } from "@/lib/auth-guard";
 import { prisma } from "@/lib/db/prisma";
 import Link from "next/link";
 import { Plus, Ticket, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { revalidatePath } from "next/cache";
 import CouponDeleteButton from "./coupon-delete-button";
+import { CouponToggle } from "./coupon-toggle";
 
 export default async function CouponsPage() {
+  await requirePagePermission("marketing.manage");
   const coupons = await prisma.coupon.findMany({
     orderBy: { createdAt: "desc" }
   });
@@ -28,6 +31,8 @@ export default async function CouponsPage() {
             <tr>
               <th className="p-4 font-medium text-gray-500">Code</th>
               <th className="p-4 font-medium text-gray-500">Discount</th>
+              <th className="p-4 font-medium text-gray-500">Rules</th>
+              <th className="p-4 font-medium text-gray-500">Used</th>
               <th className="p-4 font-medium text-gray-500">Status</th>
               <th className="p-4 font-medium text-gray-500 text-right">Actions</th>
             </tr>
@@ -39,10 +44,16 @@ export default async function CouponsPage() {
                 <td className="p-4 text-gray-600">
                   {coupon.discountType === "PERCENTAGE" ? `${coupon.discountValue}%` : `₹${coupon.discountValue}`} Off
                 </td>
+                <td className="p-4 text-xs text-gray-500 space-y-0.5">
+                  {coupon.minPurchase ? <p>Min ₹{coupon.minPurchase}</p> : null}
+                  {coupon.maxDiscount ? <p>Max ₹{coupon.maxDiscount} off</p> : null}
+                  {coupon.perUserLimit ? <p>{coupon.perUserLimit}× per customer</p> : null}
+                  {coupon.firstOrderOnly ? <p>First order only</p> : null}
+                  {coupon.expiryDate ? <p className={new Date(coupon.expiryDate) < new Date() ? "text-red-600" : ""}>Expires {new Date(coupon.expiryDate).toLocaleDateString("en-IN")}</p> : null}
+                </td>
+                <td className="p-4 text-sm tabular-nums">{coupon.usedCount}{coupon.usageLimit ? ` / ${coupon.usageLimit}` : ""}</td>
                 <td className="p-4">
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${coupon.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                    {coupon.active ? "Active" : "Inactive"}
-                  </span>
+                  <CouponToggle id={coupon.id} active={coupon.active} />
                 </td>
                 <td className="p-4 flex gap-2 justify-end">
                   <Link href={`/admin/coupons/print/${coupon.id}`}>
@@ -56,7 +67,7 @@ export default async function CouponsPage() {
             ))}
             {coupons.length === 0 && (
               <tr>
-                <td colSpan={4} className="p-8 text-center text-gray-500">No coupons found. Create some in the database first.</td>
+                <td colSpan={6} className="p-8 text-center text-gray-500">No coupons found. Create some in the database first.</td>
               </tr>
             )}
           </tbody>

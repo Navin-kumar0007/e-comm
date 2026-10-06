@@ -1,10 +1,10 @@
 'use server'
 
 import { prisma } from '@/lib/db/prisma';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requirePermission } from '@/lib/auth-guard';
 
 export async function getAdminCustomers() {
-  await requireAdmin();
+  await requirePermission('customers.view');
   const users = await prisma.user.findMany({
     include: {
       _count: {

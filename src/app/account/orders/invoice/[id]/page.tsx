@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db/prisma";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getStoreSettings } from "@/lib/store-settings";
+import { getStaffContext } from "@/lib/auth-guard";
 import { InvoiceDocument } from "@/components/invoice/invoice-document";
 
 export default async function CustomerInvoicePage({ params }: { params: Promise<{ id: string }> }) {
@@ -23,7 +24,7 @@ export default async function CustomerInvoicePage({ params }: { params: Promise<
   });
 
   const isOwner = order && order.userId === session.user.id;
-  const isAdmin = (session.user as any).role === 'ADMIN';
+  const isAdmin = !!(await getStaffContext())?.can('orders.view');
 
   if (!order || (!isOwner && !isAdmin)) {
     return notFound();

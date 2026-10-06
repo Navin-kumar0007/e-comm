@@ -2,15 +2,16 @@
 
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requirePermission, staffActor } from '@/lib/auth-guard';
+import type { Permission } from '@/lib/permissions';
 import { issueRefund, amountPaid } from '@/lib/refunds';
 import { transitionOrder } from '@/lib/order-status';
 import { logOrderEvent } from '@/lib/order-events';
 import { sendReturnUpdate } from '@/lib/email';
 
-async function actor() {
-  const session = await requireAdmin();
-  return `admin:${session.user?.email ?? 'unknown'}`;
+async function actor(permission: Permission) {
+  await requirePermission(permission);
+  return staffActor();
 }
 
 function done(orderId: string) {
@@ -19,7 +20,7 @@ function done(orderId: string) {
 }
 
 export async function getReturnRequests() {
-  await requireAdmin();
+  await requirePermission('returns.manage');
   const rows = await prisma.returnRequest.findMany({
     orderBy: { createdAt: 'desc' },
     take: 200,
@@ -33,7 +34,7 @@ export async function getReturnRequests() {
 }
 
 export async function decideReturnAction(id: string, decision: 'APPROVE' | 'REJECT', note: string) {
-  const who = await actor();
+  const who = await actor('returns.manage');
   const req = await prisma.returnRequest.findUnique({ where: { id }, include: { order: true } });
   if (!req || req.status !== 'REQUESTED') return { error: 'Request not found or already decided' };
   if (decision === 'REJECT' && !note.trim()) return { error: 'Tell the customer why it was rejected.' };
@@ -52,7 +53,7 @@ export async function decideReturnAction(id: string, decision: 'APPROVE' | 'REJE
  * REPLACEMENT: you ship a replacement (create it from Orders → New Order); recorded here for the audit trail.
  */
 export async function resolveReturnAction(id: string, resolution: 'REFUND' | 'REPLACEMENT', amount: number, note: string) {
-  const who = await actor();
+  const who = await actor(resolution === 'REFUND' ? 'refunds.issue' : 'returns.manage');
   const req = await prisma.returnRequest.findUnique({ where: { id }, include: { order: true } });
   if (!req || req.status !== 'APPROVED') return { error: 'Approve the request first.' };
 

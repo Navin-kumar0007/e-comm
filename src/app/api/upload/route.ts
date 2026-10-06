@@ -3,7 +3,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';
-import { requireAdmin } from '@/lib/auth-guard';
+import { requirePermission } from '@/lib/auth-guard';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -24,7 +24,7 @@ const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
 export async function POST(req: Request) {
   try {
     // Only authenticated admins may upload.
-    await requireAdmin();
+    await requirePermission('catalog.manage');
 
     const formData = await req.formData();
     const file = formData.get('file') as File;

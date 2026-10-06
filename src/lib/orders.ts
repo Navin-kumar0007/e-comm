@@ -4,6 +4,13 @@ import { sendOrderConfirmation, notifyAdminNewOrder } from "@/lib/email";
 import { sendWhatsAppMessage, buildOrderConfirmationWhatsAppMessage } from "@/lib/whatsapp";
 import { getStoreSettings } from "@/lib/store-settings";
 import { logOrderEvent } from "@/lib/order-events";
+import { adjustStock } from "@/lib/inventory";
+
+/** Gives a coupon use back when an order never completes (inside a tx). */
+export async function releaseCouponUse(tx: any, couponCode: string | null) {
+  if (!couponCode) return;
+  await tx.coupon.updateMany({ where: { code: couponCode, usedCount: { gt: 0 } }, data: { usedCount: { decrement: 1 } } });
+}
 
 /** How long an unpaid online order keeps its stock reserved. */
 export const PAYMENT_WINDOW_MINUTES = 30;
@@ -70,7 +77,15 @@ export async function sendOrderConfirmedNotifications(orderId: string) {
         items: order.items.map((i: any) => ({ name: i.productName, quantity: i.quantity, weight: i.weight })),
         trackingUrl: `${siteUrl}/track/${order.id}`,
       });
-      await sendWhatsAppMessage({ to: order.customerPhone, message, type: "ORDER_UPDATE" });
+      await sendWhatsAppMessage({
+        to: order.customerPhone,
+        message,
+        type: "ORDER_UPDATE",
+        template: {
+          key: "order_confirmed",
+          params: [order.customerName, order.id.slice(-8).toUpperCase(), order.total.toFixed(0), paymentLabel, `${siteUrl}/track/${order.id}`],
+        },
+      });
     } catch (e) {
       console.error("WhatsApp order confirmation failed:", e);
     }
@@ -153,8 +168,8 @@ export async function markOrderPaid(params: { orderId: string; razorpayOrderId: 
       // Customer paid after the reservation lapsed: re-reserve what was released.
       console.warn(`[PAYMENT] Late payment for expired order ${order.id}; re-reserving stock.`);
       for (const item of order.items) {
-        if (item.productId && !item.productId.startsWith("custom-")) {
-          await tx.product.update({ where: { id: item.productId }, data: { stock: { decrement: item.quantity } } });
+        if (item.productId) {
+          await adjustStock(tx, { productId: item.productId, variantId: item.variantId, delta: -item.quantity, reason: "SALE", orderId: order.id, actor: "system", note: "Late payment after expiry", force: true });
         }
       }
       if (order.userId && order.pointsUsed > 0) {
@@ -212,10 +227,11 @@ export async function releaseOrderReservation(orderId: string, newStatus: "EXPIR
 
     const order = await tx.order.findUnique({ where: { id: orderId }, include: { items: true } });
     for (const item of order.items) {
-      if (item.productId && !item.productId.startsWith("custom-")) {
-        await tx.product.update({ where: { id: item.productId }, data: { stock: { increment: item.quantity } } });
+      if (item.productId) {
+        await adjustStock(tx, { productId: item.productId, variantId: item.variantId, delta: item.quantity, reason: "RELEASE", orderId, actor: "system" });
       }
     }
+    await releaseCouponUse(tx, order.couponCode);
     if (order.userId && order.pointsUsed > 0) {
       await tx.user.update({ where: { id: order.userId }, data: { points: { increment: order.pointsUsed } } });
     }

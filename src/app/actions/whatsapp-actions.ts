@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db/prisma";
-import { requireAdmin } from "@/lib/auth-guard";
+import { requirePermission } from "@/lib/auth-guard";
 import {
   sendWhatsAppMessage,
   formatWhatsAppNumber,
@@ -46,6 +46,7 @@ export async function subscribeWhatsAppAction(
     await sendWhatsAppMessage({
       to: cleanPhone,
       type: "WELCOME",
+      template: { key: "welcome", params: [name?.trim() || "there", "ROYAL10", "https://www.spicynuts.in/shop"] },
       message: `🎉 *WELCOME TO THE SPICY NUTS VIP CIRCLE* 🎉
 
 Namaste ${name ? name.trim() : "Valued Customer"}! You are now subscribed to receive imperial harvest updates, secret deals, and price alerts directly on WhatsApp.
@@ -103,6 +104,7 @@ export async function subscribePriceAlertAction(productId: string, phone: string
     await sendWhatsAppMessage({
       to: cleanPhone,
       type: "PRICE_UPDATE",
+      template: { key: "price_alert_subscribed", params: [product.name, currentPrice, `https://www.spicynuts.in/product/${product.slug}`] },
       message: `🔔 *PRICE DROP ALERT ACTIVATED* 🔔
 
 You will be the first to know when *${product.name}* (current price: ₹${currentPrice}) goes on sale or drops in price!
@@ -131,7 +133,7 @@ export async function broadcastOfferAction({
   couponCode: string;
   shopUrl?: string;
 }) {
-  await requireAdmin();
+  await requirePermission('marketing.manage');
 
   const subscribers = await prisma.whatsAppSubscriber.findMany({
     where: { subscribedOffers: true },
@@ -155,6 +157,7 @@ export async function broadcastOfferAction({
       to: sub.phone,
       message,
       type: "OFFER",
+      template: { key: "offer", params: [title, discount, couponCode.toUpperCase(), shopUrl || "https://www.spicynuts.in/shop"] },
     });
     if (res.success) sentCount++;
   }
@@ -166,7 +169,7 @@ export async function broadcastOfferAction({
  * Admin: Broadcast a newly released product to subscribers
  */
 export async function broadcastNewReleaseAction(productId: string) {
-  await requireAdmin();
+  await requirePermission('marketing.manage');
 
   const product = await prisma.product.findUnique({
     where: { id: productId },
@@ -198,6 +201,7 @@ export async function broadcastNewReleaseAction(productId: string) {
       to: sub.phone,
       message,
       type: "NEW_RELEASE",
+      template: { key: "new_release", params: [product.name, product.weight || "-", product.salePrice || product.price, `${siteUrl}/product/${product.slug}`] },
     });
     if (res.success) sentCount++;
   }
@@ -209,7 +213,7 @@ export async function broadcastNewReleaseAction(productId: string) {
  * Admin: Get WhatsApp Marketing Dashboard metrics
  */
 export async function getWhatsAppMarketingDataAction() {
-  await requireAdmin();
+  await requirePermission('marketing.manage');
 
   const totalSubscribers = await prisma.whatsAppSubscriber.count();
   const offerSubscribers = await prisma.whatsAppSubscriber.count({ where: { subscribedOffers: true } });
@@ -235,5 +239,22 @@ export async function getWhatsAppMarketingDataAction() {
     },
     recentLogs,
     recentSubscribers,
+  };
+}
+
+/** Which Meta templates are configured, with the exact text to submit for approval. */
+export async function getWhatsAppTemplateStatusAction() {
+  await requirePermission('marketing.manage');
+  const { WA_TEMPLATES } = await import('@/lib/whatsapp-templates');
+  return {
+    provider: process.env.WHATSAPP_ACCESS_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID ? 'META' : process.env.TWILIO_ACCOUNT_SID ? 'TWILIO' : 'SIMULATED',
+    templates: Object.entries(WA_TEMPLATES).map(([key, t]) => ({
+      key,
+      env: t.env,
+      category: t.category,
+      body: t.body,
+      example: t.example,
+      configuredAs: process.env[t.env] || null,
+    })),
   };
 }

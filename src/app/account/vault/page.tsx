@@ -49,13 +49,15 @@ export default async function VaultPage() {
   
   for (const order of realOrders) {
     for (const item of order.items) {
-      const isCustomId = item.productId.startsWith('custom-');
-      const hasCustomName = item.product.name.toLowerCase().includes('custom blend:');
+      // Fall back to the order-time snapshot when the product was since deleted (productId SetNull).
+      const productName = item.product?.name ?? item.productName;
+      const isCustomId = item.productId?.startsWith('custom-') ?? false;
+      const hasCustomName = productName.toLowerCase().includes('custom blend:');
       
       if (isCustomId || hasCustomName) {
         try {
-          const namePart = item.product.name.split('(')[0].replace('Custom Blend: ', '').trim();
-          const ratios = [...item.product.name.matchAll(/(\d+)%/g)].map(m => parseInt(m[1]));
+          const namePart = productName.split('(')[0].replace('Custom Blend: ', '').trim();
+          const ratios = [...productName.matchAll(/(\d+)%/g)].map(m => parseInt(m[1]));
           
           const basePct = ratios[0] || 50;
           const heatPct = ratios[1] || 30;
@@ -63,22 +65,22 @@ export default async function VaultPage() {
 
           // Detect IDs based on name keywords
           let baseId = 'turmeric';
-          if (item.product.name.toLowerCase().includes('coriander')) baseId = 'coriander';
-          else if (item.product.name.toLowerCase().includes('cumin')) baseId = 'cumin';
-          else if (item.product.name.toLowerCase().includes('fennel')) baseId = 'fennel';
-          else if (item.product.name.toLowerCase().includes('mustard')) baseId = 'mustard';
+          if (productName.toLowerCase().includes('coriander')) baseId = 'coriander';
+          else if (productName.toLowerCase().includes('cumin')) baseId = 'cumin';
+          else if (productName.toLowerCase().includes('fennel')) baseId = 'fennel';
+          else if (productName.toLowerCase().includes('mustard')) baseId = 'mustard';
 
           let heatId = 'mild';
-          if (item.product.name.toLowerCase().includes('kashmiri') || item.product.name.toLowerCase().includes('medium')) heatId = 'medium';
-          else if (item.product.name.toLowerCase().includes('guntur') || item.product.name.toLowerCase().includes('hot')) heatId = 'hot';
-          else if (item.product.name.toLowerCase().includes('ghost')) heatId = 'ghost';
-          else if (item.product.name.toLowerCase().includes('pepper') || item.product.name.toLowerCase().includes('black pepper')) heatId = 'pepper';
+          if (productName.toLowerCase().includes('kashmiri') || productName.toLowerCase().includes('medium')) heatId = 'medium';
+          else if (productName.toLowerCase().includes('guntur') || productName.toLowerCase().includes('hot')) heatId = 'hot';
+          else if (productName.toLowerCase().includes('ghost')) heatId = 'ghost';
+          else if (productName.toLowerCase().includes('pepper') || productName.toLowerCase().includes('black pepper')) heatId = 'pepper';
 
           let aromaticId = 'cardamom';
-          if (item.product.name.toLowerCase().includes('clove')) aromaticId = 'clove';
-          else if (item.product.name.toLowerCase().includes('cinnamon')) aromaticId = 'cinnamon';
-          else if (item.product.name.toLowerCase().includes('anise')) aromaticId = 'anise';
-          else if (item.product.name.toLowerCase().includes('nutmeg')) aromaticId = 'nutmeg';
+          if (productName.toLowerCase().includes('clove')) aromaticId = 'clove';
+          else if (productName.toLowerCase().includes('cinnamon')) aromaticId = 'cinnamon';
+          else if (productName.toLowerCase().includes('anise')) aromaticId = 'anise';
+          else if (productName.toLowerCase().includes('nutmeg')) aromaticId = 'nutmeg';
 
           realBlends.push({
             id: item.id,
@@ -96,7 +98,7 @@ export default async function VaultPage() {
             aromaticVal: aromaticPct
           });
         } catch (err) {
-          console.error("Failed to parse custom blend order item name:", item.product.name, err);
+          console.error("Failed to parse custom blend order item name:", productName, err);
         }
       }
     }
