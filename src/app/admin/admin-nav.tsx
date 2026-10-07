@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, ShoppingCart, RotateCcw, Users, Repeat, Printer, Warehouse, Barcode, Package, FolderTree,
   ChefHat, ListChecks, Ticket, MessageCircle, Sparkles, Star, MessageSquare, UserCog, Settings, Store,
-  Gauge, Wheat, Scissors, Boxes, ClipboardCheck, ClipboardList, Truck,
+  Gauge, Wheat, Scissors, Boxes, ClipboardCheck, ClipboardList, Truck, TrendingUp, Receipt, Landmark, HandCoins,
 } from "lucide-react";
 import type { Permission } from "@/lib/permissions";
 
@@ -45,6 +45,15 @@ export const NAV: NavGroup[] = [
     items: [
       { href: "/admin/purchases", label: "Purchase orders", icon: ClipboardList, permission: "purchases.manage" },
       { href: "/admin/suppliers", label: "Suppliers", icon: Truck, permission: "purchases.manage" },
+    ],
+  },
+  {
+    label: "Money",
+    items: [
+      { href: "/admin/finance", label: "Profit & cash", icon: TrendingUp, permission: "reports.view" },
+      { href: "/admin/expenses", label: "Expenses", icon: Receipt, permission: "finance.manage" },
+      { href: "/admin/payments", label: "Payments", icon: HandCoins, permission: "finance.manage" },
+      { href: "/admin/gst", label: "GST returns", icon: Landmark, permission: "reports.view" },
     ],
   },
   {

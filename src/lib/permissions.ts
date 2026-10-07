@@ -17,6 +17,7 @@ export const PERMISSIONS = [
   "returns.manage",
   "inventory.manage",
   "purchases.manage", // suppliers, purchase orders, receiving goods, costs
+  "finance.manage", // expenses, supplier payments, COD remittances, payment reconciliation
   "catalog.manage", // products, sizes, categories, recipes, dietary tags
   "marketing.manage", // coupons, WhatsApp broadcasts, points
   "customers.view", // customer list, inquiries, subscriptions

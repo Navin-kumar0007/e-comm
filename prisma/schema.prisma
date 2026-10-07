@@ -152,6 +152,13 @@ model Order {
   trackingUrl     String?
   invoiceNotes    String?
   customerGstin   String? // B2B buyer GSTIN, printed on the tax invoice
+  paymentFee      Float? // Razorpay fee incl. GST on the fee, ₹
+  paymentFeeTax   Float? // GST part of that fee (input tax credit)
+  settledAt       DateTime? // Razorpay paid this order's money into the bank
+  settlementId    String?
+  settlementUtr   String?
+  codRemittanceId String?
+  codRemittance   CodRemittance?  @relation(fields: [codRemittanceId], references: [id], onDelete: SetNull)
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
@@ -534,7 +541,7 @@ model StockMovement {
 // ───────────── Warehouse ─────────────
 
 model Supplier {
-  id          String          @id @default(cuid())
+  id          String            @id @default(cuid())
   name        String
   contactName String?
   phone       String?
@@ -542,13 +549,14 @@ model Supplier {
   gstin       String?
   address     String?
   state       String?
-  leadDays    Int             @default(7) // usual days from order to delivery
+  leadDays    Int               @default(7) // usual days from order to delivery
   notes       String?
-  isActive    Boolean         @default(true)
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  isActive    Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
   purchases   PurchaseOrder[]
   lots        StockLot[]
+  payments    SupplierPayment[]
 }
 
 // Bulk stock bought by weight (e.g. 25 kg almond bags), packed into jars and pouches.
@@ -573,27 +581,28 @@ model Material {
 }
 
 model PurchaseOrder {
-  id                  String         @id @default(cuid())
-  number              String         @unique // PO-2026-0001
+  id                  String            @id @default(cuid())
+  number              String            @unique // PO-2026-0001
   supplierId          String
-  supplier            Supplier       @relation(fields: [supplierId], references: [id])
-  status              String         @default("DRAFT") // DRAFT, ORDERED, PARTIAL, RECEIVED, CANCELLED
-  orderDate           DateTime       @default(now())
+  supplier            Supplier          @relation(fields: [supplierId], references: [id])
+  status              String            @default("DRAFT") // DRAFT, ORDERED, PARTIAL, RECEIVED, CANCELLED
+  orderDate           DateTime          @default(now())
   expectedDate        DateTime?
   supplierInvoiceNo   String?
   supplierInvoiceDate DateTime?
   notes               String?
-  subtotal            Float          @default(0)
-  taxTotal            Float          @default(0)
-  freight             Float          @default(0)
-  total               Float          @default(0)
-  paidAmount          Float          @default(0)
+  subtotal            Float             @default(0)
+  taxTotal            Float             @default(0)
+  freight             Float             @default(0)
+  total               Float             @default(0)
+  paidAmount          Float             @default(0)
   createdBy           String
   receivedAt          DateTime?
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
   lines               PurchaseLine[]
   lots                StockLot[]
+  payments            SupplierPayment[]
 
   @@index([supplierId])
   @@index([status])
@@ -730,4 +739,64 @@ model StockCountLine {
   unitCost   Float      @default(0)
 
   @@index([countId])
+}
+
+// ───────────── Money ─────────────
+
+// Running costs: packaging, courier, rent, salaries, ads, utilities…
+model Expense {
+  id          String    @id @default(cuid())
+  date        DateTime
+  category    String // see src/lib/finance-core.ts EXPENSE_CATEGORIES
+  description String
+  vendor      String?
+  vendorGstin String?
+  billNo      String?
+  amount      Float // before GST
+  gstAmount   Float     @default(0)
+  total       Float
+  paidVia     String // CASH, UPI, BANK, CARD, UNPAID
+  paidAt      DateTime?
+  notes       String?
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([date])
+  @@index([category])
+}
+
+model SupplierPayment {
+  id         String         @id @default(cuid())
+  supplierId String
+  supplier   Supplier       @relation(fields: [supplierId], references: [id])
+  poId       String?
+  po         PurchaseOrder? @relation(fields: [poId], references: [id], onDelete: SetNull)
+  date       DateTime
+  amount     Float
+  method     String // CASH, UPI, BANK, CHEQUE
+  reference  String?
+  note       String?
+  createdBy  String
+  createdAt  DateTime       @default(now())
+
+  @@index([supplierId])
+  @@index([poId])
+  @@index([date])
+}
+
+// Money the courier paid us for cash-on-delivery orders.
+model CodRemittance {
+  id        String   @id @default(cuid())
+  courier   String
+  date      DateTime
+  expected  Float // COD value of the orders it covers
+  amount    Float // actually received in the bank
+  reference String? // UTR
+  note      String?
+  createdBy String
+  createdAt DateTime @default(now())
+  orders    Order[]
+
+  @@index([date])
 }

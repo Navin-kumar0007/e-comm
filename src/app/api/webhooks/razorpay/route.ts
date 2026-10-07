@@ -71,6 +71,12 @@ export async function POST(req: Request) {
     }
 
     const result = await markOrderPaid({ orderId: order.id, razorpayOrderId: payment.order_id, paymentId: payment.id });
+    // Gateway fee (incl. GST on the fee), in paise, for profit and GST reports.
+    if (payment.fee !== undefined && payment.fee !== null) {
+      await prisma.order
+        .update({ where: { id: order.id }, data: { paymentFee: Number(payment.fee) / 100, paymentFeeTax: Number(payment.tax ?? 0) / 100 } })
+        .catch((e: unknown) => console.error("[RZP WEBHOOK] Saving fee failed:", e));
+    }
     return NextResponse.json({ ok: true, result });
   } catch (e) {
     // 5xx makes Razorpay retry later.
