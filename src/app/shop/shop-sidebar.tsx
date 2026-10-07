@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Check, Filter, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { SlidersHorizontal } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -12,246 +11,178 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-export function ShopSidebar({ categories, counts }: { categories: any[], counts: any }) {
+const PRICES = [
+  { label: "All prices", value: "all" },
+  { label: "Under ₹500", value: "under-500" },
+  { label: "₹500 – ₹1,000", value: "500-1000" },
+  { label: "Over ₹1,000", value: "over-1000" },
+];
+
+const DIETARY = [
+  { label: "100% Organic", value: "organic" },
+  { label: "Raw & unpolished", value: "raw" },
+  { label: "Gluten-free", value: "gluten-free" },
+  { label: "Vegan friendly", value: "vegan" },
+];
+
+const optionClass = (on: boolean) =>
+  `flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm transition-colors ${
+    on
+      ? "bg-muted font-extrabold text-primary"
+      : "text-foreground hover:bg-muted"
+  }`;
+
+function Mark({ on, round }: { on: boolean; round?: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`flex h-5 w-5 shrink-0 items-center justify-center border-2 ${round ? "rounded-full" : "rounded-md"} ${
+        on ? "border-primary bg-primary" : "border-border bg-card"
+      }`}
+    >
+      {on && (
+        <span
+          className={`h-2 w-2 bg-primary-foreground ${round ? "rounded-full" : "rounded-sm"}`}
+        />
+      )}
+    </span>
+  );
+}
+
+export function ShopSidebar({ variant }: { variant: "mobile" | "desktop" }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const currentCategory = searchParams.get('category') || 'all';
-  const currentPrice = searchParams.get('price') || 'all';
-  const currentDietary = searchParams.getAll('dietary');
-  const currentSpice = searchParams.getAll('spice');
+  const currentPrice = searchParams.get("price") || "all";
+  const currentDietary = searchParams.getAll("dietary");
+  const activeFilterCount =
+    (currentPrice !== "all" ? 1 : 0) + currentDietary.length;
 
-  const activeFilterCount = (currentCategory !== 'all' ? 1 : 0) +
-    (currentPrice !== 'all' ? 1 : 0) +
-    currentDietary.length +
-    currentSpice.length;
-
-  // For single-value filters (category, price)
-  const updateFilters = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value === 'all') {
-      params.delete(key);
-    } else {
-      params.set(key, value);
-    }
+  const push = (params: URLSearchParams) =>
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
 
-  // For multi-value filters (dietary, spice)
-  const toggleArrayFilter = (key: string, value: string) => {
+  const setPrice = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    const currentValues = params.getAll(key);
-    
-    params.delete(key);
-    
-    if (currentValues.includes(value)) {
-      const newValues = currentValues.filter(v => v !== value);
-      newValues.forEach(v => params.append(key, v));
-    } else {
-      currentValues.forEach(v => params.append(key, v));
-      params.append(key, value);
-    }
-    
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    if (value === "all") params.delete("price");
+    else params.set("price", value);
+    push(params);
   };
 
-  const clearAllFilters = () => {
-    router.push(pathname, { scroll: false });
+  const toggleDietary = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    const next = currentDietary.includes(value)
+      ? currentDietary.filter((v) => v !== value)
+      : [...currentDietary, value];
+    params.delete("dietary");
+    next.forEach((v) => params.append("dietary", v));
+    push(params);
   };
 
-  const FilterSections = () => (
-    <div className="space-y-6">
-      {/* Category Filter */}
-      <div>
-        <h3 className="font-heading font-bold text-base mb-3 pb-2 border-b border-border/50 text-foreground">
-          Collections
-        </h3>
-        <ul className="space-y-2 text-sm">
-          <li>
-            <button 
-              onClick={() => updateFilters('category', 'all')}
-              className={`flex items-center justify-between w-full text-left transition-colors font-medium py-1 px-2 rounded-lg ${
-                currentCategory === 'all' 
-                  ? 'bg-amber-500/15 text-amber-900 dark:text-amber-300 font-bold' 
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
+  const clearAll = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("price");
+    params.delete("dietary");
+    push(params);
+  };
+
+  const filters = (
+    <div className="space-y-7">
+      <fieldset>
+        <legend className="eyebrow mb-2 text-brand-gold-deep">Price</legend>
+        <div role="radiogroup" className="space-y-1">
+          {PRICES.map((p) => (
+            <button
+              key={p.value}
+              role="radio"
+              aria-checked={currentPrice === p.value}
+              onClick={() => setPrice(p.value)}
+              className={optionClass(currentPrice === p.value)}
             >
-              <span>All Products</span>
-              <span className="bg-muted px-2 py-0.5 rounded-full text-xs font-mono">{counts.total}</span>
+              <Mark on={currentPrice === p.value} round />
+              {p.label}
             </button>
-          </li>
-          {categories.map((category) => (
-            <li key={category.id}>
-              <button 
-                onClick={() => updateFilters('category', category.slug)}
-                className={`flex items-center justify-between w-full text-left transition-colors font-medium py-1 px-2 rounded-lg ${
-                  currentCategory === category.slug 
-                    ? 'bg-amber-500/15 text-amber-900 dark:text-amber-300 font-bold' 
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend className="eyebrow mb-2 text-brand-gold-deep">
+          Purity &amp; diet
+        </legend>
+        <div className="space-y-1">
+          {DIETARY.map((d) => {
+            const on = currentDietary.includes(d.value);
+            return (
+              <button
+                key={d.value}
+                role="checkbox"
+                aria-checked={on}
+                onClick={() => toggleDietary(d.value)}
+                className={optionClass(on)}
               >
-                <span>{category.name}</span>
-                <span className="bg-muted px-2 py-0.5 rounded-full text-xs font-mono">{counts.categories[category.id] || 0}</span>
+                <Mark on={on} />
+                {d.label}
               </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Price Filter */}
-      <div>
-        <h3 className="font-heading font-bold text-base mb-3 pb-2 border-b border-border/50 text-foreground">
-          Price Range
-        </h3>
-        <ul className="space-y-2.5 text-sm text-muted-foreground">
-          {[
-            { label: 'All Prices', value: 'all' },
-            { label: 'Under ₹500', value: 'under-500' },
-            { label: '₹500 - ₹1000', value: '500-1000' },
-            { label: 'Over ₹1000', value: 'over-1000' },
-          ].map(price => (
-            <li key={price.value}>
-              <label className="flex items-center gap-3 cursor-pointer group py-0.5 px-2 rounded-lg hover:bg-muted/50">
-                <input 
-                  type="radio" 
-                  name="price" 
-                  className="sr-only" 
-                  checked={currentPrice === price.value}
-                  onChange={() => updateFilters('price', price.value)}
-                />
-                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                  currentPrice === price.value ? 'border-amber-600 bg-amber-600 text-white' : 'border-border group-hover:border-amber-600'
-                }`}>
-                  {currentPrice === price.value && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                </div>
-                <span className={currentPrice === price.value ? 'text-foreground font-bold' : ''}>{price.label}</span>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Dietary Tags (Multi-select) */}
-      <div>
-        <h3 className="font-heading font-bold text-base mb-3 pb-2 border-b border-border/50 text-foreground">
-          Purity &amp; Diet
-        </h3>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          {[
-            { label: '100% Organic', value: 'organic' },
-            { label: 'Raw & Unpolished', value: 'raw' },
-            { label: 'Gluten-Free', value: 'gluten-free' },
-            { label: 'Vegan Friendly', value: 'vegan' },
-          ].map(dietary => (
-            <li key={dietary.value}>
-              <label className="flex items-center gap-3 cursor-pointer group py-0.5 px-2 rounded-lg hover:bg-muted/50">
-                <input 
-                  type="checkbox" 
-                  className="sr-only" 
-                  checked={currentDietary.includes(dietary.value)}
-                  onChange={() => toggleArrayFilter('dietary', dietary.value)}
-                />
-                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                  currentDietary.includes(dietary.value) ? 'bg-[#0A261D] dark:bg-amber-500 border-[#0A261D] dark:border-amber-500 text-white dark:text-zinc-950' : 'border-border group-hover:border-amber-600'
-                }`}>
-                  {currentDietary.includes(dietary.value) && <Check className="w-3 h-3" />}
-                </div>
-                <span className={currentDietary.includes(dietary.value) ? 'text-foreground font-bold' : ''}>{dietary.label}</span>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </div>
+            );
+          })}
+        </div>
+      </fieldset>
 
       {activeFilterCount > 0 && (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={clearAllFilters}
-          className="w-full text-xs font-semibold rounded-xl border-dashed border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/40"
+        <button
+          onClick={clearAll}
+          className="flex min-h-11 items-center text-sm font-extrabold text-brand-gold-deep"
         >
-          <X className="w-3.5 h-3.5 mr-1" />
-          Reset All Filters
-        </Button>
+          Clear filters
+        </button>
       )}
     </div>
   );
 
-  return (
-    <aside className="w-full md:w-64 shrink-0">
-      {/* Mobile Horizontal Category Quick Scroll */}
-      <div className="md:hidden mb-3 overflow-x-auto no-scrollbar -mx-4 px-4 flex gap-2 pb-1">
-        <button
-          onClick={() => updateFilters('category', 'all')}
-          className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
-            currentCategory === 'all'
-              ? 'bg-[#0A261D] dark:bg-amber-500 text-white dark:text-zinc-950 shadow-sm'
-              : 'bg-muted/80 text-muted-foreground hover:text-foreground border border-border/40'
-          }`}
-        >
-          All ({counts.total})
-        </button>
-        {categories.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => updateFilters('category', c.slug)}
-            className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
-              currentCategory === c.slug
-                ? 'bg-[#0A261D] dark:bg-amber-500 text-white dark:text-zinc-950 shadow-sm'
-                : 'bg-muted/80 text-muted-foreground hover:text-foreground border border-border/40'
-            }`}
-          >
-            {c.name} ({counts.categories[c.id] || 0})
-          </button>
-        ))}
-      </div>
-
-      {/* Mobile Filter Trigger Bar */}
-      <div className="flex items-center justify-between md:hidden mb-4 pb-3 border-b border-border/60">
+  if (variant === "mobile") {
+    return (
+      <div className="md:hidden">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger
-            className="inline-flex items-center justify-center whitespace-nowrap text-xs font-bold rounded-xl border border-amber-500/40 bg-white/80 dark:bg-zinc-900/80 px-3.5 py-2 text-foreground shadow-sm hover:bg-amber-500/10 gap-2"
-          >
-            <Filter className="w-3.5 h-3.5 text-amber-600" />
-            <span>Refine Filters</span>
+          <SheetTrigger className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card px-3.5 text-[13px] font-bold text-foreground">
+            <SlidersHorizontal className="h-4 w-4" />
+            Filter
             {activeFilterCount > 0 && (
-              <span className="w-4 h-4 rounded-full bg-amber-600 text-white text-[10px] flex items-center justify-center font-bold">
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] text-primary-foreground">
                 {activeFilterCount}
               </span>
             )}
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[80vh] rounded-t-3xl p-6 overflow-y-auto bg-[#FAF8F4] dark:bg-zinc-950 border-t border-amber-500/30">
-            <SheetHeader className="mb-4 text-left">
-              <SheetTitle className="font-heading font-bold text-xl">Refine Harvests</SheetTitle>
+          <SheetContent
+            side="bottom"
+            className="max-h-[80vh] overflow-y-auto rounded-t-3xl bg-background p-5"
+          >
+            <SheetHeader className="p-0 pb-4">
+              <SheetTitle className="font-heading text-2xl text-primary">
+                Filter dry fruits
+              </SheetTitle>
             </SheetHeader>
-            <FilterSections />
-            <div className="mt-6 pt-4 border-t border-border">
-              <Button
-                onClick={() => setMobileOpen(false)}
-                className="w-full bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white rounded-xl h-11 font-bold text-xs"
-              >
-                Apply Filters &amp; View Results
-              </Button>
-            </div>
+            {filters}
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="mt-6 h-12 w-full rounded-2xl bg-primary font-extrabold text-primary-foreground"
+            >
+              Show products
+            </button>
           </SheetContent>
         </Sheet>
-
-        {activeFilterCount > 0 && (
-          <button
-            onClick={clearAllFilters}
-            className="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1"
-          >
-            <X className="w-3 h-3" />
-            <span>Reset ({activeFilterCount})</span>
-          </button>
-        )}
       </div>
+    );
+  }
 
-      {/* Desktop Sticky Sidebar */}
-      <div className="hidden md:block space-y-6 sticky top-28 bg-white/60 dark:bg-zinc-900/60 p-5 rounded-3xl border border-border/40 shadow-sm backdrop-blur-sm">
-        <FilterSections />
+  return (
+    <aside aria-label="Filters" className="hidden w-64 shrink-0 md:block">
+      <div className="sticky top-[150px] rounded-3xl border border-border bg-card p-5">
+        <h2 className="mb-5 font-heading text-2xl font-bold text-primary">
+          Filters
+        </h2>
+        {filters}
       </div>
     </aside>
   );

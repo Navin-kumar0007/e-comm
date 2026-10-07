@@ -50,8 +50,8 @@ export function AddToCartButton({ product, disabled = false, className, size = '
       size={size}
       onClick={handleAdd}
       disabled={disabled}
-      className={`gap-2 rounded-2xl font-bold bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white shadow-lg active:scale-95 transition-all ${
-        isAdded ? 'bg-emerald-700 hover:bg-emerald-700 text-white scale-105' : ''
+      className={`gap-2 rounded-2xl font-bold bg-royal-deep hover:bg-[#051912] dark:bg-secondary dark:hover:bg-secondary dark:text-zinc-950 text-white shadow-lg active:scale-95 transition-all ${
+        isAdded ? 'bg-primary hover:bg-primary text-white scale-105' : ''
       } ${fullWidth ? 'w-full' : ''} ${className ?? ''}`}
     >
       {disabled ? (

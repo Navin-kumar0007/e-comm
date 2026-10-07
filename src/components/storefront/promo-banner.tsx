@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Sparkles, ArrowRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 import Link from "next/link";
 
 export function PromoBanner() {
@@ -11,57 +10,24 @@ export function PromoBanner() {
   if (!isVisible) return null;
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          className="bg-gradient-to-r from-[#052C1E] via-[#0A3D2A] to-[#052C1E] text-amber-200 border-b border-amber-500/30 relative overflow-hidden"
-        >
-          <div className="container mx-auto px-3 py-1 md:py-2 flex items-center justify-center text-center">
-            {/* Mobile View: Single Slim Line (28px height, Nutraj / Orika style) */}
-            <div className="flex md:hidden items-center justify-center text-center gap-1.5 text-[10.5px] pr-6 truncate">
-              <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
-              <span className="text-zinc-100 truncate">
-                15% OFF on Royal Harvests • Code: <strong className="text-amber-300 font-bold">ROYAL15</strong>
-              </span>
-              <Link
-                href="/shop?category=dry-fruits"
-                className="font-bold text-amber-400 underline underline-offset-2 shrink-0 ml-1"
-              >
-                Shop
-              </Link>
-            </div>
-
-            {/* Desktop View: Rich Badge & Extended Copy */}
-            <div className="hidden md:flex items-center gap-2 flex-wrap justify-center pr-6 text-xs">
-              <span className="inline-flex items-center gap-1 font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider">
-                <Sparkles className="w-3 h-3" />
-                Royal Harvest
-              </span>
-              <span className="text-zinc-100">
-                Fresh Kashmiri Saffron &amp; Afghan Mamra Almonds now in stock. Free shipping above ₹999.
-              </span>
-              <Link
-                href="/shop?category=dry-fruits"
-                className="font-bold text-amber-300 underline underline-offset-4 hover:text-white inline-flex items-center gap-0.5 transition-colors"
-              >
-                Shop Reserve
-                <ArrowRight className="w-3 h-3" />
-              </Link>
-            </div>
-
-            <button
-              onClick={() => setIsVisible(false)}
-              aria-label="Dismiss banner"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-amber-300/80 hover:text-white rounded-full transition-colors"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className="relative border-b border-brand-gold/25 text-brand-gold">
+      <div className="container mx-auto flex h-[30px] items-center justify-center gap-x-4 px-9 text-[11px] font-semibold tracking-[0.04em] md:h-[34px] md:text-xs">
+        <span className="hidden sm:inline">FREE SHIPPING ABOVE ₹999</span>
+        <span className="hidden text-brand-gold/40 sm:inline" aria-hidden="true">|</span>
+        <span className="truncate">
+          CODE <strong className="tracking-[0.12em] text-white">ROYAL15</strong> · 15% OFF
+          <Link href="/shop" className="ml-2 underline underline-offset-2 hover:text-white">Shop</Link>
+        </span>
+        <span className="hidden text-brand-gold/40 md:inline" aria-hidden="true">|</span>
+        <span className="hidden md:inline">GST INVOICE WITH EVERY ORDER</span>
+      </div>
+      <button
+        onClick={() => setIsVisible(false)}
+        aria-label="Dismiss banner"
+        className="absolute right-1 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-brand-gold/80 hover:text-white"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
   );
 }

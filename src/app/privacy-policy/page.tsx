@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | Spicy Nuts",
@@ -6,8 +7,9 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
   return (
-    <div className="container mx-auto max-w-4xl py-16 px-4 pt-28 md:pt-36">
-      <h1 className="text-3xl font-heading font-bold mb-8">Privacy Policy</h1>
+    <>
+      <PageHero eyebrow={"Policy"} title={"Privacy Policy"} crumbs={[{ label: "Home", href: "/" }, { label: "Privacy Policy" }]} />
+      <div className="container mx-auto max-w-4xl px-4 py-8 md:py-10">
       <div className="prose prose-sm sm:prose-base prose-amber dark:prose-invert">
         <p><strong>Last Updated: {new Date().toLocaleDateString()}</strong></p>
         <p>This Privacy Policy applies to the services offered by B.M.V. SPICES & DRY FRUITS ("Spicy Nuts"). We comply with the Digital Personal Data Protection (DPDP) Act, 2023.</p>
@@ -30,5 +32,6 @@ export default function PrivacyPolicy() {
         <p>To exercise these rights, please contact our Data Protection Officer at spicynuts1973@gmail.com.</p>
       </div>
     </div>
+    </>
   );
 }

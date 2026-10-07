@@ -25,7 +25,7 @@ export function CategoryBento() {
         {/* Section Title */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-6">
           <div className="max-w-xl">
-            <span className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono mb-2 block">
+            <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-deep dark:text-brand-gold font-mono mb-2 block">
               Curated Collections
             </span>
             <h2 className="text-2xl md:text-3xl font-bold font-heading text-zinc-900 dark:text-zinc-50 tracking-tight">
@@ -56,7 +56,7 @@ export function CategoryBento() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-300" />
               <div className="absolute top-3 left-3 md:top-5 md:left-5">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/90 text-black text-xs font-bold shadow-md backdrop-blur-sm">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/90 text-black text-xs font-bold shadow-md backdrop-blur-sm">
                   <HeartPulse className="w-3.5 h-3.5" />
                   High-Oil &amp; Nutrient Dense
                 </span>
@@ -70,7 +70,7 @@ export function CategoryBento() {
                     Afghan Mamra Almonds, Goan W180 Cashews, Kashmiri Walnuts, Turkish Figs &amp; Medjool Dates.
                   </p>
                 </div>
-                <div className="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-amber-600 dark:group-hover:bg-amber-500 flex-shrink-0 ml-4">
+                <div className="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-secondary dark:group-hover:bg-secondary flex-shrink-0 ml-4">
                   <ArrowUpRight className="text-white w-5 h-5" />
                 </div>
               </div>
@@ -88,7 +88,7 @@ export function CategoryBento() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-300" />
               <div className="absolute top-3 left-3 md:top-5 md:left-5">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-600 dark:bg-amber-500 text-white text-xs font-bold shadow-md backdrop-blur-sm">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary dark:bg-secondary text-white text-xs font-bold shadow-md backdrop-blur-sm">
                   <Flame className="w-3.5 h-3.5" />
                   Slow-Roasted Heritage
                 </span>
@@ -102,7 +102,7 @@ export function CategoryBento() {
                     Tandoori Chai Masala, Garam Masala &amp; small-batch blends roasted in iron pans.
                   </p>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-amber-600 dark:group-hover:bg-amber-500 flex-shrink-0 ml-3">
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-secondary dark:group-hover:bg-secondary flex-shrink-0 ml-3">
                   <ArrowUpRight className="text-white w-4 h-4" />
                 </div>
               </div>
@@ -121,7 +121,7 @@ export function CategoryBento() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-300" />
               <div className="absolute bottom-4 left-4 right-4 md:bottom-5 md:left-5 md:right-5 flex justify-between items-end text-white">
                 <div>
-                  <div className="flex items-center gap-1.5 text-amber-400 text-xs font-bold mb-1">
+                  <div className="flex items-center gap-1.5 text-brand-gold text-xs font-bold mb-1">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>High Curcumin (8-12%)</span>
                   </div>
@@ -132,7 +132,7 @@ export function CategoryBento() {
                     Meghalaya Lakadong Turmeric, Royal Kashmiri Saffron &amp; Tellicherry Black Pepper.
                   </p>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-amber-600 dark:group-hover:bg-amber-500 flex-shrink-0 ml-2">
+                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-secondary dark:group-hover:bg-secondary flex-shrink-0 ml-2">
                   <ArrowUpRight className="text-white w-4 h-4" />
                 </div>
               </div>
@@ -151,7 +151,7 @@ export function CategoryBento() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-300" />
               <div className="absolute bottom-4 left-4 right-4 md:bottom-5 md:left-5 md:right-5 flex justify-between items-end text-white">
                 <div>
-                  <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-bold mb-1">
+                  <div className="flex items-center gap-1.5 text-primary text-xs font-bold mb-1">
                     <Leaf className="w-3.5 h-3.5" />
                     <span>Guilt-Free Snacking</span>
                   </div>
@@ -162,7 +162,7 @@ export function CategoryBento() {
                     Slow-Roasted Peri Peri Makhana, 7-Seed Trail Mix &amp; Organic Jaggery Chikki.
                   </p>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-amber-600 dark:group-hover:bg-amber-500 flex-shrink-0 ml-2">
+                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:rotate-45 group-hover:bg-secondary dark:group-hover:bg-secondary flex-shrink-0 ml-2">
                   <ArrowUpRight className="text-white w-4 h-4" />
                 </div>
               </div>

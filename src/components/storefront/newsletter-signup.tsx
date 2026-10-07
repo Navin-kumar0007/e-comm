@@ -71,7 +71,7 @@ export function NewsletterSignup() {
 
       <div className="container relative z-10 px-4 md:px-6">
         <div className="max-w-3xl mx-auto glass rounded-3xl p-6 md:p-12 text-center animate-on-scroll border border-border/60 shadow-xl">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold uppercase tracking-wider mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-primary border border-primary/30 text-xs font-semibold uppercase tracking-wider mb-3">
             <Gift className="w-3.5 h-3.5" />
             <span>Instant 10% OFF Welcome Gift</span>
           </div>
@@ -84,15 +84,15 @@ export function NewsletterSignup() {
           </p>
 
           {isSubscribed ? (
-            <div className="max-w-md mx-auto p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
-              <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+            <div className="max-w-md mx-auto p-6 rounded-2xl bg-muted border border-primary/30 text-center space-y-3">
+              <div className="w-12 h-12 rounded-full bg-muted text-primary flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-7 h-7" />
               </div>
               <h3 className="font-heading font-bold text-xl text-foreground">
                 You are Subscribed! 🎉
               </h3>
-              <p className="text-xs sm:text-sm text-emerald-900 font-medium">
-                Use code <span className="font-mono font-bold text-emerald-700 text-base">{couponCode}</span> at checkout for 10% OFF.
+              <p className="text-xs sm:text-sm text-primary font-medium">
+                Use code <span className="font-mono font-bold text-primary text-base">{couponCode}</span> at checkout for 10% OFF.
               </p>
               <p className="text-xs text-muted-foreground">
                 {channel === "whatsapp"
@@ -109,7 +109,7 @@ export function NewsletterSignup() {
                   onClick={() => setChannel("whatsapp")}
                   className={`flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all ${
                     channel === "whatsapp"
-                      ? "bg-emerald-600 text-white shadow-sm font-semibold"
+                      ? "bg-primary text-white shadow-sm font-semibold"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -135,7 +135,7 @@ export function NewsletterSignup() {
               <form className="space-y-3" onSubmit={handleSubmit}>
                 {channel === "whatsapp" ? (
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <div className="flex items-center rounded-full border border-border/60 bg-background/90 overflow-hidden flex-1 focus-within:ring-2 focus-within:ring-emerald-500 shadow-sm">
+                    <div className="flex items-center rounded-full border border-border/60 bg-background/90 overflow-hidden flex-1 focus-within:ring-2 focus-within:ring-primary shadow-sm">
                       <span className="px-3.5 py-3 text-xs font-semibold bg-muted text-muted-foreground border-r border-border">
                         🇮🇳 +91
                       </span>
@@ -152,7 +152,7 @@ export function NewsletterSignup() {
                     <Button
                       type="submit"
                       disabled={isLoading}
-                      className="h-12 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-7 font-medium text-sm shadow-md"
+                      className="h-12 rounded-full bg-primary hover:bg-primary text-white px-7 font-medium text-sm shadow-md"
                     >
                       {isLoading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

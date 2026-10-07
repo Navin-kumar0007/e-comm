@@ -3,6 +3,7 @@ import { Leaf, Heart, ShieldCheck, Globe, Award, Sprout } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
   title: "Our Story | Spicy Nuts",
@@ -20,19 +21,9 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen pt-28 md:pt-36">
-      {/* Hero */}
-      <section className="relative py-12 md:py-16 px-4">
-        <div className="container mx-auto max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-            <Leaf className="w-4 h-4" /> Est. 2023
-          </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-3">Our Story</h1>
-          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed text-sm">
-            Spicy Nuts was born from a simple belief: the food we eat should be pure, honest, and full of life. What started as a grandmother's kitchen wisdom has grown into a movement to bring authentic, organic Indian food to every home.
-          </p>
-        </div>
-      </section>
+    <div className="min-h-screen">
+      <PageHero eyebrow={"Est. 2023"} title={"Our Story"} subtitle={"Spicy Nuts was born from a simple belief: the food we eat should be pure, honest, and full of life. What started as a grandmother's kitchen wisdom has grown into a movement to bring authentic, organic Indian food to every home."} crumbs={[{ label: "Home", href: "/" }, { label: "Our Story" }]} />
+
 
       {/* Founder Section */}
       <section className="py-10 md:py-12 bg-muted/30">

@@ -1,165 +1,152 @@
-import { ProductCard } from '@/components/storefront/product-card';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ProductCard, type ProductCardProduct } from '@/components/storefront/product-card';
 import { prisma } from '@/lib/db/prisma';
 import { ShopSidebar } from './shop-sidebar';
 import { SortSelect } from './sort-select';
-import { unstable_cache } from 'next/cache';
-import { auth } from '@/lib/auth';
+import { COLLECTIONS, getCollection, collectionWhere } from '@/lib/collections';
+import { PageHero } from '@/components/storefront/royal/page-hero';
 
 export const metadata = {
-  title: 'Buy Premium Dry Fruits & Organic Spices Online — Spicy Nuts Shop',
-  description: 'Shop Afghan Mamra almonds, Kashmiri walnuts, Goan W180 cashews, organic turmeric, handcrafted masalas, and trail mixes. Free shipping above ₹999. 100% natural, no chemical processing.',
-  keywords: ['buy dry fruits online', 'organic spices shop', 'Mamra almonds', 'Kashmiri walnuts', 'cashew nuts online'],
+  title: 'Buy Premium Dry Fruits, Nuts & Seeds Online — Spicy Nuts Shop',
+  description: 'Shop almonds, cashews, walnuts, pistachios, dates, raisins, figs, makhana and seeds. Free shipping above ₹999.',
+  keywords: ['buy dry fruits online', 'almonds online', 'cashew nuts online', 'walnuts online', 'dates and raisins'],
 };
 
-export default async function ShopPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+type Params = { [key: string]: string | string[] | undefined };
+
+export default async function ShopPage({ searchParams }: { searchParams: Promise<Params> }) {
   const params = await searchParams;
-  
-  const categoryFilter = typeof params.category === 'string' ? params.category : undefined;
-  const priceFilter = typeof params.price === 'string' ? params.price : undefined;
-  const sortFilter = typeof params.sort === 'string' ? params.sort : undefined;
-  
+  const one = (k: string) => (typeof params[k] === 'string' ? (params[k] as string) : undefined);
+
+  const collection = getCollection(one('collection'));
+  const categoryFilter = one('category');
+  const priceFilter = one('price');
+  const sortFilter = one('sort');
+  const query = one('q')?.trim();
   const dietaryFilters = Array.isArray(params.dietary) ? params.dietary : typeof params.dietary === 'string' ? params.dietary.split(',') : [];
-  const spiceFilters = Array.isArray(params.spice) ? params.spice : typeof params.spice === 'string' ? params.spice.split(',') : [];
 
-  // Build Prisma Where Clause
-  let where: any = { status: 'ACTIVE' };
-  
-  if (categoryFilter && categoryFilter !== 'all') {
-    where.category = { slug: categoryFilter };
-  }
-
-  if (priceFilter && priceFilter !== 'all') {
-    if (priceFilter === 'under-500') where.price = { lt: 500 };
-    if (priceFilter === '500-1000') where.price = { gte: 500, lte: 1000 };
-    if (priceFilter === 'over-1000') where.price = { gt: 1000 };
-  }
-  
-  let andConditions: any[] = [];
-
+  const and: object[] = [];
+  if (collection) and.push(collectionWhere(collection));
+  if (query) and.push({ name: { contains: query, mode: 'insensitive' } });
   if (dietaryFilters.length > 0) {
-    andConditions.push({
+    and.push({
       OR: [
         { dietaryTags: { some: { slug: { in: dietaryFilters } } } },
-        ...dietaryFilters.map(df => ({ tags: { contains: df } }))
-      ]
+        ...dietaryFilters.map((df) => ({ tags: { contains: df } })),
+      ],
     });
   }
 
-  if (spiceFilters.length > 0) {
-    andConditions.push({
-      OR: spiceFilters.map(sf => ({ tags: { contains: sf } }))
-    });
-  }
+  const where: Record<string, unknown> = { status: 'ACTIVE' };
+  if (categoryFilter && categoryFilter !== 'all') where.category = { slug: categoryFilter };
+  if (priceFilter === 'under-500') where.price = { lt: 500 };
+  if (priceFilter === '500-1000') where.price = { gte: 500, lte: 1000 };
+  if (priceFilter === 'over-1000') where.price = { gt: 1000 };
+  if (and.length > 0) where.AND = and;
 
-  if (andConditions.length > 0) {
-    where.AND = andConditions;
-  }
-
-  // Build Prisma OrderBy
-  let orderBy: any = { createdAt: 'desc' }; // Default to newest
+  let orderBy: Record<string, 'asc' | 'desc'> = { createdAt: 'desc' };
   if (sortFilter === 'price-asc') orderBy = { price: 'asc' };
   if (sortFilter === 'price-desc') orderBy = { price: 'desc' };
-  if (sortFilter === 'featured') {
-    orderBy = { isFeatured: 'desc' }; 
-  }
+  if (sortFilter === 'featured') orderBy = { isFeatured: 'desc' };
 
-  // Fetch Categories for Sidebar
-  const categories = await unstable_cache(
-    async () => await prisma.category.findMany(),
-    ['categories-all'],
-    { revalidate: 3600 }
-  )();
-
-  // We need counts for the sidebar, let's fetch all products minimally and calculate it.
-  const allProducts = await unstable_cache(
-    async () => await prisma.product.findMany({ select: { categoryId: true } }),
-    ['products-counts'],
-    { revalidate: 3600 }
-  )();
-  
-  const counts = {
-    total: allProducts.length,
-    categories: allProducts.reduce((acc: any, p: any) => {
-      acc[p.categoryId] = (acc[p.categoryId] || 0) + 1;
-      return acc;
-    }, {})
-  };
-
-  // Fetch User Dietary Tags
-  const session = await auth();
-  let userDietaryTagIds: string[] = [];
-  if (session?.user?.email) {
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: { dietaryTags: true }
-    });
-    if (user && user.dietaryTags) {
-      userDietaryTagIds = user.dietaryTags.map((t: any) => t.id);
-    }
-  }
-
-  // Fetch Filtered Products
   const rawProducts = await prisma.product.findMany({
     where,
     orderBy,
-    include: { dietaryTags: true }
+    include: { variants: { where: { isActive: true }, orderBy: [{ sortOrder: 'asc' }, { price: 'asc' }] } },
   });
 
-  const products = rawProducts.map((p: any) => ({
-    ...p, 
-    weight: p.weight || undefined, 
-    images: JSON.parse(p.images), 
-    tags: p.tags ? p.tags.split(',') : []
+  const products: ProductCardProduct[] = rawProducts.map((p) => ({
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    price: p.price,
+    salePrice: p.salePrice,
+    images: p.images,
+    weight: p.weight,
+    stock: p.stock,
+    variants: p.variants.map((v) => ({ id: v.id, label: v.label, price: v.price, salePrice: v.salePrice, stock: v.stock })),
   }));
 
+  const title = collection ? collection.name : query ? `Results for “${query}”` : 'Dry Fruits & Seeds';
+  const keep = (extra: Record<string, string | undefined>) => {
+    const sp = new URLSearchParams();
+    for (const k of ['price', 'sort']) if (one(k)) sp.set(k, one(k)!);
+    dietaryFilters.forEach((d) => sp.append('dietary', d));
+    for (const [k, v] of Object.entries(extra)) if (v) sp.set(k, v);
+    const s = sp.toString();
+    return s ? `/shop?${s}` : '/shop';
+  };
+
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-8 md:pt-36 md:pb-10">
-      <div className="mb-6 text-center md:text-left">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">
-          The Imperial Harvests & Pantry
-        </h1>
-        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">
-          Explore single-estate Afghan Mamra almonds, high-altitude Kashmiri walnuts, Goan king cashews, and slow-roasted whole spices.
-        </p>
+    <div className="pb-10">
+      <PageHero
+        eyebrow="The royal pantry"
+        title={title}
+        subtitle={`${products.length} ${products.length === 1 ? 'product' : 'products'} · free shipping above ₹999`}
+        crumbs={[{ label: 'Home', href: '/' }, { label: 'Shop' }]}
+        compact
+      />
+
+      {/* Collection rail */}
+      <div className="top-header sticky z-30 border-b border-border bg-background/95 backdrop-blur">
+        <nav aria-label="Collections" className="hide-scrollbar container mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
+          <Link
+            href={keep({})}
+            aria-current={!collection ? 'page' : undefined}
+            className={`flex h-10 shrink-0 items-center rounded-full border px-4 text-[13px] font-bold ${!collection ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-foreground'}`}
+          >
+            All
+          </Link>
+          {COLLECTIONS.map((c) => {
+            const on = collection?.slug === c.slug;
+            return (
+              <Link
+                key={c.slug}
+                href={keep({ collection: c.slug })}
+                aria-current={on ? 'page' : undefined}
+                className={`flex h-10 shrink-0 items-center gap-2 rounded-full border py-1 pl-1 pr-3.5 text-[13px] font-bold ${on ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-foreground'}`}
+              >
+                <Image src={c.image} alt="" width={80} height={80} className="h-8 w-8 rounded-full object-cover" />
+                {c.name}
+              </Link>
+            );
+          })}
+        </nav>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
-        <ShopSidebar categories={categories} counts={counts} />
+      <div className="container mx-auto max-w-7xl px-4 pt-5 sm:px-6 lg:px-8 md:pt-8">
+        <div className="flex gap-8 lg:gap-10">
+          <ShopSidebar variant="desktop" />
 
-        <main className="flex-1">
-          <div className="flex items-center justify-between mb-4 md:mb-6">
-            <p className="text-muted-foreground text-xs md:text-sm font-medium">
-              Showing <span className="text-foreground font-bold">{products.length}</span> {products.length === 1 ? 'harvest' : 'harvests'}
-            </p>
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <span className="hidden sm:inline text-xs md:text-sm text-muted-foreground">Sort by:</span>
-              <SortSelect />
+          <main className="min-w-0 flex-1">
+            <div className="mb-4 flex items-center justify-between gap-3 md:mb-6">
+              <p className="hidden text-sm text-muted-foreground md:block">
+                Showing <span className="font-bold text-foreground">{products.length}</span> {products.length === 1 ? 'product' : 'products'}
+              </p>
+              <div className="flex w-full items-center justify-between gap-2 md:w-auto md:justify-end">
+                <ShopSidebar variant="mobile" />
+                <SortSelect />
+              </div>
             </div>
-          </div>
 
-          {products.length > 0 ? (
-            <>
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-5">
-                {products.map((product: any) => (
-                  <ProductCard key={product.id} product={product} userDietaryTagIds={userDietaryTagIds} />
+            {products.length > 0 ? (
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
                 ))}
               </div>
-              
-              {products.length >= 12 && (
-                <div className="mt-12 flex justify-center">
-                  <button className="px-8 py-3 rounded-full border border-border/50 font-bold text-sm hover:bg-muted transition-colors">
-                    Load More Harvests
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="py-20 text-center border border-border/50 rounded-2xl bg-muted/20">
-              <h3 className="text-xl font-bold mb-2">No products found</h3>
-              <p className="text-muted-foreground">Try adjusting your filters or search criteria.</p>
-            </div>
-          )}
-        </main>
+            ) : (
+              <div className="rounded-3xl border border-border bg-card px-6 py-16 text-center">
+                <h2 className="font-heading text-3xl font-bold text-primary">Nothing here yet</h2>
+                <p className="mt-2 text-muted-foreground">Try another collection or clear your filters.</p>
+                <Link href="/shop" className="mt-5 inline-flex h-12 items-center rounded-2xl bg-primary px-6 font-extrabold text-primary-foreground">
+                  See all dry fruits
+                </Link>
+              </div>
+            )}
+          </main>
+        </div>
       </div>
     </div>
   );

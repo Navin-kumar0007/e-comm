@@ -51,7 +51,7 @@ export function NotificationsDropdown() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger className="relative text-primary hover:bg-white/5 transition-colors rounded-full p-2 h-9 w-9 inline-flex items-center justify-center">
+      <PopoverTrigger aria-label="Notifications" className="relative text-current hover:bg-white/10 transition-colors rounded-full p-2 h-10 w-10 inline-flex items-center justify-center">
         
           <Bell className="w-5 h-5" />
           <AnimatePresence>

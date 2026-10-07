@@ -54,27 +54,27 @@ export function AIConcierge() {
       <Button
         onClick={() => setIsOpen(true)}
         aria-label="Open AI Shopping Concierge"
-        className={`fixed bottom-[136px] right-3.5 md:bottom-24 md:right-6 rounded-full w-11 h-11 md:w-14 md:h-14 shadow-2xl z-40 bg-gradient-to-br from-[#052C1E] to-[#0A3D2A] hover:from-[#0A3D2A] hover:to-[#052C1E] text-amber-300 border border-amber-500/40 hover:scale-105 active:scale-95 transition-all ${
+        className={`fixed bottom-[214px] right-3.5 md:bottom-24 md:right-6 rounded-full w-11 h-11 md:w-14 md:h-14 shadow-2xl z-40 bg-gradient-to-br from-royal-deep to-royal-deep hover:from-royal-deep hover:to-royal-deep text-brand-gold border border-brand-gold/40 hover:scale-105 active:scale-95 transition-all ${
           isOpen ? "hidden" : "flex"
         }`}
       >
-        <Sparkles className="w-5 h-5 md:w-6 md:h-6 animate-pulse text-amber-300" />
+        <Sparkles className="w-5 h-5 md:w-6 md:h-6 animate-pulse text-brand-gold" />
       </Button>
 
       {/* Floating Chat Window - responsive for mobile and desktop */}
       {isOpen && (
-        <div className="fixed bottom-20 right-3 left-3 sm:left-auto sm:right-6 md:bottom-6 sm:w-96 bg-background dark:bg-zinc-950 border border-amber-500/30 rounded-3xl shadow-2xl z-50 flex flex-col overflow-hidden max-h-[75vh] animate-in fade-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-[88px] right-3 left-3 sm:left-auto sm:right-6 md:bottom-6 sm:w-96 bg-background dark:bg-zinc-950 border border-brand-gold/30 rounded-3xl shadow-2xl z-50 flex flex-col overflow-hidden max-h-[75vh] animate-in fade-in slide-in-from-bottom-5 duration-200">
           {/* Header */}
-          <div className="bg-gradient-to-r from-[#052C1E] via-[#0A3D2A] to-[#052C1E] text-amber-200 p-4 flex items-center justify-between border-b border-amber-500/20">
+          <div className="bg-gradient-to-r from-royal-deep via-royal-deep to-royal-deep text-brand-gold p-4 flex items-center justify-between border-b border-brand-gold/20">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
-                <Bot size={18} className="text-amber-300" />
+              <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center border border-brand-gold/30">
+                <Bot size={18} className="text-brand-gold" />
               </div>
               <div>
-                <h3 className="font-heading font-bold text-sm text-amber-100 leading-none">
+                <h3 className="font-heading font-bold text-sm text-brand-gold leading-none">
                   Spicy Nuts Concierge
                 </h3>
-                <span className="text-[10px] text-amber-300/80 font-mono">
+                <span className="text-[10px] text-brand-gold font-mono">
                   AI Sommelier &amp; Guide
                 </span>
               </div>
@@ -82,7 +82,7 @@ export function AIConcierge() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-amber-200 hover:bg-white/10 rounded-full"
+              className="h-8 w-8 text-brand-gold hover:bg-white/10 rounded-full"
               onClick={() => setIsOpen(false)}
             >
               <X size={16} />
@@ -97,14 +97,14 @@ export function AIConcierge() {
                 className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {msg.role === "model" && (
-                  <div className="w-6 h-6 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-                    <Bot size={12} className="text-amber-600 dark:text-amber-400" />
+                  <div className="w-6 h-6 rounded-full bg-secondary/10 border border-brand-gold/20 flex items-center justify-center flex-shrink-0 mt-1">
+                    <Bot size={12} className="text-brand-gold-deep dark:text-brand-gold" />
                   </div>
                 )}
                 <div
                   className={`p-3 rounded-2xl max-w-[82%] leading-relaxed ${
                     msg.role === "user"
-                      ? "bg-gradient-to-br from-amber-600 to-amber-700 text-white rounded-br-none shadow-sm"
+                      ? "bg-gradient-to-br from-brand-gold to-brand-gold text-white rounded-br-none shadow-sm"
                       : "bg-muted/70 text-foreground border border-border/40 rounded-bl-none"
                   }`}
                 >
@@ -114,13 +114,13 @@ export function AIConcierge() {
             ))}
             {loading && (
               <div className="flex gap-2">
-                <div className="w-6 h-6 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-                  <Bot size={12} className="text-amber-600 dark:text-amber-400" />
+                <div className="w-6 h-6 rounded-full bg-secondary/10 border border-brand-gold/20 flex items-center justify-center flex-shrink-0 mt-1">
+                  <Bot size={12} className="text-brand-gold-deep dark:text-brand-gold" />
                 </div>
                 <div className="p-3 rounded-2xl bg-muted/70 text-muted-foreground rounded-bl-none flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-bounce" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-bounce delay-100" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-bounce delay-200" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-bounce" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-bounce delay-100" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-bounce delay-200" />
                 </div>
               </div>
             )}
@@ -137,12 +137,12 @@ export function AIConcierge() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about Mamra almonds, saffron..."
-              className="flex-1 bg-background border border-border/80 rounded-full px-4 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 text-foreground"
+              className="flex-1 bg-background border border-border/80 rounded-full px-4 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-ring/40 text-foreground"
             />
             <Button
               type="submit"
               size="icon"
-              className="rounded-full bg-[#052C1E] hover:bg-[#0A3D2A] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-amber-300 border border-amber-500/30 shrink-0 h-9 w-9 md:h-10 md:w-10"
+              className="rounded-full bg-royal-deep hover:bg-royal-deep dark:bg-secondary dark:hover:bg-secondary dark:text-zinc-950 text-brand-gold border border-brand-gold/30 shrink-0 h-9 w-9 md:h-10 md:w-10"
               disabled={loading || !input.trim()}
             >
               <Send size={15} />

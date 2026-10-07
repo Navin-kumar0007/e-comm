@@ -116,8 +116,8 @@ function NutInspectorMesh({
             className="group relative -translate-x-1/2 -translate-y-1/2 focus:outline-none"
           >
             <span className="relative flex h-5 w-5 items-center justify-center">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-amber-500 border-2 border-white shadow-md text-[9px] font-bold text-white items-center justify-center">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75" />
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-secondary border-2 border-white shadow-md text-[9px] font-bold text-white items-center justify-center">
                 {i + 1}
               </span>
             </span>
@@ -186,7 +186,7 @@ export function DryFruitInspector3D() {
       {/* Nut Type Switcher Pills */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-200/80 dark:border-zinc-800">
         <div>
-          <span className="text-xs font-bold uppercase tracking-widest text-[#C85B43] font-mono">
+          <span className="text-xs font-bold uppercase tracking-widest text-primary font-mono">
             360° Real Macro Texture &amp; Quality Inspection
           </span>
           <h3 className="text-xl md:text-2xl font-bold font-heading text-zinc-900 dark:text-zinc-50">
@@ -215,7 +215,7 @@ export function DryFruitInspector3D() {
       </div>
 
       {/* Main 3D Canvas Area with Real Photographic Medallion */}
-      <div className="relative w-full h-[250px] md:h-[290px] rounded-2xl bg-[#FAF7F2] dark:bg-zinc-950/60 overflow-hidden border border-zinc-200/60 dark:border-zinc-800 cursor-grab active:cursor-grabbing">
+      <div className="relative w-full h-[250px] md:h-[290px] rounded-2xl bg-background dark:bg-zinc-950/60 overflow-hidden border border-zinc-200/60 dark:border-zinc-800 cursor-grab active:cursor-grabbing">
         <Canvas camera={{ position: [0, 0, 5.8], fov: 32 }}>
           <Suspense fallback={null}>
             <InspectorScene
@@ -228,12 +228,12 @@ export function DryFruitInspector3D() {
 
         {/* 360 Drag Hint */}
         <div className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md text-[11px] font-medium text-zinc-700 dark:text-zinc-300 border border-zinc-200/80 dark:border-zinc-800 shadow-sm pointer-events-none">
-          <RotateCw className="w-3.5 h-3.5 text-amber-600 animate-spin-slow" />
+          <RotateCw className="w-3.5 h-3.5 text-brand-gold-deep animate-spin-slow" />
           <span>Drag 360° to Rotate Real Nut Studio</span>
         </div>
 
         {/* Origin Badge */}
-        <div className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md text-[11px] font-bold text-emerald-800 dark:text-emerald-300 border border-emerald-600/30 shadow-sm">
+        <div className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md text-[11px] font-bold text-primary dark:text-primary border border-primary/30 shadow-sm">
           📍 {data.origin}
         </div>
       </div>
@@ -246,12 +246,12 @@ export function DryFruitInspector3D() {
             onClick={() => setActiveHotspot(idx)}
             className={`p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between ${
               activeHotspot === idx
-                ? "bg-amber-50/90 dark:bg-amber-950/40 border-amber-500 shadow-sm"
+                ? "bg-muted/90 dark:bg-royal-deep/40 border-brand-gold shadow-sm"
                 : "bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200/80 dark:border-zinc-800 hover:border-zinc-300"
             }`}
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="w-4 h-4 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="w-4 h-4 rounded-full bg-secondary text-white text-[10px] font-bold flex items-center justify-center">
                 {idx + 1}
               </span>
               <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1">
@@ -270,7 +270,7 @@ export function DryFruitInspector3D() {
         <div>
           <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{data.name}</div>
           <div className="flex items-baseline gap-2">
-            <span className="text-xl font-extrabold text-[#C85B43]">{data.price}</span>
+            <span className="text-xl font-extrabold text-primary">{data.price}</span>
             <span className="text-xs text-zinc-500">per {data.weight} Glass Jar</span>
           </div>
         </div>

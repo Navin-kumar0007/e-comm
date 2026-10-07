@@ -12,9 +12,9 @@ const REVIEWS = [
 
 export function ReviewsTicker() {
   return (
-    <section className="py-6 md:py-12 bg-[#1E3A2B] text-white overflow-hidden border-t border-emerald-950">
+    <section className="py-6 md:py-12 bg-[#1E3A2B] text-white overflow-hidden border-t border-primary/30">
       <div className="container px-4 md:px-6 mb-5 text-center">
-        <span className="text-xs font-bold uppercase tracking-widest text-emerald-400 font-mono mb-2 block">
+        <span className="text-xs font-bold uppercase tracking-widest text-primary font-mono mb-2 block">
           Community Love
         </span>
         <h2 className="text-2xl md:text-3xl font-bold font-heading">
@@ -27,19 +27,19 @@ export function ReviewsTicker() {
           {[...REVIEWS, ...REVIEWS].map((review, i) => (
             <div key={`${review.id}-${i}`} className="w-56 md:w-80 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/15 inline-flex flex-col whitespace-normal shrink-0 shadow-lg">
               <div className="flex items-center justify-between mb-3">
-                <div className="flex gap-1 text-amber-400">
+                <div className="flex gap-1 text-brand-gold">
                   {[...Array(review.rating)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
-                <span className="text-[11px] font-semibold text-emerald-300 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-800/40">
+                <span className="text-[11px] font-semibold text-primary bg-primary/60 px-2.5 py-0.5 rounded-full border border-primary/40">
                   {review.product}
                 </span>
               </div>
               <p className="text-white/90 text-sm mb-4 leading-relaxed italic">&quot;{review.text}&quot;</p>
               <div className="flex items-center justify-between text-xs text-white/80 border-t border-white/10 pt-3 mt-auto">
                 <span className="font-bold text-white">{review.name}</span>
-                <span className="text-emerald-300 font-medium">{review.location}</span>
+                <span className="text-primary font-medium">{review.location}</span>
               </div>
             </div>
           ))}

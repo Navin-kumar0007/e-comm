@@ -77,8 +77,8 @@ export function ProductDescriptionRenderer({ description, productName }: Product
 
   const getNutrientIcon = (name: string) => {
     const n = name.toLowerCase();
-    if (n.includes("calorie") || n.includes("energy")) return <Flame className="w-4 h-4 text-amber-500" />;
-    if (n.includes("protein")) return <Dumbbell className="w-4 h-4 text-emerald-600" />;
+    if (n.includes("calorie") || n.includes("energy")) return <Flame className="w-4 h-4 text-brand-gold-deep" />;
+    if (n.includes("protein")) return <Dumbbell className="w-4 h-4 text-primary" />;
     if (n.includes("fat")) return <HeartPulse className="w-4 h-4 text-rose-500" />;
     return <Activity className="w-4 h-4 text-primary" />;
   };
@@ -100,7 +100,7 @@ export function ProductDescriptionRenderer({ description, productName }: Product
                 key={idx}
                 className="text-lg sm:text-xl font-heading font-bold text-foreground mt-4 mb-2 flex items-center gap-2"
               >
-                <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+                <Sparkles className="w-4 h-4 text-brand-gold-deep shrink-0" />
                 {para.replace(/\*\*/g, "")}
               </h3>
             );
@@ -112,7 +112,7 @@ export function ProductDescriptionRenderer({ description, productName }: Product
                 key={idx}
                 className="text-base sm:text-lg font-heading font-bold text-foreground mt-6 mb-2 flex items-center gap-2"
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
                 {para.replace(/\*\*/g, "")}
               </h4>
             );
@@ -128,15 +128,15 @@ export function ProductDescriptionRenderer({ description, productName }: Product
 
       {/* Modern Nutritional Facts Grid (Parsed from Markdown Table) */}
       {tableRows.length > 0 && (
-        <div className="p-4 sm:p-6 rounded-2xl bg-amber-50/60 dark:bg-zinc-900/60 border border-amber-500/20 shadow-sm">
-          <div className="flex items-center justify-between mb-4 border-b border-amber-500/20 pb-3">
+        <div className="p-4 sm:p-6 rounded-2xl bg-muted/60 dark:bg-zinc-900/60 border border-brand-gold/20 shadow-sm">
+          <div className="flex items-center justify-between mb-4 border-b border-brand-gold/20 pb-3">
             <div>
               <h4 className="font-heading font-bold text-base sm:text-lg text-foreground">
                 Nutritional Profile
               </h4>
               <p className="text-xs text-muted-foreground">Values per 100g of pure harvest</p>
             </div>
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-300 font-mono">
+            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-secondary/15 text-brand-gold-deep dark:text-brand-gold font-mono">
               Lab Verified
             </span>
           </div>

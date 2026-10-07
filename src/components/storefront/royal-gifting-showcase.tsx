@@ -40,18 +40,18 @@ const GIFT_SETS = [
 
 export function RoyalGiftingShowcase() {
   return (
-    <section className="py-6 md:py-24 bg-white dark:bg-zinc-950 border-b border-amber-500/20 relative overflow-hidden transition-colors duration-300">
+    <section className="py-6 md:py-24 bg-white dark:bg-zinc-950 border-b border-brand-gold/20 relative overflow-hidden transition-colors duration-300">
       {/* Background Ambience */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-200/20 dark:bg-amber-900/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-200/20 dark:bg-emerald-950/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-secondary/20 dark:bg-royal-deep/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-muted dark:bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="container relative z-10 px-4 md:px-6 mx-auto">
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-4 md:mb-12">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider mb-3">
-              <Gift className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/15 border border-brand-gold/30 text-brand-gold-deep dark:text-brand-gold font-bold text-xs uppercase tracking-wider mb-3">
+              <Gift className="w-3.5 h-3.5 text-brand-gold-deep dark:text-brand-gold" />
               <span>Royal Gifting Atelier</span>
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold font-heading text-foreground tracking-tight leading-tight">
@@ -68,8 +68,8 @@ export function RoyalGiftingShowcase() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button variant="outline" className="rounded-2xl border-amber-500/40 text-xs font-bold hover:bg-amber-500/10 gap-2 h-11 px-4">
-                <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
+              <Button variant="outline" className="rounded-2xl border-brand-gold/40 text-xs font-bold hover:bg-secondary/10 gap-2 h-11 px-4">
+                <PhoneCall className="w-3.5 h-3.5 text-primary" />
                 <span>Corporate Concierge</span>
               </Button>
             </a>
@@ -81,7 +81,7 @@ export function RoyalGiftingShowcase() {
           {GIFT_SETS.map((gift) => (
             <div
               key={gift.id}
-              className="rounded-3xl overflow-hidden bg-[#FAF8F4] dark:bg-zinc-900 border border-amber-500/25 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+              className="rounded-3xl overflow-hidden bg-background dark:bg-zinc-900 border border-brand-gold/25 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
             >
               <div>
                 {/* Visual Stage */}
@@ -96,25 +96,25 @@ export function RoyalGiftingShowcase() {
                   
                   {/* Top Badge */}
                   <div className="absolute top-3.5 left-3.5">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-amber-300 border border-amber-500/30 text-xs font-bold">
-                      <Sparkles className="w-3 h-3 text-amber-400" />
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-brand-gold border border-brand-gold/30 text-xs font-bold">
+                      <Sparkles className="w-3 h-3 text-brand-gold" />
                       {gift.badge}
                     </span>
                   </div>
 
                   {/* Price Tag on Image */}
-                  <div className="absolute bottom-3 right-3 flex items-baseline gap-1.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-500/30 shadow-sm">
-                    <span className="text-base font-black text-amber-700 dark:text-amber-400 tnum">{gift.price}</span>
+                  <div className="absolute bottom-3 right-3 flex items-baseline gap-1.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-brand-gold/30 shadow-sm">
+                    <span className="text-base font-black text-brand-gold-deep dark:text-brand-gold tnum">{gift.price}</span>
                     <span className="text-xs text-muted-foreground line-through tnum">{gift.mrp}</span>
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="p-3 md:p-6 flex flex-col gap-2">
-                  <h3 className="font-heading font-bold text-lg md:text-xl text-foreground group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
+                  <h3 className="font-heading font-bold text-lg md:text-xl text-foreground group-hover:text-brand-gold-deep dark:group-hover:text-brand-gold transition-colors">
                     {gift.name}
                   </h3>
-                  <span className="text-xs font-mono text-amber-800 dark:text-amber-300 font-semibold">
+                  <span className="text-xs font-mono text-brand-gold-deep dark:text-brand-gold font-semibold">
                     {gift.tagline}
                   </span>
                   <p className="text-xs text-muted-foreground leading-relaxed mt-1">
@@ -126,7 +126,7 @@ export function RoyalGiftingShowcase() {
               {/* Bottom Action */}
               <div className="p-3 md:p-6 pt-0">
                 <Link href="/shop">
-                  <Button className="w-full bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white rounded-xl h-11 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-95">
+                  <Button className="w-full bg-royal-deep hover:bg-[#051912] dark:bg-secondary dark:hover:bg-secondary dark:text-zinc-950 text-white rounded-xl h-11 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-95">
                     <span>Reserve Gift Casket</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Button>
@@ -137,13 +137,13 @@ export function RoyalGiftingShowcase() {
         </div>
 
         {/* Custom Gifting Callout Banner */}
-        <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-r from-[#052C1E] via-[#0A3D2A] to-[#052C1E] text-white border border-amber-500/30 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+        <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-r from-royal-deep via-royal-deep to-royal-deep text-white border border-brand-gold/30 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
-              <HeartHandshake className="w-6 h-6 text-amber-300" />
+            <div className="w-12 h-12 rounded-2xl bg-secondary/20 border border-brand-gold/40 flex items-center justify-center shrink-0">
+              <HeartHandshake className="w-6 h-6 text-brand-gold" />
             </div>
             <div>
-              <h4 className="font-heading font-bold text-lg md:text-xl text-amber-100 mb-1">
+              <h4 className="font-heading font-bold text-lg md:text-xl text-brand-gold mb-1">
                 Custom Corporate &amp; Wedding Hampers
               </h4>
               <p className="text-xs md:text-sm text-zinc-300 max-w-xl">
@@ -158,7 +158,7 @@ export function RoyalGiftingShowcase() {
             rel="noopener noreferrer"
             className="shrink-0 w-full md:w-auto"
           >
-            <Button className="w-full md:w-auto bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs rounded-xl h-11 px-7 shadow-lg">
+            <Button className="w-full md:w-auto bg-secondary hover:bg-secondary text-zinc-950 font-bold text-xs rounded-xl h-11 px-7 shadow-lg">
               <span>Request Bespoke Catalogue</span>
             </Button>
           </a>

@@ -4,9 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* next/font sets these variables on <body>, so resolve them where they're used */
+@theme inline {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-cormorant), Georgia, serif;
+  --font-royal: var(--font-cinzel), Georgia, serif;
+}
+
 @theme {
-  --font-sans: var(--font-inter);
-  --font-heading: var(--font-playfair);
 
   --color-border: var(--border);
   --color-input: var(--input);
@@ -39,6 +44,9 @@
   --color-brand-gold: var(--brand-gold);
   --color-brand-gold-deep: var(--brand-gold-deep);
   --color-brand-green: var(--primary);
+  --color-royal-deep: var(--royal-deep);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -46,73 +54,72 @@
 }
 
 @layer base {
+  /* Rajwada Royal: palace maroon, temple gold, ivory. One palette for the whole site. */
   :root {
-    --background: #f4f3ea;
-    --foreground: #052216;
-    
+    --background: #fbf6ee;
+    --foreground: #24140f;
+
     --card: #ffffff;
-    --card-foreground: #052216;
-    
+    --card-foreground: #24140f;
+
     --popover: #ffffff;
-    --popover-foreground: #052216;
-    
-    --primary: #052c1e;
-    --primary-foreground: #fcfbf7;
-    
-    --secondary: #c59b27;
-    --secondary-foreground: #052216;
+    --popover-foreground: #24140f;
 
-    --muted: #e7e5dc;
-    --muted-foreground: #55675e;
+    --primary: #6e1a2c;
+    --primary-foreground: #ffffff;
 
-    --accent: #c59b27;
-    --accent-foreground: #fcfbf7;
+    --secondary: #c9a45a;
+    --secondary-foreground: #3e0e1a;
 
-    --destructive: #dc2626;
-    --destructive-foreground: #fcfbf7;
+    --muted: #f3eadb;
+    --muted-foreground: #6b5a52;
 
-    --border: #e3dec9;
-    --input: #e3dec9;
-    --ring: #052c1e;
+    --accent: #f3eadb;
+    --accent-foreground: #6e1a2c;
 
-    /* Metallic gold accent + a darker tone that meets AA contrast on light bg */
-    --brand-gold: #c59b27;
-    --brand-gold-deep: #8a6d1f;
+    --destructive: #b42318;
+    --destructive-foreground: #ffffff;
 
-    --radius: 1.25rem;
+    --border: #e8ddcc;
+    --input: #e8ddcc;
+    --ring: #c9a45a;
+
+    --royal-deep: #4a0f1d;
+    --success: #1e6b45;
+    --warning: #7a4a00;
+
+    /* Temple gold for fills, antique gold for gold text on ivory (AA contrast) */
+    --brand-gold: #c9a45a;
+    --brand-gold-deep: #7a571c;
+
+    --radius: 1rem;
   }
 
   .dark {
-    --background: #06130e;
-    --foreground: #fcfaf5;
-
-    --card: #0a1b15;
-    --card-foreground: #fcfaf5;
-
-    --popover: #0a1b15;
-    --popover-foreground: #fcfaf5;
-
-    --primary: #1e7a52;
-    --primary-foreground: #f3fbf7;
-
-    --secondary: #cba35c;
-    --secondary-foreground: #06130e;
-
-    --muted: #11231d;
-    --muted-foreground: #a0b7ae;
-
-    --accent: #cba35c;
-    --accent-foreground: #06130e;
-
-    --destructive: #ef4444;
-    --destructive-foreground: #fcfaf5;
-
-    --border: #1c332a;
-    --input: #1c332a;
-    --ring: #cba35c;
-
-    --brand-gold: #cba35c;
-    --brand-gold-deep: #cba35c;
+    --background: #1f0a10;
+    --foreground: #fbf6ee;
+    --card: #2a0e16;
+    --card-foreground: #fbf6ee;
+    --popover: #2a0e16;
+    --popover-foreground: #fbf6ee;
+    --primary: #c9a45a;
+    --primary-foreground: #3e0e1a;
+    --secondary: #c9a45a;
+    --secondary-foreground: #3e0e1a;
+    --muted: #3a1520;
+    --muted-foreground: #d9c9b8;
+    --accent: #3a1520;
+    --accent-foreground: #fbf6ee;
+    --destructive: #f04438;
+    --destructive-foreground: #ffffff;
+    --border: #4a1d29;
+    --input: #4a1d29;
+    --ring: #c9a45a;
+    --royal-deep: #14060a;
+    --success: #47b77f;
+    --warning: #f0b45a;
+    --brand-gold: #c9a45a;
+    --brand-gold-deep: #c9a45a;
   }
 
   * {
@@ -127,10 +134,10 @@
 
 /* Glassmorphism styling details */
 .glass {
-  background-color: rgba(244, 243, 234, 0.75);
+  background-color: rgba(251, 246, 238, 0.82);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(197, 155, 39, 0.12);
-  box-shadow: 0 8px 32px 0 rgba(197, 155, 39, 0.04);
+  border: 1px solid rgba(201, 164, 90, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(74, 15, 29, 0.08);
 }
 
 .dark .glass {
@@ -203,7 +210,7 @@
 }
 .card-3d:hover {
   transform: translateY(-6px);
-  box-shadow: 0 30px 60px -25px rgba(5, 44, 30, 0.28);
+  box-shadow: 0 30px 60px -25px rgba(74, 15, 29, 0.28);
 }
 
 /* Refined numerals for pricing */
@@ -288,3 +295,94 @@
 .group:hover .animate-marquee {
   animation-play-state: paused;
 }
+
+/* --- RAJWADA ROYAL MOTIFS --- */
+
+/* Jaali lattice for deep maroon sections */
+.jaali {
+  background-color: var(--royal-deep);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Cpath d='M18 0 36 18 18 36 0 18Z' fill='none' stroke='%23C9A45A' stroke-opacity='.15'/%3E%3Ccircle cx='18' cy='18' r='4' fill='none' stroke='%23C9A45A' stroke-opacity='.15'/%3E%3C/svg%3E");
+}
+
+/* Jharokha arch frame for photos */
+.arch {
+  border-radius: 999px 999px 1rem 1rem;
+}
+
+/* Small-caps royal eyebrow label */
+.eyebrow {
+  font-family: var(--font-cinzel), Georgia, serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* CSS-only 3D: rotating gift casket and floating orbs */
+.casket-stage { perspective: 1000px; }
+.casket {
+  position: relative;
+  transform-style: preserve-3d;
+  animation: casket-spin 20s linear infinite;
+}
+.casket > * { position: absolute; inset: 0; backface-visibility: visible; }
+@keyframes casket-spin {
+  from { transform: rotateX(-16deg) rotateY(0deg); }
+  to { transform: rotateX(-16deg) rotateY(360deg); }
+}
+.float-a { animation: float-a 6s ease-in-out infinite; }
+.float-b { animation: float-b 7.5s ease-in-out infinite; }
+@keyframes float-a { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-12px) rotate(6deg); } }
+@keyframes float-b { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(10px) rotate(-8deg); } }
+
+/* 3D coverflow transitions */
+.coverflow-item { transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s; }
+
+/* Tilt-on-hover for arch tiles (pointer devices only) */
+@media (hover: hover) {
+  .tilt-hover { transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s; }
+  .tilt-hover:hover {
+    transform: perspective(700px) rotateY(-8deg) rotateX(3deg) translateY(-4px);
+    box-shadow: 16px 22px 32px rgba(74, 15, 29, 0.22);
+  }
+}
+
+/* --- Layout helpers for the royal shell --- */
+:root { --header-h: 86px; }
+@media (min-width: 768px) { :root { --header-h: 104px; } }
+.pt-header { padding-top: var(--header-h); }
+.top-header { top: var(--header-h); }
+
+/* Ivory content card used across inner pages */
+.royal-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+}
+
+/* Gold diamond rule between heading and copy */
+.gold-rule { display: flex; align-items: center; gap: 0.5rem; color: var(--brand-gold); }
+.gold-rule::before, .gold-rule::after { content: ""; height: 1px; width: 2.75rem; background: currentColor; }
+
+/* Long-form text on policy / story pages */
+.royal-prose { font-size: 0.95rem; line-height: 1.7; color: var(--muted-foreground); }
+.royal-prose h2 { font-family: var(--font-cormorant), Georgia, serif; font-weight: 700; font-size: 1.75rem; line-height: 1.1; color: var(--primary); margin: 2rem 0 0.75rem; }
+.royal-prose h3 { font-weight: 800; color: var(--foreground); margin: 1.25rem 0 0.5rem; }
+.royal-prose p, .royal-prose ul, .royal-prose ol { margin: 0 0 0.9rem; }
+.royal-prose ul { list-style: disc; padding-left: 1.25rem; }
+.royal-prose a { color: var(--primary); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.royal-prose strong { color: var(--foreground); }
+
+/* Hero option A: dry fruits orbiting the royal seal */
+.orbit-ring { position: absolute; transform-style: preserve-3d; animation: orbit-spin 22s linear infinite; }
+@keyframes orbit-spin { to { transform: rotateY(360deg); } }
+.orbit-face { animation: orbit-face 22s linear infinite; }
+@keyframes orbit-face { from { transform: rotateY(0deg); } to { transform: rotateY(-360deg); } }
+.seal-glow { animation: seal-glow 3.2s ease-in-out infinite; }
+@keyframes seal-glow {
+  0%, 100% { box-shadow: 0 0 0 8px rgba(201, 164, 90, 0.16), 0 18px 30px rgba(0, 0, 0, 0.45); }
+  50% { box-shadow: 0 0 0 16px rgba(201, 164, 90, 0.08), 0 18px 30px rgba(0, 0, 0, 0.45); }
+}
+/* Pause so a medallion is easy to tap or click */
+.orbit-stage:hover .orbit-ring, .orbit-stage:hover .orbit-face,
+.orbit-stage:focus-within .orbit-ring, .orbit-stage:focus-within .orbit-face { animation-play-state: paused; }

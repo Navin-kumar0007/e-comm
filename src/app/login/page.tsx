@@ -67,7 +67,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 pt-28 md:pt-36">
+    <div className="relative jaali min-h-[80vh] flex items-center justify-center px-4 pb-14 pt-[calc(var(--header-h)+32px)]">
       {/* Background */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-brand-green/10 rounded-full blur-3xl" />
@@ -78,15 +78,15 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
-            <Leaf className="h-8 w-8 text-primary" />
-            <span className="font-heading text-2xl font-bold">Spicy Nuts</span>
+            <Leaf className="h-8 w-8 text-brand-gold" />
+            <span className="font-heading text-2xl font-bold text-brand-gold">Spicy Nuts</span>
           </Link>
-          <h1 className="text-3xl font-heading font-bold text-foreground">Welcome Back</h1>
-          <p className="text-muted-foreground mt-2">Sign in to your account</p>
+          <h1 className="font-heading text-[34px] font-bold leading-none text-white">Welcome Back</h1>
+          <p className="text-white/80 mt-2">Sign in to your account</p>
         </div>
 
         {/* Form Card */}
-        <div className="glass rounded-3xl p-8 shadow-xl border border-border/50">
+        <div className="bg-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-brand-gold/40">
           {/* Google Sign In Button */}
           <Button
             type="button"

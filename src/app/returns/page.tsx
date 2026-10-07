@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
   title: "Returns & Refunds | Spicy Nuts",
@@ -7,9 +8,9 @@ export const metadata: Metadata = {
 
 export default function ReturnsPage() {
   return (
-    <div className="container mx-auto max-w-4xl px-4 pt-28 pb-10 md:pt-36 md:pb-12">
-      <h1 className="text-2xl sm:text-3xl font-heading font-bold mb-2">Returns & Refunds Policy</h1>
-      <p className="text-sm text-muted-foreground mb-8">Last updated: September 2026</p>
+    <>
+      <PageHero eyebrow={"Policy"} title={"Returns & Refunds Policy"} subtitle={"Last updated: September 2026"} crumbs={[{ label: "Home", href: "/" }, { label: "Returns & Refunds" }]} />
+      <div className="container mx-auto max-w-4xl px-4 pt-8 pb-10 md:pb-12">
 
       <div className="prose prose-stone dark:prose-invert max-w-none prose-headings:font-heading prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-sm">
 
@@ -71,5 +72,6 @@ export default function ReturnsPage() {
 
       </div>
     </div>
+    </>
   );
 }

@@ -36,7 +36,7 @@ export default async function SubscriptionsPage() {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-heading font-bold text-foreground">My Subscriptions</h1>
+          <h1 className="text-[30px] font-heading font-bold leading-none text-primary">My Subscriptions</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Manage your recurring Taste of Spicy Nuts deliveries.
           </p>
@@ -64,7 +64,7 @@ export default async function SubscriptionsPage() {
           {subscriptions.map((sub: any) => (
             <div key={sub.id} className="bg-card border border-border rounded-3xl p-6 shadow-sm flex flex-col md:flex-row gap-6 relative overflow-hidden">
               {sub.status === 'ACTIVE' && (
-                <div className="absolute top-0 right-0 w-2 h-full bg-green-500"></div>
+                <div className="absolute top-0 right-0 w-2 h-full bg-success"></div>
               )}
               {sub.status === 'CANCELLED' && (
                 <div className="absolute top-0 right-0 w-2 h-full bg-destructive"></div>
@@ -79,7 +79,7 @@ export default async function SubscriptionsPage() {
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-xl font-bold font-heading">{sub.boxType}</h3>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                      sub.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                      sub.status === 'ACTIVE' ? 'bg-success/10 text-success' : 'bg-red-100 text-red-700'
                     }`}>
                       {sub.status}
                     </span>

@@ -49,7 +49,7 @@ export function PincodeChecker({ price }: { price: number }) {
         </button>
       </form>
       {result && (
-        <p className={`text-xs font-medium ${result.serviceable ? "text-emerald-600" : "text-destructive"}`}>{result.message}</p>
+        <p className={`text-xs font-medium ${result.serviceable ? "text-primary" : "text-destructive"}`}>{result.message}</p>
       )}
     </div>
   );

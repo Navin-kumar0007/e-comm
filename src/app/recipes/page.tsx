@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Clock, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/db/prisma";
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata = {
   title: "Traditional Indian Recipes — Dry Fruits, Masalas & Healthy Cooking",
@@ -16,14 +17,10 @@ export default async function RecipesPage() {
   });
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-8 md:pt-36 md:pb-10">
+    <>
+      <PageHero eyebrow={"From our kitchen"} title={"Authentic Recipes"} subtitle={"Discover traditional Indian recipes crafted with our premium, organic spices. Bring the authentic taste of Spicy Nuts to your home."} crumbs={[{ label: "Home", href: "/" }, { label: "Recipes" }]} />
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-8 md:pb-10">
       <div className="max-w-3xl mx-auto text-center mb-8">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-3 text-foreground">
-          Authentic <span className="text-primary italic">Recipes</span>
-        </h1>
-        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-          Discover traditional Indian recipes crafted with our premium, organic spices. Bring the authentic taste of Spicy Nuts to your home.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -59,5 +56,6 @@ export default async function RecipesPage() {
         ))}
       </div>
     </div>
+    </>
   );
 }

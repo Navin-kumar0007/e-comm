@@ -1,21 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ShoppingCart, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { ShoppingBag, Minus, Plus, Truck, Lock } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { useCartStore } from '@/lib/store/cart-store';
 import { getCleanProductImage } from "@/lib/utils";
 
-export function CartDrawer() {
+export const FREE_SHIPPING_AT = 999;
+const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
+const noopSubscribe = () => () => {};
+
+/**
+ * Cart sheet. `variant="pill"` is the gold "2 · ₹1,000" button from the desktop
+ * header; `variant="icon"` is the bag icon for the mobile header and tab bar.
+ */
+export function CartDrawer({ variant = 'icon', tone = 'light' }: { variant?: 'icon' | 'pill'; tone?: 'light' | 'dark' }) {
   const items = useCartStore((s) => s.items);
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
@@ -23,110 +30,91 @@ export function CartDrawer() {
   const getItemCount = useCartStore((s) => s.getItemCount);
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-
-  // Hydration guard — Zustand persisted state loads async
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // Zustand's persisted cart only exists after hydration
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
 
   const itemCount = mounted ? getItemCount() : 0;
   const total = mounted ? getTotal() : 0;
+  const left = FREE_SHIPPING_AT - total;
+  const pct = Math.min(100, Math.round((total / FREE_SHIPPING_AT) * 100));
+
+  const trigger =
+    variant === 'pill' ? (
+      <button aria-label={`Cart, ${itemCount} items`} className="flex h-10 items-center gap-2 rounded-full bg-secondary px-4 text-[13px] font-extrabold text-secondary-foreground" />
+    ) : (
+      <button aria-label={`Cart, ${itemCount} items`} className={`relative flex h-11 w-11 items-center justify-center rounded-full ${tone === 'dark' ? 'text-white' : 'text-current'}`} />
+    );
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger render={
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full" />
-      }>
-        <ShoppingCart className="h-5 w-5" />
-        {itemCount > 0 && (
-          <Badge
-            variant="destructive"
-            className="absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] rounded-full border-2 border-background"
-          >
-            {itemCount}
-          </Badge>
+      <SheetTrigger render={trigger}>
+        <ShoppingBag className="h-5 w-5" />
+        {variant === 'pill' ? (
+          <span className="tnum">{itemCount} · {inr(total)}</span>
+        ) : (
+          itemCount > 0 && (
+            <span className="absolute right-0.5 top-1 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-secondary px-1 text-[10px] font-extrabold text-secondary-foreground">
+              {itemCount}
+            </span>
+          )
         )}
-        <span className="sr-only">Shopping Cart</span>
       </SheetTrigger>
 
-      <SheetContent side="right" className="w-full sm:w-[420px] max-w-full flex flex-col p-0 bg-[#FAF8F4] dark:bg-zinc-950">
-        {/* Header */}
-        <div className="p-6 pb-4 border-b border-border/50">
-          <h2 className="text-xl font-heading font-bold flex items-center gap-2">
-            <ShoppingBag className="w-5 h-5 text-primary" />
-            Your Cart
-            {itemCount > 0 && (
-              <span className="text-sm font-normal text-muted-foreground">
-                ({itemCount} {itemCount === 1 ? 'item' : 'items'})
+      <SheetContent side="right" className="flex w-full max-w-full flex-col gap-0 bg-background p-0 sm:w-[400px]">
+        <div className="jaali px-5 pb-4 pt-5 text-white">
+          <SheetTitle className="font-heading text-[26px] font-bold text-white">
+            Your cart <span className="font-sans text-[13px] font-semibold text-white/75">{itemCount} {itemCount === 1 ? 'item' : 'items'}</span>
+          </SheetTitle>
+          {mounted && items.length > 0 && (
+            <div className="mt-3 rounded-2xl bg-royal-deep/60 p-3">
+              <p className="flex items-center gap-2 text-[13px] font-bold">
+                <Truck className="h-[18px] w-[18px] text-brand-gold" />
+                {left > 0 ? `Add ${inr(left)} more for free shipping` : 'Free shipping unlocked on this order'}
+              </p>
+              <span className="mt-2 block h-1.5 rounded-full bg-white/20">
+                <span className="block h-1.5 rounded-full bg-secondary" style={{ width: `${pct}%` }} />
               </span>
-            )}
-          </h2>
+            </div>
+          )}
         </div>
 
-        {/* Items */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4">
           {!mounted || items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center gap-4 py-12">
-              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
-                <ShoppingCart className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Your cart is empty</h3>
-                <p className="text-sm text-muted-foreground">
-                  Discover our organic products and add some items!
-                </p>
-              </div>
-              <Button variant="outline" className="rounded-full" onClick={() => { setIsOpen(false); router.push('/shop'); }}>
-                  Continue Shopping
-                </Button>
+            <div className="flex h-full flex-col items-center justify-center gap-3 py-10 text-center">
+              <span className="arch flex h-24 w-20 items-center justify-center border-2 border-brand-gold bg-muted">
+                <ShoppingBag className="h-7 w-7 text-primary" />
+              </span>
+              <h3 className="font-heading text-2xl font-bold text-primary">Your cart is empty</h3>
+              <p className="text-sm text-muted-foreground">Fill it with almonds, cashews, dates and more.</p>
+              <button onClick={() => { setIsOpen(false); router.push('/shop'); }} className="h-11 rounded-xl bg-primary px-5 text-sm font-extrabold text-primary-foreground">
+                Shop the pantry
+              </button>
             </div>
           ) : (
-            <ul className="space-y-5">
-              {items.map((item) => (
-                <li
-                  key={`${item.productId}-${item.weight}`}
-                  className="flex gap-4 p-3 rounded-xl bg-muted/30 border border-border/30"
-                >
-                  {/* Image */}
-                  <Link href={`/product/${item.slug}`} onClick={() => setIsOpen(false)} className="relative w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-muted">
-                    <Image
-                      src={getCleanProductImage(item.image, item.name)}
-                      alt={item.name}
-                      fill
-                      className="object-cover"
-                      sizes="80px"
-                    />
+            <ul className="overflow-hidden rounded-2xl border border-border bg-card">
+              {items.map((item, i) => (
+                <li key={`${item.productId}-${item.weight}`} className={`flex gap-3 p-3 ${i > 0 ? 'border-t border-border' : ''}`}>
+                  <Link href={item.productId.startsWith('custom-') ? '/blend-creator' : `/product/${item.slug}`} onClick={() => setIsOpen(false)} className="arch relative h-[68px] w-[56px] shrink-0 overflow-hidden border-[1.5px] border-brand-gold bg-muted">
+                    <Image src={getCleanProductImage(item.image, item.name)} alt={item.name} fill className="object-cover" sizes="56px" />
                   </Link>
-
-                  {/* Details */}
-                  <div className="flex-1 min-w-0">
-                    <Link href={`/product/${item.slug}`} onClick={() => setIsOpen(false)}>
-                      <h4 className="font-semibold text-sm truncate hover:text-primary transition-colors">
-                        {item.name}
-                      </h4>
-                    </Link>
-                    <p className="text-xs text-muted-foreground mt-0.5">{item.weight}</p>
-                    <p className="font-bold text-primary mt-1">₹{item.price * item.quantity}</p>
-
-                    {/* Quantity Controls */}
-                    <div className="flex items-center gap-2 mt-2">
-                      <button
-                        onClick={() => updateQuantity(item.productId, item.weight, item.quantity - 1)}
-                        className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.productId, item.weight, item.quantity + 1)}
-                        className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={() => removeItem(item.productId, item.weight)}
-                        className="ml-auto w-7 h-7 rounded-full flex items-center justify-center hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <div className="flex justify-between gap-2">
+                      <span className="text-sm font-bold leading-tight">{item.name}</span>
+                      <span className="tnum text-sm font-extrabold">{inr(item.price * item.quantity)}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{item.weight} · {inr(item.price)} each</span>
+                    <div className="mt-1 flex items-center justify-between">
+                      <div className="flex h-9 items-center rounded-xl border border-border">
+                        <button aria-label={`Decrease ${item.name}`} onClick={() => updateQuantity(item.productId, item.weight, item.quantity - 1)} className="flex h-9 w-10 items-center justify-center">
+                          <Minus className="h-3.5 w-3.5" />
+                        </button>
+                        <span className="min-w-5 text-center text-sm font-extrabold">{item.quantity}</span>
+                        <button aria-label={`Increase ${item.name}`} onClick={() => updateQuantity(item.productId, item.weight, item.quantity + 1)} className="flex h-9 w-10 items-center justify-center">
+                          <Plus className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      <button onClick={() => removeItem(item.productId, item.weight)} className="min-h-9 px-1 text-xs font-bold text-muted-foreground underline underline-offset-[3px]">
+                        Remove
                       </button>
                     </div>
                   </div>
@@ -136,22 +124,20 @@ export function CartDrawer() {
           )}
         </div>
 
-        {/* Footer */}
         {mounted && items.length > 0 && (
-          <div className="p-4 sm:p-6 pt-3 sm:pt-4 border-t border-border/50 space-y-3 sm:space-y-4 bg-background/95 backdrop-blur-md safe-area-bottom pb-8 sm:pb-6">
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground text-sm font-medium">Subtotal</span>
-              <span className="text-xl font-black text-foreground tnum">₹{total.toFixed(2)}</span>
+          <div className="border-t border-border bg-card p-4 pb-6 shadow-[0_-10px_26px_rgba(74,15,29,0.12)]">
+            <div className="mb-3 flex items-baseline justify-between">
+              <span className="text-sm font-bold text-muted-foreground">Item total</span>
+              <span className="tnum text-lg font-extrabold">{inr(total)}</span>
             </div>
-            <p className="text-[11px] text-muted-foreground">
-              Free royal shipping &amp; insured packaging on all orders over ₹999.
-            </p>
-            <Button 
-              onClick={() => { setIsOpen(false); router.push('/checkout'); }} 
-              className="w-full h-12 rounded-2xl text-sm font-bold bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white shadow-lg transition-all"
+            <button
+              onClick={() => { setIsOpen(false); router.push('/checkout'); }}
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-brand-gold bg-primary text-sm font-extrabold text-primary-foreground"
             >
-              Proceed to Checkout
-            </Button>
+              <Lock className="h-4 w-4 text-brand-gold" />
+              Proceed to checkout ›
+            </button>
+            <p className="mt-2 text-center text-[11px] text-muted-foreground">Coupons and delivery are applied at checkout · prices include GST</p>
           </div>
         )}
       </SheetContent>

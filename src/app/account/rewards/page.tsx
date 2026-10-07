@@ -31,8 +31,8 @@ export default async function RewardsPage() {
   let nextTierName = "Silver Clove";
   let tierProgress = 0;
   let pointsToNext = 500 - points;
-  let tierColor = "text-amber-700 bg-amber-700/10 border-amber-700/20";
-  let iconColor = "text-amber-700";
+  let tierColor = "text-brand-gold-deep bg-secondary/10 border-brand-gold/20";
+  let iconColor = "text-brand-gold-deep";
   
   if (points >= 1500) {
     tierName = "Platinum Vanilla";
@@ -63,7 +63,7 @@ export default async function RewardsPage() {
     <div className="container max-w-5xl py-28 px-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
         <div>
-          <h1 className="text-3xl font-heading font-bold text-foreground">Spice Points & Rewards</h1>
+          <h1 className="text-[30px] font-heading font-bold leading-none text-primary">Spice Points & Rewards</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Welcome back, {user.name?.split(' ')[0]}. Track your loyalty points and member benefits.
           </p>

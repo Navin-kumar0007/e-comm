@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { submitRecipe } from '@/app/actions/admin-recipes';
 import { toast } from 'sonner';
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export default function SubmitRecipe() {
   const router = useRouter();
@@ -28,9 +29,9 @@ export default function SubmitRecipe() {
   };
 
   return (
-    <div className="container max-w-2xl py-12 pt-28 md:pt-36">
-      <h1 className="text-4xl font-heading font-bold mb-2">Share Your Recipe</h1>
-      <p className="text-zinc-500 mb-8">Got a secret family recipe using our masalas? Share it with the community!</p>
+    <>
+      <PageHero eyebrow={"Community"} title={"Share Your Recipe"} subtitle={"Got a secret family recipe using our masalas? Share it with the community!"} crumbs={[{ label: "Home", href: "/" }, { label: "Share a recipe" }]} />
+      <div className="container mx-auto max-w-2xl px-4 py-8">
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -97,5 +98,6 @@ export default function SubmitRecipe() {
         </Button>
       </form>
     </div>
+    </>
   );
 }

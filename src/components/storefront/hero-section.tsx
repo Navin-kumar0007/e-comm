@@ -12,8 +12,8 @@ import { useState } from "react";
 const DryFruitHeroScene = dynamic(() => import("@/components/three/dryfruit-hero-scene"), {
   ssr: false,
   loading: () => (
-    <div className="relative w-full h-[380px] md:h-[500px] flex items-center justify-center rounded-3xl bg-amber-50/40 dark:bg-zinc-900/40 border border-amber-500/20 animate-pulse">
-      <div className="flex flex-col items-center gap-3 text-amber-800 dark:text-amber-300">
+    <div className="relative w-full h-[380px] md:h-[500px] flex items-center justify-center rounded-3xl bg-muted/40 dark:bg-zinc-900/40 border border-brand-gold/20 animate-pulse">
+      <div className="flex flex-col items-center gap-3 text-brand-gold-deep dark:text-brand-gold">
         <Sparkles className="w-8 h-8 animate-spin" />
         <span className="text-xs font-semibold tracking-wider uppercase font-mono">Loading 3D Vault...</span>
       </div>
@@ -34,7 +34,7 @@ const HERO_PRODUCTS = [
     image: "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?q=80&w=800&auto=format&fit=crop",
     badge: "👑 Royal Superfood",
     origin: "Kandahar Valleys",
-    bgPill: "bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-300/50",
+    bgPill: "bg-muted dark:bg-royal-deep/60 text-brand-gold-deep dark:text-brand-gold border-brand-gold/50",
   },
   {
     id: "kashmiri-walnuts",
@@ -48,7 +48,7 @@ const HERO_PRODUCTS = [
     image: "/products/walnut.jpg",
     badge: "❄️ Snow-White Kernels",
     origin: "Kishtwar, Kashmir",
-    bgPill: "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 border-emerald-300/50",
+    bgPill: "bg-muted dark:bg-primary/60 text-primary dark:text-primary border-primary/50",
   },
   {
     id: "jumbo-cashews",
@@ -62,7 +62,7 @@ const HERO_PRODUCTS = [
     image: "/products/premium-cashew-w180.jpg",
     badge: "💎 King Size W180",
     origin: "Goan Coastal Groves",
-    bgPill: "bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-300/50",
+    bgPill: "bg-muted dark:bg-royal-deep/60 text-brand-gold-deep dark:text-brand-gold border-brand-gold/50",
   },
   {
     id: "tandoori-chai",
@@ -86,18 +86,18 @@ export function HeroSection() {
   const activeProduct = HERO_PRODUCTS[activeIdx];
 
   return (
-    <section className="relative overflow-hidden bg-[#FAF8F4] dark:bg-[#071510] pt-20 pb-2 md:pt-28 md:pb-20 transition-colors duration-500">
+    <section className="relative overflow-hidden bg-background dark:bg-royal-deep pt-20 pb-2 md:pt-28 md:pb-20 transition-colors duration-500">
       {/* Background ambient lighting */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[40rem] h-[40rem] bg-gradient-to-br from-amber-200/30 dark:from-amber-900/10 via-emerald-200/20 to-transparent rounded-full blur-3xl -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] bg-emerald-300/15 dark:bg-emerald-950/20 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/4 w-[40rem] h-[40rem] bg-gradient-to-br from-brand-gold/30 dark:from-brand-gold/10 via-primary/20 to-transparent rounded-full blur-3xl -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] bg-primary/15 dark:bg-primary/20 rounded-full blur-3xl" />
         <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] bg-[radial-gradient(#C59B27_1px,transparent_1px)] [background-size:28px_28px]" />
       </div>
 
       <div className="container relative z-10 px-4 md:px-6 mx-auto">
         {/* Mobile Compact D2C Hero Banner (Nutraj / 20-20 Dry Fruits style) */}
         <div className="md:hidden mb-2">
-          <div className="relative rounded-2xl overflow-hidden shadow-lg border border-amber-500/25 bg-gradient-to-br from-[#052C1E] via-[#0A3D2A] to-[#041F15] p-4 text-white">
+          <div className="relative rounded-2xl overflow-hidden shadow-lg border border-brand-gold/25 bg-gradient-to-br from-royal-deep via-royal-deep to-royal-deep p-4 text-white">
             {/* Background product photography */}
             <div className="absolute inset-0 opacity-25 pointer-events-none">
               <Image
@@ -108,11 +108,11 @@ export function HeroSection() {
                 priority
               />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-r from-[#052C1E]/90 via-[#0A3D2A]/80 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-royal-deep/90 via-royal-deep/80 to-transparent pointer-events-none" />
 
             <div className="relative z-10">
-              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/25 border border-amber-400/40 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider mb-2">
-                <Sparkles className="w-3 h-3 text-amber-400" />
+              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary/25 border border-brand-gold/40 text-brand-gold text-[10px] font-extrabold uppercase tracking-wider mb-2">
+                <Sparkles className="w-3 h-3 text-brand-gold" />
                 Royal Harvest • Single-Origin
               </div>
 
@@ -127,29 +127,29 @@ export function HeroSection() {
               {/* Action Buttons */}
               <div className="flex items-center gap-2">
                 <Link href="/shop" className="flex-1">
-                  <Button size="sm" className="w-full h-9 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs rounded-xl shadow-md">
+                  <Button size="sm" className="w-full h-9 bg-secondary hover:bg-secondary text-black font-bold text-xs rounded-xl shadow-md">
                     <ShoppingBag className="w-3.5 h-3.5 mr-1.5" />
                     Shop Now
                   </Button>
                 </Link>
                 <Link href="/blend-creator" className="flex-1">
                   <Button size="sm" variant="outline" className="w-full h-9 bg-white/10 hover:bg-white/20 text-white border-white/25 font-bold text-xs rounded-xl backdrop-blur-xs">
-                    <Sparkles className="w-3.5 h-3.5 mr-1 text-amber-300" />
+                    <Sparkles className="w-3.5 h-3.5 mr-1 text-brand-gold" />
                     Custom Blend
                   </Button>
                 </Link>
               </div>
 
               {/* Micro Trust Strip */}
-              <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-white/10 text-[9px] text-amber-200/90 font-medium">
+              <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-white/10 text-[9px] text-brand-gold font-medium">
                 <span className="flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-amber-400" /> Grade AAA
+                  <CheckCircle2 className="w-3 h-3 text-brand-gold" /> Grade AAA
                 </span>
                 <span className="flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-amber-400" /> Zero Polish
+                  <CheckCircle2 className="w-3 h-3 text-brand-gold" /> Zero Polish
                 </span>
                 <span className="flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-amber-400" /> Glass Sealed
+                  <CheckCircle2 className="w-3 h-3 text-brand-gold" /> Glass Sealed
                 </span>
               </div>
             </div>
@@ -167,8 +167,8 @@ export function HeroSection() {
             className="lg:col-span-6 flex flex-col items-start text-left"
           >
             {/* Top Brand Pill with Gold Sheen */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/15 px-3 py-1 text-[11px] md:text-xs font-semibold text-amber-800 dark:text-amber-300 mb-3 backdrop-blur-sm">
-              <Sparkles className="h-3 w-3 text-amber-600 dark:text-amber-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-brand-gold/30 bg-secondary/10 dark:bg-secondary/15 px-3 py-1 text-[11px] md:text-xs font-semibold text-brand-gold-deep dark:text-brand-gold mb-3 backdrop-blur-sm">
+              <Sparkles className="h-3 w-3 text-brand-gold-deep dark:text-brand-gold animate-pulse" />
               <span>Imperial Royal Pantry • Certified Single-Origin</span>
             </div>
 
@@ -190,7 +190,7 @@ export function HeroSection() {
               <Link href="/shop" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white h-9 md:h-12 px-3.5 md:px-7 rounded-2xl shadow-lg shadow-emerald-950/20 hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm font-bold w-full flex items-center justify-center gap-2 border border-amber-500/30"
+                  className="bg-royal-deep hover:bg-[#051912] dark:bg-secondary dark:hover:bg-secondary dark:text-zinc-950 text-white h-9 md:h-12 px-3.5 md:px-7 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm font-bold w-full flex items-center justify-center gap-2 border border-brand-gold/30"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>Explore Royal Harvests</span>
@@ -200,33 +200,33 @@ export function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-9 md:h-12 px-3.5 md:px-6 rounded-2xl border-amber-500/40 hover:bg-amber-500/10 text-zinc-900 dark:text-zinc-100 backdrop-blur-sm text-sm font-semibold w-full flex items-center justify-center gap-2"
+                  className="h-9 md:h-12 px-3.5 md:px-6 rounded-2xl border-brand-gold/40 hover:bg-secondary/10 text-zinc-900 dark:text-zinc-100 backdrop-blur-sm text-sm font-semibold w-full flex items-center justify-center gap-2"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <Sparkles className="w-4 h-4 text-brand-gold-deep dark:text-brand-gold" />
                   <span>Custom Blend Atelier</span>
                 </Button>
               </Link>
             </div>
 
             {/* Royal Trust Metrics Bar */}
-            <div className="grid grid-cols-3 gap-1 sm:gap-4 pt-2 md:pt-6 border-t border-amber-500/20 w-full">
+            <div className="grid grid-cols-3 gap-1 sm:gap-4 pt-2 md:pt-6 border-t border-brand-gold/20 w-full">
               <div className="flex flex-col">
-                <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs sm:text-sm md:text-base font-heading">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div className="flex items-center gap-1.5 text-brand-gold-deep dark:text-brand-gold font-bold text-xs sm:text-sm md:text-base font-heading">
+                  <CheckCircle2 className="w-4 h-4 text-primary" />
                   <span>Grade AAA</span>
                 </div>
                 <span className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">High-Oil Natural Kernels</span>
               </div>
               <div className="flex flex-col">
-                <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs sm:text-sm md:text-base font-heading">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div className="flex items-center gap-1.5 text-brand-gold-deep dark:text-brand-gold font-bold text-xs sm:text-sm md:text-base font-heading">
+                  <CheckCircle2 className="w-4 h-4 text-primary" />
                   <span>Zero Polish</span>
                 </div>
                 <span className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">100% Unadulterated</span>
               </div>
               <div className="flex flex-col">
-                <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs sm:text-sm md:text-base font-heading">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div className="flex items-center gap-1.5 text-brand-gold-deep dark:text-brand-gold font-bold text-xs sm:text-sm md:text-base font-heading">
+                  <CheckCircle2 className="w-4 h-4 text-primary" />
                   <span>Glass Sealed</span>
                 </div>
                 <span className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">Aroma &amp; Oil Lock</span>
@@ -239,12 +239,12 @@ export function HeroSection() {
           <div className="lg:col-span-6 relative flex flex-col items-center w-full">
 
             {/* Desktop Mode Toggle (Showcase vs 3D Orbit) */}
-            <div className="hidden md:flex items-center gap-1 p-1 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-amber-500/30 shadow-sm backdrop-blur-md mb-4 z-20">
+            <div className="hidden md:flex items-center gap-1 p-1 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-brand-gold/30 shadow-sm backdrop-blur-md mb-4 z-20">
               <button
                 onClick={() => setViewMode("showcase")}
                 className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                   viewMode === "showcase"
-                    ? "bg-[#0A261D] text-white dark:bg-amber-500 dark:text-zinc-950 shadow"
+                    ? "bg-royal-deep text-white dark:bg-secondary dark:text-zinc-950 shadow"
                     : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
                 }`}
               >
@@ -255,11 +255,11 @@ export function HeroSection() {
                 onClick={() => setViewMode("3d")}
                 className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                   viewMode === "3d"
-                    ? "bg-[#0A261D] text-white dark:bg-amber-500 dark:text-zinc-950 shadow"
+                    ? "bg-royal-deep text-white dark:bg-secondary dark:text-zinc-950 shadow"
                     : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
                 }`}
               >
-                <Cuboid className="w-3.5 h-3.5 text-amber-400 dark:text-zinc-950" />
+                <Cuboid className="w-3.5 h-3.5 text-brand-gold dark:text-zinc-950" />
                 <span>3D Interactive Vault</span>
               </button>
             </div>
@@ -269,7 +269,7 @@ export function HeroSection() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative w-full rounded-3xl overflow-hidden bg-white/40 dark:bg-zinc-900/40 border border-amber-500/30 shadow-2xl backdrop-blur-sm"
+                className="relative w-full rounded-3xl overflow-hidden bg-white/40 dark:bg-zinc-900/40 border border-brand-gold/30 shadow-2xl backdrop-blur-sm"
               >
                 <DryFruitHeroScene />
               </motion.div>
@@ -286,8 +286,8 @@ export function HeroSection() {
                       onClick={() => setActiveIdx(idx)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex-shrink-0 border ${
                         activeIdx === idx
-                          ? "bg-[#0A261D] text-white dark:bg-amber-500 dark:text-zinc-950 border-amber-500/50 shadow-sm"
-                          : "bg-white/80 dark:bg-zinc-900/80 text-zinc-600 dark:text-zinc-400 border-border/50 hover:border-amber-500/30"
+                          ? "bg-royal-deep text-white dark:bg-secondary dark:text-zinc-950 border-brand-gold/50 shadow-sm"
+                          : "bg-white/80 dark:bg-zinc-900/80 text-zinc-600 dark:text-zinc-400 border-border/50 hover:border-brand-gold/30"
                       }`}
                     >
                       {prod.title}
@@ -296,7 +296,7 @@ export function HeroSection() {
                 </div>
 
                 {/* Royal Feature Card */}
-                <div className="relative w-full rounded-3xl overflow-hidden bg-white dark:bg-zinc-900 border border-amber-500/25 shadow-xl p-3 md:p-6 flex flex-col">
+                <div className="relative w-full rounded-3xl overflow-hidden bg-white dark:bg-zinc-900 border border-brand-gold/25 shadow-xl p-3 md:p-6 flex flex-col">
                   {/* Top Badge & Origin */}
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${activeProduct.bgPill}`}>
@@ -306,7 +306,7 @@ export function HeroSection() {
                   </div>
 
                   {/* Product Image Stage */}
-                  <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#FAF8F4] dark:bg-zinc-950 mb-4 border border-zinc-200/60 dark:border-zinc-800/80 group">
+                  <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-background dark:bg-zinc-950 mb-4 border border-zinc-200/60 dark:border-zinc-800/80 group">
                     <Image
                       src={activeProduct.image}
                       alt={activeProduct.title}
@@ -326,12 +326,12 @@ export function HeroSection() {
                         {activeProduct.title}
                       </h3>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-xl md:text-2xl font-black text-amber-700 dark:text-amber-400">{activeProduct.price}</span>
+                        <span className="text-xl md:text-2xl font-black text-brand-gold-deep dark:text-brand-gold">{activeProduct.price}</span>
                         <span className="text-xs text-zinc-400 line-through">{activeProduct.mrp}</span>
                       </div>
                     </div>
 
-                    <p className="text-xs text-amber-800 dark:text-amber-300 font-medium italic">
+                    <p className="text-xs text-brand-gold-deep dark:text-brand-gold font-medium italic">
                       {activeProduct.tagline}
                     </p>
 
@@ -341,7 +341,7 @@ export function HeroSection() {
 
                     <Link href={`/product/${activeProduct.slug}`}>
                       <Button
-                        className="w-full bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white rounded-xl h-11 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-[0.98]"
+                        className="w-full bg-royal-deep hover:bg-[#051912] dark:bg-secondary dark:hover:bg-secondary dark:text-zinc-950 text-white rounded-xl h-11 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-[0.98]"
                       >
                         <span>Reserve &amp; Order Now</span>
                         <ArrowRight className="w-3.5 h-3.5" />

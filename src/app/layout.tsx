@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Cinzel, Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import Script from 'next/script';
 
@@ -23,7 +23,6 @@ function Analytics() {
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/storefront/Navbar";
 import { MobileBottomNav } from "@/components/storefront/mobile-bottom-nav";
-import { PageTransition } from "@/components/ui/page-transition";
 import { PromoBanner } from "@/components/storefront/promo-banner";
 import { Footer } from "@/components/storefront/Footer";
 import { Toaster } from "@/components/ui/sonner";
@@ -34,15 +33,22 @@ import { WhatsAppWelcomePrompt } from "@/components/storefront/whatsapp-welcome-
 import { AccessibilityToolbar } from "@/components/accessibility/accessibility-toolbar";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
-// Fonts
-const inter = Inter({
+// Fonts: Manrope for interface and prices, Cormorant Garamond for headings, Cinzel for royal eyebrows
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-manrope",
 });
 
-const playfair = Playfair_Display({
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: ["500", "600", "700"],
+  variable: "--font-cormorant",
+});
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-cinzel",
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
@@ -179,7 +185,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${playfair.variable} antialiased min-h-screen flex flex-col font-sans`}
+        className={`${manrope.variable} ${cormorant.variable} ${cinzel.variable} antialiased min-h-screen flex flex-col font-sans`}
       >
         <AuthProvider>
           <ThemeProvider
@@ -188,10 +194,8 @@ export default function RootLayout({
             forcedTheme="light"
             disableTransitionOnChange
           >
-            <div className="print:hidden"><Navbar /></div><main className="flex-1 pb-16 md:pb-0 print:m-0 print:p-0">
-              <PageTransition>
-                {children}
-              </PageTransition>
+            <div className="print:hidden"><Navbar /></div><main className="flex-1 pb-24 md:pb-0 print:m-0 print:p-0">
+              {children}
             </main>
             <div className="print:hidden"><Footer /><MobileBottomNav /><AIConcierge /><WhatsAppButton /><WhatsAppWelcomePrompt /><AccessibilityToolbar /></div><ScrollReveal />
             <Toaster />

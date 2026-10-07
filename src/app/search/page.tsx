@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db/prisma';
 import { ProductCard } from '@/components/storefront/product-card';
 import { Search } from 'lucide-react';
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata = {
   title: 'Search Results | Spicy Nuts',
@@ -43,11 +44,10 @@ export default async function SearchPage({
   }
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-8 md:pt-36 md:pb-10 min-h-[60vh]">
+    <>
+      <PageHero eyebrow={"Search"} title={"Search Results"} crumbs={[{ label: "Home", href: "/" }, { label: "Search" }]} />
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 pb-8 md:pb-10 min-h-[50vh]">
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">
-          Search Results
-        </h1>
         {q ? (
           <p className="text-muted-foreground text-sm">
             Showing results for <span className="font-semibold text-foreground">"{q}"</span> ({results.length} found)
@@ -75,5 +75,6 @@ export default async function SearchPage({
         </div>
       ) : null}
     </div>
+    </>
   );
 }

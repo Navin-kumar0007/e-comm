@@ -16,16 +16,16 @@ export function SortSelect() {
   };
 
   return (
-    <select 
-      value={currentSort} 
+    <select
+      value={currentSort}
       onChange={handleSort}
       aria-label="Sort products"
-      className="h-9 px-2.5 sm:px-3 text-xs sm:text-sm rounded-xl border border-amber-500/30 bg-background/90 text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 cursor-pointer font-medium transition-colors"
+      className="h-10 cursor-pointer rounded-full border border-border bg-card px-3.5 text-[13px] font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
     >
-      <option value="newest">✨ Newest Harvests</option>
-      <option value="featured">👑 Featured Royal</option>
-      <option value="price-asc">Price: Low to High</option>
-      <option value="price-desc">Price: High to Low</option>
+      <option value="newest">Newest</option>
+      <option value="featured">Featured</option>
+      <option value="price-asc">Price: low to high</option>
+      <option value="price-desc">Price: high to low</option>
     </select>
   );
 }

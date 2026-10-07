@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { submitContact } from '@/app/actions/contact';
 import { toast } from 'sonner';
 import { MapPin, Mail, Clock, Phone } from 'lucide-react';
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 
 
@@ -27,11 +28,11 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 pt-28 pb-10 md:pt-36 md:pb-12">
+    <>
+      <PageHero eyebrow={"Contact"} title={"Get in Touch"} subtitle={"Have a question about our products or your order? We'd love to hear from you."} crumbs={[{ label: "Home", href: "/" }, { label: "Contact" }]} />
+      <div className="container mx-auto max-w-4xl px-4 pt-8 pb-10 md:pb-12">
       <div className="grid md:grid-cols-2 gap-8 items-start">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-heading font-bold mb-3">Get in Touch</h1>
-          <p className="text-sm text-muted-foreground mb-6">Have a question about our products or your order? We&apos;d love to hear from you.</p>
           
           <div className="space-y-6">
             <div className="flex gap-3">
@@ -95,5 +96,6 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -88,16 +88,16 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 pt-28 md:pt-36">
+    <div className="relative jaali min-h-[80vh] flex items-center justify-center px-4 pb-14 pt-[calc(var(--header-h)+32px)]">
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
-            <Leaf className="h-8 w-8 text-primary" />
-            <span className="font-heading text-2xl font-bold">Spicy Nuts</span>
+            <Leaf className="h-8 w-8 text-brand-gold" />
+            <span className="font-heading text-2xl font-bold text-brand-gold">Spicy Nuts</span>
           </Link>
-          <h1 className="text-3xl font-heading font-bold text-foreground">Choose a New Password</h1>
+          <h1 className="font-heading text-[34px] font-bold leading-none text-white">Choose a New Password</h1>
         </div>
-        <div className="glass rounded-3xl p-8 shadow-xl border border-border/50">
+        <div className="bg-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-brand-gold/40">
           <Suspense fallback={<Loader2 className="w-6 h-6 animate-spin mx-auto text-muted-foreground" />}>
             <ResetPasswordForm />
           </Suspense>

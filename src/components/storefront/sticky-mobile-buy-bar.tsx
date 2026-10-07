@@ -43,7 +43,7 @@ export function StickyMobileBuyBar({ product }: StickyMobileBuyBarProps) {
   };
 
   return (
-    <div className="fixed bottom-16 left-0 right-0 z-30 md:hidden bg-background/95 backdrop-blur-2xl border-t border-amber-500/25 p-3 shadow-[0_-8px_20px_rgba(0,0,0,0.1)] transition-all">
+    <div className="fixed bottom-16 left-0 right-0 z-30 md:hidden bg-background/95 backdrop-blur-2xl border-t border-brand-gold/25 p-3 shadow-[0_-8px_20px_rgba(0,0,0,0.1)] transition-all">
       <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
         {/* Left: Mini product info */}
         <div className="flex items-center gap-2.5 min-w-0">
@@ -58,7 +58,7 @@ export function StickyMobileBuyBar({ product }: StickyMobileBuyBarProps) {
           <div className="min-w-0">
             <h4 className="text-xs font-bold text-foreground truncate">{product.name}</h4>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-sm font-black text-amber-700 dark:text-amber-400 tnum">₹{effectivePrice}</span>
+              <span className="text-sm font-black text-brand-gold-deep dark:text-brand-gold tnum">₹{effectivePrice}</span>
               {product.salePrice && (
                 <span className="text-[10px] text-muted-foreground line-through tnum">₹{product.price}</span>
               )}
@@ -73,8 +73,8 @@ export function StickyMobileBuyBar({ product }: StickyMobileBuyBarProps) {
           onClick={handleAdd}
           className={`shrink-0 rounded-xl h-10 px-4 font-bold text-xs flex items-center gap-1.5 shadow-md transition-all ${
             isAdded
-              ? "bg-emerald-700 text-white"
-              : "bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white"
+              ? "bg-primary text-white"
+              : "bg-royal-deep hover:bg-[#051912] dark:bg-secondary dark:hover:bg-secondary dark:text-zinc-950 text-white"
           }`}
         >
           {isAdded ? (

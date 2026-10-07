@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions | Spicy Nuts",
@@ -6,8 +7,9 @@ export const metadata: Metadata = {
 
 export default function TermsConditions() {
   return (
-    <div className="container mx-auto max-w-4xl py-16 px-4 pt-28 md:pt-36">
-      <h1 className="text-3xl font-heading font-bold mb-8">Terms & Conditions</h1>
+    <>
+      <PageHero eyebrow={"Policy"} title={"Terms & Conditions"} crumbs={[{ label: "Home", href: "/" }, { label: "Terms & Conditions" }]} />
+      <div className="container mx-auto max-w-4xl px-4 py-8 md:py-10">
       <div className="prose prose-sm sm:prose-base prose-amber dark:prose-invert">
         <p><strong>Last Updated: {new Date().toLocaleDateString()}</strong></p>
         <p>Welcome to Spicy Nuts (operated by B.M.V. SPICES & DRY FRUITS).</p>
@@ -28,5 +30,6 @@ export default function TermsConditions() {
         <p>These terms shall be governed by and construed in accordance with the laws of India. Any disputes will be subject to the exclusive jurisdiction of the courts in Bidar, Karnataka.</p>
       </div>
     </div>
+    </>
   );
 }

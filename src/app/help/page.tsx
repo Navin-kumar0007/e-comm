@@ -24,11 +24,12 @@ export default function HelpSupportPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pt-28 md:pt-36 pb-20">
+    <div className="min-h-screen pb-20">
       {/* Hero Section */}
-      <div className="bg-[#C85B43] text-white py-10 md:py-12 px-4">
+      <div className="jaali pt-header text-white pb-10 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          <h1 className="text-2xl sm:text-3xl font-heading font-bold">How can we help you?</h1>
+          <span className="eyebrow block pt-6 text-brand-gold">Help &amp; support</span>
+          <h1 className="font-heading text-[34px] font-bold leading-none md:text-[50px]">How can we help you?</h1>
           <p className="text-sm text-white/80 max-w-2xl mx-auto">
             Search our knowledge base or get in touch with our support team.
           </p>
@@ -46,21 +47,21 @@ export default function HelpSupportPage() {
         {/* Quick Links */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">
           <Link href="/shipping-policy" className="bg-white p-6 rounded-2xl shadow-sm border border-border/50 hover:shadow-md transition-shadow group">
-            <div className="w-12 h-12 bg-orange-100 text-[#C85B43] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 bg-orange-100 text-primary rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <FileText className="w-6 h-6" />
             </div>
             <h3 className="font-bold text-lg mb-2">Shipping Policy</h3>
             <p className="text-muted-foreground text-sm">Learn about our delivery times and shipping costs.</p>
           </Link>
           <Link href="/returns" className="bg-white p-6 rounded-2xl shadow-sm border border-border/50 hover:shadow-md transition-shadow group">
-            <div className="w-12 h-12 bg-orange-100 text-[#C85B43] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 bg-orange-100 text-primary rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <HelpCircle className="w-6 h-6" />
             </div>
             <h3 className="font-bold text-lg mb-2">Returns & Refunds</h3>
             <p className="text-muted-foreground text-sm">Our 7-day easy return policy explained.</p>
           </Link>
           <Link href="/contact" className="bg-white p-6 rounded-2xl shadow-sm border border-border/50 hover:shadow-md transition-shadow group">
-            <div className="w-12 h-12 bg-orange-100 text-[#C85B43] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 bg-orange-100 text-primary rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Phone className="w-6 h-6" />
             </div>
             <h3 className="font-bold text-lg mb-2">Contact Us</h3>
@@ -86,7 +87,7 @@ export default function HelpSupportPage() {
           <h2 className="text-2xl font-heading font-bold mb-4">Still need help?</h2>
           <p className="text-muted-foreground mb-8">Our customer support team is available Monday to Saturday, 9 AM to 6 PM.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact" className="inline-flex h-11 items-center justify-center rounded-full bg-[#C85B43] px-8 text-sm font-medium text-white hover:bg-[#8B4513]"><Mail className="w-4 h-4 mr-2" /> Email Support</Link>
+            <Link href="/contact" className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-white hover:bg-royal-deep"><Mail className="w-4 h-4 mr-2" /> Email Support</Link>
             <Link href="mailto:contact@spicynuts.com" className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-200 bg-white px-8 text-sm font-medium hover:bg-zinc-100 text-zinc-900"><Phone className="w-4 h-4 mr-2" /> Email Us</Link>
           </div>
         </div>

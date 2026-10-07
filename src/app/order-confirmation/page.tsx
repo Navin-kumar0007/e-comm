@@ -55,7 +55,7 @@ export default function OrderConfirmationPage() {
 
   if (!order) {
     return (
-      <div className="container mx-auto max-w-3xl px-4 py-32 text-center min-h-[65vh] flex flex-col items-center justify-center pt-28 md:pt-36">
+      <div className="container mx-auto max-w-3xl px-4 pb-24 text-center min-h-[65vh] flex flex-col items-center justify-center pt-[calc(var(--header-h)+40px)]">
         <div className="w-16 h-16 rounded-full bg-muted/60 flex items-center justify-center mb-4 text-muted-foreground">
           <ShoppingBag className="w-8 h-8" />
         </div>
@@ -71,7 +71,7 @@ export default function OrderConfirmationPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pt-28 pb-16">
+    <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pt-[calc(var(--header-h)+32px)] pb-16">
       
       {/* Celebration Header (Hidden on Print) */}
       <motion.div
@@ -80,8 +80,8 @@ export default function OrderConfirmationPage() {
         transition={{ type: 'spring', stiffness: 200, damping: 18 }}
         className="text-center mb-10 print:hidden"
       >
-        <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 mb-5">
-          <CheckCircle2 className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
+        <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 dark:bg-primary/20 mb-5">
+          <CheckCircle2 className="w-12 h-12 text-primary dark:text-primary" />
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: -10 }}
@@ -196,7 +196,7 @@ export default function OrderConfirmationPage() {
                 <span className="font-medium text-foreground">₹{order.subtotal.toFixed(2)}</span>
               </div>
               {(order.discount ?? 0) > 0 && (
-                <div className="flex justify-between text-emerald-600 text-xs font-medium">
+                <div className="flex justify-between text-primary text-xs font-medium">
                   <span>Discounts</span>
                   <span>-₹{order.discount!.toFixed(2)}</span>
                 </div>
@@ -204,7 +204,7 @@ export default function OrderConfirmationPage() {
               <div className="flex justify-between text-muted-foreground text-xs">
                 <span>Courier Shipping</span>
                 {order.shipping === 0 ? (
-                  <span className="text-emerald-600 font-semibold">FREE</span>
+                  <span className="text-primary font-semibold">FREE</span>
                 ) : (
                   <span className="font-medium text-foreground">₹{order.shipping.toFixed(2)}</span>
                 )}

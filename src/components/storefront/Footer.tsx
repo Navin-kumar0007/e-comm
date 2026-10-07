@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Leaf } from "lucide-react";
 
 const footerLinks = {
   shop: [
@@ -25,97 +24,63 @@ const footerLinks = {
   ],
 };
 
+function LinkColumn({ title, links }: { title: string; links: { label: string; href: string }[] }) {
+  return (
+    <nav aria-label={title}>
+      <h3 className="eyebrow mb-3 text-brand-gold">{title}</h3>
+      <ul>
+        {links.map((link) => (
+          <li key={link.label}>
+            <Link href={link.href} className="inline-flex min-h-9 items-center text-[13.5px] text-white/85 transition-colors hover:text-brand-gold">
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
 export function Footer() {
   return (
-    <footer className="border-t border-border/40 bg-muted/30 pb-24 md:pb-12">
-      <div className="container mx-auto max-w-7xl px-4 py-12 sm:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
+    <footer className="jaali pb-44 text-white md:pb-10">
+      <div className="container mx-auto max-w-7xl px-4 py-10 sm:py-14">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12">
           {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-4">
-              <div className="relative w-11 h-11 rounded-full overflow-hidden border border-amber-500/20 shadow-sm flex-shrink-0">
+          <div className="col-span-2 flex flex-col items-center text-center md:col-span-1 md:items-start md:text-left">
+            <Link href="/" className="mb-4 flex items-center gap-3">
+              <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border-2 border-brand-gold">
                 <Image src="/spicy-nuts-logo-v3.jpg" alt="Spicy Nuts" fill className="object-cover" />
               </div>
-              <div className="flex flex-col">
-                <span className="font-heading font-black text-lg tracking-tight text-foreground leading-none">
-                  SPICY NUTS
-                </span>
-                <span className="text-[9px] font-mono tracking-widest text-muted-foreground uppercase mt-1 font-semibold">
-                  Fine Nuts &amp; Spices
-                </span>
+              <div className="flex flex-col text-left">
+                <span className="font-heading text-xl font-bold leading-none text-brand-gold">SPICY NUTS</span>
+                <span className="mt-1 font-royal text-[9px] font-semibold uppercase tracking-[0.22em] text-white/75">Fine Nuts &amp; Spices</span>
               </div>
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            <p className="mb-4 text-[13.5px] leading-relaxed text-white/80">
               Purveyors of Imperial Dry Fruits, Royal Nuts, and Rare Whole Spices sourced directly from single-estate farms.
             </p>
-            <div className="text-xs text-muted-foreground space-y-1 mt-4">
-              <p className="font-semibold text-foreground">B.M.V. SPICES & DRY FRUITS</p>
+            <div className="space-y-0.5 text-xs leading-relaxed text-white/80">
+              <p className="font-semibold text-white">B.M.V. SPICES & DRY FRUITS</p>
               <p>Shop No 1/206/1, Bhaskar Nagar Chitguppa,</p>
               <p>Chitguppa Sub Post Office, Chitgoppa,</p>
               <p>Bidar, Karnataka – 585412</p>
-              <p className="mt-2 text-primary font-medium">GSTIN: 29FCBPM9871D1Z6</p>
+              <p className="mt-2 font-semibold text-brand-gold">GSTIN: 29FCBPM9871D1Z6</p>
               <p>📧 spicynuts1973@gmail.com</p>
             </div>
           </div>
 
-          {/* Shop */}
-          <div>
-            <h3 className="font-heading font-bold text-sm mb-4">Shop</h3>
-            <ul className="space-y-2.5">
-              {footerLinks.shop.map(link => (
-                <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="font-heading font-bold text-sm mb-4">Company</h3>
-            <ul className="space-y-2.5">
-              {footerLinks.company.map(link => (
-                <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h3 className="font-heading font-bold text-sm mb-4">Support</h3>
-            <ul className="space-y-2.5">
-              {footerLinks.support.map(link => (
-                <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <LinkColumn title="Shop" links={footerLinks.shop} />
+          <LinkColumn title="Company" links={footerLinks.company} />
+          <div className="col-span-2 md:col-span-1">
+            <LinkColumn title="Support" links={footerLinks.support} />
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-border/40 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Spicy Nuts. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span>UPI</span>
-            <span>&#x2022;</span>
-            <span>Visa</span>
-            <span>&#x2022;</span>
-            <span>Mastercard</span>
-            <span>&#x2022;</span>
-            <span>RuPay</span>
-            <span>&#x2022;</span>
-            <span>Net Banking</span>
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-brand-gold/25 pt-6 sm:flex-row">
+          <p className="text-xs text-white/70">&copy; {new Date().getFullYear()} Spicy Nuts. All rights reserved.</p>
+          <div className="flex items-center gap-3 text-xs text-white/70">
+            <span>UPI</span><span>&#x2022;</span><span>Visa</span><span>&#x2022;</span><span>Mastercard</span><span>&#x2022;</span><span>RuPay</span><span>&#x2022;</span><span>Net Banking</span>
           </div>
         </div>
       </div>

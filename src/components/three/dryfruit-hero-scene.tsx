@@ -95,11 +95,11 @@ function FloatingNutPod({
         <div
           className={`pointer-events-none transition-all duration-300 px-2.5 py-1 rounded-full backdrop-blur-md shadow-md border whitespace-nowrap flex items-center gap-1.5 ${
             hovered || isCenter
-              ? "bg-[#1E3A2B] text-white border-amber-400/60 scale-102"
+              ? "bg-[#1E3A2B] text-white border-brand-gold/60 scale-102"
               : "bg-white/95 dark:bg-zinc-900/95 text-zinc-900 dark:text-zinc-100 border-zinc-200/90"
           }`}
         >
-          <span className="text-amber-400 text-[10px]">{badge}</span>
+          <span className="text-brand-gold text-[10px]">{badge}</span>
           <div className="flex flex-col text-left">
             <span className="text-[11px] font-bold font-heading leading-tight">{label}</span>
             <span className="text-[9px] text-zinc-300 leading-tight">{subtext}</span>
@@ -199,7 +199,7 @@ export default function DryFruitHeroScene() {
         </Suspense>
       </Canvas>
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3.5 py-1 rounded-full bg-black/50 dark:bg-white/10 backdrop-blur-md text-[11px] font-medium text-white tracking-wide pointer-events-none flex items-center gap-2 shadow-lg">
-        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+        <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
         <span>3D Real Nut Studio • Move cursor to float &amp; tilt</span>
       </div>
     </div>

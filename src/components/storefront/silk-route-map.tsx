@@ -92,10 +92,10 @@ export function SilkRouteMap() {
   const [activeLoc, setActiveLoc] = useState<OriginLocation>(PROVENANCE_LOCATIONS[0]);
 
   return (
-    <section className="py-6 md:py-24 bg-[#FAF7F2] dark:bg-[#06140F] border-b border-amber-500/20 relative overflow-hidden transition-colors duration-300">
+    <section className="py-6 md:py-24 bg-background dark:bg-[#06140F] border-b border-brand-gold/20 relative overflow-hidden transition-colors duration-300">
       {/* Background glow & subtle coordinate lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55rem] h-[55rem] bg-gradient-to-br from-amber-200/40 dark:from-amber-950/20 via-emerald-200/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55rem] h-[55rem] bg-gradient-to-br from-brand-gold/40 dark:from-brand-gold/20 via-primary/20 to-transparent rounded-full blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(#C59B27_1px,transparent_1px)] [background-size:32px_32px] opacity-15" />
       </div>
 
@@ -103,8 +103,8 @@ export function SilkRouteMap() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-14">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider mb-3">
-              <Compass className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/15 border border-brand-gold/30 text-brand-gold-deep dark:text-brand-gold font-bold text-xs uppercase tracking-wider mb-3">
+              <Compass className="w-3.5 h-3.5 text-brand-gold-deep dark:text-brand-gold" />
               <span>Historical Provenance</span>
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold font-heading text-foreground tracking-tight leading-tight">
@@ -116,7 +116,7 @@ export function SilkRouteMap() {
           </div>
 
           <Link href="/traceability" className="mt-4 md:mt-0 shrink-0">
-            <Button variant="outline" className="rounded-2xl border-amber-500/40 text-xs font-bold hover:bg-amber-500/10 gap-2 h-11 px-5">
+            <Button variant="outline" className="rounded-2xl border-brand-gold/40 text-xs font-bold hover:bg-secondary/10 gap-2 h-11 px-5">
               <span>View Interactive Ledger</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Button>
@@ -140,14 +140,14 @@ export function SilkRouteMap() {
                     onClick={() => setActiveLoc(loc)}
                     className={`w-full text-left p-4 rounded-2xl transition-all duration-300 border flex items-center justify-between group ${
                       isActive
-                        ? "bg-white dark:bg-zinc-900 border-amber-500 shadow-md shadow-amber-900/5 ring-1 ring-amber-500/30 scale-[1.01]"
-                        : "bg-white/60 dark:bg-zinc-900/50 border-border/50 hover:bg-white dark:hover:bg-zinc-900 hover:border-amber-500/30"
+                        ? "bg-white dark:bg-zinc-900 border-brand-gold shadow-md shadow-brand-gold/5 ring-1 ring-ring/30 scale-[1.01]"
+                        : "bg-white/60 dark:bg-zinc-900/50 border-border/50 hover:bg-white dark:hover:bg-zinc-900 hover:border-brand-gold/30"
                     }`}
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                         isActive 
-                          ? "bg-[#0A261D] text-amber-400 dark:bg-amber-500 dark:text-zinc-950" 
+                          ? "bg-royal-deep text-brand-gold dark:bg-secondary dark:text-zinc-950" 
                           : "bg-muted text-muted-foreground group-hover:text-foreground"
                       }`}>
                         <MapPin className="w-4 h-4" />
@@ -161,14 +161,14 @@ export function SilkRouteMap() {
                             {loc.region}
                           </span>
                         </div>
-                        <p className="text-xs text-amber-800 dark:text-amber-400 font-semibold truncate mt-0.5">
+                        <p className="text-xs text-brand-gold-deep dark:text-brand-gold font-semibold truncate mt-0.5">
                           {loc.product}
                         </p>
                       </div>
                     </div>
 
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-transform ${
-                      isActive ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 translate-x-1" : "text-muted-foreground opacity-40 group-hover:opacity-100"
+                      isActive ? "bg-secondary/20 text-brand-gold-deep dark:text-brand-gold translate-x-1" : "text-muted-foreground opacity-40 group-hover:opacity-100"
                     }`}>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </div>
@@ -178,8 +178,8 @@ export function SilkRouteMap() {
             </div>
 
             {/* Quality Guarantee Ticker */}
-            <div className="p-4 rounded-2xl bg-amber-500/10 dark:bg-amber-950/30 border border-amber-500/25 flex items-center gap-3 mt-4">
-              <ShieldCheck className="w-6 h-6 text-emerald-600 shrink-0" />
+            <div className="p-4 rounded-2xl bg-secondary/10 dark:bg-royal-deep/30 border border-brand-gold/25 flex items-center gap-3 mt-4">
+              <ShieldCheck className="w-6 h-6 text-primary shrink-0" />
               <p className="text-xs text-muted-foreground leading-relaxed">
                 <strong className="text-foreground font-semibold">100% Direct Farmer Trade:</strong> We eliminate middlemen. Every harvest supports sustainable high-altitude orchards and cooperative farming families.
               </p>
@@ -188,7 +188,7 @@ export function SilkRouteMap() {
 
           {/* Right Column: High-Impact Terroir Showcase Card */}
           <div className="lg:col-span-7">
-            <div className="h-full rounded-3xl overflow-hidden bg-white dark:bg-zinc-900 border border-amber-500/30 shadow-xl flex flex-col justify-between">
+            <div className="h-full rounded-3xl overflow-hidden bg-white dark:bg-zinc-900 border border-brand-gold/30 shadow-xl flex flex-col justify-between">
               
               {/* Card Media Banner */}
               <div className="relative w-full h-64 sm:h-72 md:h-80 bg-zinc-950 overflow-hidden group">
@@ -203,20 +203,20 @@ export function SilkRouteMap() {
 
                 {/* Top Badges */}
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-300 border border-amber-500/30 text-xs font-bold">
-                    <Award className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-brand-gold border border-brand-gold/30 text-xs font-bold">
+                    <Award className="w-3.5 h-3.5 text-brand-gold" />
                     {activeLoc.badge}
                   </span>
 
                   <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/90 dark:bg-zinc-900/90 text-foreground text-xs font-mono font-bold shadow-sm backdrop-blur-md">
-                    <Mountain className="w-3.5 h-3.5 text-emerald-600" />
+                    <Mountain className="w-3.5 h-3.5 text-primary" />
                     {activeLoc.elevation}
                   </span>
                 </div>
 
                 {/* Bottom Image Headline */}
                 <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <span className="text-[11px] font-mono tracking-widest uppercase text-amber-400 font-bold block mb-1">
+                  <span className="text-[11px] font-mono tracking-widest uppercase text-brand-gold font-bold block mb-1">
                     Origin Terroir • {activeLoc.region}
                   </span>
                   <h3 className="text-2xl sm:text-3xl font-heading font-bold text-white leading-tight">
@@ -228,7 +228,7 @@ export function SilkRouteMap() {
               {/* Card Body Details */}
               <div className="p-4 md:p-8 flex flex-col justify-between flex-1 gap-4 md:gap-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-[#FAF8F4] dark:bg-zinc-950 border border-border/50">
+                  <div className="p-4 rounded-2xl bg-background dark:bg-zinc-950 border border-border/50">
                     <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block mb-1">
                       Harvest Method
                     </span>
@@ -237,11 +237,11 @@ export function SilkRouteMap() {
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#FAF8F4] dark:bg-zinc-950 border border-border/50">
+                  <div className="p-4 rounded-2xl bg-background dark:bg-zinc-950 border border-border/50">
                     <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block mb-1">
                       Nutrient Profile
                     </span>
-                    <p className="text-sm font-semibold text-amber-800 dark:text-amber-400">
+                    <p className="text-sm font-semibold text-brand-gold-deep dark:text-brand-gold">
                       {activeLoc.keyFeature}
                     </p>
                   </div>
@@ -254,7 +254,7 @@ export function SilkRouteMap() {
                   </div>
 
                   <Link href={`/product/${activeLoc.slug}`} className="w-full sm:w-auto">
-                    <Button className="w-full sm:w-auto bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white rounded-xl h-11 px-6 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-95">
+                    <Button className="w-full sm:w-auto bg-royal-deep hover:bg-[#051912] dark:bg-secondary dark:hover:bg-secondary dark:text-zinc-950 text-white rounded-xl h-11 px-6 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-95">
                       <span>Shop This Terroir</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Button>

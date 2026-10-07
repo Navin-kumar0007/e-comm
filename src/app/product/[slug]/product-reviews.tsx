@@ -150,7 +150,7 @@ export function ProductReviews({ productId }: { productId: string }) {
           Customer Reviews
         </h2>
         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          <div className="flex items-center text-amber-500">
+          <div className="flex items-center text-brand-gold-deep">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
                 key={star}
@@ -193,13 +193,13 @@ export function ProductReviews({ productId }: { productId: string }) {
                     <Star
                       className={`w-7 h-7 ${
                         star <= (hoverRating || rating)
-                          ? "fill-amber-500 text-amber-500"
+                          ? "fill-brand-gold text-brand-gold-deep"
                           : "text-muted-foreground/30"
                       }`}
                     />
                   </button>
                 ))}
-                <span className="text-xs font-bold text-amber-600 dark:text-amber-400 ml-2">
+                <span className="text-xs font-bold text-brand-gold-deep dark:text-brand-gold ml-2">
                   {rating === 5
                     ? "Excellent (5/5)"
                     : rating === 4
@@ -244,7 +244,7 @@ export function ProductReviews({ productId }: { productId: string }) {
 
             {session && (
               <div className="flex items-center gap-2 p-2.5 rounded-xl bg-primary/5 border border-primary/10 text-xs text-primary font-medium">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-primary" />
                 <span>
                   Posting as <strong>{session.user?.name || session.user?.email}</strong>
                 </span>
@@ -277,7 +277,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                   type="button"
                   disabled={isUploading || uploadedImages.length >= 4}
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-16 h-16 rounded-2xl border-2 border-dashed border-border hover:border-amber-500/60 bg-muted/40 hover:bg-amber-500/5 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-amber-600 transition-all disabled:opacity-50 shrink-0"
+                  className="w-16 h-16 rounded-2xl border-2 border-dashed border-border hover:border-brand-gold/60 bg-muted/40 hover:bg-secondary/5 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-brand-gold-deep transition-all disabled:opacity-50 shrink-0"
                 >
                   {isUploading ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -302,7 +302,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                 {uploadedImages.map((url, idx) => (
                   <div
                     key={idx}
-                    className="relative w-16 h-16 rounded-2xl overflow-hidden border border-amber-500/30 group shrink-0 shadow-xs"
+                    className="relative w-16 h-16 rounded-2xl overflow-hidden border border-brand-gold/30 group shrink-0 shadow-xs"
                   >
                     <Image src={url} alt="Review attachment" fill className="object-cover" />
                     <button
@@ -323,7 +323,7 @@ export function ProductReviews({ productId }: { productId: string }) {
             <Button
               type="submit"
               disabled={isSubmitting || isUploading}
-              className="w-full h-11 rounded-xl bg-[#0A261D] hover:bg-[#051912] dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white font-bold text-xs shadow-md transition-all"
+              className="w-full h-11 rounded-xl bg-royal-deep hover:bg-[#051912] dark:bg-secondary dark:hover:bg-secondary dark:text-zinc-950 text-white font-bold text-xs shadow-md transition-all"
             >
               {isSubmitting ? (
                 <>
@@ -366,7 +366,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                             {rev.reviewerName}
                           </span>
                           {rev.verifiedPurchase && (
-                            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
+                            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-primary/15 text-primary dark:text-primary">
                               Verified Purchase
                             </span>
                           )}
@@ -381,7 +381,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                       </div>
                     </div>
 
-                    <div className="flex text-amber-500">
+                    <div className="flex text-brand-gold-deep">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
@@ -406,7 +406,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                           key={photoIdx}
                           type="button"
                           onClick={() => setActiveLightboxImage(photoUrl)}
-                          className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-border/50 hover:border-amber-500/50 transition-all group shrink-0 shadow-xs"
+                          className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-border/50 hover:border-brand-gold/50 transition-all group shrink-0 shadow-xs"
                         >
                           <Image
                             src={photoUrl}

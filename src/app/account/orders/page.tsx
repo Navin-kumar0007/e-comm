@@ -149,7 +149,7 @@ export default async function OrdersPage() {
               )}
 
               {order.refunds.length > 0 && (
-                <div className="mt-4 p-4 bg-emerald-500/5 rounded-lg border border-emerald-500/20 text-sm space-y-1">
+                <div className="mt-4 p-4 bg-primary/5 rounded-lg border border-primary/20 text-sm space-y-1">
                   <p className="text-xs uppercase font-semibold text-muted-foreground flex items-center gap-1"><IndianRupee className="w-3 h-3" /> Refunds</p>
                   {order.refunds.map((r) => (
                     <p key={r.id}>

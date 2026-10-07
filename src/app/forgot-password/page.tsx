@@ -37,7 +37,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 pt-28 md:pt-36">
+    <div className="relative jaali min-h-[80vh] flex items-center justify-center px-4 pb-14 pt-[calc(var(--header-h)+32px)]">
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-brand-green/10 rounded-full blur-3xl" />
       </div>
@@ -45,20 +45,20 @@ export default function ForgotPasswordPage() {
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
-            <Leaf className="h-8 w-8 text-primary" />
-            <span className="font-heading text-2xl font-bold">Spicy Nuts</span>
+            <Leaf className="h-8 w-8 text-brand-gold" />
+            <span className="font-heading text-2xl font-bold text-brand-gold">Spicy Nuts</span>
           </Link>
-          <h1 className="text-3xl font-heading font-bold text-foreground">Reset Password</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="font-heading text-[34px] font-bold leading-none text-white">Reset Password</h1>
+          <p className="text-white/80 mt-2">
             {isSent ? "Check your email" : "Enter your email to receive a reset link"}
           </p>
         </div>
 
-        <div className="glass rounded-3xl p-8 shadow-xl border border-border/50">
+        <div className="bg-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-brand-gold/40">
           {isSent ? (
             <div className="text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle2 className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 mx-auto bg-success/10 rounded-full flex items-center justify-center">
+                <CheckCircle2 className="w-8 h-8 text-success" />
               </div>
               <p className="text-sm text-muted-foreground">
                 If an account exists with <strong>{email}</strong>, you will receive a password reset email shortly.

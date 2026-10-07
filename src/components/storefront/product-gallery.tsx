@@ -32,7 +32,7 @@ export function ProductGallery({ images, productName, isOrganic }: ProductGaller
           sizes="(max-width: 1024px) 100vw, 50vw"
         />
         {isOrganic && (
-          <Badge className="absolute top-3.5 left-3.5 bg-emerald-700 hover:bg-emerald-700 text-white border-none shadow-md text-xs font-semibold px-2.5 py-1">
+          <Badge className="absolute top-3.5 left-3.5 bg-primary hover:bg-primary text-white border-none shadow-md text-xs font-semibold px-2.5 py-1">
             <Leaf className="w-3 h-3 mr-1" /> 100% Organic
           </Badge>
         )}

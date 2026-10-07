@@ -4,12 +4,12 @@ import { ProductPurchase } from "@/components/storefront/product-purchase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ShieldCheck, Truck, ArrowLeft, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/db/prisma";
 import { WishlistButton } from "@/components/storefront/wishlist-button";
 import { ProductReviews } from "./product-reviews";
-import { ProductGallery } from "@/components/storefront/product-gallery";
+import { PackViewer } from "@/components/storefront/royal/pack-viewer";
+import { JarViewer } from "@/components/storefront/royal/jar-viewer";
+import { getProductLabel } from "@/lib/product-labels";
 import { ProductDescriptionRenderer, extractProductShortSummary } from "@/components/storefront/product-description-renderer";
 import { WhatsAppPriceAlertModal } from "@/components/storefront/whatsapp-price-alert-modal";
 import { getCleanProductImage } from "@/lib/utils";
@@ -181,88 +181,66 @@ export default async function ProductPage({
     cleanCover,
     ...rawList.filter((img: string) => img && !img.includes("placehold.co") && img !== cleanCover)
   ];
+  const jarLabel = getProductLabel(product.slug);
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-8 md:pt-36 md:pb-10">
+    <div className="pb-28 md:pb-14">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify([jsonLd, breadcrumbLd, faqLd]),
         }}
       />
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-        <Link
-          href="/shop"
-          className="hover:text-primary transition-colors flex items-center gap-1"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to Shop
-        </Link>
-        <span>/</span>
-        <span className="text-foreground">{product.name}</span>
-      </nav>
 
-      <article className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
-        {/* Product Visuals (Left Col) */}
-        <div className="space-y-6">
-          <ProductGallery
-            images={displayImages}
-            productName={product.name}
-            isOrganic={product.isOrganic}
-          />
-        </div>
+      {/* Mobile: full-bleed 3D stage under the header */}
+      <div className="pt-header md:hidden">
+        {jarLabel ? <JarViewer label={jarLabel} images={displayImages} name={product.name} weight={product.weight || "250g"} /> : <PackViewer images={displayImages} name={product.name} weight={product.weight || "250g"} />}
+      </div>
 
-        {/* Product Details (Right Col) */}
-        <div className="flex flex-col">
-          <div className="mb-6">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-foreground tracking-tight mb-2">
-              {product.name}
-            </h1>
+      <div className="container mx-auto max-w-7xl md:px-6 md:pt-[calc(var(--header-h)+20px)] lg:px-8">
+        <nav aria-label="Breadcrumb" className="mb-4 hidden items-center gap-2 text-[13px] text-muted-foreground md:flex">
+          <Link href="/shop" className="flex items-center gap-1 font-semibold hover:text-primary">
+            <ArrowLeft className="h-4 w-4" /> Shop
+          </Link>
+          <span aria-hidden="true">›</span>
+          <span className="text-foreground">{product.name}</span>
+        </nav>
 
-            <div className="flex items-center gap-4 mb-4">
-              {reviewCount > 0 ? (
-                <div className="flex items-center gap-1 text-brand-gold">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${i < roundedRating ? "fill-current" : "text-muted-foreground/30"}`}
-                    />
-                  ))}
-                  <span className="text-muted-foreground text-sm ml-1">
-                    ({avgRating.toFixed(1)}/5 from {reviewCount}{" "}
-                    {reviewCount === 1 ? "review" : "reviews"})
-                  </span>
-                </div>
-              ) : (
-                <span className="text-muted-foreground text-sm">
-                  No reviews yet — be the first to review
-                </span>
-              )}
-            </div>
+        <article className="md:grid md:grid-cols-2 md:gap-10">
+          <div className="hidden md:sticky md:top-[calc(var(--header-h)+20px)] md:block md:self-start">
+            {jarLabel ? <JarViewer label={jarLabel} images={displayImages} name={product.name} weight={product.weight || "250g"} /> : <PackViewer images={displayImages} name={product.name} weight={product.weight || "250g"} />}
+          </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-              <div className="flex items-baseline gap-4">
-                {product.salePrice ? (
-                  <>
-                    <span className="text-3xl font-bold text-primary">
-                      ₹{product.salePrice}
-                    </span>
-                    <span className="text-xl text-muted-foreground line-through">
-                      ₹{product.price}
-                    </span>
-                    <Badge variant="destructive" className="ml-2">
-                      Save ₹
-                      {(
-                        Number(product.price) - Number(product.salePrice)
-                      ).toFixed(0)}
-                    </Badge>
-                  </>
-                ) : (
-                  <span className="text-3xl font-bold text-primary">
-                    ₹{product.price}
-                  </span>
-                )}
-              </div>
+          <div className="relative -mt-6 flex flex-col gap-3 rounded-t-[26px] bg-background px-4 pt-5 md:mt-0 md:rounded-none md:px-0 md:pt-2">
+            <span className="eyebrow text-brand-gold-deep">Dry fruits &amp; seeds</span>
+            <h1 className="-mt-1 font-heading text-[34px] font-bold leading-[0.95] text-primary md:text-[46px]">{product.name}</h1>
+            {reviewCount > 0 ? (
+              <a href="#reviews" className="flex items-center gap-1 text-brand-gold">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className={`h-4 w-4 ${i < roundedRating ? "fill-current" : "text-muted-foreground/30"}`} />
+                ))}
+                <span className="ml-1 text-[13px] text-muted-foreground">({avgRating.toFixed(1)}/5 · {reviewCount} {reviewCount === 1 ? "review" : "reviews"})</span>
+              </a>
+            ) : (
+              <a href="#reviews" className="self-start text-[13px] font-semibold text-muted-foreground underline underline-offset-[3px]">Reviews · be the first to review</a>
+            )}
+
+            <ProductPurchase
+              product={{
+                id: product.id,
+                name: product.name,
+                slug: product.slug,
+                image: product.images[0],
+                price: Number(product.price),
+                salePrice: product.salePrice ? Number(product.salePrice) : null,
+                stock: product.stock,
+                weight: product.weight || "Standard",
+              }}
+              sizes={sizes}
+            />
+
+            <div className="flex flex-wrap items-center gap-2">
+              <WishlistButton productId={product.id} variant="outline" />
               <WhatsAppPriceAlertModal
                 productId={product.id}
                 productName={product.name}
@@ -270,77 +248,54 @@ export default async function ProductPage({
               />
             </div>
 
-            <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-              {extractProductShortSummary(product.description)}
-            </p>
-          </div>
-
-          <div className="h-px w-full bg-border/50 my-6" />
-
-          {/* Pack size + Actions */}
-          <div className="flex items-end gap-4 mb-4">
-            <div className="flex-1">
-              <ProductPurchase
-                product={{
-                  id: product.id,
-                  name: product.name,
-                  slug: product.slug,
-                  image: product.images[0],
-                  price: Number(product.price),
-                  salePrice: product.salePrice ? Number(product.salePrice) : null,
-                  stock: product.stock,
-                  weight: product.weight || "Standard",
-                }}
-                sizes={sizes}
-              />
+            <div className="jaali flex items-center gap-3 rounded-2xl p-3.5 text-white">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-dashed border-brand-gold font-royal text-[10px] font-bold text-brand-gold">%</span>
+              <span className="flex flex-1 flex-col leading-tight">
+                <strong className="text-sm">15% off with ROYAL15</strong>
+                <span className="text-xs text-white/80">Apply the code at checkout</span>
+              </span>
             </div>
-            <div className="h-14 shrink-0 flex items-center justify-center">
-              <WishlistButton productId={product.id} variant="outline" />
+
+            <div className="royal-card p-3.5">
+              <PincodeChecker price={product.salePrice ? Number(product.salePrice) : Number(product.price)} />
             </div>
-          </div>
 
-          {/* Delivery check */}
-          <div className="mb-6">
-            <PincodeChecker price={product.salePrice ? Number(product.salePrice) : Number(product.price)} />
-          </div>
-
-          {/* Trust Badges */}
-          <div className="grid grid-cols-2 gap-4 mt-auto">
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-muted/30 border border-border/50">
-              <ShieldCheck className="w-6 h-6 text-primary shrink-0" />
-              <div>
-                <h4 className="font-semibold text-sm">Certified Quality</h4>
-                <p className="text-xs text-muted-foreground">
-                  Lab tested for purity
-                </p>
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="flex items-start gap-2.5 rounded-2xl border border-border bg-muted p-3">
+                <ShieldCheck className="h-5 w-5 shrink-0 text-primary" />
+                <div>
+                  <h4 className="text-[13px] font-bold">Certified Quality</h4>
+                  <p className="text-[11.5px] text-muted-foreground">Lab tested for purity</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5 rounded-2xl border border-border bg-muted p-3">
+                <Truck className="h-5 w-5 shrink-0 text-primary" />
+                <div>
+                  <h4 className="text-[13px] font-bold">Fast Delivery</h4>
+                  <p className="text-[11.5px] text-muted-foreground">Free shipping over ₹999</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-muted/30 border border-border/50">
-              <Truck className="w-6 h-6 text-primary shrink-0" />
-              <div>
-                <h4 className="font-semibold text-sm">Fast Delivery</h4>
-                <p className="text-xs text-muted-foreground">
-                  Free shipping over ₹999
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
 
+            <p className="text-sm leading-relaxed text-muted-foreground">{extractProductShortSummary(product.description)}</p>
+          </div>
+        </article>
+      </div>
+
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* Full Description & Nutrition */}
-      <div className="mt-16 pt-12 border-t border-border/50">
+      <div className="mt-10 border-t border-border pt-10 md:mt-14">
         <div className="max-w-3xl mx-auto space-y-12">
           <section>
-            <h2 className="text-2xl font-heading font-bold mb-4">
+            <h2 className="mb-3 font-heading text-[30px] font-bold text-primary">
               About this product
             </h2>
             <ProductDescriptionRenderer description={product.description} productName={product.name} />
           </section>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8">
-            <section className="bg-muted/30 p-6 rounded-2xl border border-border/50">
-              <h2 className="text-xl font-heading font-bold mb-4">
+            <section className="royal-card p-5">
+              <h2 className="mb-3 font-heading text-2xl font-bold text-primary">
                 Ingredients & Sourcing
               </h2>
               <ul className="space-y-2 text-muted-foreground text-sm">
@@ -363,8 +318,8 @@ export default async function ProductPage({
               </ul>
             </section>
 
-            <section className="bg-muted/30 p-6 rounded-2xl border border-border/50">
-              <h2 className="text-xl font-heading font-bold mb-4">
+            <section className="royal-card p-5">
+              <h2 className="mb-3 font-heading text-2xl font-bold text-primary">
                 Product Details
               </h2>
               <ul className="space-y-3 text-sm">
@@ -395,7 +350,7 @@ export default async function ProductPage({
           </div>
 
           <section className="pt-12 border-t border-border/50">
-            <h2 className="text-2xl font-heading font-bold mb-6">
+            <h2 className="mb-4 font-heading text-[30px] font-bold text-primary">
               Frequently Asked Questions
             </h2>
             <div className="space-y-6">
@@ -423,7 +378,7 @@ export default async function ProductPage({
           </section>
 
           <section className="pt-12 border-t border-border/50">
-            <h2 className="text-2xl font-heading font-bold mb-4">How to Use</h2>
+            <h2 className="mb-3 font-heading text-[30px] font-bold text-primary">How to Use</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
               Add a touch of authentic flavor to your daily meals. For best
               results, store in a cool, dry place away from direct sunlight.
@@ -435,10 +390,11 @@ export default async function ProductPage({
       </div>
 
       {/* Product Reviews Section */}
-      <div className="mt-20 border-t border-border/50 pt-16">
+      <div id="reviews" className="mt-12 scroll-mt-32 border-t border-border pt-10">
         <ProductReviews productId={product.id} />
       </div>
 
+      </div>
     </div>
   );
 }

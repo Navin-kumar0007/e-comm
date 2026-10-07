@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db/prisma";
+import { PageHero } from "@/components/storefront/royal/page-hero";
 import { auth } from "@/lib/auth";
 import { getStaffContext } from "@/lib/auth-guard";
 import { SHIPMENT_STATUS_LABELS, type ShipmentStatus } from "@/lib/shipping/status";
@@ -13,9 +14,9 @@ export const metadata = {
 const statusSteps = [
   { key: "PENDING", label: "Order Placed", icon: Clock, color: "text-yellow-600" },
   { key: "PROCESSING", label: "Processing", icon: Package, color: "text-blue-600" },
-  { key: "CONFIRMED", label: "Confirmed", icon: CheckCircle2, color: "text-emerald-600" },
+  { key: "CONFIRMED", label: "Confirmed", icon: CheckCircle2, color: "text-primary" },
   { key: "SHIPPED", label: "Shipped", icon: Truck, color: "text-purple-600" },
-  { key: "DELIVERED", label: "Delivered", icon: CheckCircle2, color: "text-green-600" },
+  { key: "DELIVERED", label: "Delivered", icon: CheckCircle2, color: "text-success" },
 ];
 
 // Anyone with the tracking link can see this page, so personal details are
@@ -70,7 +71,9 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
   const currentStep = statusOrder[order.status] ?? 0;
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8 pt-28 md:pt-36">
+    <>
+    <PageHero eyebrow="Order tracking" title={`Order #${order.id.slice(-8).toUpperCase()}`} subtitle={`Placed on ${order.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}`} compact />
+    <div className="min-h-[60vh] bg-background py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <Link
           href="/"
@@ -80,10 +83,10 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
           Back to Store
         </Link>
 
-        <div className="glass-card rounded-2xl p-6 sm:p-8 mb-6">
+        <div className="royal-card p-5 sm:p-7 mb-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-heading font-bold">Order #{order.id.slice(-8).toUpperCase()}</h1>
+              <h2 className="font-heading text-2xl font-bold text-primary">Order #{order.id.slice(-8).toUpperCase()}</h2>
               <p className="text-sm text-muted-foreground mt-1">
                 Placed on {order.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
               </p>
@@ -243,5 +246,6 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -6,9 +6,9 @@ import Link from "next/link";
 
 const getStatusColor = (status: string) => {
   const m: Record<string, string> = {
-    DELIVERED: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    DELIVERED: "bg-success/10 text-success dark:bg-success/30 dark:text-success",
     SHIPPED: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-    CONFIRMED: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+    CONFIRMED: "bg-muted text-brand-gold-deep dark:bg-royal-deep/30 dark:text-brand-gold",
     CANCELLED: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
     EXPIRED: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
     PENDING: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
@@ -42,8 +42,8 @@ export default async function AccountPage() {
 
   const stats = [
     { label: "Total Orders", value: totalOrdersCount.toString(), icon: Package, color: "text-blue-600 bg-blue-100 dark:bg-blue-900/30" },
-    { label: "Loyalty Points", value: user.points.toLocaleString(), icon: Award, color: "text-amber-600 bg-amber-100 dark:bg-amber-900/30" },
-    { label: "Carbon Saved", value: "2.4 kg", icon: Leaf, color: "text-green-600 bg-green-100 dark:bg-green-900/30" },
+    { label: "Loyalty Points", value: user.points.toLocaleString(), icon: Award, color: "text-brand-gold-deep bg-muted dark:bg-royal-deep/30" },
+    { label: "Carbon Saved", value: "2.4 kg", icon: Leaf, color: "text-success bg-success/10 dark:bg-success/30" },
     { label: "Avg. Savings", value: "₹340", icon: TrendingUp, color: "text-purple-600 bg-purple-100 dark:bg-purple-900/30" },
   ];
 
@@ -51,7 +51,7 @@ export default async function AccountPage() {
     <div className="space-y-8">
       {/* Welcome */}
       <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-r from-primary/10 to-brand-gold/10 border border-border/50">
-        <h1 className="text-3xl font-heading font-bold text-foreground mb-2">
+        <h1 className="text-[30px] font-heading font-bold leading-none text-primary mb-2">
           Welcome back, {session?.user?.name?.split(" ")[0]}! 👋
         </h1>
         <p className="text-muted-foreground">

@@ -38,14 +38,14 @@ export default function TrackOrderLookup() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4 pt-28 md:pt-36">
+    <div className="relative jaali min-h-[80vh] flex items-center justify-center px-4 pb-14 pt-[calc(var(--header-h)+32px)]">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-            <Package className="w-8 h-8 text-primary" />
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-secondary flex items-center justify-center mb-4">
+            <Package className="w-8 h-8 text-secondary-foreground" />
           </div>
-          <h1 className="text-3xl font-heading font-bold">Track Your Order</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="font-heading text-[34px] font-bold leading-none text-white">Track Your Order</h1>
+          <p className="text-white/80 mt-2">
             Enter your order ID and email address to see the latest status.
           </p>
         </div>

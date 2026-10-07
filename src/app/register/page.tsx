@@ -157,7 +157,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 pt-28 md:pt-36">
+    <div className="relative jaali min-h-[80vh] flex items-center justify-center px-4 pb-14 pt-[calc(var(--header-h)+32px)]">
       {/* Background */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-brand-terracotta/10 rounded-full blur-3xl" />
@@ -168,15 +168,15 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
-            <Leaf className="h-8 w-8 text-primary" />
-            <span className="font-heading text-2xl font-bold">Spicy Nuts</span>
+            <Leaf className="h-8 w-8 text-brand-gold" />
+            <span className="font-heading text-2xl font-bold text-brand-gold">Spicy Nuts</span>
           </Link>
-          <h1 className="text-3xl font-heading font-bold text-foreground">Create Account</h1>
-          <p className="text-muted-foreground mt-2">Join the organic food revolution</p>
+          <h1 className="font-heading text-[34px] font-bold leading-none text-white">Create Account</h1>
+          <p className="text-white/80 mt-2">Join the organic food revolution</p>
         </div>
 
         {/* Form Card */}
-        <div className="glass rounded-3xl p-8 shadow-xl border border-border/50">
+        <div className="bg-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-brand-gold/40">
           {/* Google Sign Up Button — always visible */}
           <Button
             type="button"
@@ -207,7 +207,7 @@ export default function RegisterPage() {
 
           {/* Step Indicator */}
           <div className="flex items-center justify-center gap-3 mb-6">
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${step === 1 && !isVerified ? 'bg-primary text-primary-foreground' : isVerified ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground'}`}>
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${step === 1 && !isVerified ? 'bg-primary text-primary-foreground' : isVerified ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
               {isVerified ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
               Verify Email
             </div>
@@ -282,7 +282,7 @@ export default function RegisterPage() {
           {/* STEP 2: Name + Password */}
           {step === 2 && (
             <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-success/10 border border-success/30 text-success text-sm">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 <span><strong>{email}</strong> verified</span>
               </div>
@@ -297,7 +297,7 @@ export default function RegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="phone">WhatsApp Mobile Number</Label>
-                <div className="flex items-center rounded-xl border border-border bg-background overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500">
+                <div className="flex items-center rounded-xl border border-border bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary">
                   <span className="px-3 py-2.5 text-xs font-semibold bg-muted text-muted-foreground border-r border-border">
                     🇮🇳 +91
                   </span>

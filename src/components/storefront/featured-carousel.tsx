@@ -60,13 +60,13 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
   };
 
   return (
-    <section className="py-4 md:py-24 bg-[#FAF7F2] dark:bg-zinc-950">
+    <section className="py-4 md:py-24 bg-background dark:bg-zinc-950">
       <div className="container px-3 md:px-6 mx-auto">
         
         {/* Section Header */}
         <div className="flex justify-between items-end mb-3 md:mb-12">
           <div>
-            <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono block">
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-brand-gold-deep dark:text-brand-gold font-mono block">
               Handpicked Essentials
             </span>
             <h2 className="text-xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 font-heading">
@@ -76,7 +76,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
               Royal dry fruits, hand-ground masalas, and nutritious superfoods loved by our patrons.
             </p>
           </div>
-          <Link href="/shop" className="inline-flex items-center gap-1 text-xs md:text-sm font-bold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors">
+          <Link href="/shop" className="inline-flex items-center gap-1 text-xs md:text-sm font-bold text-brand-gold-deep dark:text-brand-gold hover:text-brand-gold-deep dark:hover:text-brand-gold transition-colors">
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -92,11 +92,11 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
             return (
               <div 
                 key={product.id}
-                className="group relative rounded-2xl bg-white dark:bg-zinc-900 border border-amber-900/10 dark:border-amber-500/15 overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between p-2"
+                className="group relative rounded-2xl bg-white dark:bg-zinc-900 border border-brand-gold/10 dark:border-brand-gold/15 overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between p-2"
               >
                 <div>
                   {/* Square Product Image */}
-                  <Link href={`/product/${product.slug}`} className="block relative aspect-square w-full rounded-xl overflow-hidden bg-amber-50 dark:bg-zinc-800/80 mb-1.5">
+                  <Link href={`/product/${product.slug}`} className="block relative aspect-square w-full rounded-xl overflow-hidden bg-muted dark:bg-zinc-800/80 mb-1.5">
                     <Image
                       src={primaryImage}
                       alt={product.name}
@@ -110,11 +110,11 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                         SALE
                       </span>
                     ) : product.isOrganic ? (
-                      <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-emerald-700 text-white text-[8px] font-extrabold uppercase shadow-xs">
+                      <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-primary text-white text-[8px] font-extrabold uppercase shadow-xs">
                         ORGANIC
                       </span>
                     ) : (
-                      <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-amber-600 text-white text-[8px] font-extrabold uppercase shadow-xs">
+                      <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-secondary text-white text-[8px] font-extrabold uppercase shadow-xs">
                         ROYAL
                       </span>
                     )}
@@ -122,7 +122,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
 
                   {/* Title & Details */}
                   <Link href={`/product/${product.slug}`}>
-                    <h3 className="text-[11.5px] font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1 leading-tight group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
+                    <h3 className="text-[11.5px] font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1 leading-tight group-hover:text-brand-gold-deep dark:group-hover:text-brand-gold transition-colors">
                       {product.name}
                     </h3>
                   </Link>
@@ -147,11 +147,11 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                 <Button 
                   size="sm" 
                   onClick={() => handleAddToCart(product, basePrice, "500g", primaryImage)}
-                  className="w-full h-7 mt-2 rounded-lg text-[11px] font-bold bg-amber-500 hover:bg-amber-600 text-black shadow-xs flex items-center justify-center gap-1 active:scale-95 transition-transform"
+                  className="w-full h-7 mt-2 rounded-lg text-[11px] font-bold bg-secondary hover:bg-secondary text-black shadow-xs flex items-center justify-center gap-1 active:scale-95 transition-transform"
                 >
                   {addedIds[product.id] ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-950 stroke-[3]" />
+                      <Check className="w-3.5 h-3.5 text-primary stroke-[3]" />
                       <span>Added</span>
                     </>
                   ) : (
@@ -205,12 +205,12 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                           {/* Top Badges */}
                           <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
                             {product.isOrganic && (
-                              <Badge className="bg-emerald-600/90 text-white text-[10px] font-bold tracking-wider uppercase border-none backdrop-blur-xs">
+                              <Badge className="bg-primary/90 text-white text-[10px] font-bold tracking-wider uppercase border-none backdrop-blur-xs">
                                 100% Organic
                               </Badge>
                             )}
                             {hasDiscount && (
-                              <Badge className="bg-amber-600/90 text-white text-[10px] font-bold tracking-wider uppercase border-none backdrop-blur-xs">
+                              <Badge className="bg-secondary/90 text-white text-[10px] font-bold tracking-wider uppercase border-none backdrop-blur-xs">
                                 Special Harvest
                               </Badge>
                             )}
@@ -219,7 +219,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
 
                         {/* Product Info */}
                         <CardContent className="p-5">
-                          <div className="flex items-center gap-1 text-amber-500 mb-2">
+                          <div className="flex items-center gap-1 text-brand-gold-deep mb-2">
                             <Star className="w-3.5 h-3.5 fill-current" />
                             <Star className="w-3.5 h-3.5 fill-current" />
                             <Star className="w-3.5 h-3.5 fill-current" />
@@ -227,11 +227,11 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                             <Star className="w-3.5 h-3.5 fill-current" />
                             <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 ml-1">4.9</span>
                             <span className="text-zinc-300 dark:text-zinc-700 mx-1">•</span>
-                            <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">100% Unadulterated</span>
+                            <span className="text-[11px] font-medium text-primary dark:text-primary">100% Unadulterated</span>
                           </div>
 
                           <Link href={`/product/${product.slug}`}>
-                            <h3 className="font-bold text-zinc-900 dark:text-zinc-50 text-base group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
+                            <h3 className="font-bold text-zinc-900 dark:text-zinc-50 text-base group-hover:text-brand-gold-deep dark:group-hover:text-brand-gold transition-colors line-clamp-1">
                               {product.name}
                             </h3>
                           </Link>
@@ -248,7 +248,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                                   onClick={() => setSelectedWeights((prev) => ({ ...prev, [product.id]: wt }))}
                                   className={`py-1 text-center rounded-lg transition-all ${
                                     currentWeight === wt
-                                      ? "bg-white dark:bg-zinc-700 text-amber-800 dark:text-amber-300 shadow-xs font-bold"
+                                      ? "bg-white dark:bg-zinc-700 text-brand-gold-deep dark:text-brand-gold shadow-xs font-bold"
                                       : "hover:text-zinc-900 dark:hover:text-zinc-200"
                                   }`}
                                 >
@@ -280,7 +280,7 @@ export function FeaturedCarousel({ products }: { products: Product[] }) {
                           <Button
                             size="sm"
                             onClick={() => handleAddToCart(product, basePrice, currentWeight, primaryImage)}
-                            className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl shadow-md transition-all font-semibold gap-1.5 active:scale-95"
+                            className="bg-secondary hover:bg-secondary text-white rounded-xl shadow-md transition-all font-semibold gap-1.5 active:scale-95"
                           >
                             {addedIds[product.id] ? (
                               <>

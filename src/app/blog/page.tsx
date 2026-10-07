@@ -1,15 +1,16 @@
 import Image from "next/image";
 import Link from 'next/link';
 import { getBlogPosts } from '@/app/actions/blog';
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export default async function BlogPage() {
   const posts = await getBlogPosts();
 
   return (
-    <div className="container max-w-4xl py-10 md:py-12 pt-28 md:pt-36">
+    <>
+      <PageHero eyebrow={"Journal"} title={"The Spice Journal"} subtitle={"Stories, recipes, and insights from Spicy Nuts."} crumbs={[{ label: "Home", href: "/" }, { label: "Blog" }]} />
+      <div className="container mx-auto max-w-4xl px-4 py-8 md:py-10">
       <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-3">The Spice Journal</h1>
-        <p className="text-xl text-zinc-500">Stories, recipes, and insights from Spicy Nuts.</p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
@@ -23,11 +24,11 @@ export default async function BlogPage() {
               )}
             </div>
             <div className="flex items-center gap-4 text-sm text-zinc-500 mb-2">
-              <span className="text-[#C85B43] font-medium">{post.category}</span>
+              <span className="text-primary font-medium">{post.category}</span>
               <span>&bull;</span>
               <span>{new Date(post.createdAt).toLocaleDateString()}</span>
             </div>
-            <h2 className="text-2xl font-heading font-bold mb-2 group-hover:text-[#C85B43] transition-colors">{post.title}</h2>
+            <h2 className="text-2xl font-heading font-bold mb-2 group-hover:text-primary transition-colors">{post.title}</h2>
             <p className="text-zinc-600 dark:text-zinc-400">{post.excerpt}</p>
           </div>
         )) : (
@@ -37,5 +38,6 @@ export default async function BlogPage() {
         )}
       </div>
     </div>
+    </>
   );
 }

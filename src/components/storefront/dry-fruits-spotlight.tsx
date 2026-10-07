@@ -11,8 +11,8 @@ const DryFruitInspector3D = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-[400px] flex items-center justify-center rounded-3xl bg-amber-50/50 dark:bg-zinc-900/50 border border-amber-500/20 animate-pulse">
-        <span className="text-xs font-semibold text-amber-800 dark:text-amber-300 uppercase font-mono">Loading 3D Nut Inspector...</span>
+      <div className="w-full h-[400px] flex items-center justify-center rounded-3xl bg-muted/50 dark:bg-zinc-900/50 border border-brand-gold/20 animate-pulse">
+        <span className="text-xs font-semibold text-brand-gold-deep dark:text-brand-gold uppercase font-mono">Loading 3D Nut Inspector...</span>
       </div>
     ),
   }
@@ -55,16 +55,16 @@ const HEALTH_GOALS = [
 
 export function DryFruitsSpotlight() {
   return (
-    <section className="py-6 md:py-14 bg-gradient-to-b from-[#FAF7F2] to-white dark:from-zinc-950 dark:to-zinc-900 overflow-hidden relative border-y border-zinc-200/80 dark:border-zinc-800">
+    <section className="py-6 md:py-14 bg-gradient-to-b from-background to-white dark:from-zinc-950 dark:to-zinc-900 overflow-hidden relative border-y border-zinc-200/80 dark:border-zinc-800">
       {/* Decorative background circle */}
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-amber-100 dark:bg-amber-950/40 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-100 dark:bg-emerald-950/40 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-muted dark:bg-royal-deep/40 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-muted dark:bg-primary/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="container px-4 md:px-6 mx-auto relative z-10">
         
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-5 md:mb-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-muted dark:bg-royal-deep text-brand-gold-deep dark:text-brand-gold font-bold text-xs uppercase tracking-wider mb-4">
             <Award className="w-3.5 h-3.5" />
             <span>Purity Standard</span>
           </div>
@@ -85,7 +85,7 @@ export function DryFruitsSpotlight() {
             >
               <div className="flex items-center justify-between mb-4">
                 <span className="text-2xl sm:text-3xl">{p.icon}</span>
-                <span className="text-[11px] font-bold font-mono px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
+                <span className="text-[11px] font-bold font-mono px-2.5 py-1 rounded-full bg-muted dark:bg-royal-deep/60 text-brand-gold-deep dark:text-brand-gold">
                   PILLAR {p.step}
                 </span>
               </div>
@@ -107,11 +107,11 @@ export function DryFruitsSpotlight() {
         </div>
 
         {/* Daily Health Rituals Strip */}
-        <div className="max-w-4xl mx-auto p-6 md:p-8 rounded-3xl bg-emerald-500/10 dark:bg-emerald-950/30 border border-emerald-500/20 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-4xl mx-auto p-6 md:p-8 rounded-3xl bg-primary/10 dark:bg-primary/30 border border-primary/20 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <HeartPulse className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-              <h4 className="text-sm font-bold text-emerald-900 dark:text-emerald-200 uppercase tracking-wider font-mono">
+              <HeartPulse className="w-5 h-5 text-primary dark:text-primary" />
+              <h4 className="text-sm font-bold text-primary dark:text-primary uppercase tracking-wider font-mono">
                 Daily Wellness Rituals
               </h4>
             </div>
@@ -121,7 +121,7 @@ export function DryFruitsSpotlight() {
                   key={item}
                   className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-zinc-900 text-xs font-medium text-zinc-800 dark:text-zinc-200 shadow-sm border border-zinc-200/80 dark:border-zinc-800"
                 >
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
                   {item}
                 </span>
               ))}

@@ -9,176 +9,120 @@ import { CommandPalette } from "./command-palette";
 import { useState } from "react";
 import { CartDrawer } from "./cart-drawer";
 import { NotificationsDropdown } from "./notifications";
-import { Menu, Search, Sparkles, MapPin, BookOpen, Award, Phone } from "lucide-react";
+import { Menu, Search, BookOpen, Award, MapPin, Sparkles, Phone } from "lucide-react";
 import {
   Sheet,
   SheetContent,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { COLLECTIONS } from "@/lib/collections";
+
+const DESKTOP_LINKS = [
+  { href: "/shop", label: "Shop All" },
+  { href: "/shop?collection=almonds", label: "Almonds", wide: true },
+  { href: "/shop?collection=cashews", label: "Cashews", wide: true },
+  { href: "/shop?collection=walnuts", label: "Walnuts", wide: true },
+  { href: "/shop?collection=dates", label: "Dates" },
+  { href: "/shop?collection=seeds", label: "Seeds" },
+  { href: "/#gift", label: "Gifting", gold: true },
+  { href: "/blend-creator", label: "Spice Atelier" },
+  { href: "/about", label: "Our Story" },
+];
+
+/** Logo on an ivory plaque so the green-and-gold wordmark stays legible on maroon. */
+function LogoPlaque() {
+  return (
+    <span className="inline-flex items-center rounded-xl border border-brand-gold bg-background px-2 py-0.5">
+      <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" width={140} height={111} priority className="h-[34px] w-auto md:h-[46px]" />
+    </span>
+  );
+}
 
 export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const NavLinks = () => (
-    <>
-      <Link href="/shop" className="text-sm font-medium transition-colors hover:text-amber-700 dark:hover:text-amber-400">
-        Shop All
-      </Link>
-      <Link href="/category/dry-fruits" className="text-sm font-medium transition-colors hover:text-amber-700 dark:hover:text-amber-400">
-        Royal Nuts
-      </Link>
-      <Link href="/category/masalas" className="text-sm font-medium transition-colors hover:text-amber-700 dark:hover:text-amber-400">
-        Exotic Spices
-      </Link>
-      <Link href="/blend-creator" className="text-sm font-medium transition-colors hover:text-amber-700 dark:hover:text-amber-400 flex items-center gap-1 text-amber-700 dark:text-amber-400 font-semibold">
-        <Sparkles className="w-3.5 h-3.5" />
-        <span>Custom Blend</span>
-      </Link>
-      <Link href="/traceability" className="text-sm font-medium transition-colors hover:text-amber-700 dark:hover:text-amber-400">
-        Farm Journey
-      </Link>
-      <Link href="/recipes" className="text-sm font-medium transition-colors hover:text-amber-700 dark:hover:text-amber-400">
-        Recipes
-      </Link>
-      <Link href="/about" className="text-sm font-medium transition-colors hover:text-amber-700 dark:hover:text-amber-400">
-        Our Story
-      </Link>
-    </>
-  );
+  const close = () => setDrawerOpen(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300">
+    <header className="jaali fixed left-0 right-0 top-0 z-50 w-full text-white shadow-[0_6px_20px_rgba(42,10,18,0.25)]">
       <PromoBanner />
-      <div className="bg-background/90 backdrop-blur-2xl w-full border-b border-amber-500/20 shadow-sm shadow-primary/5 h-12 md:h-20 transition-all duration-300">
-        <div className="container mx-auto h-full px-3 md:px-6 flex items-center justify-between">
-
-        {/* Left: Mobile Menu Trigger + Brand Identity */}
-        <div className="flex items-center gap-2.5 md:gap-4">
-          <div className="md:hidden">
+      <div className="container mx-auto flex h-14 items-center justify-between gap-3 px-2 md:h-[70px] md:px-6">
+        {/* Left: menu (mobile) + logo */}
+        <div className="flex flex-1 items-center gap-1 lg:flex-none">
+          <div className="lg:hidden">
             <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-              <SheetTrigger
-                aria-label="Open Navigation Menu"
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-amber-500/10 hover:text-primary h-10 w-10 border border-border/50"
-              >
-                <Menu className="w-5 h-5" />
+              <SheetTrigger aria-label="Open menu" className="inline-flex h-11 w-11 items-center justify-center rounded-xl hover:bg-white/10">
+                <Menu className="h-[22px] w-[22px]" />
               </SheetTrigger>
-              <SheetContent side="left" className="w-[310px] sm:w-[350px] p-0 flex flex-col justify-between bg-[#FAF7F2] dark:bg-zinc-950 border-r border-amber-500/25">
-                {/* Drawer Top Header */}
-                <div>
-                  <div className="p-6 pb-5 bg-gradient-to-b from-emerald-950/10 dark:from-emerald-950/50 to-transparent border-b border-amber-500/15">
-                    <div className="flex items-center gap-3">
-                      <div className="relative h-9 w-[80px] flex-shrink-0">
-                        <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" fill className="object-contain object-left dark:brightness-110" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Navigation Links */}
-                  <div className="p-5 space-y-1">
-                    <p className="text-[10px] uppercase font-mono font-bold tracking-widest text-muted-foreground px-3 mb-2">Collections</p>
-                    <Link
-                      href="/shop"
-                      onClick={() => setDrawerOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-500/10 text-sm font-medium transition-colors"
-                    >
-                      <span className="text-base">🛍️</span>
-                      <span>Shop All Harvests</span>
-                    </Link>
-                    <Link
-                      href="/category/dry-fruits"
-                      onClick={() => setDrawerOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-500/10 text-sm font-medium transition-colors"
-                    >
-                      <span className="text-base">👑</span>
-                      <span>Royal Mamra &amp; Dry Fruits</span>
-                    </Link>
-                    <Link
-                      href="/category/masalas"
-                      onClick={() => setDrawerOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-500/10 text-sm font-medium transition-colors"
-                    >
-                      <span className="text-base">🌶️</span>
-                      <span>Single-Origin Spices</span>
-                    </Link>
-                    <Link
-                      href="/blend-creator"
-                      onClick={() => setDrawerOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-sm font-bold text-amber-900 dark:text-amber-300 transition-colors"
-                    >
-                      <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                      <span>Custom Blend Atelier</span>
-                    </Link>
-
-                    <div className="pt-4 mt-4 border-t border-border/40">
-                      <p className="text-[10px] uppercase font-mono font-bold tracking-widest text-muted-foreground px-3 mb-2">Heritage</p>
-                      <Link
-                        href="/traceability"
-                        onClick={() => setDrawerOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-500/10 text-sm font-medium transition-colors"
-                      >
-                        <MapPin className="w-4 h-4 text-emerald-600" />
-                        <span>Farm Sourcing Map</span>
-                      </Link>
-                      <Link
-                        href="/recipes"
-                        onClick={() => setDrawerOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-500/10 text-sm font-medium transition-colors"
-                      >
-                        <BookOpen className="w-4 h-4 text-amber-600" />
-                        <span>Traditional Recipes</span>
-                      </Link>
-                      <Link
-                        href="/about"
-                        onClick={() => setDrawerOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-500/10 text-sm font-medium transition-colors"
-                      >
-                        <Award className="w-4 h-4 text-zinc-500" />
-                        <span>Our Founding Story</span>
-                      </Link>
-                    </div>
-                  </div>
+              <SheetContent side="left" className="flex w-[300px] flex-col gap-0 border-r border-border bg-background p-0 sm:w-[340px]">
+                <div className="jaali px-5 pb-5 pt-6">
+                  <SheetTitle className="sr-only">Menu</SheetTitle>
+                  <LogoPlaque />
+                  <p className="eyebrow mt-3 text-brand-gold">Shop by collection</p>
                 </div>
-
-                {/* Drawer Footer Contact */}
-                <div className="p-5 border-t border-border/40 bg-white/40 dark:bg-zinc-900/40 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-2 mb-2 text-foreground font-semibold">
-                    <Phone className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Contact us via email</span>
+                <nav aria-label="Collections" className="flex-1 overflow-y-auto p-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link href="/shop" onClick={close} className="col-span-2 flex h-11 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
+                      Shop all
+                    </Link>
+                    {COLLECTIONS.map((c) => (
+                      <Link key={c.slug} href={`/shop?collection=${c.slug}`} onClick={close} className="flex min-h-11 items-center gap-2 rounded-xl border border-border bg-card p-1.5 pr-2 text-[13px] font-semibold hover:border-brand-gold">
+                        <Image src={c.image} alt="" width={64} height={64} className="arch h-9 w-8 shrink-0 object-cover ring-1 ring-brand-gold" />
+                        <span className="leading-tight">{c.name}</span>
+                      </Link>
+                    ))}
                   </div>
-                  <p className="text-[11px] leading-relaxed">Sourced directly from certified organic farms &amp; Kashmir valleys.</p>
+                  <p className="eyebrow px-1 pb-2 pt-6 text-brand-gold-deep">Spicy Nuts</p>
+                  {[
+                    { href: "/blend-creator", label: "Spice Atelier: custom blend", icon: Sparkles },
+                    { href: "/traceability", label: "Farm journey", icon: MapPin },
+                    { href: "/recipes", label: "Recipes", icon: BookOpen },
+                    { href: "/about", label: "Our story", icon: Award },
+                  ].map(({ href, label, icon: Icon }) => (
+                    <Link key={href} href={href} onClick={close} className="flex h-11 items-center gap-3 rounded-xl px-2 text-sm font-semibold hover:bg-muted">
+                      <Icon className="h-4 w-4 text-primary" />
+                      {label}
+                    </Link>
+                  ))}
+                </nav>
+                <div className="border-t border-border p-4 text-xs text-muted-foreground">
+                  <p className="flex items-center gap-2 font-semibold text-foreground">
+                    <Phone className="h-3.5 w-3.5 text-primary" /> Contact us via email
+                  </p>
+                  <p className="mt-1">spicynuts1973@gmail.com</p>
                 </div>
               </SheetContent>
             </Sheet>
           </div>
-
-          {/* Logo & Wordmark */}
-          <Link href="/" className="flex items-center group -ml-2">
-            <div className="relative h-9 md:h-[72px] w-[80px] md:w-[140px] flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
-              <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" fill className="object-contain object-left dark:brightness-110" priority />
-            </div>
+          <Link href="/" aria-label="Spicy Nuts home" className="mx-auto lg:mx-0">
+            <LogoPlaque />
           </Link>
         </div>
 
-        {/* Desktop Navigation */}
-        <div className="hidden lg:flex flex-1 items-center justify-center gap-6 xl:gap-8">
-          <NavLinks />
-        </div>
+        {/* Desktop navigation */}
+        <nav aria-label="Main" className="hidden flex-1 items-center justify-center gap-4 lg:flex 2xl:gap-6">
+          {DESKTOP_LINKS.map((l) => (
+            <Link key={l.href} href={l.href} className={`whitespace-nowrap text-[13px] font-bold tracking-wide transition-colors hover:text-brand-gold ${l.gold ? "text-brand-gold" : "text-white"} ${"wide" in l && l.wide ? "hidden 2xl:inline" : ""}`}>
+              {l.label}
+            </Link>
+          ))}
+        </nav>
 
-        {/* Right Side Actions */}
-        <div className="flex items-center gap-1.5 md:gap-3 h-full">
+        {/* Actions */}
+        <div className="flex flex-1 items-center justify-end gap-0.5 md:gap-1.5 lg:flex-none">
           <button
             onClick={() => setSearchOpen(true)}
             aria-label="Search"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium transition-colors hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-400 h-9 w-9 border border-transparent hover:border-amber-500/20"
+            className="inline-flex h-10 items-center gap-2 rounded-full px-2.5 text-sm font-semibold hover:bg-white/10 2xl:w-52 2xl:border 2xl:border-brand-gold/45 2xl:bg-white/10 2xl:px-4 2xl:text-white/80"
           >
-            <Search className="w-4 h-4 md:w-5 md:h-5" />
+            <Search className="h-[19px] w-[19px]" />
+            <span className="hidden 2xl:inline">Search the pantry</span>
           </button>
-          <NotificationsDropdown />
-          <CartDrawer />
-          <UserMenu />
-        </div>
-
+          <span className="hidden md:inline-flex"><NotificationsDropdown /></span>
+          <span className="hidden md:inline-flex"><UserMenu /></span>
+          <span className="md:hidden"><CartDrawer tone="dark" /></span>
+          <span className="hidden md:inline-flex"><CartDrawer variant="pill" /></span>
         </div>
       </div>
       <CommandPalette open={searchOpen} setOpen={setSearchOpen} />

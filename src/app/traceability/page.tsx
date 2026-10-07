@@ -6,6 +6,7 @@ import { Search, MapPin, Shield, Leaf, Sun, Package, Loader2 } from 'lucide-reac
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 interface TimelineItem {
   date: string;
@@ -44,27 +45,22 @@ export default function TraceabilityPage() {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'leaf': return <Leaf className="w-5 h-5 text-green-500" />;
+      case 'leaf': return <Leaf className="w-5 h-5 text-success" />;
       case 'shield': return <Shield className="w-5 h-5 text-blue-500" />;
       case 'sun': return <Sun className="w-5 h-5 text-yellow-500" />;
-      case 'package': return <Package className="w-5 h-5 text-amber-700" />;
+      case 'package': return <Package className="w-5 h-5 text-brand-gold-deep" />;
       default: return <MapPin className="w-5 h-5 text-primary" />;
     }
   };
 
   return (
-    <div className="min-h-screen pt-28 pb-20 md:pt-36 bg-background relative overflow-hidden">
+    <div className="min-h-screen pb-20 bg-background relative overflow-hidden">
+      <PageHero eyebrow={"Secure Food Ledger"} title={"Trace Your Food's Journey"} subtitle={"Enter the batch number found on your product packaging to view the farm source, quality checks, and real-time processing map."} crumbs={[{ label: "Home", href: "/" }, { label: "Farm journey" }]} />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -z-10 animate-pulse" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-3xl -z-10 animate-pulse delay-1000" />
       
       <div className="container mx-auto px-4 max-w-6xl">
-        <div className="text-center mb-12">
-          <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">Secure Food Ledger</Badge>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-3">Trace Your Food's Journey</h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Enter the batch number found on your product packaging to view the farm source, quality checks, and real-time processing map.
-          </p>
-        </div>
+        
 
         <form onSubmit={handleSearch} className="max-w-xl mx-auto mb-16 relative">
           <Input 

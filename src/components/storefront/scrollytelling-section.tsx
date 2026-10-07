@@ -8,14 +8,14 @@ const CRAFT_STEPS = [
     title: "Direct Origin Sourcing",
     description: "We source directly from historical origin farms: high-altitude Afghan Mamra Almonds, Kashmiri Snow Walnuts & Goan Cashews.",
     icon: Award,
-    color: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+    color: "bg-muted text-brand-gold-deep dark:bg-royal-deep dark:text-brand-gold",
   },
   {
     step: "02",
     title: "Zero Chemical Bleach",
     description: "100% natural sorting. We never treat our nuts with sulfur dioxide or chemical polishing agents to artificially alter color.",
     icon: HeartPulse,
-    color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
+    color: "bg-muted text-primary dark:bg-primary dark:text-primary",
   },
   {
     step: "03",
@@ -40,7 +40,7 @@ export function ScrollytellingSection() {
         
         {/* Header */}
         <div className="flex flex-col items-center text-center space-y-3 mb-5 md:mb-8 max-w-2xl mx-auto">
-          <span className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono">
+          <span className="text-xs font-bold uppercase tracking-widest text-brand-gold-deep dark:text-brand-gold font-mono">
             Purity &amp; Heritage
           </span>
           <h2 className="text-2xl md:text-3xl font-bold font-heading text-zinc-900 dark:text-zinc-50 tracking-tight">
@@ -58,7 +58,7 @@ export function ScrollytellingSection() {
             return (
               <div
                 key={step.step}
-                className="relative p-4 sm:p-6 rounded-3xl bg-[#FAF7F2] dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group hover:-translate-y-1"
+                className="relative p-4 sm:p-6 rounded-3xl bg-background dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group hover:-translate-y-1"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3 md:mb-5">

@@ -25,7 +25,7 @@ export function UserMenu() {
   if (!session?.user) {
     return (
       <Link href="/login">
-        <Button variant="ghost" size="sm" className="rounded-full gap-2 text-sm">
+        <Button variant="ghost" size="sm" className="rounded-full gap-2 text-sm h-10 text-current hover:bg-white/10 hover:text-current">
           <LogIn className="w-4 h-4" />
           <span className="hidden sm:inline">Sign In</span>
         </Button>
@@ -35,7 +35,7 @@ export function UserMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<button className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary hover:bg-primary/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background" />}>
+      <DropdownMenuTrigger render={<button aria-label="Account menu" className="w-10 h-10 rounded-full flex items-center justify-center text-current hover:bg-white/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" />}>
         <User className="w-4 h-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 rounded-xl p-2">

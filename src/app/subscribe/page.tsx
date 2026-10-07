@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { Leaf, CheckCircle2, Package, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export default function SubscribePage() {
   const router = useRouter();
@@ -41,16 +42,9 @@ export default function SubscribePage() {
   };
 
   return (
-    <div className="container max-w-6xl py-12 md:py-16 px-4 min-h-[60vh] pt-28 md:pt-36">
-      <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20">
-          <Leaf className="w-4 h-4" /> Organic & Homemade
-        </span>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold">Taste of Spicy Nuts Box</h1>
-        <p className="text-lg text-muted-foreground">
-          Discover a curated selection of our finest Royal Dry Fruits (Mamra Almonds, Goan Cashews), freshly roasted organic snacks, and artisanal Chai masalas delivered to your door every month.
-        </p>
-      </div>
+    <>
+      <PageHero eyebrow={"Organic & Homemade"} title={"Taste of Spicy Nuts Box"} subtitle={"Discover a curated selection of our finest Royal Dry Fruits (Mamra Almonds, Goan Cashews), freshly roasted organic snacks, and artisanal Chai masalas delivered to your door every month."} crumbs={[{ label: "Home", href: "/" }, { label: "Subscribe" }]} />
+      <div className="container mx-auto max-w-6xl px-4 py-8 md:py-12 min-h-[60vh]">
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {/* Standard Box */}
@@ -121,7 +115,7 @@ export default function SubscribePage() {
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-              <span className="font-medium text-amber-600">Exclusive early-access items</span>
+              <span className="font-medium text-brand-gold-deep">Exclusive early-access items</span>
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
@@ -139,5 +133,6 @@ export default function SubscribePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

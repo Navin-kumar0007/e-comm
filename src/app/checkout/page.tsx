@@ -285,28 +285,39 @@ export default function CheckoutPage() {
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       
-      <div className="container mx-auto max-w-6xl px-4 pt-28 pb-16 min-h-[75vh]">
-        
-        {/* Header Breadcrumb */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground">Secure Checkout</h1>
-            <p className="text-sm text-muted-foreground mt-1">Complete your order with single-estate harvest freshness</p>
+      <section className="jaali pt-header pb-6 text-white">
+        <div className="container mx-auto max-w-6xl px-4 pt-5">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <span className="eyebrow text-brand-gold">Secure checkout</span>
+              <h1 className="font-heading text-[34px] font-bold leading-none md:text-[46px]">Secure Checkout</h1>
+              <p className="mt-1.5 text-[13px] text-white/80">Complete your order with single-estate harvest freshness</p>
+            </div>
+            <Link href="/shop" className="hidden items-center gap-1 text-[13px] font-bold text-brand-gold hover:text-white sm:inline-flex">
+              ← Continue Shopping
+            </Link>
           </div>
-          <Link href="/shop" className="text-sm text-primary hover:underline hidden sm:inline-flex items-center gap-1">
-            ← Continue Shopping
-          </Link>
+          <ol aria-label="Checkout steps" className="mt-4 grid grid-cols-3 gap-2">
+            {[["Cart", true], ["Address", true], ["Payment", false]].map(([label, done]) => (
+              <li key={label as string} className="flex flex-col gap-1.5">
+                <span className={`h-1 rounded-full ${done ? "bg-brand-gold" : "bg-white/25"}`} />
+                <span className={`font-royal text-[10.5px] font-bold tracking-[0.16em] ${done ? "text-brand-gold" : "text-white/70"}`}>{(label as string).toUpperCase()}</span>
+              </li>
+            ))}
+          </ol>
         </div>
+      </section>
 
+      <div className="container mx-auto max-w-6xl px-4 pt-6 pb-16 min-h-[60vh]">
         {/* Guest vs Logged-in Banner */}
         {!session ? (
-          <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
-            <div className="flex items-center gap-2.5 text-amber-900 dark:text-amber-300 font-medium">
-              <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+          <div className="mb-6 p-4 rounded-2xl bg-secondary/10 border border-brand-gold/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
+            <div className="flex items-center gap-2.5 text-brand-gold-deep dark:text-brand-gold font-medium">
+              <Sparkles className="w-4 h-4 text-brand-gold-deep shrink-0" />
               <span>Ordering as a guest. Want to save your address & earn 5% Royal points?</span>
             </div>
             <Link href="/login?callbackUrl=/checkout">
-              <Button variant="outline" size="sm" className="rounded-xl border-amber-500/30 text-xs font-semibold h-8 shrink-0">
+              <Button variant="outline" size="sm" className="rounded-xl border-brand-gold/30 text-xs font-semibold h-8 shrink-0">
                 Sign In / Register
               </Button>
             </Link>
@@ -323,7 +334,7 @@ export default function CheckoutPage() {
           <button
             type="button"
             onClick={() => setShowMobileSummary(!showMobileSummary)}
-            className="w-full p-4 rounded-2xl bg-card border border-border/60 flex items-center justify-between shadow-sm text-sm"
+            className="w-full p-4 royal-card flex items-center justify-between text-sm"
           >
             <div className="flex items-center gap-2 font-medium">
               <ShoppingBag className="w-4 h-4 text-primary" />
@@ -351,9 +362,9 @@ export default function CheckoutPage() {
               </div>
               <div className="pt-2 border-t border-border/50 text-xs space-y-1.5 text-muted-foreground">
                 <div className="flex justify-between"><span>Subtotal</span><span>₹{(quote?.subtotal ?? cartTotal).toFixed(2)}</span></div>
-                {discount > 0 && <div className="flex justify-between text-emerald-600 font-medium"><span>Promo Discount</span><span>-₹{discount.toFixed(2)}</span></div>}
-                {pointsDiscount > 0 && <div className="flex justify-between text-emerald-600 font-medium"><span>Points Redeemed</span><span>-₹{pointsDiscount.toFixed(2)}</span></div>}
-                <div className="flex justify-between"><span>Delivery</span>{shippingFee === 0 ? <span className="text-emerald-600 font-semibold">FREE</span> : <span>₹{shippingFee.toFixed(2)}</span>}</div>
+                {discount > 0 && <div className="flex justify-between text-primary font-medium"><span>Promo Discount</span><span>-₹{discount.toFixed(2)}</span></div>}
+                {pointsDiscount > 0 && <div className="flex justify-between text-primary font-medium"><span>Points Redeemed</span><span>-₹{pointsDiscount.toFixed(2)}</span></div>}
+                <div className="flex justify-between"><span>Delivery</span>{shippingFee === 0 ? <span className="text-primary font-semibold">FREE</span> : <span>₹{shippingFee.toFixed(2)}</span>}</div>
               </div>
             </div>
           )}
@@ -365,11 +376,11 @@ export default function CheckoutPage() {
           <form onSubmit={handleOrderSubmission} className="lg:col-span-7 space-y-6">
             
             {/* 1. Shipping Details Card */}
-            <div className="p-6 sm:p-7 bg-card rounded-3xl shadow-sm border border-border/60 space-y-5">
+            <div className="royal-card p-5 sm:p-6 space-y-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-4">
                 <div>
-                  <h2 className="text-lg font-heading font-bold text-foreground flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">1</span>
+                  <h2 className="font-heading text-2xl font-bold text-primary flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">1</span>
                     Shipping Destination
                   </h2>
                   <p className="text-xs text-muted-foreground mt-0.5">Where should we courier your fresh harvest?</p>
@@ -416,17 +427,17 @@ export default function CheckoutPage() {
                   <Label htmlFor="pincode" className="text-xs font-semibold">Pincode (6-digits) *</Label>
                   <Input id="pincode" name="pincode" inputMode="numeric" maxLength={6} required value={formData.pincode} onChange={handleInputChange} placeholder="e.g. 560001" className="rounded-xl h-11" />
                   {delivery && (
-                    <p className={`text-xs font-medium ${delivery.serviceable ? 'text-emerald-600' : 'text-destructive'}`}>{delivery.message}</p>
+                    <p className={`text-xs font-medium ${delivery.serviceable ? 'text-primary' : 'text-destructive'}`}>{delivery.message}</p>
                   )}
                 </div>
               </div>
             </div>
 
             {/* 2. Payment Method Selector */}
-            <div className="p-6 sm:p-7 bg-card rounded-3xl shadow-sm border border-border/60 space-y-4">
+            <div className="royal-card p-5 sm:p-6 space-y-4">
               <div className="border-b border-border/40 pb-3">
-                <h2 className="text-lg font-heading font-bold text-foreground flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">2</span>
+                <h2 className="font-heading text-2xl font-bold text-primary flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">2</span>
                   Payment Method
                 </h2>
                 <p className="text-xs text-muted-foreground mt-0.5">Select how you wish to settle this purchase</p>
@@ -453,7 +464,7 @@ export default function CheckoutPage() {
                     <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                       <CreditCard className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-semibold text-emerald-600 bg-emerald-100 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-semibold text-primary bg-muted dark:bg-primary/40 px-2 py-0.5 rounded-full">
                       Recommended
                     </span>
                   </div>
@@ -481,7 +492,7 @@ export default function CheckoutPage() {
                     className="sr-only"
                   />
                   <div className="flex items-center justify-between mb-2">
-                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-xl bg-secondary/10 text-brand-gold-deep dark:text-brand-gold flex items-center justify-center">
                       <Truck className="w-4 h-4" />
                     </div>
                     <span className="text-xs font-medium text-muted-foreground">
@@ -501,7 +512,7 @@ export default function CheckoutPage() {
               <Button 
                 type="submit" 
                 disabled={isProcessing || !quoteReady || notServiceable} 
-                className="w-full h-14 text-base md:text-lg font-bold rounded-2xl shadow-xl hover:shadow-primary/25 transition-all"
+                className="w-full h-12 text-[15px] font-extrabold rounded-xl border border-brand-gold shadow-lg transition-all"
               >
                 {isProcessing 
                   ? "Securing Order..." 
@@ -512,7 +523,7 @@ export default function CheckoutPage() {
               </Button>
 
               <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground pt-1">
-                <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4 text-emerald-600" /> 100% Secure Checkout</span>
+                <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4 text-primary" /> 100% Secure Checkout</span>
                 <span>•</span>
                 <span>Direct Terroir Harvest</span>
                 <span>•</span>
@@ -524,8 +535,8 @@ export default function CheckoutPage() {
 
           {/* Desktop Sticky Order Summary Column */}
           <div className="lg:col-span-5 sticky top-28 space-y-6">
-            <div className="p-6 bg-card rounded-3xl border border-border/60 shadow-sm space-y-5">
-              <h2 className="text-lg font-heading font-bold text-foreground flex items-center justify-between">
+            <div className="royal-card p-5 space-y-5">
+              <h2 className="font-heading text-2xl font-bold text-primary flex items-center justify-between">
                 <span>Order Summary</span>
                 <span className="text-xs font-normal text-muted-foreground">({items.length} unique items)</span>
               </h2>
@@ -590,14 +601,14 @@ export default function CheckoutPage() {
                 </div>
                 
                 {discount > 0 && (
-                  <div className="flex justify-between text-emerald-600 text-xs font-medium">
+                  <div className="flex justify-between text-primary text-xs font-medium">
                     <span>Promo Code Discount</span>
                     <span>-₹{discount.toFixed(2)}</span>
                   </div>
                 )}
 
                 {pointsDiscount > 0 && (
-                  <div className="flex justify-between text-emerald-600 text-xs font-medium">
+                  <div className="flex justify-between text-primary text-xs font-medium">
                     <span>Royal Points Redeemed</span>
                     <span>-₹{pointsDiscount.toFixed(2)}</span>
                   </div>
@@ -606,7 +617,7 @@ export default function CheckoutPage() {
                 <div className="flex justify-between text-muted-foreground text-xs">
                   <span>Courier Shipping</span>
                   {shippingFee === 0 ? (
-                    <span className="text-emerald-600 font-semibold">FREE</span>
+                    <span className="text-primary font-semibold">FREE</span>
                   ) : (
                     <span className="font-medium text-foreground">₹{shippingFee.toFixed(2)}</span>
                   )}
@@ -630,7 +641,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Terroir / Eco Packaging Badge */}
-              <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-2.5 text-emerald-800 dark:text-emerald-300 text-xs">
+              <div className="p-3.5 rounded-2xl bg-primary/10 border border-primary/20 flex items-start gap-2.5 text-primary dark:text-primary text-xs">
                 <span className="text-lg">🌿</span>
                 <div>
                   <p className="font-semibold">Single-Estate Provenance Insured</p>

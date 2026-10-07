@@ -24,7 +24,7 @@ export default function WishlistDashboardPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-heading font-bold text-foreground">My Wishlist</h1>
+        <h1 className="text-[30px] font-heading font-bold leading-none text-primary">My Wishlist</h1>
         <p className="text-muted-foreground">Products you've saved for later.</p>
       </div>
 

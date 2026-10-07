@@ -32,7 +32,7 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
   const tags = recipe.tags ? recipe.tags.split(',') : [];
 
   return (
-    <div className="min-h-screen pb-20 pt-28 md:pt-36">
+    <div className="min-h-screen pb-20 pt-header">
       {/* Hero */}
       <div className="relative h-[40vh] md:h-[50vh] overflow-hidden mt-2 md:mt-4">
         <Image width={800} height={800} unoptimized={false} src={recipe.image && !recipe.image.includes("placehold.co") ? recipe.image : "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=800&auto=format&fit=crop"} alt={recipe.title} className="w-full h-full object-cover" />
