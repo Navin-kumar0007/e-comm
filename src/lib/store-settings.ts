@@ -8,10 +8,11 @@ export const DEFAULT_STORE_SETTINGS = {
   flatShippingRate: 50,
   gstRate: 5,
   currency: "INR",
-  gstin: null as string | null,
-  legalName: null as string | null,
-  businessAddress: null as string | null,
-  businessState: null as string | null,
+  // Business identity (from the GST registration); editable in Admin → Settings.
+  gstin: "29FCBPM9871D1Z6" as string | null,
+  legalName: "B.M.V. Spices & Dry Fruits" as string | null,
+  businessAddress: "Shop No 1/206/1, Bhaskar Nagar Chitguppa, Chitguppa Sub Post Office, Chitgoppa, Bidar, Karnataka – 585412" as string | null,
+  businessState: "Karnataka" as string | null,
   invoicePrefix: "SN",
   shippingProvider: "MANUAL",
   pickupName: null as string | null,
@@ -27,6 +28,9 @@ export const DEFAULT_STORE_SETTINGS = {
   codEnabled: true,
   codMaxOrderValue: 5000,
   returnWindowHours: 48,
+  fssaiLicense: null as string | null,
+  signatoryName: null as string | null,
+  invoiceTerms: null as string | null,
 };
 
 export type StoreSettings = typeof DEFAULT_STORE_SETTINGS;
@@ -35,5 +39,10 @@ export type StoreSettings = typeof DEFAULT_STORE_SETTINGS;
 export async function getStoreSettings(): Promise<StoreSettings> {
   const settings = await prisma.settings.findFirst();
   if (!settings) return { ...DEFAULT_STORE_SETTINGS };
-  return { ...DEFAULT_STORE_SETTINGS, ...settings };
+  // Blank saved fields fall back to the defaults (e.g. the business identity).
+  const merged: StoreSettings = { ...DEFAULT_STORE_SETTINGS };
+  for (const [k, v] of Object.entries(settings)) {
+    if (v !== null && v !== undefined && v !== "") (merged as Record<string, unknown>)[k] = v;
+  }
+  return merged;
 }

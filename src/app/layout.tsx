@@ -25,6 +25,7 @@ import { Navbar } from "@/components/storefront/Navbar";
 import { MobileBottomNav } from "@/components/storefront/mobile-bottom-nav";
 import { PromoBanner } from "@/components/storefront/promo-banner";
 import { Footer } from "@/components/storefront/Footer";
+import { StorefrontOnly } from "@/components/storefront/storefront-only";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/storefront/auth-provider";
 import { AIConcierge } from "@/components/storefront/ai-concierge";
@@ -195,10 +196,10 @@ export default function RootLayout({
             forcedTheme="light"
             disableTransitionOnChange
           >
-            <div className="print:hidden"><Navbar /></div><main className="flex-1 pb-24 md:pb-0 print:m-0 print:p-0">
+            <StorefrontOnly><div className="print:hidden"><Navbar /></div></StorefrontOnly><main className="flex-1 pb-24 md:pb-0 print:m-0 print:p-0">
               {children}
             </main>
-            <div className="print:hidden"><Footer /><MobileBottomNav /><AIConcierge /><WhatsAppButton /><WhatsAppWelcomePrompt /><AccessibilityToolbar /></div><ScrollReveal />
+            <StorefrontOnly><div className="print:hidden"><Footer /><MobileBottomNav /><AIConcierge /><WhatsAppButton /><WhatsAppWelcomePrompt /><AccessibilityToolbar /></div><ScrollReveal /></StorefrontOnly>
             <Toaster />
           </ThemeProvider>
         </AuthProvider>

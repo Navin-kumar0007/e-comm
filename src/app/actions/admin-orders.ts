@@ -10,6 +10,7 @@ import { transitionOrder } from '@/lib/order-status';
 import { nextAdminStatuses, ORDER_STATUSES, type OrderStatus } from '@/lib/order-status-rules';
 import { logOrderEvent } from '@/lib/order-events';
 import { adjustStock, StockError } from '@/lib/inventory';
+import { splitGst } from '@/lib/gst';
 
 function mapPrismaStatusToUI(status: string) {
   const m: Record<string, string> = {
@@ -158,6 +159,7 @@ export async function createOrderAction(data: {
   const productIds = data.items.map(i => i.productId);
   const products = await prisma.product.findMany({ where: { id: { in: productIds } }, include: { variants: { where: { isActive: true }, orderBy: { sortOrder: 'asc' } } } });
   const nameById = new Map(products.map((p: any) => [p.id, p.name]));
+  const productById = new Map<string, any>(products.map((p: any) => [p.id, p]));
   // Products with sizes: use the size matching the weight label, else the default size.
   const variantFor = (productId: string, weight: string) => {
     const variants: any[] = products.find((p: any) => p.id === productId)?.variants ?? [];
@@ -170,7 +172,12 @@ export async function createOrderAction(data: {
   const subtotal = round2(data.items.reduce((sum, i) => sum + i.price * i.quantity, 0));
   const shippingFee = subtotal >= settings.freeShippingThreshold ? 0 : settings.flatShippingRate;
   const total = round2(subtotal + shippingFee);
-  const taxAmount = round2((total * settings.gstRate) / (100 + settings.gstRate));
+  const rateFor = (productId: string) => productById.get(productId)?.gstRate ?? settings.gstRate;
+  const taxAmount = splitGst({
+    lines: data.items.map((i) => ({ amount: i.price * i.quantity, gstRate: rateFor(i.productId) })),
+    shipping: shippingFee,
+    defaultRate: settings.gstRate,
+  }).taxTotal;
 
   try {
     const order = await prisma.$transaction(async (tx: any) => {
@@ -194,6 +201,8 @@ export async function createOrderAction(data: {
               quantity: item.quantity,
               price: item.price,
               weight: item.weight,
+              hsnCode: productById.get(item.productId)?.hsnCode ?? null,
+              gstRate: rateFor(item.productId),
               productName: nameById.get(item.productId) || "Product"
             }))
           }

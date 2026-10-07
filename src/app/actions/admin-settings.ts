@@ -25,6 +25,9 @@ export async function updateAdminSettingsAction(data: {
   businessAddress?: string | null;
   businessState?: string | null;
   invoicePrefix?: string;
+  fssaiLicense?: string | null;
+  signatoryName?: string | null;
+  invoiceTerms?: string | null;
   shippingProvider?: string;
   pickupName?: string | null;
   pickupPhone?: string | null;
@@ -45,6 +48,10 @@ export async function updateAdminSettingsAction(data: {
   if (data.gstin) {
     data.gstin = data.gstin.trim().toUpperCase();
     if (!GSTIN_RE.test(data.gstin)) return { error: 'Invalid GSTIN format (e.g. 29ABCDE1234F1Z5)' };
+  }
+  if (data.fssaiLicense) {
+    data.fssaiLicense = data.fssaiLicense.replace(/\s+/g, '');
+    if (!/^\d{14}$/.test(data.fssaiLicense)) return { error: 'FSSAI licence number must be 14 digits' };
   }
   if (data.invoicePrefix !== undefined) {
     data.invoicePrefix = data.invoicePrefix.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 10) || DEFAULT_STORE_SETTINGS.invoicePrefix;

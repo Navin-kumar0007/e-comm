@@ -101,6 +101,8 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
         weight: fd.get("weight") as string || "250g",
         costPrice: fd.get("costPrice") ? Number(fd.get("costPrice")) : null,
         lowStockThreshold: Number(fd.get("lowStockThreshold")) || 10,
+        hsnCode: ((fd.get("hsnCode") as string) || "").trim() || null,
+        gstRate: fd.get("gstRate") ? Number(fd.get("gstRate")) : null,
         tags,
         isFeatured,
         isOrganic,
@@ -217,6 +219,18 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
                 <div className="space-y-2">
                   <Label htmlFor="lowStockThreshold">Low-stock alert at</Label>
                   <Input id="lowStockThreshold" name="lowStockThreshold" type="number" min={0} defaultValue={product.lowStockThreshold ?? 10} className="rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="hsnCode">HSN Code</Label>
+                  <Input id="hsnCode" name="hsnCode" inputMode="numeric" maxLength={8} defaultValue={product.hsnCode ?? ""} placeholder="e.g. 0802" className="rounded-xl font-mono" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gstRate">GST Rate (%)</Label>
+                  <select id="gstRate" name="gstRate" defaultValue={product.gstRate ?? ""} className="w-full h-10 px-3 rounded-xl border border-input bg-background text-sm">
+                    <option value="">Store default</option>
+                    {[0, 5, 12, 18, 28, 40].map((r) => <option key={r} value={r}>{r}%</option>)}
+                  </select>
+                  <p className="text-xs text-muted-foreground">Confirm HSN and rate with your CA.</p>
                 </div>
                 {product.hasSizes && (
                   <p className="col-span-2 sm:col-span-3 text-xs text-muted-foreground">

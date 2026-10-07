@@ -123,6 +123,12 @@ export async function createProductAction(data: any) {
 export async function updateProductAction(id: string, data: any) {
   const actor = await adminActor('catalog.manage');
   const { dietaryTagIds, labelSettings, stock: newStock, ...restData } = data;
+  if (restData.hsnCode != null && restData.hsnCode !== "" && !/^\d{4,8}$/.test(String(restData.hsnCode))) {
+    throw new Error("HSN code must be 4 to 8 digits");
+  }
+  if (restData.gstRate != null && !(Number(restData.gstRate) >= 0 && Number(restData.gstRate) <= 40)) {
+    throw new Error("GST rate must be between 0 and 40%");
+  }
 
   const existing = await prisma.product.findUnique({
     where: { id },

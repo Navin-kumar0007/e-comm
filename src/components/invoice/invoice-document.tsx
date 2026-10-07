@@ -1,118 +1,247 @@
-import { Leaf } from "lucide-react";
+import Image from "next/image";
 import { computeInvoice, type InvoiceOrder, type InvoiceSettings } from "@/lib/invoice";
+import { amountInWords, stateCode } from "@/lib/gst";
+import { BRAND_EMAIL, BRAND_PHONE_DISPLAY } from "@/lib/contact";
 
 type InvoiceDocumentOrder = Omit<InvoiceOrder, "items"> & {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerGstin?: string | null;
   invoiceNotes?: string | null;
-  items: Array<{ price: number; quantity: number; weight: string; productName?: string | null; product?: { name: string } | null }>;
+  items: Array<{
+    price: number;
+    quantity: number;
+    weight: string;
+    gstRate?: number | null;
+    hsnCode?: string | null;
+    productName?: string | null;
+    product?: { name: string; hsnCode?: string | null } | null;
+  }>;
 };
 
-const inr = (n: number) => `₹${n.toFixed(2)}`;
+const money = (n: number) => n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const SITE = "www.spicynuts.in";
 
-/** A4 invoice shared by the customer account page and the admin order hub. */
+/** A4 GST tax invoice shared by the customer account page, the admin order hub and bulk printing. */
 export function InvoiceDocument({
   order,
   settings,
   notes,
+  copyLabel = "Original for Recipient",
 }: {
   order: InvoiceDocumentOrder;
-  settings: InvoiceSettings;
+  settings: InvoiceSettings & { fssaiLicense?: string | null; signatoryName?: string | null; invoiceTerms?: string | null };
   notes?: string;
+  copyLabel?: string;
 }) {
-  const inv = computeInvoice(order, settings);
+  // Older order lines have no HSN snapshot: fall back to the product's current HSN.
+  const items = order.items.map((i) => ({ ...i, hsnCode: i.hsnCode ?? i.product?.hsnCode ?? null }));
+  const inv = computeInvoice({ ...order, items }, settings);
   const invoiceDate = new Date(order.paidAt ?? order.createdAt);
   const title = !inv.isFinalInvoice ? "Order Summary" : inv.isTaxInvoice ? "Tax Invoice" : "Invoice";
-  const placeOfSupply = order.shippingState || null;
+  const sellerCode = stateCode(settings.businessState);
+  const posCode = stateCode(inv.placeOfSupply);
+  const isCod = order.paymentMethod === "COD";
+  const halfTax = inv.sameState === true;
 
   return (
-    <div className="w-full max-w-[210mm] bg-white text-black p-8 sm:p-12 rounded-xl shadow-sm border print:shadow-none print:border-none print:p-0 print:mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-b pb-8 mb-8">
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2 mb-2 text-green-700">
-            <Leaf className="h-7 w-7" />
-            <span className="font-heading text-2xl font-bold">{settings.storeName}</span>
+    <div className="invoice-a4 w-full max-w-[210mm] bg-white text-[#1f1712] text-[11px] leading-[1.45] rounded-xl shadow-sm border print:shadow-none print:border-none print:rounded-none print:mx-auto">
+      {/* Header band */}
+      <div className="flex items-stretch justify-between gap-6 border-b-[3px] border-[#6E1A2C] px-8 pt-7 pb-5">
+        <div className="flex items-start gap-4">
+          <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" width={112} height={88} className="h-[64px] w-auto shrink-0" priority />
+          <div className="space-y-0.5">
+            <p className="text-[13px] font-extrabold uppercase tracking-wide text-[#6E1A2C]">{settings.legalName || settings.storeName}</p>
+            {settings.businessAddress && <p className="max-w-[300px] text-[#4b3f37] whitespace-pre-line">{settings.businessAddress}</p>}
+            <p className="text-[#4b3f37]">
+              {BRAND_PHONE_DISPLAY} · {settings.contactEmail || BRAND_EMAIL} · {SITE}
+            </p>
+            <p className="pt-0.5">
+              {settings.gstin && <><span className="font-semibold">GSTIN:</span> <span className="font-mono">{settings.gstin}</span></>}
+              {sellerCode && <span className="text-[#4b3f37]"> · State: {settings.businessState} ({sellerCode})</span>}
+            </p>
+            {settings.fssaiLicense && (
+              <p><span className="font-semibold">FSSAI Lic. No.:</span> <span className="font-mono">{settings.fssaiLicense}</span></p>
+            )}
           </div>
-          {settings.legalName && <p className="text-sm font-semibold text-gray-700">{settings.legalName}</p>}
-          {settings.businessAddress && <p className="text-sm text-gray-500 whitespace-pre-line">{settings.businessAddress}</p>}
-          {settings.gstin && <p className="text-sm text-gray-700"><span className="font-semibold">GSTIN:</span> {settings.gstin}</p>}
         </div>
-        <div className="sm:text-right">
-          <h1 className="text-3xl font-heading font-black text-gray-900 uppercase tracking-wider mb-2">{title}</h1>
-          <p className="text-sm"><span className="font-semibold text-gray-500">{inv.isFinalInvoice ? "Invoice #:" : "Order #:"}</span> {inv.invoiceNumber}</p>
-          <p className="text-sm"><span className="font-semibold text-gray-500">Date:</span> {invoiceDate.toLocaleDateString("en-IN")}</p>
-          <p className="text-sm"><span className="font-semibold text-gray-500">Order Ref:</span> NW-{order.id.slice(-8).toUpperCase()}</p>
-          <p className="text-sm"><span className="font-semibold text-gray-500">Payment:</span> {order.paymentMethod === "COD" ? "Cash on Delivery" : "Prepaid (Online)"}</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
-        <div>
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Billed To</h3>
-          <p className="font-semibold text-gray-800">{order.customerName}</p>
-          <p className="text-sm text-gray-600">{order.customerEmail}</p>
-          <p className="text-sm text-gray-600">{order.customerPhone}</p>
-        </div>
-        <div>
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Shipped To</h3>
-          <p className="text-sm text-gray-600 whitespace-pre-line">{order.shippingAddress}</p>
-          {placeOfSupply && <p className="text-sm text-gray-600 mt-1"><span className="font-semibold">Place of supply:</span> {placeOfSupply}</p>}
+        <div className="text-right flex flex-col justify-between">
+          <div>
+            <p className="text-[22px] font-black uppercase tracking-[0.12em] text-[#1f1712]">{title}</p>
+            {inv.isFinalInvoice && <p className="text-[9.5px] font-semibold uppercase tracking-[0.18em] text-[#9A6E2A]">{copyLabel}</p>}
+          </div>
+          <table className="ml-auto mt-2 text-[10.5px]">
+            <tbody>
+              <tr><td className="pr-3 text-[#6b5a52]">{inv.isFinalInvoice ? "Invoice No." : "Order No."}</td><td className="font-mono font-semibold">{inv.invoiceNumber}</td></tr>
+              <tr><td className="pr-3 text-[#6b5a52]">Invoice Date</td><td className="font-semibold">{invoiceDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td></tr>
+              <tr><td className="pr-3 text-[#6b5a52]">Order Ref.</td><td className="font-mono">NW-{order.id.slice(-8).toUpperCase()}</td></tr>
+              <tr><td className="pr-3 text-[#6b5a52]">Payment</td><td>{isCod ? "Cash on Delivery" : "Prepaid (Online)"}</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div className="overflow-x-auto mb-8">
-        <table className="w-full text-left border-collapse min-w-[480px]">
+      {/* Parties */}
+      <div className="grid grid-cols-3 gap-0 border-b border-[#e7dccb]">
+        <div className="px-8 py-4 border-r border-[#e7dccb]">
+          <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.16em] text-[#9A6E2A]">Bill To</p>
+          <p className="font-bold text-[12px]">{order.customerName}</p>
+          <p className="text-[#4b3f37]">{order.customerPhone}</p>
+          <p className="text-[#4b3f37] break-all">{order.customerEmail}</p>
+          {order.customerGstin && <p className="mt-1"><span className="font-semibold">GSTIN:</span> <span className="font-mono">{order.customerGstin}</span></p>}
+        </div>
+        <div className="px-6 py-4 border-r border-[#e7dccb]">
+          <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.16em] text-[#9A6E2A]">Ship To</p>
+          <p className="font-semibold">{order.customerName}</p>
+          <p className="text-[#4b3f37] whitespace-pre-line">{order.shippingAddress}</p>
+        </div>
+        <div className="px-6 py-4 space-y-1">
+          <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.16em] text-[#9A6E2A]">Supply Details</p>
+          <p><span className="text-[#6b5a52]">Place of supply:</span> <span className="font-semibold">{inv.placeOfSupply ?? "—"}{posCode ? ` (${posCode})` : ""}</span></p>
+          <p><span className="text-[#6b5a52]">Tax type:</span> {inv.sameState === true ? "CGST + SGST (intra-state)" : inv.sameState === false ? "IGST (inter-state)" : "GST"}</p>
+          <p><span className="text-[#6b5a52]">Reverse charge:</span> No</p>
+          <p><span className="text-[#6b5a52]">Prices:</span> Inclusive of GST</p>
+        </div>
+      </div>
+
+      {/* Items */}
+      <div className="px-8 pt-5">
+        <table className="w-full border-collapse text-[10.5px]">
           <thead>
-            <tr className="border-y bg-gray-50/50">
-              <th className="py-3 px-3 text-sm font-semibold text-gray-800">Description</th>
-              <th className="py-3 px-3 text-sm font-semibold text-gray-800 text-center">Qty</th>
-              <th className="py-3 px-3 text-sm font-semibold text-gray-800 text-right">Unit Price</th>
-              <th className="py-3 px-3 text-sm font-semibold text-gray-800 text-right">Amount</th>
+            <tr className="bg-[#6E1A2C] text-white">
+              <th className="py-2 pl-2 pr-1 text-left font-semibold w-6">#</th>
+              <th className="py-2 px-1 text-left font-semibold">Item</th>
+              <th className="py-2 px-1 text-left font-semibold">HSN</th>
+              <th className="py-2 px-1 text-right font-semibold">Qty</th>
+              <th className="py-2 px-1 text-right font-semibold">Rate</th>
+              <th className="py-2 px-1 text-right font-semibold">Disc.</th>
+              <th className="py-2 px-1 text-right font-semibold">Taxable</th>
+              <th className="py-2 px-1 text-right font-semibold">GST</th>
+              <th className="py-2 pl-1 pr-2 text-right font-semibold">Amount</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
-            {order.items.map((item, i) => (
-              <tr key={i}>
-                <td className="py-3 px-3">
-                  <p className="font-medium text-gray-800">{item.productName || item.product?.name || "Product"}</p>
-                  <p className="text-xs text-gray-500">Weight: {item.weight}</p>
-                </td>
-                <td className="py-3 px-3 text-center text-gray-600">{item.quantity}</td>
-                <td className="py-3 px-3 text-right text-gray-600">{inr(item.price)}</td>
-                <td className="py-3 px-3 text-right font-medium text-gray-800">{inr(item.price * item.quantity)}</td>
+          <tbody>
+            {items.map((item, i) => {
+              const l = inv.lines[i];
+              return (
+                <tr key={i} className="border-b border-[#efe6d8] align-top">
+                  <td className="py-2 pl-2 pr-1 text-[#6b5a52]">{i + 1}</td>
+                  <td className="py-2 px-1">
+                    <p className="font-semibold">{item.productName || item.product?.name || "Product"}</p>
+                    <p className="text-[9.5px] text-[#6b5a52]">Pack: {item.weight}</p>
+                  </td>
+                  <td className="py-2 px-1 font-mono">{l.hsnCode ?? "—"}</td>
+                  <td className="py-2 px-1 text-right tabular-nums">{item.quantity}</td>
+                  <td className="py-2 px-1 text-right tabular-nums">{money(item.price)}</td>
+                  <td className="py-2 px-1 text-right tabular-nums">{l.discount ? money(l.discount) : "—"}</td>
+                  <td className="py-2 px-1 text-right tabular-nums">{money(l.taxable)}</td>
+                  <td className="py-2 px-1 text-right tabular-nums whitespace-nowrap">{l.rate}% · {money(l.tax)}</td>
+                  <td className="py-2 pl-1 pr-2 text-right font-semibold tabular-nums">{money(l.net)}</td>
+                </tr>
+              );
+            })}
+            {inv.shipping > 0 && (
+              <tr className="border-b border-[#efe6d8]">
+                <td className="py-2 pl-2 pr-1 text-[#6b5a52]">{items.length + 1}</td>
+                <td className="py-2 px-1 font-semibold" colSpan={2}>Shipping &amp; handling</td>
+                <td className="py-2 px-1 text-right">1</td>
+                <td className="py-2 px-1 text-right tabular-nums">{money(inv.shippingLine.net)}</td>
+                <td className="py-2 px-1 text-right">—</td>
+                <td className="py-2 px-1 text-right tabular-nums">{money(inv.shippingLine.taxable)}</td>
+                <td className="py-2 px-1 text-right tabular-nums whitespace-nowrap">{inv.shippingLine.rate}% · {money(inv.shippingLine.tax)}</td>
+                <td className="py-2 pl-1 pr-2 text-right font-semibold tabular-nums">{money(inv.shippingLine.net)}</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
-      <div className="flex justify-end">
-        <div className="w-full sm:w-80 space-y-2 text-sm">
-          <div className="flex justify-between text-gray-600"><span>Items Subtotal</span><span>{inr(inv.subtotal)}</span></div>
-          {inv.discount > 0 && (
-            <div className="flex justify-between text-emerald-700 font-medium"><span>Discounts</span><span>-{inr(inv.discount)}</span></div>
-          )}
-          <div className="flex justify-between text-gray-600"><span>Shipping</span><span>{inv.shipping === 0 ? "Free" : inr(inv.shipping)}</span></div>
-          <div className="flex justify-between text-lg font-bold text-gray-800 border-t pt-3">
-            <span>{order.paymentMethod === "COD" ? "Amount Payable" : "Total Paid"}</span>
-            <span>{inr(inv.total)}</span>
-          </div>
-          <div className="pt-3 mt-1 border-t border-dashed space-y-1 text-xs text-gray-500">
-            <div className="flex justify-between"><span>Taxable Value</span><span>{inr(inv.taxableValue)}</span></div>
-            {inv.taxLines.map((line) => (
-              <div key={line.label} className="flex justify-between"><span>{line.label}</span><span>{inr(line.amount)}</span></div>
-            ))}
-            <p className="pt-1">All prices are inclusive of GST.</p>
+      {/* Tax summary + totals */}
+      <div className="grid grid-cols-[1fr_260px] gap-6 px-8 pt-4">
+        <div>
+          <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.16em] text-[#9A6E2A]">Tax Summary (HSN-wise)</p>
+          <table className="w-full border-collapse text-[10px]">
+            <thead>
+              <tr className="border-y border-[#d9c9b0] text-[#6b5a52]">
+                <th className="py-1 text-left font-semibold">HSN</th>
+                <th className="py-1 text-right font-semibold">Taxable</th>
+                {halfTax ? (
+                  <><th className="py-1 text-right font-semibold">CGST</th><th className="py-1 text-right font-semibold">SGST</th></>
+                ) : (
+                  <th className="py-1 text-right font-semibold">{inv.sameState === false ? "IGST" : "GST"}</th>
+                )}
+                <th className="py-1 text-right font-semibold">Total Tax</th>
+              </tr>
+            </thead>
+            <tbody>
+              {inv.hsnSummary.map((h) => (
+                <tr key={`${h.hsnCode}-${h.rate}`} className="border-b border-[#efe6d8]">
+                  <td className="py-1 font-mono">{h.hsnCode}</td>
+                  <td className="py-1 text-right tabular-nums">{money(h.taxable)}</td>
+                  {halfTax ? (
+                    <>
+                      <td className="py-1 text-right tabular-nums">{h.rate / 2}% · {money(h.tax / 2)}</td>
+                      <td className="py-1 text-right tabular-nums">{h.rate / 2}% · {money(h.tax - Math.round((h.tax / 2) * 100) / 100)}</td>
+                    </>
+                  ) : (
+                    <td className="py-1 text-right tabular-nums">{h.rate}% · {money(h.tax)}</td>
+                  )}
+                  <td className="py-1 text-right tabular-nums font-semibold">{money(h.tax)}</td>
+                </tr>
+              ))}
+              {inv.shipping > 0 && (
+                <tr className="border-b border-[#efe6d8] text-[#6b5a52]">
+                  <td className="py-1">Shipping</td>
+                  <td className="py-1 text-right tabular-nums">{money(inv.shippingLine.taxable)}</td>
+                  {halfTax ? (
+                    <><td className="py-1 text-right tabular-nums">{money(inv.shippingLine.tax / 2)}</td><td className="py-1 text-right tabular-nums">{money(inv.shippingLine.tax - Math.round((inv.shippingLine.tax / 2) * 100) / 100)}</td></>
+                  ) : (
+                    <td className="py-1 text-right tabular-nums">{money(inv.shippingLine.tax)}</td>
+                  )}
+                  <td className="py-1 text-right tabular-nums">{money(inv.shippingLine.tax)}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.16em] text-[#9A6E2A]">Amount in Words</p>
+          <p className="font-semibold">{amountInWords(inv.total)}</p>
+        </div>
+
+        <div className="self-start rounded-md border border-[#e7dccb] bg-[#fbf6ee] p-3 space-y-1 text-[10.5px]">
+          <div className="flex justify-between"><span className="text-[#6b5a52]">Items total</span><span className="tabular-nums">{money(inv.subtotal)}</span></div>
+          {inv.discount > 0 && <div className="flex justify-between text-[#1e6b45]"><span>Discount</span><span className="tabular-nums">−{money(inv.discount)}</span></div>}
+          <div className="flex justify-between"><span className="text-[#6b5a52]">Shipping</span><span className="tabular-nums">{inv.shipping === 0 ? "Free" : money(inv.shipping)}</span></div>
+          <div className="my-1 border-t border-dashed border-[#d9c9b0]" />
+          <div className="flex justify-between"><span className="text-[#6b5a52]">Taxable value</span><span className="tabular-nums">{money(inv.taxableValue)}</span></div>
+          {inv.taxLines.map((t) => (
+            <div key={t.label} className="flex justify-between"><span className="text-[#6b5a52]">{t.label}</span><span className="tabular-nums">{money(t.amount)}</span></div>
+          ))}
+          <div className="mt-1 flex justify-between items-baseline border-t-2 border-[#6E1A2C] pt-2">
+            <span className="font-bold uppercase text-[10px] tracking-wide">{isCod ? "Amount Payable" : "Total Paid"}</span>
+            <span className="text-[16px] font-black tabular-nums">₹{money(inv.total)}</span>
           </div>
         </div>
       </div>
 
-      <div className="mt-14 pt-8 border-t text-center text-sm text-gray-500 space-y-1">
-        <p className="font-medium text-gray-700">{notes || "Thank you for choosing pure, natural dry fruits & spices."}</p>
-        <p>Questions about this invoice? Contact {settings.contactEmail}</p>
-        {inv.isFinalInvoice && <p className="text-xs">This is a computer-generated invoice and does not require a signature.</p>}
+      {/* Footer */}
+      <div className="grid grid-cols-[1fr_220px] gap-6 px-8 pt-6 pb-7 mt-4 border-t border-[#e7dccb]">
+        <div className="space-y-1 text-[9.5px] text-[#4b3f37]">
+          <p className="font-semibold text-[#1f1712]">{notes || "Thank you for choosing Spicy Nuts. Fine nuts & dry fruits, handpicked since 1973."}</p>
+          {settings.invoiceTerms && <p className="whitespace-pre-line">{settings.invoiceTerms}</p>}
+          <p>Returns: report any issue within 48 hours of delivery at {SITE}/account/orders.</p>
+          <p>Questions about this invoice? {BRAND_PHONE_DISPLAY} · {settings.contactEmail || BRAND_EMAIL}</p>
+        </div>
+        <div className="text-center text-[10px]">
+          <p className="font-semibold">For {settings.legalName || settings.storeName}</p>
+          <div className="h-12" />
+          <p className="border-t border-[#1f1712] pt-1 font-semibold">{settings.signatoryName || "Authorised Signatory"}</p>
+          {settings.signatoryName && <p className="text-[9px] text-[#6b5a52]">Authorised Signatory</p>}
+        </div>
       </div>
+      {inv.isFinalInvoice && (
+        <p className="pb-5 text-center text-[8.5px] text-[#8a7a70]">This is a computer-generated invoice and does not require a physical signature.</p>
+      )}
     </div>
   );
 }

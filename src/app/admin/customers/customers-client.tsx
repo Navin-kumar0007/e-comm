@@ -5,8 +5,8 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
-export default function CustomersClient({ initialCustomers }: { initialCustomers: any[] }) {
-  const [searchQuery, setSearchQuery] = useState("");
+export default function CustomersClient({ initialCustomers, initialQuery = "" }: { initialCustomers: any[]; initialQuery?: string }) {
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
 
   const filteredCustomers = useMemo(() => {
     if (!searchQuery) return initialCustomers;

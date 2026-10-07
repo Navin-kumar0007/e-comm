@@ -18,10 +18,10 @@ type Row = { key: string; product: Product; variant: Variant | null; label: stri
 
 const inr = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
 
-export function InventoryClient({ products }: { products: Product[] }) {
+export function InventoryClient({ products, initialQuery = "" }: { products: Product[]; initialQuery?: string }) {
   const router = useRouter();
   const [filter, setFilter] = useState<"all" | "low" | "out">("all");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initialQuery);
   const [open, setOpen] = useState<string | null>(null);
   const [form, setForm] = useState<{ reason: StockReason; qty: string; note: string }>({ reason: "RESTOCK", qty: "", note: "" });
   const [busy, setBusy] = useState(false);

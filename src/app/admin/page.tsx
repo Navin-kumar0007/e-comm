@@ -8,6 +8,11 @@ import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/order-status-rules"
 import { SalesChart } from "./sales-chart";
 
 const inr = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
+
+function greeting() {
+  const h = new Date(Date.now() + 5.5 * 3600_000).getUTCHours();
+  return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+}
 const RANGE_LABELS: Record<RangeKey, string> = { today: "Today", "7d": "7 days", "30d": "30 days", "90d": "90 days" };
 
 export default async function AdminDashboard({ searchParams }: { searchParams: Promise<{ range?: string; denied?: string }> }) {
@@ -19,9 +24,10 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
   try { await releaseStaleOrders(10); } catch (e) { console.error("Stale order sweep failed:", e); }
   const d = await getDashboard(range);
 
+  const change = (now: number, before: number) => (before > 0 ? Math.round(((now - before) / before) * 100) : null);
   const kpis = [
-    { label: "Net sales", value: inr(d.net), hint: d.refunded ? `${inr(d.gross)} gross − ${inr(d.refunded)} refunds` : "Confirmed orders, after refunds", icon: IndianRupee },
-    { label: "Orders", value: String(d.orders), hint: `Avg order ${inr(d.aov)} · ${d.codShare}% COD`, icon: ShoppingCart },
+    { label: "Net sales", value: inr(d.net), hint: d.refunded ? `${inr(d.gross)} gross − ${inr(d.refunded)} refunds` : "Confirmed orders, after refunds", icon: IndianRupee, delta: change(d.net, d.previous.net) },
+    { label: "Orders", value: String(d.orders), hint: `Avg order ${inr(d.aov)} · ${d.codShare}% COD`, icon: ShoppingCart, delta: change(d.orders, d.previous.orders) },
     { label: "Customers", value: String(d.customers), hint: `${d.repeatRate}% are repeat buyers`, icon: Users },
     { label: "RTO rate", value: d.rtoRate === null ? "—" : `${d.rtoRate}%`, hint: "Returned undelivered, of finished orders", icon: AlertTriangle },
   ];
@@ -37,12 +43,13 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-heading font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Sales from confirmed orders (paid online or COD), in India time</p>
+          <p className="text-sm font-medium text-[#9A6E2A]">{greeting()}, {staff.user.name?.split(" ")[0] || "there"}</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Business overview</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Confirmed orders (paid online or COD), India time · compared with the previous {RANGE_LABELS[range].toLowerCase()}</p>
         </div>
-        <div className="flex gap-1 p-1 bg-muted/50 rounded-xl">
+        <div className="flex gap-1 p-1 bg-white ring-1 ring-border rounded-xl">
           {(Object.keys(RANGES) as RangeKey[]).map((r) => (
-            <Link key={r} href={`/admin?range=${r}`} className={`px-3 py-1.5 rounded-lg text-sm ${r === range ? "bg-card shadow-sm font-semibold" : "text-muted-foreground"}`}>
+            <Link key={r} href={`/admin?range=${r}`} className={`px-3 py-1.5 rounded-lg text-sm ${r === range ? "bg-[#6E1A2C] text-white font-semibold" : "text-muted-foreground hover:text-foreground"}`}>
               {RANGE_LABELS[r]}
             </Link>
           ))}
@@ -58,7 +65,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
       {/* Needs attention */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {actions.map((a) => (
-          <Link key={a.label} href={a.href} className="p-5 rounded-2xl bg-card border border-border/50 shadow-sm hover:border-primary/40 transition-colors">
+          <Link key={a.label} href={a.href} className="p-5 rounded-xl bg-white border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:border-primary/40 transition-colors">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground font-medium">{a.label}</p>
               <a.icon className="w-4 h-4 text-muted-foreground" />
@@ -73,12 +80,19 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
       {showReports && (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (
-          <div key={k.label} className="p-6 rounded-2xl bg-card border border-border/50 shadow-sm">
+          <div key={k.label} className="p-6 rounded-xl bg-white border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground font-medium">{k.label}</p>
               <k.icon className="w-4 h-4 text-muted-foreground" />
             </div>
-            <p className="text-3xl font-bold mt-1 text-foreground tabular-nums">{k.value}</p>
+            <div className="mt-1 flex items-baseline gap-2">
+              <p className="text-3xl font-bold text-foreground tabular-nums">{k.value}</p>
+              {"delta" in k && k.delta !== null && k.delta !== undefined && (
+                <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${k.delta >= 0 ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
+                  {k.delta >= 0 ? "▲" : "▼"} {Math.abs(k.delta)}%
+                </span>
+              )}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">{k.hint}</p>
           </div>
         ))}
@@ -87,15 +101,15 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {showReports && (
-        <div className="lg:col-span-2 p-6 rounded-2xl bg-card border border-border/50 shadow-sm">
-          <h2 className="text-lg font-heading font-bold text-foreground mb-6">Daily sales</h2>
+        <div className="lg:col-span-2 p-6 rounded-xl bg-white border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <h2 className="text-base font-semibold text-foreground mb-6">Daily sales</h2>
           <SalesChart data={d.daily} />
         </div>
         )}
 
-        <div className="p-6 rounded-2xl bg-card border border-border/50 shadow-sm">
+        <div className="p-6 rounded-xl bg-white border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-heading font-bold text-foreground">Low stock</h2>
+            <h2 className="text-base font-semibold text-foreground">Low stock</h2>
             <Link href="/admin/inventory" className="text-sm text-primary hover:underline flex items-center gap-1">Inventory <ArrowUpRight className="w-3 h-3" /></Link>
           </div>
           {d.lowStock.length === 0 ? (
@@ -120,8 +134,8 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {showReports && (
-        <div className="p-6 rounded-2xl bg-card border border-border/50 shadow-sm">
-          <h2 className="text-lg font-heading font-bold text-foreground mb-4">Top products</h2>
+        <div className="p-6 rounded-xl bg-white border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <h2 className="text-base font-semibold text-foreground mb-4">Top products</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm tabular-nums">
               <thead className="text-xs text-muted-foreground">
@@ -146,9 +160,9 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
         </div>
         )}
 
-        <div className="p-6 rounded-2xl bg-card border border-border/50 shadow-sm">
+        <div className="p-6 rounded-xl bg-white border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-heading font-bold text-foreground">Recent orders</h2>
+            <h2 className="text-base font-semibold text-foreground">Recent orders</h2>
             <Link href="/admin/orders" className="text-sm text-primary hover:underline flex items-center gap-1">View all <ArrowUpRight className="w-3 h-3" /></Link>
           </div>
           <table className="w-full text-sm">

@@ -21,8 +21,9 @@ const istDateKey = (d: Date) => new Date(d.getTime() + 5.5 * 3600_000).toISOStri
 export async function getDashboard(range: RangeKey) {
   const days = RANGES[range];
   const since = istDayStart(days - 1);
+  const prevSince = istDayStart(2 * days - 1);
 
-  const [orders, refunds, live, openReturns, pendingManualRefunds, pendingReviews, lowStock, recent] = await Promise.all([
+  const [orders, refunds, live, openReturns, pendingManualRefunds, pendingReviews, lowStock, recent, prev, prevRefunds] = await Promise.all([
     prisma.order.findMany({
       where: { createdAt: { gte: since }, status: { in: BOOKED_STATUSES } },
       select: {
@@ -42,7 +43,17 @@ export async function getDashboard(range: RangeKey) {
       take: 6,
       select: { id: true, customerName: true, total: true, status: true, createdAt: true },
     }),
+    // Same-length period just before, for "vs previous" comparisons.
+    prisma.order.aggregate({
+      where: { createdAt: { gte: prevSince, lt: since }, status: { in: BOOKED_STATUSES } },
+      _sum: { total: true },
+      _count: { _all: true },
+    }),
+    prisma.refund.aggregate({ where: { createdAt: { gte: prevSince, lt: since }, status: { not: "FAILED" } }, _sum: { amount: true } }),
   ]);
+  const prevGross = round(prev._sum.total ?? 0);
+  const prevOrders = prev._count._all;
+  const prevNet = round(prevGross - (prevRefunds._sum.amount ?? 0));
 
   const gross = round(orders.reduce((s: number, o: any) => s + o.total, 0));
   const refunded = round(refunds._sum.amount ?? 0);
@@ -134,6 +145,7 @@ export async function getDashboard(range: RangeKey) {
     topProducts,
     daily: [...daily.entries()].map(([date, v]) => ({ date, revenue: round(v.revenue), orders: v.orders })),
     recent,
+    previous: { net: prevNet, orders: prevOrders, aov: prevOrders ? round(prevGross / prevOrders) : 0 },
   };
 }
 

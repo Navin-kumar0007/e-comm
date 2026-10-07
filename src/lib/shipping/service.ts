@@ -16,7 +16,7 @@ import { ShippingError, type PaymentMode, type TrackingEvent } from "./types";
 import { estimateOrderWeight } from "./weight";
 export { parseWeightGrams, estimateOrderWeight } from "./weight";
 
-function parseAddress(order: { shippingAddress: string; shippingState?: string | null }) {
+export function parseAddress(order: { shippingAddress: string; shippingState?: string | null }) {
   // Stored as "street, city, state, pincode"
   const parts = order.shippingAddress.split(",").map((p) => p.trim());
   const pincode = parts.length >= 1 && /^\d{6}$/.test(parts[parts.length - 1]) ? parts.pop()! : "";

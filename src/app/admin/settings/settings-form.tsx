@@ -88,6 +88,9 @@ export default function SettingsForm({ initialSettings, providers }: { initialSe
         businessAddress: ((fd.get("businessAddress") as string) || "").trim() || null,
         businessState: ((fd.get("businessState") as string) || "").trim() || null,
         invoicePrefix: (fd.get("invoicePrefix") as string) || "SN",
+        fssaiLicense: ((fd.get("fssaiLicense") as string) || "").trim() || null,
+        signatoryName: ((fd.get("signatoryName") as string) || "").trim() || null,
+        invoiceTerms: ((fd.get("invoiceTerms") as string) || "").trim() || null,
       };
       const res = await updateAdminSettingsAction(data);
       if (res && "error" in res) {
@@ -248,6 +251,21 @@ export default function SettingsForm({ initialSettings, providers }: { initialSe
                     <Input name="invoicePrefix" defaultValue={settings.invoicePrefix ?? "SN"} className="rounded-xl font-mono uppercase" />
                     <p className="text-xs text-muted-foreground">Invoices are numbered PREFIX/2026-27/00001.</p>
                   </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>FSSAI Licence No.</Label>
+                    <Input name="fssaiLicense" inputMode="numeric" maxLength={14} defaultValue={settings.fssaiLicense ?? ""} placeholder="14 digits" className="rounded-xl font-mono" />
+                    <p className="text-xs text-muted-foreground">Food businesses must print this on every invoice.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Authorised Signatory</Label>
+                    <Input name="signatoryName" defaultValue={settings.signatoryName ?? ""} placeholder="Owner / proprietor name" className="rounded-xl" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Invoice Terms (optional)</Label>
+                  <Textarea name="invoiceTerms" defaultValue={settings.invoiceTerms ?? ""} rows={2} placeholder="e.g. Goods once sold are returnable only as per our returns policy." className="rounded-xl" />
                 </div>
               </div>
               <div className="pt-4 flex justify-end">

@@ -142,6 +142,8 @@ export async function POST(req: Request) {
           quantity: line.quantity,
           price: line.unitPrice,
           weight: line.weight,
+          hsnCode: line.hsnCode,
+          gstRate: line.gstRate,
         });
       }
 

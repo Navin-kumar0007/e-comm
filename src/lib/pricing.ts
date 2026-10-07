@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { parseBlendSpec, blendDisplayName, BLEND_WEIGHT, type BlendSpec } from "@/lib/blend-pricing";
 import { getStoreSettings, type StoreSettings } from "@/lib/store-settings";
+import { splitGst } from "@/lib/gst";
 
 /** An error whose message is safe to show to the customer. */
 export class CheckoutError extends Error {
@@ -21,6 +22,8 @@ export interface PricedLine {
   quantity: number;
   weight: string;
   blend?: BlendSpec;
+  gstRate: number; // % (product's own rate, else store default)
+  hsnCode: string | null;
 }
 
 export interface CartQuote {
@@ -97,6 +100,8 @@ export async function priceCart(input: {
         quantity: item.quantity,
         weight: BLEND_WEIGHT,
         blend: parsed.spec,
+        gstRate: settings.gstRate,
+        hsnCode: null,
       });
       continue;
     }
@@ -136,6 +141,8 @@ export async function priceCart(input: {
       unitPrice: variant ? variant.salePrice ?? variant.price : product.salePrice ?? product.price,
       quantity: item.quantity,
       weight: variant ? variant.label : product.weight || item.weight || "Standard",
+      gstRate: product.gstRate ?? settings.gstRate,
+      hsnCode: product.hsnCode ?? null,
     });
   }
 
@@ -179,7 +186,12 @@ export async function priceCart(input: {
   const shippingFee = merchandise >= settings.freeShippingThreshold ? 0 : round2(settings.flatShippingRate);
   const total = round2(merchandise + shippingFee);
   const gstRate = settings.gstRate;
-  const taxAmount = round2((total * gstRate) / (100 + gstRate));
+  const taxAmount = splitGst({
+    lines: lines.map((l) => ({ amount: l.unitPrice * l.quantity, gstRate: l.gstRate })),
+    discount: couponDiscount + pointsDiscount,
+    shipping: shippingFee,
+    defaultRate: gstRate,
+  }).taxTotal;
 
   return {
     lines,

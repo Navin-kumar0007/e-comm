@@ -141,6 +141,10 @@ export default function OrderHubClient({
                <Button type="button" onClick={() => window.print()} className="w-full gap-2 shadow-sm mt-2" variant="outline">
                  <Printer className="w-4 h-4" /> Print Invoice
                </Button>
+               <div className="grid grid-cols-2 gap-2">
+                 <a href={`/admin/print/labels?ids=${order.id}`} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center justify-center rounded-md border bg-white text-xs font-medium hover:bg-muted">4×6 Shipping label</a>
+                 <a href={`/admin/print/packing?ids=${order.id}`} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center justify-center rounded-md border bg-white text-xs font-medium hover:bg-muted">Packing slip</a>
+               </div>
             </div>
           </div>
 
