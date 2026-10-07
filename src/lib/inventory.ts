@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db/prisma";
+import { allocatePackLots, returnPackLots } from "@/lib/wms";
 
 import type { StockReason } from "@/lib/inventory-labels";
 export { STOCK_REASON_LABELS, type StockReason } from "@/lib/inventory-labels";
@@ -16,7 +17,11 @@ export interface StockChange {
   note?: string | null;
   /** Allow going below zero (e.g. re-reserving for a late payment). */
   force?: boolean;
+  /** Take from this batch first (e.g. writing off an expired batch). */
+  lotId?: string | null;
 }
+
+const RETURN_REASONS = new Set<StockReason>(["RELEASE", "CANCEL_RESTOCK", "RTO_RESTOCK"]);
 
 export interface StockResult {
   productId: string;
@@ -57,7 +62,7 @@ export async function adjustStock(tx: any, change: StockChange): Promise<StockRe
   const variant = variantId ? await tx.productVariant.findUnique({ where: { id: variantId }, select: { label: true, stock: true } }) : null;
   const balance = variant ? variant.stock : product.stock;
 
-  await tx.stockMovement.create({
+  const movement = await tx.stockMovement.create({
     data: {
       productId,
       variantId,
@@ -69,6 +74,13 @@ export async function adjustStock(tx: any, change: StockChange): Promise<StockRe
       actor: change.actor,
     },
   });
+
+  // Batches: units out come from the earliest-expiring batch; units returned go back where they came from.
+  if (delta < 0) {
+    await allocatePackLots(tx, { productId, variantId, qty: -delta, orderId: change.orderId, movementId: movement.id, lotId: change.lotId });
+  } else if (change.orderId && RETURN_REASONS.has(change.reason)) {
+    await returnPackLots(tx, { productId, variantId, qty: delta, orderId: change.orderId });
+  }
 
   const threshold = product.lowStockThreshold ?? 10;
   return {

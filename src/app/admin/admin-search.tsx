@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Search, ShoppingCart, Package, User, CornerDownLeft } from "lucide-react";
+import { Search, ShoppingCart, Package, User, CornerDownLeft, ClipboardList, Truck, Boxes } from "lucide-react";
 import { adminSearchAction, type SearchHit } from "@/app/actions/admin-search";
 
-const ICONS = { order: ShoppingCart, product: Package, customer: User } as const;
-const GROUP_LABEL = { order: "Orders", product: "Products", customer: "Customers" } as const;
+const ICONS = { order: ShoppingCart, product: Package, customer: User, purchase: ClipboardList, supplier: Truck, batch: Boxes } as const;
+const GROUP_LABEL = { order: "Orders", product: "Products", customer: "Customers", purchase: "Purchase orders", supplier: "Suppliers", batch: "Batches" } as const;
 
 /** Header search: orders (no., phone, email, invoice, AWB), products (name, SKU, barcode), customers. */
 export function AdminSearch() {

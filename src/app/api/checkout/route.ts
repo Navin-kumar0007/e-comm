@@ -192,7 +192,7 @@ export async function POST(req: Request) {
 
       if (isCod) await creditOrderRewards(tx, created);
       return created;
-    });
+    }, { timeout: 15000, maxWait: 5000 });
 
     await notifyLowStock(stockResults);
 

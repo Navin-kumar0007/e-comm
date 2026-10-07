@@ -111,7 +111,7 @@ export async function transitionOrder(
     }
 
     return { ok: true, from, to, noop: false } as const;
-  });
+  }, { timeout: 15000, maxWait: 5000 });
 
   if (!result.ok) return result;
   if (result.noop) return { ok: true, from: result.from, to: result.to };

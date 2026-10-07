@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, ShoppingCart, RotateCcw, Users, Repeat, Printer, Warehouse, Barcode, Package, FolderTree,
   ChefHat, ListChecks, Ticket, MessageCircle, Sparkles, Star, MessageSquare, UserCog, Settings, Store,
+  Gauge, Wheat, Scissors, Boxes, ClipboardCheck, ClipboardList, Truck,
 } from "lucide-react";
 import type { Permission } from "@/lib/permissions";
 
@@ -30,8 +31,20 @@ export const NAV: NavGroup[] = [
   {
     label: "Inventory",
     items: [
+      { href: "/admin/warehouse", label: "Warehouse", icon: Gauge, permission: "inventory.manage" },
       { href: "/admin/inventory", label: "Stock", icon: Warehouse, permission: "inventory.manage" },
+      { href: "/admin/materials", label: "Bulk stock", icon: Wheat, permission: "inventory.manage" },
+      { href: "/admin/repack", label: "Pack from bulk", icon: Scissors, permission: "inventory.manage" },
+      { href: "/admin/batches", label: "Batches & expiry", icon: Boxes, permission: "inventory.manage" },
+      { href: "/admin/stock-counts", label: "Stock counts", icon: ClipboardCheck, permission: "inventory.manage" },
       { href: "/admin/barcodes", label: "Barcodes", icon: Barcode, permission: ["inventory.manage", "catalog.manage"] },
+    ],
+  },
+  {
+    label: "Purchasing",
+    items: [
+      { href: "/admin/purchases", label: "Purchase orders", icon: ClipboardList, permission: "purchases.manage" },
+      { href: "/admin/suppliers", label: "Suppliers", icon: Truck, permission: "purchases.manage" },
     ],
   },
   {

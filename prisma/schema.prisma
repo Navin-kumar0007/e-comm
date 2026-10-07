@@ -57,6 +57,9 @@ model Product {
   gstRate             Float? // % GST; null = store default (Settings.gstRate)
   variants            ProductVariant[]
   stockMovements      StockMovement[]
+  materials           Material[]
+  purchaseLines       PurchaseLine[]
+  lots                StockLot[]
 
   @@index([categoryId])
   @@index([status])
@@ -503,6 +506,8 @@ model ProductVariant {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   stockMovements StockMovement[]
+  purchaseLines  PurchaseLine[]
+  lots           StockLot[]
 
   @@index([productId])
 }
@@ -524,4 +529,205 @@ model StockMovement {
 
   @@index([productId, createdAt])
   @@index([orderId])
+}
+
+// ───────────── Warehouse ─────────────
+
+model Supplier {
+  id          String          @id @default(cuid())
+  name        String
+  contactName String?
+  phone       String?
+  email       String?
+  gstin       String?
+  address     String?
+  state       String?
+  leadDays    Int             @default(7) // usual days from order to delivery
+  notes       String?
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  purchases   PurchaseOrder[]
+  lots        StockLot[]
+}
+
+// Bulk stock bought by weight (e.g. 25 kg almond bags), packed into jars and pouches.
+model Material {
+  id            String             @id @default(cuid())
+  name          String             @unique
+  unit          String             @default("kg")
+  productId     String? // the product it is packed into
+  product       Product?           @relation(fields: [productId], references: [id], onDelete: SetNull)
+  stockQty      Float              @default(0)
+  avgCost       Float              @default(0) // ₹ per unit, weighted average
+  reorderLevel  Float              @default(0)
+  hsnCode       String?
+  gstRate       Float?
+  isActive      Boolean            @default(true)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  lots          StockLot[]
+  movements     MaterialMovement[]
+  purchaseLines PurchaseLine[]
+  repacks       RepackRun[]
+}
+
+model PurchaseOrder {
+  id                  String         @id @default(cuid())
+  number              String         @unique // PO-2026-0001
+  supplierId          String
+  supplier            Supplier       @relation(fields: [supplierId], references: [id])
+  status              String         @default("DRAFT") // DRAFT, ORDERED, PARTIAL, RECEIVED, CANCELLED
+  orderDate           DateTime       @default(now())
+  expectedDate        DateTime?
+  supplierInvoiceNo   String?
+  supplierInvoiceDate DateTime?
+  notes               String?
+  subtotal            Float          @default(0)
+  taxTotal            Float          @default(0)
+  freight             Float          @default(0)
+  total               Float          @default(0)
+  paidAmount          Float          @default(0)
+  createdBy           String
+  receivedAt          DateTime?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  lines               PurchaseLine[]
+  lots                StockLot[]
+
+  @@index([supplierId])
+  @@index([status])
+}
+
+// One line of a purchase: either bulk material (kg) or finished packs (pcs).
+model PurchaseLine {
+  id          String          @id @default(cuid())
+  poId        String
+  po          PurchaseOrder   @relation(fields: [poId], references: [id], onDelete: Cascade)
+  materialId  String?
+  material    Material?       @relation(fields: [materialId], references: [id], onDelete: SetNull)
+  productId   String?
+  product     Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variantId   String?
+  variant     ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  description String
+  unit        String // kg, pcs
+  qty         Float
+  rate        Float // ₹ per unit before GST
+  gstRate     Float           @default(0)
+  receivedQty Float           @default(0)
+
+  @@index([poId])
+}
+
+// A batch of stock that arrived or was packed together, with its expiry. Sold first-expiry-first-out.
+model StockLot {
+  id          String          @id @default(cuid())
+  lotNumber   String          @unique // B2610-001, the code stamped on the pack
+  kind        String // MATERIAL, PACK
+  materialId  String?
+  material    Material?       @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  productId   String?
+  product     Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantId   String?
+  variant     ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  supplierId  String?
+  supplier    Supplier?       @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  poId        String?
+  po          PurchaseOrder?  @relation(fields: [poId], references: [id], onDelete: SetNull)
+  repackRunId String?
+  qtyIn       Float
+  qtyLeft     Float
+  unitCost    Float           @default(0) // ₹ per kg (material) or per pack
+  mfgDate     DateTime?
+  expiryDate  DateTime?
+  source      String // PURCHASE, REPACK, OPENING
+  note        String?
+  actor       String
+  receivedAt  DateTime        @default(now())
+  allocations LotAllocation[]
+
+  @@index([productId, variantId])
+  @@index([materialId])
+  @@index([expiryDate])
+}
+
+// Which lot each unit sold came from: batch-to-customer tracing for recalls, and true cost of goods sold.
+model LotAllocation {
+  id         String   @id @default(cuid())
+  lotId      String
+  lot        StockLot @relation(fields: [lotId], references: [id], onDelete: Cascade)
+  orderId    String?
+  movementId String?
+  qty        Float
+  unitCost   Float    @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([lotId])
+  @@index([orderId])
+}
+
+// Every change to bulk material stock. Sum of deltas = Material.stockQty.
+model MaterialMovement {
+  id           String   @id @default(cuid())
+  materialId   String
+  material     Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  lotId        String?
+  delta        Float
+  balanceAfter Float
+  reason       String // PURCHASE, REPACK, WASTAGE, CORRECTION, OPENING
+  refId        String? // PO or repack run
+  note         String?
+  actor        String
+  createdAt    DateTime @default(now())
+
+  @@index([materialId, createdAt])
+}
+
+// Bulk → packs: e.g. 10 kg almonds → 38 × 250 g jars + 0.4 kg wastage.
+model RepackRun {
+  id          String   @id @default(cuid())
+  number      String   @unique // RP-2026-0001
+  materialId  String
+  material    Material @relation(fields: [materialId], references: [id])
+  inputQty    Float // kg taken from bulk
+  outputQty   Float // kg that went into packs
+  wastageQty  Float
+  costPerKg   Float // bulk cost of the input, ₹/kg
+  packingCost Float    @default(0) // jar + label + seal, ₹ per pack
+  outputs     String // JSON [{productId, variantId, label, packs, grams, lotId, lotNumber, unitCost}]
+  notes       String?
+  actor       String
+  createdAt   DateTime @default(now())
+
+  @@index([materialId])
+}
+
+model StockCount {
+  id        String           @id @default(cuid())
+  number    String           @unique // SC-2026-0001
+  status    String           @default("OPEN") // OPEN, POSTED, CANCELLED
+  notes     String?
+  createdBy String
+  createdAt DateTime         @default(now())
+  postedAt  DateTime?
+  postedBy  String?
+  lines     StockCountLine[]
+}
+
+model StockCountLine {
+  id         String     @id @default(cuid())
+  countId    String
+  count      StockCount @relation(fields: [countId], references: [id], onDelete: Cascade)
+  kind       String // PACK, MATERIAL
+  productId  String?
+  variantId  String?
+  materialId String?
+  name       String
+  unit       String     @default("pcs")
+  expected   Float
+  counted    Float?
+  unitCost   Float      @default(0)
+
+  @@index([countId])
 }

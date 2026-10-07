@@ -194,7 +194,7 @@ export async function markOrderPaid(params: { orderId: string; razorpayOrderId: 
 
     await creditOrderRewards(tx, order);
     return { ok: true, orderId: order.id, alreadyProcessed: false } as const;
-  });
+  }, { timeout: 15000, maxWait: 5000 });
 
   if (result.ok && !result.alreadyProcessed) {
     await sendOrderConfirmedNotifications(result.orderId);
@@ -248,7 +248,7 @@ export async function releaseOrderReservation(orderId: string, newStatus: "EXPIR
       await tx.user.update({ where: { id: order.userId }, data: { points: { increment: order.pointsUsed } } });
     }
     return true;
-  });
+  }, { timeout: 15000, maxWait: 5000 });
 }
 
 /**

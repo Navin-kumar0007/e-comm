@@ -16,6 +16,7 @@ export const PERMISSIONS = [
   "refunds.issue",
   "returns.manage",
   "inventory.manage",
+  "purchases.manage", // suppliers, purchase orders, receiving goods, costs
   "catalog.manage", // products, sizes, categories, recipes, dietary tags
   "marketing.manage", // coupons, WhatsApp broadcasts, points
   "customers.view", // customer list, inquiries, subscriptions

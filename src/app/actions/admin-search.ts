@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { getStaffContext } from "@/lib/auth-guard";
 
 export interface SearchHit {
-  kind: "order" | "product" | "customer";
+  kind: "order" | "product" | "customer" | "purchase" | "supplier" | "batch";
   id: string;
   title: string;
   subtitle: string;
@@ -91,6 +91,41 @@ export async function adminSearchAction(query: string): Promise<SearchHit[]> {
         subtitle: [u.email, u.phone].filter(Boolean).join(" · "),
         href: `/admin/customers?q=${encodeURIComponent(u.email)}`,
       });
+    }
+  }
+
+  if (staff.can("purchases.manage")) {
+    const [pos, suppliers] = await Promise.all([
+      prisma.purchaseOrder.findMany({
+        where: { OR: [{ number: ci }, { supplierInvoiceNo: ci }, { supplier: { name: ci } }] },
+        orderBy: { createdAt: "desc" },
+        take: 4,
+        select: { id: true, number: true, total: true, status: true, supplier: { select: { name: true } } },
+      }),
+      prisma.supplier.findMany({
+        where: { OR: [{ name: ci }, { gstin: ci }, ...(digits.length >= 4 ? [{ phone: { contains: digits } }] : [])] },
+        take: 3,
+        select: { id: true, name: true, phone: true, gstin: true },
+      }),
+    ]);
+    for (const p of pos) {
+      hits.push({ kind: "purchase", id: p.id, title: `${p.number} · ${p.supplier.name}`, subtitle: `₹${Math.round(p.total).toLocaleString("en-IN")} · ${p.status.toLowerCase()}`, href: `/admin/purchases/${p.id}` });
+    }
+    for (const s of suppliers) {
+      hits.push({ kind: "supplier", id: s.id, title: s.name, subtitle: [s.phone, s.gstin].filter(Boolean).join(" · ") || "Supplier", href: "/admin/suppliers" });
+    }
+  }
+
+  if (staff.can("inventory.manage")) {
+    const lots = await prisma.stockLot.findMany({
+      where: { lotNumber: ci },
+      take: 4,
+      orderBy: { receivedAt: "desc" },
+      select: { id: true, lotNumber: true, qtyLeft: true, product: { select: { name: true } }, variant: { select: { label: true } }, material: { select: { name: true } } },
+    });
+    for (const l of lots) {
+      const name = l.product ? `${l.product.name}${l.variant ? ` ${l.variant.label}` : ""}` : l.material?.name ?? "";
+      hits.push({ kind: "batch", id: l.id, title: `Batch ${l.lotNumber}`, subtitle: `${name} · ${l.qtyLeft} left`, href: `/admin/batches?q=${encodeURIComponent(l.lotNumber)}` });
     }
   }
 

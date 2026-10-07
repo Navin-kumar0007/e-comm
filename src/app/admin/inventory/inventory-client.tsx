@@ -82,6 +82,9 @@ export function InventoryClient({ products, initialQuery = "" }: { products: Pro
       <div>
         <h1 className="text-3xl font-heading font-bold text-foreground">Inventory</h1>
         <p className="text-muted-foreground mt-1">Stock levels, restocks and a full history of every change</p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Buying from a supplier? Use a <a href="/admin/purchases" className="font-semibold text-[#6E1A2C] hover:underline">purchase order</a> so the cost, batch and expiry are recorded. Packing jars from bulk? Use <a href="/admin/repack" className="font-semibold text-[#6E1A2C] hover:underline">Pack from bulk</a>.
+        </p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

@@ -9,7 +9,9 @@ export type StockReason =
   | "DAMAGE"
   | "CORRECTION" // stock count fix / admin edit
   | "ADMIN_ORDER"
-  | "OPENING";
+  | "OPENING"
+  | "REPACK" // packed from bulk stock
+  | "COUNT"; // stock count adjustment
 
 export const STOCK_REASON_LABELS: Record<StockReason, string> = {
   SALE: "Sold",
@@ -21,5 +23,7 @@ export const STOCK_REASON_LABELS: Record<StockReason, string> = {
   CORRECTION: "Stock correction",
   ADMIN_ORDER: "Manual order",
   OPENING: "Opening stock",
+  REPACK: "Packed from bulk",
+  COUNT: "Stock count",
 };
 

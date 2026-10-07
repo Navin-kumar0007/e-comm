@@ -286,7 +286,7 @@ export async function saveProductVariantsAction(
     if (clean.length > 0) {
       await syncProductFromVariants(tx, productId);
     }
-  });
+  }, { timeout: 15000, maxWait: 5000 });
 
   revalidatePath(`/admin/products/edit/${productId}`);
   revalidatePath('/admin/products');

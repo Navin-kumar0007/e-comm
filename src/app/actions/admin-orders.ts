@@ -217,7 +217,7 @@ export async function createOrderAction(data: {
         }
       }
       return created;
-    });
+    }, { timeout: 15000, maxWait: 5000 });
 
     revalidatePath('/admin/orders');
     revalidatePath('/admin');
