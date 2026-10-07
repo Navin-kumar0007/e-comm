@@ -2,6 +2,7 @@ import { Search, HelpCircle, FileText, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
+import { BRAND_PHONE_DISPLAY, BRAND_PHONE_TEL } from "@/lib/contact";
 
 export default function HelpSupportPage() {
   const faqs = [
@@ -88,7 +89,7 @@ export default function HelpSupportPage() {
           <p className="text-muted-foreground mb-8">Our customer support team is available Monday to Saturday, 9 AM to 6 PM.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/contact" className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-white hover:bg-royal-deep"><Mail className="w-4 h-4 mr-2" /> Email Support</Link>
-            <Link href="mailto:contact@spicynuts.com" className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-200 bg-white px-8 text-sm font-medium hover:bg-zinc-100 text-zinc-900"><Phone className="w-4 h-4 mr-2" /> Email Us</Link>
+            <a href={`tel:${BRAND_PHONE_TEL}`} className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-200 bg-white px-8 text-sm font-medium hover:bg-zinc-100 text-zinc-900"><Phone className="w-4 h-4 mr-2" /> Call {BRAND_PHONE_DISPLAY}</a>
           </div>
         </div>
       </div>

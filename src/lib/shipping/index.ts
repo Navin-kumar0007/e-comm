@@ -1,9 +1,10 @@
 import { manualProvider } from "./manual";
 import { xpressbeesProvider } from "./xpressbees";
+import { shiprocketProvider } from "./shiprocket";
 import type { ShippingProvider } from "./types";
 
 // Register new delivery partners here.
-const PROVIDERS: ShippingProvider[] = [manualProvider, xpressbeesProvider];
+const PROVIDERS: ShippingProvider[] = [manualProvider, shiprocketProvider, xpressbeesProvider];
 
 export function getProvider(id: string | null | undefined): ShippingProvider | null {
   return PROVIDERS.find((p) => p.id === id) ?? null;

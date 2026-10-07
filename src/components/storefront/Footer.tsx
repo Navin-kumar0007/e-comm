@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BRAND_PHONE_DISPLAY, BRAND_PHONE_TEL } from "@/lib/contact";
 
 const footerLinks = {
   shop: [
@@ -66,6 +67,7 @@ export function Footer() {
               <p>Chitguppa Sub Post Office, Chitgoppa,</p>
               <p>Bidar, Karnataka – 585412</p>
               <p className="mt-2 font-semibold text-brand-gold">GSTIN: 29FCBPM9871D1Z6</p>
+              <p>📞 <a href={`tel:${BRAND_PHONE_TEL}`} className="hover:text-brand-gold">{BRAND_PHONE_DISPLAY}</a></p>
               <p>📧 spicynuts1973@gmail.com</p>
             </div>
           </div>

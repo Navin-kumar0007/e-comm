@@ -164,6 +164,24 @@ export async function notifyAdminNewOrder(orderId: string, total: number, custom
 }
 
 
+export async function notifyAdminShippingIssue(orderId: string, customerName: string, problem: string) {
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM?.match(/<(.+)>/)?.[1] || 'spicynuts1973@gmail.com';
+  const orderNum = orderId.slice(-8).toUpperCase();
+  return sendEmail(adminEmail, `⚠️ Book shipment manually — Order #${orderNum}`, `
+    <div style="${baseStyles}">
+      ${headerHtml}
+      <h1 style="color: #052c1e; font-size: 20px;">Automatic courier booking failed</h1>
+      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
+        <p style="margin: 4px 0;"><strong>Order:</strong> #${orderNum}</p>
+        <p style="margin: 4px 0;"><strong>Customer:</strong> ${esc(customerName)}</p>
+        <p style="margin: 4px 0;"><strong>Reason:</strong> ${esc(problem)}</p>
+      </div>
+      <p>The order is safe. Open it and click <strong>Book shipment</strong> after fixing the reason (e.g. recharge the courier wallet).</p>
+      <p><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicynuts.in'}/admin/orders/${orderId}" style="color: #c59b27; font-weight: bold;">Open order →</a></p>
+    </div>
+  `);
+}
+
 export async function notifyAdminContact(name: string, email: string, message: string) {
   const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM?.match(/<(.+)>/)?.[1] || 'spicynuts1973@gmail.com';
   

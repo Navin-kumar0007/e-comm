@@ -74,7 +74,7 @@ export async function createShipmentForOrder(orderId: string, opts: BookShipment
     paymentMode: isCod ? "COD" : "PREPAID",
     orderValue: order.total,
     codAmount: isCod ? order.total : 0,
-    consignee: { name: order.customerName, phone: order.customerPhone, ...addr },
+    consignee: { name: order.customerName, phone: order.customerPhone, email: order.customerEmail || undefined, ...addr },
     pickup: pickupFrom(settings),
     items: order.items.map((i: any) => ({
       name: i.productName || i.product?.name || "Item",
@@ -120,6 +120,36 @@ export async function createShipmentForOrder(orderId: string, opts: BookShipment
 
   await syncOrderWithShipment(order.id, booked.status, actor);
   return shipment;
+}
+
+/**
+ * Books the courier automatically for a newly confirmed order (COD placed or
+ * online payment captured). Off unless SHIPPING_AUTO_BOOK=true and the chosen
+ * partner can book by API. Never throws: on failure the order stays ready for
+ * manual booking and the admin is emailed.
+ */
+export async function autoBookShipment(orderId: string) {
+  if (process.env.SHIPPING_AUTO_BOOK !== "true") return;
+  try {
+    const settings = await getStoreSettings();
+    const provider = getActiveProvider(settings.shippingProvider);
+    if (!provider.capabilities.autoBooking) return;
+    const order = await prisma.order.findUnique({ where: { id: orderId }, include: { shipments: true } });
+    if (!order || !["PROCESSING", "CONFIRMED"].includes(order.status)) return;
+    if (order.shipments.some((s: any) => s.type === "FORWARD" && s.status !== "CANCELLED")) return;
+    await createShipmentForOrder(orderId, {}, "auto-booking");
+  } catch (e) {
+    const reason = e instanceof ShippingError ? e.message : "Unexpected error while booking";
+    console.error(`[AUTO-BOOK] ${orderId}:`, e);
+    await logOrderEvent(null, { orderId, type: "NOTE", message: `Automatic courier booking failed: ${reason}. Book it manually.`, actor: "auto-booking" }).catch(() => {});
+    try {
+      const order = await prisma.order.findUnique({ where: { id: orderId }, select: { customerName: true } });
+      const { notifyAdminShippingIssue } = await import("@/lib/email");
+      await notifyAdminShippingIssue(orderId, order?.customerName ?? "", reason);
+    } catch (mailErr) {
+      console.error("[AUTO-BOOK] Admin alert failed:", mailErr);
+    }
+  }
 }
 
 /** Moves the order along when the courier status implies it (CONFIRMED → SHIPPED → DELIVERED / RTO). */

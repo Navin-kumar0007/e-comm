@@ -32,6 +32,7 @@ import { WhatsAppButton } from "@/components/storefront/whatsapp-button";
 import { WhatsAppWelcomePrompt } from "@/components/storefront/whatsapp-welcome-prompt";
 import { AccessibilityToolbar } from "@/components/accessibility/accessibility-toolbar";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { BRAND_PHONE_TEL } from "@/lib/contact";
 
 // Fonts: Manrope for interface and prices, Cormorant Garamond for headings, Cinzel for royal eyebrows
 const manrope = Manrope({
@@ -135,7 +136,7 @@ const jsonLd = {
   alternateName: "B.M.V. Spices & Dry Fruits",
   description: "Premium dry fruits, organic spices, Mamra almonds, Kashmiri walnuts, and handcrafted masalas. Online store delivering across India.",
   url: siteUrl,
-  telephone: "+91-spicynuts1973",
+  telephone: BRAND_PHONE_TEL,
   email: "spicynuts1973@gmail.com",
   address: {
     "@type": "PostalAddress",

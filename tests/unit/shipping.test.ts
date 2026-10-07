@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { parseWeightGrams, estimateOrderWeight } from "@/lib/shipping/weight";
 import { mapXpressbeesStatus } from "@/lib/shipping/xpressbees";
+import { mapShiprocketStatus, shiprocketProvider } from "@/lib/shipping/shiprocket";
 import { orderStatusForShipment } from "@/lib/shipping/status";
 
 describe("weights", () => {
@@ -33,5 +34,27 @@ describe("courier status mapping", () => {
     expect(orderStatusForShipment("DELIVERED")).toBe("DELIVERED");
     expect(orderStatusForShipment("RTO_DELIVERED")).toBe("RTO");
     expect(orderStatusForShipment("PICKUP_SCHEDULED")).toBeNull();
+  });
+});
+
+describe("shiprocket", () => {
+  it.each([
+    ["NEW", "CREATED"], ["PICKUP SCHEDULED", "PICKUP_SCHEDULED"], ["OUT FOR PICKUP", "PICKUP_SCHEDULED"],
+    ["PICKED UP", "PICKED_UP"], ["SHIPPED", "PICKED_UP"], ["IN TRANSIT", "IN_TRANSIT"],
+    ["REACHED AT DESTINATION HUB", "IN_TRANSIT"], ["OUT FOR DELIVERY", "OUT_FOR_DELIVERY"],
+    ["UNDELIVERED", "NDR"], ["DELIVERED", "DELIVERED"], ["RTO INITIATED", "RTO_INITIATED"],
+    ["RTO IN TRANSIT", "RTO_IN_TRANSIT"], ["RTO DELIVERED", "RTO_DELIVERED"], ["CANCELED", "CANCELLED"], ["LOST", "LOST"],
+  ])("%s → %s", (raw, expected) => {
+    expect(mapShiprocketStatus(raw)).toBe(expected);
+  });
+
+  it("reads webhook pushes", () => {
+    const updates = shiprocketProvider.parseWebhook!({
+      awb: "1234567890", current_status: "OUT FOR DELIVERY", current_timestamp: "2026-10-08 10:15:00",
+      scans: [{ date: "2026-10-08 10:15:00", activity: "Out for delivery", location: "Bidar" }],
+    });
+    expect(updates).toHaveLength(1);
+    expect(updates[0]).toMatchObject({ awb: "1234567890", status: "OUT_FOR_DELIVERY", location: "Bidar" });
+    expect(shiprocketProvider.parseWebhook!({ hello: "world" })).toHaveLength(0);
   });
 });

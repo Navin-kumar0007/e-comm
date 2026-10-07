@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Gift, MessageCircle, X } from "lucide-react";
 import { WhatsAppVIPModal } from "./whatsapp-vip-modal";
+import { BRAND_WHATSAPP } from "@/lib/contact";
 
 export function WhatsAppButton() {
   const [vipOpen, setVipOpen] = useState(false);
@@ -24,7 +25,7 @@ export function WhatsAppButton() {
 
         {/* Direct WhatsApp Chat Link */}
         <Link
-          href="https://wa.me/919876543210?text=Hi%20Spicy%20Nuts!%20I%20have%20a%20query."
+          href={`https://wa.me/${BRAND_WHATSAPP}?text=Hi%20Spicy%20Nuts!%20I%20have%20a%20query.`}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with us on WhatsApp"

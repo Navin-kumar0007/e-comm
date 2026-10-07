@@ -6,6 +6,7 @@ import { submitContact } from '@/app/actions/contact';
 import { toast } from 'sonner';
 import { MapPin, Mail, Clock, Phone } from 'lucide-react';
 import { PageHero } from "@/components/storefront/royal/page-hero";
+import { BRAND_PHONE_DISPLAY, BRAND_PHONE_TEL, BRAND_WHATSAPP } from "@/lib/contact";
 
 
 
@@ -42,6 +43,19 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-bold text-sm mb-1">Visit Our Store</h3>
                 <p className="text-sm text-muted-foreground">B.M.V. Spices & Dry Fruits<br />Shop No 1/206/1, Bhaskar Nagar Chitguppa<br />Chitgoppa, Bidar, Karnataka – 585412</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <Phone className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm mb-1">Call / WhatsApp</h3>
+                <p className="text-sm text-muted-foreground">
+                  <a href={`tel:${BRAND_PHONE_TEL}`} className="hover:text-primary">{BRAND_PHONE_DISPLAY}</a>
+                  {" · "}
+                  <a href={`https://wa.me/${BRAND_WHATSAPP}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary">WhatsApp</a>
+                </p>
               </div>
             </div>
             <div className="flex gap-3">

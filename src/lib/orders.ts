@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import Razorpay from "razorpay";
 import { prisma } from "@/lib/db/prisma";
 import { sendOrderConfirmation, notifyAdminNewOrder } from "@/lib/email";
@@ -95,6 +96,17 @@ export async function sendOrderConfirmedNotifications(orderId: string) {
     await notifyAdminNewOrder(order.id, order.total, order.customerName, order.paymentMethod);
   } catch (e) {
     console.error("Admin new-order notification failed:", e);
+  }
+
+  // Courier booking runs after the response so checkout / payment callbacks stay fast.
+  const book = async () => {
+    const { autoBookShipment } = await import("@/lib/shipping/service"); // dynamic: avoids an import cycle
+    await autoBookShipment(order.id);
+  };
+  try {
+    after(book);
+  } catch {
+    await book(); // called outside a request (scripts / tests)
   }
 }
 
