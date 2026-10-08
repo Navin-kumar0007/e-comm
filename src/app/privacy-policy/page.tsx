@@ -30,6 +30,18 @@ export default function PrivacyPolicy() {
           <li>Right to grievance redressal.</li>
         </ul>
         <p>To exercise these rights, please contact our Data Protection Officer at spicynuts1973@gmail.com.</p>
+
+        <h3>5. WhatsApp Messages</h3>
+        <p>If you give us your phone number, we send order updates (confirmation, shipping, delivery) on WhatsApp from +91 85500 07073 using the WhatsApp Business Platform by Meta. Offers are sent only if you opted in. Reply STOP at any time to stop offers. Messages you send us are used only to answer you and handle your order.</p>
+
+        <h3 id="data-deletion">6. Deleting Your Data</h3>
+        <p>You can ask us to delete your account and personal data at any time:</p>
+        <ol>
+          <li>Email <a href="mailto:spicynuts1973@gmail.com?subject=Delete%20my%20data">spicynuts1973@gmail.com</a> with the subject &quot;Delete my data&quot;, from the email address on your account, or message us on WhatsApp at +91 85500 07073.</li>
+          <li>Tell us your name and the phone number or email you used to order.</li>
+          <li>We delete your account, saved addresses, WhatsApp subscription and marketing data within 30 days and confirm by email.</li>
+        </ol>
+        <p>We keep invoice and order records only as long as tax law requires (GST records are kept for at least 6 years); these are not used for marketing.</p>
       </div>
     </div>
     </>
