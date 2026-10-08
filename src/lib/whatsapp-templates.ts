@@ -18,7 +18,8 @@ export type TemplateKey =
   | "offer"
   | "new_release"
   | "price_drop"
-  | "price_alert_subscribed";
+  | "price_alert_subscribed"
+  | "owner_daily_summary";
 
 export const WA_TEMPLATES: Record<TemplateKey, { env: string; category: "UTILITY" | "MARKETING"; body: string; example: string[] }> = {
   order_confirmed: {
@@ -86,6 +87,12 @@ export const WA_TEMPLATES: Record<TemplateKey, { env: string; category: "UTILITY
     category: "UTILITY",
     body: "You'll get a WhatsApp message when {{1}} (now ₹{{2}}) drops in price. View it: {{3}}",
     example: ["Kashmiri Walnuts", "799", "https://www.spicynuts.in/product/kashmiri-walnuts"],
+  },
+  owner_daily_summary: {
+    env: "WA_TEMPLATE_OWNER_DAILY_SUMMARY",
+    category: "UTILITY",
+    body: "Spicy Nuts daily report for {{1}}: {{2}} orders, sales ₹{{3}}. To pack: {{4}}. Needs attention: {{5}}. Details: {{6}}",
+    example: ["7 Oct", "12", "8,450", "5 orders", "3 low stock, 1 batch expiring", "https://www.spicynuts.in/admin"],
   },
 };
 

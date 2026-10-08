@@ -67,29 +67,36 @@ model Product {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String
-  email         String         @unique
-  password      String?
-  provider      String? // "credentials" or "google"
-  image         String? // Google profile picture URL
-  role          String         @default("USER") // USER or ADMIN
-  points        Int            @default(0)
-  address       String?
-  city          String?
-  state         String?
-  pincode       String?
-  phone         String?
-  whatsappOptIn Boolean        @default(true)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  orders        Order[]
-  recipes       Recipe[]
-  reviews       Review[]
-  blogPosts     BlogPost[]
-  notifications Notification[]
-  dietaryTags   DietaryTag[]   @relation("UserDietaryTags")
-  subscriptions Subscription[]
+  id                String         @id @default(cuid())
+  name              String
+  email             String         @unique
+  password          String?
+  provider          String? // "credentials" or "google"
+  image             String? // Google profile picture URL
+  role              String         @default("USER") // USER or ADMIN
+  points            Int            @default(0)
+  address           String?
+  city              String?
+  state             String?
+  pincode           String?
+  phone             String?
+  whatsappOptIn     Boolean        @default(true)
+  customerType      String         @default("RETAIL") // RETAIL, WHOLESALE
+  businessName      String?
+  gstin             String? // business buyer's GSTIN, printed on their invoices
+  wholesaleDiscount Float? // % off retail prices on manual orders
+  totpSecret        String? // two-step login secret (encrypted)
+  totpEnabledAt     DateTime?
+  totpBackupCodes   String? // JSON array of SHA-256 hashes of one-time codes
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  orders            Order[]
+  recipes           Recipe[]
+  reviews           Review[]
+  blogPosts         BlogPost[]
+  notifications     Notification[]
+  dietaryTags       DietaryTag[]   @relation("UserDietaryTags")
+  subscriptions     Subscription[]
 }
 
 model Recipe {
@@ -799,4 +806,21 @@ model CodRemittance {
   orders    Order[]
 
   @@index([date])
+}
+
+// Who changed what in the admin, and when.
+model AuditLog {
+  id        String   @id @default(cuid())
+  actor     String // role:email
+  action    String // e.g. product.update, settings.update, refund.issue
+  entity    String? // Product, Order, Settings…
+  entityId  String?
+  summary   String
+  data      String? // JSON details (before / after)
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entity, entityId])
+  @@index([actor])
 }

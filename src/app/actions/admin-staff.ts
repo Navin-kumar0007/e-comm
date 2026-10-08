@@ -1,5 +1,6 @@
 'use server';
 
+import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
 import { getStaffContext, requirePermission } from '@/lib/auth-guard';
@@ -31,5 +32,6 @@ export async function setStaffRoleAction(email: string, role: string) {
 
   await prisma.user.update({ where: { id: user.id }, data: { role } });
   revalidatePath('/admin/staff');
+  await audit({ action: 'staff.role', entity: 'User', entityId: user.id, summary: `Set role of ${target} to ${role}` });
   return { success: true, name: user.name };
 }

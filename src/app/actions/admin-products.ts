@@ -1,5 +1,6 @@
 'use server';
 
+import { audit } from '@/lib/audit';
 import { sendWhatsAppMessage, buildPriceDropWhatsAppMessage } from "@/lib/whatsapp";
 
 import { prisma } from '@/lib/db/prisma';
@@ -43,6 +44,7 @@ export async function deleteProductAction(id: string) {
 
   revalidatePath('/admin/products');
   revalidatePath('/shop');
+  await audit({ action: 'product.delete', entity: 'Product', entityId: id, summary: `Deleted product ${id}` });
   return { success: true };
 }
 
@@ -67,6 +69,7 @@ export async function bulkDeleteProductsAction(ids: string[]) {
 
   revalidatePath('/admin/products');
   revalidatePath('/shop');
+  await audit({ action: 'product.delete', entity: 'Product', summary: `Deleted ${ids.length} products`, data: { ids } });
   return { success: true };
 }
 
@@ -77,6 +80,7 @@ export async function updateProductStatusAction(id: string, status: string) {
     data: { status }
   });
   revalidatePath('/admin/products');
+  await audit({ action: 'product.status', entity: 'Product', entityId: id, summary: `Set product status to ${status}` });
   return { success: true };
 }
 
@@ -87,6 +91,7 @@ export async function bulkUpdateProductStatusAction(ids: string[], status: strin
     data: { status }
   });
   revalidatePath('/admin/products');
+  await audit({ action: 'product.status', entity: 'Product', summary: `Set ${ids.length} products to ${status}`, data: { ids } });
   return { success: true };
 }
 
@@ -117,6 +122,7 @@ export async function createProductAction(data: any) {
   });
   revalidatePath('/admin/products');
   revalidatePath('/shop');
+  await audit({ action: 'product.create', entity: 'Product', entityId: product.id, summary: `Created product ${product.name}` });
   return product;
 }
 
@@ -205,6 +211,7 @@ export async function updateProductAction(id: string, data: any) {
 
   revalidatePath('/admin/products');
   revalidatePath('/shop');
+  await audit({ action: 'product.update', entity: 'Product', entityId: id, summary: `Edited product ${product.name}`, data: { price: data.price, salePrice: data.salePrice, mrp: data.mrp, costPrice: data.costPrice, gstRate: data.gstRate, hsnCode: data.hsnCode, status: data.status } });
   return product;
 }
 
@@ -218,6 +225,7 @@ export async function updateProductQuickAction(id: string, data: { stock: number
   });
   revalidatePath('/admin/products');
   revalidatePath('/shop');
+  await audit({ action: 'product.quick_edit', entity: 'Product', entityId: id, summary: `Quick edit: stock ${data.stock}, sale price ${data.salePrice ?? 'none'}`, data });
   return { success: true };
 }
 
@@ -292,5 +300,6 @@ export async function saveProductVariantsAction(
   revalidatePath('/admin/products');
   revalidatePath('/admin/inventory');
   revalidatePath('/shop');
+  await audit({ action: 'product.sizes', entity: 'Product', entityId: productId, summary: `Edited pack sizes and prices (${rows.length} sizes)`, data: rows.map((r) => ({ label: r.label, price: r.price, salePrice: r.salePrice, mrp: r.mrp, costPrice: r.costPrice, stock: r.stock })) });
   return { success: true };
 }

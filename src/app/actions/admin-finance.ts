@@ -1,5 +1,6 @@
 'use server';
 
+import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
 import { requirePermission, staffActor } from '@/lib/auth-guard';
@@ -103,6 +104,7 @@ export async function saveExpenseAction(input: ExpenseInput) {
   if (input.id) await prisma.expense.update({ where: { id: input.id }, data });
   else await prisma.expense.create({ data: { ...data, createdBy: actor } });
   touch();
+  await audit({ action: 'expense.save', entity: 'Expense', entityId: input.id ?? null, summary: `${input.id ? 'Edited' : 'Added'} expense ₹${data.total}: ${description}` });
   return { success: true };
 }
 
@@ -111,6 +113,7 @@ export async function payExpenseAction(id: string, paidVia: string, paidOn?: str
   if (!PAY_METHODS.some((p) => p.key === paidVia)) return { error: 'Choose how it was paid.' };
   await prisma.expense.update({ where: { id }, data: { paidVia, paidAt: asDate(paidOn) ?? new Date() } });
   touch();
+  await audit({ action: 'expense.paid', entity: 'Expense', entityId: id, summary: `Marked expense paid via ${paidVia}` });
   return { success: true };
 }
 
@@ -118,6 +121,7 @@ export async function deleteExpenseAction(id: string) {
   await manager();
   await prisma.expense.delete({ where: { id } });
   touch();
+  await audit({ action: 'expense.delete', entity: 'Expense', entityId: id, summary: 'Deleted expense' });
   return { success: true };
 }
 
@@ -181,6 +185,7 @@ export async function recordSupplierPaymentAction(input: SupplierPaymentInput) {
   touch();
   revalidatePath('/admin/suppliers');
   revalidatePath('/admin/purchases');
+  await audit({ action: 'supplier.payment', entity: 'Supplier', entityId: supplier.id, summary: `Paid ${supplier.name} ₹${amount} via ${input.method}${input.reference ? ` (${input.reference})` : ''}` });
   return { success: true };
 }
 
@@ -221,6 +226,7 @@ export async function recordCodRemittanceAction(input: { courier: string; date: 
     },
   });
   touch();
+  await audit({ action: 'cod.remittance', entity: 'CodRemittance', summary: `COD from ${input.courier}: ₹${amount} for ${orders.length} orders (expected ₹${expected})` });
   return { success: true, short: r2(expected - amount) };
 }
 

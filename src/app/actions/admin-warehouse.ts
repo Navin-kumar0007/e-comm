@@ -1,5 +1,6 @@
 'use server';
 
+import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
 import { getStaffContext, requirePermission, staffActor } from '@/lib/auth-guard';
@@ -81,6 +82,7 @@ export async function saveMaterialAction(input: MaterialInput) {
   };
   const saved = input.id ? await prisma.material.update({ where: { id: input.id }, data }) : await prisma.material.create({ data });
   touch('/admin/materials');
+  await audit({ action: 'material.save', entity: 'Material', entityId: saved.id, summary: `${input.id ? 'Edited' : 'Added'} bulk item ${name}` });
   return { success: true, id: saved.id };
 }
 
@@ -121,6 +123,7 @@ export async function adjustMaterialAction(input: MaterialAdjustInput) {
     return fail(e);
   }
   touch('/admin/materials', '/admin/batches');
+  await audit({ action: 'material.adjust', entity: 'Material', entityId: input.materialId, summary: `Bulk ${input.kind.toLowerCase()} ${qty}${input.note ? `: ${input.note}` : ''}` });
   return { success: true };
 }
 
@@ -219,6 +222,7 @@ export async function createRepackAction(input: RepackInput) {
   }
   touch('/admin/repack', '/admin/materials', '/admin/batches');
   const done = result as unknown as { number: string; lots: string[]; wastageKg: number };
+  await audit({ action: 'repack.create', entity: 'RepackRun', summary: `Packing run ${done.number}: ${inputQty} kg, batches ${done.lots.join(', ')}` });
   return { success: true as const, number: done.number, lots: done.lots, wastageKg: done.wastageKg };
 }
 
@@ -308,6 +312,7 @@ export async function createOpeningLotAction(input: OpeningLotInput) {
     return fail(e);
   }
   touch('/admin/batches');
+  await audit({ action: 'lot.opening', entity: 'Product', entityId: input.productId, summary: `Gave ${qty} packs a batch${input.expiryDate ? `, best before ${input.expiryDate}` : ''}` });
   return { success: true };
 }
 
@@ -336,6 +341,7 @@ export async function writeOffLotAction(input: { lotId: string; qty?: number; no
     return fail(e);
   }
   touch('/admin/batches', '/admin/materials');
+  await audit({ action: 'lot.write_off', entity: 'StockLot', entityId: input.lotId, summary: `Wrote off ${input.qty ?? 'all'} from a batch${input.note ? `: ${input.note}` : ''}` });
   return { success: true };
 }
 
@@ -433,6 +439,7 @@ export async function postStockCountAction(countId: string) {
   }
   await prisma.stockCount.update({ where: { id: c.id }, data: { status: 'POSTED', postedAt: new Date(), postedBy: actor } });
   touch('/admin/stock-counts', `/admin/stock-counts/${countId}`, '/admin/materials', '/admin/batches');
+  await audit({ action: 'count.post', entity: 'StockCount', entityId: countId, summary: `Posted ${c.number}: ${changed} items changed` });
   return { success: true, changed };
 }
 

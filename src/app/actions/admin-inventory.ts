@@ -1,5 +1,6 @@
 'use server';
 
+import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
 import { requirePermission, staffActor } from '@/lib/auth-guard';
@@ -39,6 +40,7 @@ export async function adjustInventoryAction(input: { productId: string; variantI
     );
     revalidatePath('/admin/inventory');
     revalidatePath('/admin/products');
+    await audit({ action: 'stock.adjust', entity: 'Product', entityId: input.productId, summary: `Stock ${delta > 0 ? '+' : ''}${delta} (${input.reason})${input.note ? `: ${input.note}` : ''}`, actor: who });
     return { success: true, balance: res?.balance };
   } catch (e) {
     if (e instanceof StockError) return { error: "Can't remove more than what's in stock." };

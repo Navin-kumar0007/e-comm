@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { audit } from "@/lib/audit";
 import { prisma } from "@/lib/db/prisma";
 import { getStaffContext } from "@/lib/auth-guard";
 import { inStoreEan13, isValidEan13 } from "@/lib/barcode";
@@ -65,6 +66,7 @@ export async function setBarcodeAction(kind: "product" | "variant", id: string, 
   if (kind === "variant") await prisma.productVariant.update({ where: { id }, data: { barcode: value } });
   else await prisma.product.update({ where: { id }, data: { barcode: value } });
   revalidatePath("/admin/barcodes");
+  await audit({ action: "barcode.set", entity: kind === "variant" ? "ProductVariant" : "Product", entityId: id, summary: value ? `Barcode set to ${value}` : "Barcode cleared" });
   return { success: true };
 }
 
@@ -90,5 +92,6 @@ export async function generateMissingBarcodesAction() {
     }
   }
   revalidatePath("/admin/barcodes");
+  if (created) await audit({ action: "barcode.generate", summary: `Generated ${created} in-store barcodes` });
   return { created };
 }

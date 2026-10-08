@@ -1,24 +1,38 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import { isStaffRole, roleCan, type Permission, type StaffRole } from "@/lib/permissions";
+import { checkTwoStep, TWO_STEP_COOKIE } from "@/lib/totp";
 
 /**
  * The signed-in staff member, with their role read fresh from the database
  * (the role in the login token can be stale after a demotion). Cached per request.
+ * Staff who turned on two-step login get no permissions until this browser has
+ * passed the code check (`twoStepOk`).
  */
 export const getStaffContext = cache(async () => {
   const session = await auth();
   const email = session?.user?.email;
   if (!email) return null;
-  const user = await prisma.user.findUnique({ where: { email }, select: { id: true, email: true, name: true, role: true } });
+  const user = await prisma.user.findUnique({ where: { email }, select: { id: true, email: true, name: true, role: true, totpEnabledAt: true } });
   if (!user || !isStaffRole(user.role)) return null;
+  let twoStepOk = !user.totpEnabledAt;
+  if (!twoStepOk) {
+    try {
+      twoStepOk = checkTwoStep((await cookies()).get(TWO_STEP_COOKIE)?.value, user.id);
+    } catch {
+      twoStepOk = false;
+    }
+  }
   return {
     session,
-    user: user as { id: string; email: string; name: string; role: StaffRole },
+    user: { id: user.id, email: user.email, name: user.name, role: user.role } as { id: string; email: string; name: string; role: StaffRole },
     role: user.role as StaffRole,
-    can: (permission: Permission) => roleCan(user.role, permission),
+    twoStepEnabled: !!user.totpEnabledAt,
+    twoStepOk,
+    can: (permission: Permission) => twoStepOk && roleCan(user.role, permission),
   };
 });
 
@@ -38,6 +52,7 @@ export async function requirePermission(permission: Permission) {
 export async function requirePagePermission(permission: Permission) {
   const ctx = await getStaffContext();
   if (!ctx) redirect("/login");
+  if (!ctx.twoStepOk) redirect("/admin-verify");
   if (!ctx.can(permission)) redirect("/admin?denied=1");
   return ctx;
 }

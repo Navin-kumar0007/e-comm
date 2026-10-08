@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, ShoppingCart, RotateCcw, Users, Repeat, Printer, Warehouse, Barcode, Package, FolderTree,
   ChefHat, ListChecks, Ticket, MessageCircle, Sparkles, Star, MessageSquare, UserCog, Settings, Store,
-  Gauge, Wheat, Scissors, Boxes, ClipboardCheck, ClipboardList, Truck, TrendingUp, Receipt, Landmark, HandCoins,
+  Gauge, Wheat, Scissors, Boxes, ClipboardCheck, ClipboardList, Truck, TrendingUp, Receipt, Landmark, HandCoins, Lightbulb, ShieldCheck, History,
 } from "lucide-react";
 import type { Permission } from "@/lib/permissions";
 
@@ -54,6 +54,7 @@ export const NAV: NavGroup[] = [
       { href: "/admin/expenses", label: "Expenses", icon: Receipt, permission: "finance.manage" },
       { href: "/admin/payments", label: "Payments", icon: HandCoins, permission: "finance.manage" },
       { href: "/admin/gst", label: "GST returns", icon: Landmark, permission: "reports.view" },
+      { href: "/admin/insights", label: "Insights", icon: Lightbulb, permission: "reports.view" },
     ],
   },
   {
@@ -80,6 +81,8 @@ export const NAV: NavGroup[] = [
     items: [
       { href: "/admin/staff", label: "Staff & Roles", icon: UserCog, permission: "staff.manage" },
       { href: "/admin/settings", label: "Settings", icon: Settings, permission: "settings.manage" },
+      { href: "/admin/security", label: "Login security", icon: ShieldCheck, permission: "dashboard.view" },
+      { href: "/admin/audit", label: "Activity log", icon: History, permission: "staff.manage" },
     ],
   },
 ];

@@ -11,10 +11,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { createOrderAction } from "@/app/actions/admin-orders";
 import { toast } from "sonner";
 
-export default function NewOrderForm({ products, settings }: { products: any[], settings: any }) {
+export default function NewOrderForm({ products, settings, buyers = [], initialBuyer }: { products: any[], settings: any, buyers?: any[], initialBuyer?: string }) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [items, setItems] = useState<any[]>([]);
+  const [buyerId, setBuyerId] = useState<string>(initialBuyer && buyers.some((b) => b.id === initialBuyer) ? initialBuyer : "");
+  const buyer = buyers.find((b) => b.id === buyerId) ?? null;
+  const discountPct = buyer?.wholesaleDiscount ?? 0;
+  const priceFor = (retail: number, pct = discountPct) => Math.round(retail * (1 - pct / 100) * 100) / 100;
+  const chooseBuyer = (id: string) => {
+    setBuyerId(id);
+    const b = buyers.find((x) => x.id === id);
+    const pct = b?.wholesaleDiscount ?? 0;
+    setItems((cur) => cur.map((i) => ({ ...i, price: priceFor(i.retail, pct) })));
+  };
   const [productSearch, setProductSearch] = useState("");
   const [showProductPicker, setShowProductPicker] = useState(false);
 
@@ -27,7 +37,8 @@ export default function NewOrderForm({ products, settings }: { products: any[], 
     if (existing) {
       setItems(items.map(i => i.productId === product.id ? { ...i, quantity: i.quantity + 1 } : i));
     } else {
-      setItems([...items, { name: product.name, quantity: 1, price: product.salePrice || product.price, weight: product.weight, productId: product.id }]);
+      const retail = product.salePrice || product.price;
+      setItems([...items, { name: product.name, quantity: 1, retail, price: priceFor(retail), weight: product.weight, productId: product.id }]);
     }
     setProductSearch("");
     setShowProductPicker(false);
@@ -59,6 +70,8 @@ export default function NewOrderForm({ products, settings }: { products: any[], 
         customerEmail: fd.get("email") as string,
         customerPhone: fd.get("phone") as string,
         shippingAddress: fd.get("address") as string,
+        customerGstin: buyer?.gstin ?? null,
+        userId: buyer?.id ?? null,
         items: items.map(i => ({
           productId: i.productId,
           quantity: i.quantity,
@@ -93,12 +106,24 @@ export default function NewOrderForm({ products, settings }: { products: any[], 
         <div className="lg:col-span-2 space-y-6">
           <div className="p-6 rounded-2xl bg-card border border-border/50 shadow-sm space-y-5">
             <h2 className="font-heading font-bold text-lg text-foreground">Customer Information</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>Full Name *</Label><Input name="customer" required placeholder="John Doe" className="rounded-xl" /></div>
-              <div className="space-y-2"><Label>Email *</Label><Input name="email" required type="email" placeholder="john@example.com" className="rounded-xl" /></div>
+            {buyers.length > 0 && (
+              <div className="space-y-2">
+                <Label>Wholesale buyer</Label>
+                <select value={buyerId} onChange={(e) => chooseBuyer(e.target.value)} className="h-10 w-full rounded-xl border border-input bg-background px-3 text-sm">
+                  <option value="">Walk-in / phone customer (retail prices)</option>
+                  {buyers.map((b) => <option key={b.id} value={b.id}>{b.businessName || b.name}{b.wholesaleDiscount ? ` · ${b.wholesaleDiscount}% off` : ""}</option>)}
+                </select>
+                {buyer && <p className="text-xs text-muted-foreground">{buyer.gstin ? `GSTIN ${buyer.gstin} will be printed on the invoice. ` : "No GSTIN on file. "}{discountPct ? `Prices are ${discountPct}% below retail.` : ""}</p>}
+              </div>
+            )}
+            <div key={buyerId} className="space-y-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2"><Label>Full Name *</Label><Input name="customer" required defaultValue={buyer ? (buyer.businessName ? `${buyer.businessName} (${buyer.name})` : buyer.name) : ""} placeholder="John Doe" className="rounded-xl" /></div>
+                <div className="space-y-2"><Label>Email *</Label><Input name="email" required type="email" defaultValue={buyer?.email ?? ""} placeholder="john@example.com" className="rounded-xl" /></div>
+              </div>
+              <div className="space-y-2"><Label>Phone</Label><Input name="phone" defaultValue={buyer?.phone ?? ""} placeholder="e.g. 98765 43210" className="rounded-xl" /></div>
+              <div className="space-y-2"><Label>Shipping Address *</Label><Textarea name="address" required defaultValue={buyer ? [buyer.address, buyer.city, buyer.state, buyer.pincode].filter(Boolean).join(", ") : ""} placeholder="Full address with pincode" rows={2} className="rounded-xl" /></div>
             </div>
-            <div className="space-y-2"><Label>Phone</Label><Input name="phone" placeholder="e.g. 98765 43210" className="rounded-xl" /></div>
-            <div className="space-y-2"><Label>Shipping Address *</Label><Textarea name="address" required placeholder="Full address with pincode" rows={2} className="rounded-xl" /></div>
             <div className="space-y-2"><Label>Notes</Label><Input name="notes" placeholder="Special instructions..." className="rounded-xl" /></div>
           </div>
 
@@ -136,7 +161,7 @@ export default function NewOrderForm({ products, settings }: { products: any[], 
                   <div key={item.productId} className="flex items-center gap-4 p-3 bg-muted/30 rounded-xl">
                     <div className="flex-1">
                       <div className="font-medium text-sm text-foreground">{item.name}</div>
-                      <div className="text-xs text-muted-foreground">{item.weight} · ₹{item.price} each</div>
+                      <div className="text-xs text-muted-foreground">{item.weight} · ₹{item.price} each{item.price !== item.retail ? <span className="ml-1 line-through">₹{item.retail}</span> : null}</div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button type="button" variant="outline" size="icon" className="h-7 w-7 rounded-lg" onClick={() => updateItemQty(item.productId, item.quantity - 1)}>-</Button>

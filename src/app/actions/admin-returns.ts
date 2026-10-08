@@ -1,5 +1,6 @@
 'use server';
 
+import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
 import { requirePermission, staffActor } from '@/lib/auth-guard';
@@ -44,6 +45,7 @@ export async function decideReturnAction(id: string, decision: 'APPROVE' | 'REJE
   await logOrderEvent(null, { orderId: req.orderId, type: 'RETURN', message: `Return ${status.toLowerCase()}${note.trim() ? `: ${note.trim()}` : ''}`, actor: who });
   try { await sendReturnUpdate(req.order.customerEmail, req.orderId, status, note.trim() || null); } catch (e) { console.error('Return email failed:', e); }
   done(req.orderId);
+  await audit({ action: 'return.decide', entity: 'ReturnRequest', entityId: id, summary: `Return ${decision === 'APPROVE' ? 'approved' : 'rejected'}${note ? `: ${note}` : ''}` });
   return { success: true };
 }
 

@@ -1,5 +1,6 @@
 'use server'
 
+import { audit } from '@/lib/audit';
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
 import { requirePermission } from '@/lib/auth-guard';
@@ -93,5 +94,6 @@ export async function updateAdminSettingsAction(data: {
   });
 
   revalidatePath('/admin/settings');
+  await audit({ action: 'settings.update', entity: 'Settings', entityId: 'default', summary: `Changed store settings: ${Object.keys(data).join(', ')}`.slice(0, 300), data });
   return updated;
 }

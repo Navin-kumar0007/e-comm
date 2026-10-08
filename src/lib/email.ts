@@ -287,3 +287,20 @@ export async function notifyAdminLowStock(items: Array<{ name: string; stock: nu
 export function siteUrl() {
   return SITE_URL;
 }
+
+/** Morning report for the owner. `rows` are label/value pairs; `alerts` are things to act on today. */
+export async function sendOwnerDailySummary(subject: string, title: string, rows: Array<[string, string]>, alerts: string[]) {
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_FROM?.match(/<(.+)>/)?.[1] || 'spicynuts1973@gmail.com';
+  const table = rows.map(([k, v]) => `<tr><td style="padding:6px 0;color:#555">${esc(k)}</td><td style="padding:6px 0;text-align:right;font-weight:bold">${esc(v)}</td></tr>`).join('');
+  const todo = alerts.length
+    ? `<h2 style="font-size:16px;margin:20px 0 8px">Needs attention</h2><ul style="padding-left:18px;margin:0">${alerts.map((a) => `<li style="margin:4px 0">${esc(a)}</li>`).join('')}</ul>`
+    : '<p style="margin-top:16px">Nothing needs attention today. 🎉</p>';
+  return sendEmail(adminEmail, subject, `
+    <div style="${baseStyles}">
+      <h1 style="color:#6E1A2C;font-size:20px;margin:0 0 12px">${esc(title)}</h1>
+      <table style="width:100%;border-collapse:collapse;background:white;padding:12px;border-radius:8px">${table}</table>
+      ${todo}
+      <p style="margin-top:20px"><a href="${SITE_URL}/admin" style="color:#6E1A2C;font-weight:bold">Open admin →</a></p>
+    </div>
+  `);
+}

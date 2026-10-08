@@ -1,5 +1,6 @@
 'use server';
 
+import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
 import { requirePermission, staffActor } from '@/lib/auth-guard';
@@ -70,6 +71,7 @@ export async function saveSupplierAction(input: SupplierInput) {
   };
   const saved = input.id ? await prisma.supplier.update({ where: { id: input.id }, data }) : await prisma.supplier.create({ data });
   revalidatePath('/admin/suppliers');
+  await audit({ action: 'supplier.save', entity: 'Supplier', entityId: saved.id, summary: `${input.id ? 'Edited' : 'Added'} supplier ${name}` });
   return { success: true, id: saved.id };
 }
 
@@ -200,6 +202,7 @@ export async function savePurchaseOrderAction(input: PurchaseInput) {
   if ('error' in po) return po as { error: string };
   revalidatePath('/admin/purchases');
   revalidatePath('/admin/warehouse');
+  await audit({ action: 'purchase.save', entity: 'PurchaseOrder', entityId: po.id, summary: `${input.id ? 'Edited' : 'Created'} ${po.number} (${input.status.toLowerCase()}), total ₹${t.total}` });
   return { success: true, id: po.id, number: po.number };
 }
 
@@ -212,6 +215,7 @@ export async function setPurchaseStatusAction(id: string, status: 'ORDERED' | 'C
   await prisma.purchaseOrder.update({ where: { id }, data: { status } });
   revalidatePath('/admin/purchases');
   revalidatePath(`/admin/purchases/${id}`);
+  await audit({ action: 'purchase.status', entity: 'PurchaseOrder', entityId: id, summary: `${po.number} → ${status}` });
   return { success: true };
 }
 
@@ -296,6 +300,7 @@ export async function receivePurchaseAction(input: ReceiveInput) {
   revalidatePath('/admin/warehouse');
   revalidatePath('/admin/inventory');
   revalidatePath('/admin/batches');
+  await audit({ action: 'purchase.receive', entity: 'PurchaseOrder', entityId: po.id, summary: `Received goods on ${po.number}: batches ${lots.join(', ')}` });
   return { success: true, lots };
 }
 

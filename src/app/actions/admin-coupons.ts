@@ -1,5 +1,6 @@
 'use server'
 
+import { audit } from '@/lib/audit';
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
 import { requirePermission } from '@/lib/auth-guard';
@@ -44,6 +45,7 @@ export async function createCouponAction(data: {
   });
 
   revalidatePath('/admin/coupons');
+  await audit({ action: 'coupon.create', entity: 'Coupon', entityId: coupon.id, summary: `Created coupon ${coupon.code}`, data });
   return { success: true, id: coupon.id };
 }
 
@@ -51,6 +53,7 @@ export async function setCouponActiveAction(id: string, active: boolean) {
   await requirePermission('marketing.manage');
   await prisma.coupon.update({ where: { id }, data: { active } });
   revalidatePath('/admin/coupons');
+  await audit({ action: 'coupon.active', entity: 'Coupon', entityId: id, summary: `${active ? 'Enabled' : 'Disabled'} coupon` });
   return { success: true };
 }
 
@@ -58,5 +61,6 @@ export async function deleteCouponAction(id: string) {
   await requirePermission('marketing.manage');
   await prisma.coupon.delete({ where: { id } });
   revalidatePath('/admin/coupons');
+  await audit({ action: 'coupon.delete', entity: 'Coupon', entityId: id, summary: 'Deleted coupon' });
   return { success: true };
 }

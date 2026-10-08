@@ -6,7 +6,8 @@ export type WhatsAppMessageType =
   | "NEW_RELEASE"
   | "PRICE_UPDATE"
   | "ORDER_UPDATE"
-  | "WELCOME";
+  | "WELCOME"
+  | "OWNER_SUMMARY";
 
 export interface SendWhatsAppParams {
   to: string; // phone number e.g. "+919876543210" or "9876543210"

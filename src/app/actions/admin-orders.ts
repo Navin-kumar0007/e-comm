@@ -1,5 +1,6 @@
 'use server'
 
+import { audit } from '@/lib/audit';
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
 import { requirePermission, staffActor } from '@/lib/auth-guard';
@@ -10,7 +11,7 @@ import { transitionOrder } from '@/lib/order-status';
 import { nextAdminStatuses, ORDER_STATUSES, type OrderStatus } from '@/lib/order-status-rules';
 import { logOrderEvent } from '@/lib/order-events';
 import { adjustStock, StockError } from '@/lib/inventory';
-import { splitGst } from '@/lib/gst';
+import { splitGst, isValidGstin } from '@/lib/gst';
 
 function mapPrismaStatusToUI(status: string) {
   const m: Record<string, string> = {
@@ -122,6 +123,7 @@ export async function updateOrderStatusAction(id: string, status: string, reason
 
   const res = await transitionOrder(id, upper, { actor, reason });
   revalidateOrder(id);
+  if (res.ok) await audit({ action: 'order.status', entity: 'Order', entityId: id, summary: `Order #${id.slice(-8).toUpperCase()} → ${status}${reason ? ` (${reason})` : ''}` });
   return res.ok ? { success: true } : { error: res.error };
 }
 
@@ -130,6 +132,7 @@ export async function deleteOrderAction(id: string) {
   // Soft-delete only closed orders (cancelled / expired / returned); keeps the audit trail.
   const res = await transitionOrder(id, 'DELETED', { actor });
   revalidateOrder(id);
+  if (res.ok) await audit({ action: 'order.delete', entity: 'Order', entityId: id, summary: `Deleted order #${id.slice(-8).toUpperCase()}` });
   return res.ok ? { success: true } : { error: 'Only cancelled, expired or returned orders can be deleted.' };
 }
 
@@ -147,9 +150,13 @@ export async function createOrderAction(data: {
   customerEmail: string;
   customerPhone: string;
   shippingAddress: string;
+  customerGstin?: string | null;
+  userId?: string | null;
   items: Array<{ productId: string; quantity: number; price: number; weight: string }>;
 }) {
   const actor = await adminActor('orders.create');
+  const customerGstin = data.customerGstin?.trim().toUpperCase() || null;
+  if (customerGstin && !isValidGstin(customerGstin)) return { error: 'Customer GSTIN is not valid.' };
 
   if (!data.items.length || data.items.some(i => !Number.isInteger(i.quantity) || i.quantity < 1 || !(i.price >= 0))) {
     return { error: 'Invalid items' };
@@ -193,6 +200,8 @@ export async function createOrderAction(data: {
           customerEmail: data.customerEmail,
           customerPhone: data.customerPhone,
           shippingAddress: data.shippingAddress,
+          customerGstin,
+          ...(data.userId ? { userId: data.userId } : {}),
           invoiceNumber: await allocateInvoiceNumber(tx),
           items: {
             create: data.items.map(item => ({
@@ -221,6 +230,7 @@ export async function createOrderAction(data: {
 
     revalidatePath('/admin/orders');
     revalidatePath('/admin');
+    await audit({ action: 'order.create', entity: 'Order', entityId: order.id, summary: `Manual order #${order.id.slice(-8).toUpperCase()} for ${data.customerName}`, actor });
     return { success: true, orderId: order.id };
   } catch (e: any) {
     if (typeof e?.message === 'string' && e.message.startsWith('STOCK:')) {

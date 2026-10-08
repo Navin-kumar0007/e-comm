@@ -1,5 +1,6 @@
 'use server';
 
+import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
 import { requirePermission, staffActor } from '@/lib/auth-guard';
@@ -122,6 +123,7 @@ export async function cancelShipmentAction(shipmentId: string) {
     await prisma.order.update({ where: { id: shipment.orderId }, data: { trackingNumber: null, trackingUrl: null } });
     await logOrderEvent(null, { orderId: shipment.orderId, type: 'SHIPMENT', message: `Shipment ${shipment.awb || ''} cancelled — order can be re-booked`, actor: who });
     done(shipment.orderId);
+    await audit({ action: 'shipment.cancel', entity: 'Order', entityId: shipment.orderId, summary: `Cancelled shipment ${shipment.awb || ''}`, actor: who });
     return { success: true };
   } catch (e) {
     return fail(e);
@@ -133,6 +135,7 @@ export async function issueRefundAction(orderId: string, amount: number, reason:
   if (!reason.trim()) return { error: 'Enter a reason for the refund.' };
   const res = await issueRefund({ orderId, amount, reason: reason.trim(), actor: who });
   done(orderId);
+  if (res.ok) await audit({ action: 'refund.issue', entity: 'Order', entityId: orderId, summary: `Refund ₹${amount} on #${orderId.slice(-8).toUpperCase()}: ${reason}` });
   return res.ok ? { success: true, status: res.status } : { error: res.error };
 }
 
@@ -141,5 +144,6 @@ export async function markRefundPaidAction(refundId: string, reference: string) 
   const refund = await prisma.refund.findUnique({ where: { id: refundId } });
   const res = await markManualRefundProcessed(refundId, reference.trim(), who);
   if (refund) done(refund.orderId);
+  if (res.ok) await audit({ action: 'refund.paid', entity: 'Refund', entityId: refundId, summary: `Manual refund marked paid (${reference})` });
   return res.ok ? { success: true } : { error: res.error };
 }

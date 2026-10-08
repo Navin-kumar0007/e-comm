@@ -15,6 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     const session = await auth();
     redirect(session?.user ? "/" : "/login");
   }
+  if (!staff.twoStepOk) redirect("/admin-verify");
   const permissions = PERMISSIONS.filter((p) => staff.can(p));
   const nav = <AdminNav permissions={permissions} staffName={staff.user.name || staff.user.email} roleName={ROLE_LABELS[staff.role].name} />;
 
