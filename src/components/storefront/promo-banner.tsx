@@ -1,25 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { X } from "lucide-react";
 import Link from "next/link";
+import type { AnnouncementMsg } from "@/lib/site-content-shared";
 
-export function PromoBanner() {
+const DEFAULT: AnnouncementMsg[] = [
+  { text: "FREE SHIPPING ABOVE ₹999" },
+  { text: "CODE ROYAL15 · 15% OFF", link: "/shop", linkText: "Shop" },
+  { text: "GST INVOICE WITH EVERY ORDER" },
+];
+
+/** Thin bar above the header. Text comes from Admin → Website editor → Announcement bar. */
+export function PromoBanner({ enabled = true, messages = DEFAULT }: { enabled?: boolean; messages?: AnnouncementMsg[] }) {
   const [isVisible, setIsVisible] = useState(true);
+  if (!isVisible || !enabled || !messages.length) return null;
+  // Phones have room for one message: the one with a link (usually the offer), else the first.
+  const mobileIndex = Math.max(0, messages.findIndex((m) => m.link));
 
-  if (!isVisible) return null;
+  const render = (m: AnnouncementMsg) => (
+    <>
+      {m.text}
+      {m.link && <Link href={m.link} className="ml-2 underline underline-offset-2 hover:text-white">{m.linkText || "Shop"}</Link>}
+    </>
+  );
 
   return (
     <div className="relative border-b border-brand-gold/25 text-brand-gold">
       <div className="container mx-auto flex h-[30px] items-center justify-center gap-x-4 px-9 text-[11px] font-semibold tracking-[0.04em] md:h-[34px] md:text-xs">
-        <span className="hidden sm:inline">FREE SHIPPING ABOVE ₹999</span>
-        <span className="hidden text-brand-gold/40 sm:inline" aria-hidden="true">|</span>
-        <span className="truncate">
-          CODE <strong className="tracking-[0.12em] text-white">ROYAL15</strong> · 15% OFF
-          <Link href="/shop" className="ml-2 underline underline-offset-2 hover:text-white">Shop</Link>
-        </span>
-        <span className="hidden text-brand-gold/40 md:inline" aria-hidden="true">|</span>
-        <span className="hidden md:inline">GST INVOICE WITH EVERY ORDER</span>
+        {messages.map((m, i) => (
+          <Fragment key={i}>
+            {i > 0 && <span className={`text-brand-gold/40 ${i === mobileIndex || i - 1 === mobileIndex ? "hidden sm:inline" : "hidden md:inline"}`} aria-hidden="true">|</span>}
+            <span className={i === mobileIndex ? "truncate" : i < 2 ? "hidden sm:inline" : "hidden md:inline"}>{render(m)}</span>
+          </Fragment>
+        ))}
       </div>
       <button
         onClick={() => setIsVisible(false)}

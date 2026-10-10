@@ -16,6 +16,7 @@ import { AccessibilityToolbar } from "@/components/accessibility/accessibility-t
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { BRAND_PHONE_TEL } from "@/lib/contact";
 import { CookieConsent } from "@/components/storefront/cookie-consent";
+import { getSiteContent } from "@/lib/site-content";
 
 // Fonts: Manrope for interface and prices, Cormorant Garamond for headings, Cinzel for royal eyebrows
 const manrope = Manrope({
@@ -155,11 +156,12 @@ const jsonLd = {
   sameAs: [],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [announcement, popup, contact] = await Promise.all([getSiteContent("announcement"), getSiteContent("popup"), getSiteContent("contact")]);
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -178,10 +180,10 @@ export default function RootLayout({
             forcedTheme="light"
             disableTransitionOnChange
           >
-            <StorefrontOnly><div className="print:hidden"><Navbar /></div></StorefrontOnly><main className="flex-1 pb-24 md:pb-0 print:m-0 print:p-0">
+            <StorefrontOnly><div className="print:hidden"><Navbar announcement={announcement} /></div></StorefrontOnly><main className="flex-1 pb-24 md:pb-0 print:m-0 print:p-0">
               {children}
             </main>
-            <StorefrontOnly><div className="print:hidden"><Footer /><MobileBottomNav /><AIConcierge /><WhatsAppButton /><WhatsAppWelcomePrompt /><AccessibilityToolbar /></div><ScrollReveal /></StorefrontOnly>
+            <StorefrontOnly><div className="print:hidden"><Footer contact={contact} /><MobileBottomNav /><AIConcierge /><WhatsAppButton /><WhatsAppWelcomePrompt enabled={popup.enabled} title={popup.title} text={popup.text} delaySeconds={popup.delaySeconds} /><AccessibilityToolbar /></div><ScrollReveal /></StorefrontOnly>
             <Toaster />
           </ThemeProvider>
         </AuthProvider>

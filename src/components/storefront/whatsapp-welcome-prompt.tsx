@@ -6,24 +6,25 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { subscribeWhatsAppAction } from "@/app/actions/whatsapp-actions";
 
-export function WhatsAppWelcomePrompt() {
+export function WhatsAppWelcomePrompt({ enabled = true, title = "Get 10% OFF on WhatsApp", text = "Receive secret harvest deals & your instant welcome code.", delaySeconds = 3.5 }: { enabled?: boolean; title?: string; text?: string; delaySeconds?: number }) {
   const [visible, setVisible] = useState(false);
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    // Only display if user has not interacted or closed before
-    const seen = localStorage.getItem("sn_wa_welcome_seen");
+    // Only display if turned on in the website editor and the visitor hasn't closed it before
+    if (!enabled) return;
+    let seen: string | null = null;
+    try { seen = localStorage.getItem("sn_wa_welcome_seen"); } catch { /* private mode */ }
     if (seen) return;
 
-    // Show after 3.5 seconds of browsing
     const timer = setTimeout(() => {
       setVisible(true);
-    }, 3500);
+    }, delaySeconds * 1000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [enabled, delaySeconds]);
 
   const handleDismiss = () => {
     setVisible(false);
@@ -102,14 +103,14 @@ export function WhatsAppWelcomePrompt() {
               <div>
                 <div className="flex items-center gap-1.5">
                   <h4 className="font-heading font-bold text-sm text-foreground">
-                    Get 10% OFF on WhatsApp
+                    {title}
                   </h4>
                   <span className="text-[10px] font-bold bg-muted text-brand-gold-deep px-1.5 py-0.5 rounded-full">
                     VIP
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Receive secret harvest deals & your instant welcome code.
+                  {text}
                 </p>
               </div>
             </div>

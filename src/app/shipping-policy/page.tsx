@@ -1,3 +1,5 @@
+import { getSiteContent } from "@/lib/site-content";
+import { SimpleMarkdown } from "@/components/storefront/simple-markdown";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
@@ -6,7 +8,7 @@ export const metadata: Metadata = {
   description: "Shipping policy for Spicy Nuts (B.M.V. Spices & Dry Fruits). Free shipping on orders above ₹999. Delivery across India in 3-7 business days.",
 };
 
-export default function ShippingPolicyPage() {
+function BuiltInPage() {
   return (
     <>
       <PageHero eyebrow={"Policy"} title={"Shipping Policy"} subtitle={"Last updated: September 2026"} crumbs={[{ label: "Home", href: "/" }, { label: "Shipping Policy" }]} />
@@ -71,6 +73,22 @@ export default function ShippingPolicyPage() {
 
       </div>
     </div>
+    </>
+  );
+}
+
+/** Text written in Admin → Website editor → Policy pages replaces the built-in page; empty keeps it. */
+export default async function ShippingPolicyPage() {
+  const custom = (await getSiteContent("policies")).shipping;
+  if (!custom?.trim()) return <BuiltInPage />;
+  return (
+    <>
+      <PageHero eyebrow={"Policy"} title={"Shipping Policy"} crumbs={[{ label: "Home", href: "/" }, { label: "Shipping Policy" }]} />
+      <div className="container mx-auto max-w-4xl px-4 py-8 md:py-10">
+        <div className="prose prose-sm sm:prose-base prose-amber dark:prose-invert max-w-none">
+          <SimpleMarkdown text={custom} />
+        </div>
+      </div>
     </>
   );
 }

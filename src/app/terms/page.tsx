@@ -1,3 +1,5 @@
+import { getSiteContent } from "@/lib/site-content";
+import { SimpleMarkdown } from "@/components/storefront/simple-markdown";
 import { Metadata } from "next";
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
@@ -5,7 +7,7 @@ export const metadata: Metadata = {
   title: "Terms & Conditions | Spicy Nuts",
 };
 
-export default function TermsConditions() {
+function BuiltInPage() {
   return (
     <>
       <PageHero eyebrow={"Policy"} title={"Terms & Conditions"} crumbs={[{ label: "Home", href: "/" }, { label: "Terms & Conditions" }]} />
@@ -30,6 +32,22 @@ export default function TermsConditions() {
         <p>These terms shall be governed by and construed in accordance with the laws of India. Any disputes will be subject to the exclusive jurisdiction of the courts in Bidar, Karnataka.</p>
       </div>
     </div>
+    </>
+  );
+}
+
+/** Text written in Admin → Website editor → Policy pages replaces the built-in page; empty keeps it. */
+export default async function TermsConditions() {
+  const custom = (await getSiteContent("policies")).terms;
+  if (!custom?.trim()) return <BuiltInPage />;
+  return (
+    <>
+      <PageHero eyebrow={"Policy"} title={"Terms & Conditions"} crumbs={[{ label: "Home", href: "/" }, { label: "Terms & Conditions" }]} />
+      <div className="container mx-auto max-w-4xl px-4 py-8 md:py-10">
+        <div className="prose prose-sm sm:prose-base prose-amber dark:prose-invert max-w-none">
+          <SimpleMarkdown text={custom} />
+        </div>
+      </div>
     </>
   );
 }

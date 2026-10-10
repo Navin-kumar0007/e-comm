@@ -39,14 +39,14 @@ function LogoPlaque() {
   );
 }
 
-export function Navbar() {
+export function Navbar({ announcement }: { announcement?: { enabled: boolean; messages: import("@/lib/site-content-shared").AnnouncementMsg[] } }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const close = () => setDrawerOpen(false);
 
   return (
     <header className="jaali fixed left-0 right-0 top-0 z-50 w-full text-white shadow-[0_6px_20px_rgba(42,10,18,0.25)]">
-      <PromoBanner />
+      <PromoBanner {...(announcement ?? {})} />
       <div className="container mx-auto flex h-14 items-center justify-between gap-3 px-2 md:h-[70px] md:px-6">
         {/* Left: menu (mobile) + logo */}
         <div className="flex flex-1 items-center gap-1 lg:flex-none">

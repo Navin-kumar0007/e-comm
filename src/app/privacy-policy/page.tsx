@@ -1,3 +1,5 @@
+import { getSiteContent } from "@/lib/site-content";
+import { SimpleMarkdown } from "@/components/storefront/simple-markdown";
 import { Metadata } from "next";
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
@@ -5,7 +7,7 @@ export const metadata: Metadata = {
   title: "Privacy Policy | Spicy Nuts",
 };
 
-export default function PrivacyPolicy() {
+function BuiltInPage() {
   return (
     <>
       <PageHero eyebrow={"Policy"} title={"Privacy Policy"} crumbs={[{ label: "Home", href: "/" }, { label: "Privacy Policy" }]} />
@@ -44,6 +46,22 @@ export default function PrivacyPolicy() {
         <p>We keep invoice and order records only as long as tax law requires (GST records are kept for at least 6 years); these are not used for marketing.</p>
       </div>
     </div>
+    </>
+  );
+}
+
+/** Text written in Admin → Website editor → Policy pages replaces the built-in page; empty keeps it. */
+export default async function PrivacyPolicy() {
+  const custom = (await getSiteContent("policies")).privacy;
+  if (!custom?.trim()) return <BuiltInPage />;
+  return (
+    <>
+      <PageHero eyebrow={"Policy"} title={"Privacy Policy"} crumbs={[{ label: "Home", href: "/" }, { label: "Privacy Policy" }]} />
+      <div className="container mx-auto max-w-4xl px-4 py-8 md:py-10">
+        <div className="prose prose-sm sm:prose-base prose-amber dark:prose-invert max-w-none">
+          <SimpleMarkdown text={custom} />
+        </div>
+      </div>
     </>
   );
 }

@@ -43,7 +43,11 @@ function LinkColumn({ title, links }: { title: string; links: { label: string; h
   );
 }
 
-export function Footer() {
+type FooterContact = { phone: string; email: string; address: string; tagline: string; instagram?: string; youtube?: string; facebook?: string };
+
+export function Footer({ contact }: { contact?: FooterContact }) {
+  const tel = (contact?.phone || BRAND_PHONE_DISPLAY).replace(/[^\d+]/g, "");
+  const socials = [["Instagram", contact?.instagram], ["YouTube", contact?.youtube], ["Facebook", contact?.facebook]].filter(([, url]) => !!url) as Array<[string, string]>;
   return (
     <footer className="jaali pb-44 text-white md:pb-10">
       <div className="container mx-auto max-w-7xl px-4 py-10 sm:py-14">
@@ -60,16 +64,19 @@ export function Footer() {
               </div>
             </Link>
             <p className="mb-4 text-[13.5px] leading-relaxed text-white/80">
-              Purveyors of Imperial Dry Fruits, Royal Nuts, and Rare Whole Spices sourced directly from single-estate farms.
+              {contact?.tagline || "Purveyors of Imperial Dry Fruits, Royal Nuts, and Rare Whole Spices sourced directly from single-estate farms."}
             </p>
             <div className="space-y-0.5 text-xs leading-relaxed text-white/80">
               <p className="font-semibold text-white">B.M.V. SPICES & DRY FRUITS</p>
-              <p>Shop No 1/206/1, Bhaskar Nagar Chitguppa,</p>
-              <p>Chitguppa Sub Post Office, Chitgoppa,</p>
-              <p>Bidar, Karnataka – 585412</p>
+              {contact?.address
+                ? <p className="max-w-[260px]">{contact.address}</p>
+                : (<><p>Shop No 1/206/1, Bhaskar Nagar Chitguppa,</p><p>Chitguppa Sub Post Office, Chitgoppa,</p><p>Bidar, Karnataka – 585412</p></>)}
               <p className="mt-2 font-semibold text-brand-gold">GSTIN: 29FCBPM9871D1Z6</p>
-              <p>📞 <a href={`tel:${BRAND_PHONE_TEL}`} className="hover:text-brand-gold">{BRAND_PHONE_DISPLAY}</a></p>
-              <p>📧 spicynuts1973@gmail.com</p>
+              <p>📞 <a href={`tel:${contact?.phone ? tel : BRAND_PHONE_TEL}`} className="hover:text-brand-gold">{contact?.phone || BRAND_PHONE_DISPLAY}</a></p>
+              <p>📧 <a href={`mailto:${contact?.email || "spicynuts1973@gmail.com"}`} className="hover:text-brand-gold">{contact?.email || "spicynuts1973@gmail.com"}</a></p>
+              {socials.length > 0 && (
+                <p className="flex gap-3 pt-2">{socials.map(([name, url]) => <a key={name} href={url} target="_blank" rel="noreferrer" className="font-semibold text-brand-gold hover:text-white">{name}</a>)}</p>
+              )}
             </div>
           </div>
 

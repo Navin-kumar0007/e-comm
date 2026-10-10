@@ -1,3 +1,5 @@
+import { getSiteContent } from "@/lib/site-content";
+import { SimpleMarkdown } from "@/components/storefront/simple-markdown";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
@@ -6,7 +8,7 @@ export const metadata: Metadata = {
   description: "Returns and refund policy for Spicy Nuts. We offer replacements or refunds for damaged or incorrect items within 48 hours of delivery.",
 };
 
-export default function ReturnsPage() {
+function BuiltInPage() {
   return (
     <>
       <PageHero eyebrow={"Policy"} title={"Returns & Refunds Policy"} subtitle={"Last updated: September 2026"} crumbs={[{ label: "Home", href: "/" }, { label: "Returns & Refunds" }]} />
@@ -72,6 +74,22 @@ export default function ReturnsPage() {
 
       </div>
     </div>
+    </>
+  );
+}
+
+/** Text written in Admin → Website editor → Policy pages replaces the built-in page; empty keeps it. */
+export default async function ReturnsPage() {
+  const custom = (await getSiteContent("policies")).returns;
+  if (!custom?.trim()) return <BuiltInPage />;
+  return (
+    <>
+      <PageHero eyebrow={"Policy"} title={"Returns & Refunds Policy"} crumbs={[{ label: "Home", href: "/" }, { label: "Returns & Refunds Policy" }]} />
+      <div className="container mx-auto max-w-4xl px-4 py-8 md:py-10">
+        <div className="prose prose-sm sm:prose-base prose-amber dark:prose-invert max-w-none">
+          <SimpleMarkdown text={custom} />
+        </div>
+      </div>
     </>
   );
 }

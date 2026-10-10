@@ -6,6 +6,18 @@ import type { ProductCardProduct } from "@/components/storefront/product-card";
 import { packLabel } from "@/components/storefront/royal/pack-shot";
 import { prisma } from "@/lib/db/prisma";
 import { getCleanProductImage } from "@/lib/utils";
+import type { Metadata } from "next";
+import { getSiteContent, liveBanners, type HomeSectionKey } from "@/lib/site-content";
+import { OfferBanners } from "@/components/storefront/offer-banners";
+
+// Rebuilt in the background at most every 10 minutes (banners start and stop on their dates),
+// and straight away when anything is saved in the website editor.
+export const revalidate = 600;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSiteContent("seo");
+  return { title: { absolute: seo.homeTitle }, description: seo.homeDescription };
+}
 
 // Gift tray picks, in display order (falls back to whatever is active).
 const GIFT_SLUGS = ["california-almond", "walnut", "dry-dates", "kishmish-raisins", "pistachios", "kaju-cashews"];
@@ -52,17 +64,22 @@ async function getHomeData() {
 }
 
 export default async function Home() {
-  const { shelf, gifts } = await getHomeData();
+  const [{ shelf, gifts }, hero, banners, sections] = await Promise.all([getHomeData(), getSiteContent("hero"), getSiteContent("banners"), getSiteContent("sections")]);
+  const blocks: Record<HomeSectionKey, React.ReactNode> = {
+    collections: <CollectionCoverflow key="collections" />,
+    shelf: <RoyalShelf key="shelf" products={shelf} />,
+    gifts: <GiftTray key="gifts" options={gifts} />,
+    atelier: <UseAndAtelier key="atelier" />,
+    founder: <FounderSection key="founder" />,
+    trust: <TrustStrip key="trust" />,
+  };
+  const live = liveBanners(banners);
 
   return (
     <div className="flex min-h-screen flex-col">
-      <RoyalHero />
-      <CollectionCoverflow />
-      <RoyalShelf products={shelf} />
-      <GiftTray options={gifts} />
-      <UseAndAtelier />
-      <FounderSection />
-      <TrustStrip />
+      <RoyalHero {...hero} />
+      {live.length > 0 && <OfferBanners banners={live} />}
+      {sections.order.filter((k) => !sections.hidden.includes(k)).map((k) => blocks[k])}
     </div>
   );
 }

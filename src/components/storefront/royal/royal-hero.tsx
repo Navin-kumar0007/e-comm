@@ -2,13 +2,24 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { RoyalOrbit } from "./royal-orbit";
 
-export function RoyalHero() {
+export function RoyalHero({
+  eyebrow = "From Bidar, Karnataka",
+  title = "The Royal Pantry",
+  subtitle = "Almonds, cashews, walnuts, pistachios, dates, raisins and seeds, packed for gifting and for everyday.",
+  primaryText = "Shop the pantry",
+  primaryLink = "/shop",
+  secondaryText = "Build a gift tray",
+  secondaryLink = "#gift",
+}: { eyebrow?: string; title?: string; subtitle?: string; primaryText?: string; primaryLink?: string; secondaryText?: string; secondaryLink?: string }) {
+  // The desktop title breaks after the first word ("The Royal / Pantry" style) when it has 3+ words.
+  const words = title.split(" ");
+  const cut = words.length >= 3 ? words.length - 1 : 0;
   return (
     <section className="jaali relative pt-header text-white">
       {/* ---------- Mobile (design board: Mobile · Royal 3D home) ---------- */}
       <div className="px-5 pb-12 pt-4 text-center md:hidden">
-        <span className="eyebrow text-brand-gold">From Bidar, Karnataka</span>
-        <h1 className="mt-2 font-heading text-[40px] font-bold leading-[0.95]">The Royal Pantry</h1>
+        <span className="eyebrow text-brand-gold">{eyebrow}</span>
+        <h1 className="mt-2 font-heading text-[40px] font-bold leading-[0.95]">{title}</h1>
         <div className="gold-rule mt-2.5 justify-center" aria-hidden="true">
           <span className="h-2 w-2 rotate-45 bg-brand-gold" />
         </div>
@@ -16,28 +27,28 @@ export function RoyalHero() {
           <RoyalOrbit />
         </div>
         <p className="mx-auto mt-4 max-w-sm text-[13.5px] text-white/85">
-          Almonds, cashews, walnuts, pistachios, dates, raisins and seeds, packed for gifting and for everyday.
+          {subtitle}
         </p>
         <div className="mt-4 flex gap-2.5">
-          <Link href="/shop" className="flex h-11 flex-1 items-center justify-center rounded-xl bg-secondary text-[13.5px] font-extrabold text-secondary-foreground">Shop the pantry</Link>
-          <Link href="#gift" className="flex h-11 flex-1 items-center justify-center rounded-xl border-[1.5px] border-brand-gold text-[13.5px] font-bold">Build a gift box</Link>
+          <Link href={primaryLink} className="flex h-11 flex-1 items-center justify-center rounded-xl bg-secondary text-[13.5px] font-extrabold text-secondary-foreground">{primaryText}</Link>
+          <Link href={secondaryLink} className="flex h-11 flex-1 items-center justify-center rounded-xl border-[1.5px] border-brand-gold text-[13.5px] font-bold">{secondaryText}</Link>
         </div>
       </div>
 
       {/* ---------- Desktop (design board: Desktop · Royal 3D home) ---------- */}
       <div className="container mx-auto hidden max-w-7xl grid-cols-2 items-center gap-10 px-6 pb-20 pt-10 md:grid">
         <div className="flex flex-col gap-4">
-          <span className="eyebrow text-brand-gold">From Bidar, Karnataka</span>
-          <h1 className="font-heading text-[clamp(52px,5.4vw,72px)] font-bold leading-[0.9]">The Royal<br />Pantry</h1>
+          <span className="eyebrow text-brand-gold">{eyebrow}</span>
+          <h1 className="font-heading text-[clamp(52px,5.4vw,72px)] font-bold leading-[0.9]">{cut ? <>{words.slice(0, cut).join(" ")}<br />{words.slice(cut).join(" ")}</> : title}</h1>
           <div className="gold-rule" aria-hidden="true">
             <span className="h-2.5 w-2.5 rotate-45 bg-brand-gold" />
           </div>
           <p className="max-w-md text-base text-white/85">
-            Almonds, cashews, walnuts, pistachios, dates, raisins and seeds, packed for gifting and for everyday.
+            {subtitle}
           </p>
           <div className="mt-1 flex gap-3">
-            <Link href="/shop" className="flex h-12 items-center rounded-xl bg-secondary px-7 text-[15px] font-extrabold text-secondary-foreground">Shop the pantry</Link>
-            <Link href="#gift" className="flex h-12 items-center rounded-xl border-[1.5px] border-brand-gold px-7 text-[15px] font-bold">Build a gift tray</Link>
+            <Link href={primaryLink} className="flex h-12 items-center rounded-xl bg-secondary px-7 text-[15px] font-extrabold text-secondary-foreground">{primaryText}</Link>
+            <Link href={secondaryLink} className="flex h-12 items-center rounded-xl border-[1.5px] border-brand-gold px-7 text-[15px] font-bold">{secondaryText}</Link>
           </div>
         </div>
 
