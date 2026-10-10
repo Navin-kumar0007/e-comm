@@ -42,7 +42,7 @@ function revalidateOrder(id?: string) {
 
 const ORDERS_PAGE_SIZE = 50; // not exported: "use server" files may only export async functions
 
-export async function getAdminOrders(opts: { page?: number; q?: string; status?: string } = {}) {
+export async function getAdminOrders(opts: { page?: number; q?: string; status?: string; channel?: string } = {}) {
   await requirePermission('orders.view');
   // Fallback for when no cron is configured: expire abandoned online checkouts.
   try { await releaseStaleOrders(10); } catch (e) { console.error('Stale order sweep failed:', e); }
@@ -66,7 +66,8 @@ export async function getAdminOrders(opts: { page?: number; q?: string; status?:
         ],
       }
     : {};
-  const where = { status: rawStatus ? rawStatus : { not: 'DELETED' }, ...search };
+  const channel = ['WEBSITE', 'SHOP', 'WHOLESALE', 'PHONE'].includes(opts.channel ?? '') ? opts.channel : undefined;
+  const where = { status: rawStatus ? rawStatus : { not: 'DELETED' }, ...(channel ? { channel } : {}), ...search };
 
   const [dbOrders, total, grouped] = await Promise.all([
     prisma.order.findMany({
@@ -97,6 +98,8 @@ export async function getAdminOrders(opts: { page?: number; q?: string; status?:
     rawStatus: o.status as string,
     nextStatuses: nextAdminStatuses(o.status) as string[],
     paymentMethod: o.paymentMethod || 'ONLINE',
+    channel: o.channel || 'WEBSITE',
+    codPending: o.codStatus === 'PENDING',
     discount: o.discount || 0,
     couponCode: o.couponCode || null,
     items: o.items.map((item: any) => ({
@@ -201,6 +204,7 @@ export async function createOrderAction(data: {
           customerPhone: data.customerPhone,
           shippingAddress: data.shippingAddress,
           customerGstin,
+          channel: data.userId ? 'WHOLESALE' : 'PHONE',
           ...(data.userId ? { userId: data.userId } : {}),
           invoiceNumber: await allocateInvoiceNumber(tx),
           items: {
@@ -272,4 +276,149 @@ export async function bulkUpdateOrderStatusAction(ids: string[], status: string)
   }
   revalidateOrder();
   return { success: failed.length === 0, updated, failed };
+}
+
+// ───────────── COD confirmation ─────────────
+
+/** Staff called the customer and they confirmed the COD order. */
+export async function confirmCodAction(orderId: string) {
+  const actor = await adminActor('orders.update');
+  const { confirmCodOrder } = await import('@/lib/cod');
+  const ok = await confirmCodOrder(orderId, actor, 'by staff after calling the customer');
+  if (!ok) return { error: 'This order is not waiting for COD confirmation.' };
+  await audit({ action: 'order.cod_confirm', entity: 'Order', entityId: orderId, summary: `COD order #${orderId.slice(-8).toUpperCase()} confirmed by staff`, actor });
+  revalidateOrder(orderId);
+  return { success: true };
+}
+
+/** Customer couldn't be reached or doesn't want it: cancel and restock. */
+export async function cancelUnconfirmedCodAction(orderId: string) {
+  const actor = await adminActor('orders.cancel');
+  const { declineCodOrder } = await import('@/lib/cod');
+  const ok = await declineCodOrder(orderId, actor, 'cancelled by staff');
+  if (!ok) return { error: 'This order is not waiting for COD confirmation.' };
+  await audit({ action: 'order.cod_cancel', entity: 'Order', entityId: orderId, summary: `Unconfirmed COD order #${orderId.slice(-8).toUpperCase()} cancelled`, actor });
+  revalidateOrder(orderId);
+  return { success: true };
+}
+
+// ───────────── Editing an order before it ships ─────────────
+
+const EDITABLE = ['PENDING', 'PROCESSING', 'CONFIRMED'];
+
+async function editableOrder(orderId: string) {
+  const order = await prisma.order.findUnique({ where: { id: orderId }, include: { items: true, shipments: { where: { status: { not: 'CANCELLED' } }, select: { id: true } } } });
+  if (!order) return { error: 'Order not found.' } as const;
+  if (!EDITABLE.includes(order.status)) return { error: 'Only orders that haven’t shipped can be edited.' } as const;
+  if (order.shipments.length) return { error: 'A courier is already booked. Cancel the shipment first, then edit.' } as const;
+  return { order } as const;
+}
+
+export interface OrderContactInput { customerName: string; customerPhone: string; customerEmail: string; address: string; city: string; state: string; pincode: string; customerGstin?: string | null }
+
+/** Fix the name, phone, email, address or GSTIN on an order that hasn't shipped. */
+export async function editOrderContactAction(orderId: string, input: OrderContactInput) {
+  const actor = await adminActor('orders.update');
+  const found = await editableOrder(orderId);
+  if ('error' in found) return { error: found.error };
+  const name = input.customerName?.trim();
+  const phone = (input.customerPhone || '').replace(/\D/g, '');
+  const email = input.customerEmail?.trim().toLowerCase();
+  const pincode = (input.pincode || '').trim();
+  if (!name) return { error: 'Enter the customer name.' };
+  if (phone.length < 10) return { error: 'Phone number should have 10 digits.' };
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) return { error: 'Email looks wrong.' };
+  if (!/^[1-9]\d{5}$/.test(pincode)) return { error: 'Pincode must be 6 digits.' };
+  if (!input.address?.trim() || !input.city?.trim() || !input.state?.trim()) return { error: 'Fill in the full address.' };
+  const gstin = input.customerGstin?.trim().toUpperCase() || null;
+  if (gstin && !isValidGstin(gstin)) return { error: 'GSTIN is not valid.' };
+  const shippingAddress = [input.address.trim(), input.city.trim(), input.state.trim(), pincode].join(', ');
+  const before = found.order;
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { customerName: name, customerPhone: phone.length === 10 ? `91${phone}` : phone, customerEmail: email, shippingAddress, shippingState: input.state.trim(), customerGstin: gstin },
+  });
+  const changed = [
+    before.customerName !== name && 'name', before.shippingAddress !== shippingAddress && 'address',
+    before.customerPhone.replace(/\D/g, '').slice(-10) !== phone.slice(-10) && 'phone', before.customerEmail !== email && 'email', (before.customerGstin ?? null) !== gstin && 'GSTIN',
+  ].filter(Boolean).join(', ');
+  await logOrderEvent(null, { orderId, type: 'NOTE', message: `Order details edited: ${changed || 'no change'}`, actor });
+  await audit({ action: 'order.edit_contact', entity: 'Order', entityId: orderId, summary: `Edited ${changed || 'nothing'} on #${orderId.slice(-8).toUpperCase()}`, data: { before: { name: before.customerName, phone: before.customerPhone, address: before.shippingAddress } }, actor });
+  revalidateOrder(orderId);
+  return { success: true };
+}
+
+/**
+ * Change items and quantities on an unshipped, unpaid order (COD, phone or wholesale).
+ * Stock moves by the difference; totals and GST are recalculated; the invoice number stays.
+ * Prepaid online orders can't change value here: use a partial refund instead.
+ */
+export async function editOrderItemsAction(orderId: string, lines: Array<{ productId: string; variantId: string | null; quantity: number }>) {
+  const actor = await adminActor('orders.update');
+  const found = await editableOrder(orderId);
+  if ('error' in found) return { error: found.error };
+  const order = found.order;
+  if (order.paymentMethod === 'ONLINE' && order.paymentId) return { error: 'This order was paid online. Use a partial refund for removed items instead of editing.' };
+  const want = lines.filter((l) => Number(l.quantity) > 0).map((l) => ({ ...l, quantity: Math.floor(Number(l.quantity)) }));
+  if (!want.length) return { error: 'An order needs at least one item. Cancel it instead.' };
+
+  const settings = await getStoreSettings();
+  const products = await prisma.product.findMany({ where: { id: { in: [...new Set([...want.map((l) => l.productId), ...order.items.map((i: any) => i.productId).filter(Boolean)])] } }, include: { variants: true } });
+  const keyOf = (p: string | null, v: string | null) => `${p}|${v ?? ''}`;
+  const oldQty = new Map<string, number>();
+  for (const i of order.items as any[]) oldQty.set(keyOf(i.productId, i.variantId), (oldQty.get(keyOf(i.productId, i.variantId)) ?? 0) + i.quantity);
+
+  const newItems: Array<{ productId: string; variantId: string | null; quantity: number; price: number; weight: string; hsnCode: string | null; gstRate: number; productName: string }> = [];
+  for (const l of want) {
+    const p: any = products.find((x: any) => x.id === l.productId);
+    if (!p) return { error: 'A product was not found.' };
+    const v = l.variantId ? p.variants.find((x: any) => x.id === l.variantId) : null;
+    if (l.variantId && !v) return { error: `${p.name}: pack size not found.` };
+    // Keep the price the customer was quoted for items already on the order.
+    const existing = (order.items as any[]).find((i) => i.productId === p.id && (i.variantId ?? null) === (v?.id ?? null));
+    const price = existing ? existing.price : (v ? v.salePrice ?? v.price : p.salePrice ?? p.price);
+    newItems.push({ productId: p.id, variantId: v?.id ?? null, quantity: l.quantity, price, weight: v?.label ?? p.weight ?? '', hsnCode: p.hsnCode ?? null, gstRate: p.gstRate ?? settings.gstRate, productName: p.name });
+  }
+  const r2 = (n: number) => Math.round(n * 100) / 100;
+  const subtotal = r2(newItems.reduce((s, i) => s + i.price * i.quantity, 0));
+  const discount = Math.min(order.discount || 0, subtotal);
+  const shippingFee = order.shippingFee || 0;
+  const total = r2(subtotal - discount + shippingFee);
+  const taxAmount = splitGst({ lines: newItems.map((i) => ({ amount: i.price * i.quantity, gstRate: i.gstRate })), discount, shipping: shippingFee, defaultRate: settings.gstRate }).taxTotal;
+
+  try {
+    await prisma.$transaction(async (tx: any) => {
+      const newQty = new Map<string, number>();
+      for (const i of newItems) newQty.set(keyOf(i.productId, i.variantId), (newQty.get(keyOf(i.productId, i.variantId)) ?? 0) + i.quantity);
+      for (const k of new Set([...oldQty.keys(), ...newQty.keys()])) {
+        const [productId, variantId] = k.split('|');
+        const delta = (oldQty.get(k) ?? 0) - (newQty.get(k) ?? 0); // + puts stock back, − takes more
+        if (delta && productId && productId !== 'null') {
+          await adjustStock(tx, { productId, variantId: variantId || null, delta, reason: delta > 0 ? 'CANCEL_RESTOCK' : 'ADMIN_ORDER', orderId, actor, note: 'Order edited' });
+        }
+      }
+      await tx.orderItem.deleteMany({ where: { orderId } });
+      await tx.order.update({ where: { id: orderId }, data: { subtotal, total, taxAmount, discount, items: { create: newItems } } });
+    }, { timeout: 15000, maxWait: 5000 });
+  } catch (e) {
+    if (e instanceof StockError) return { error: 'Not enough stock for the new quantity.' };
+    throw e;
+  }
+  const summary = newItems.map((i) => `${i.productName} ${i.weight}×${i.quantity}`).join(', ');
+  await logOrderEvent(null, { orderId, type: 'NOTE', message: `Items changed: ${summary}. New total ₹${total.toFixed(2)} (was ₹${order.total.toFixed(2)}).`, actor });
+  await audit({ action: 'order.edit_items', entity: 'Order', entityId: orderId, summary: `Items changed on #${orderId.slice(-8).toUpperCase()}: ₹${order.total} → ₹${total}`, data: { before: order.items.map((i: any) => ({ name: i.productName, qty: i.quantity, price: i.price })), after: newItems.map((i) => ({ name: i.productName, qty: i.quantity, price: i.price })) }, actor });
+  revalidateOrder(orderId);
+  return { success: true, total };
+}
+
+/** Products and sizes to pick from when editing an order. */
+export async function getOrderEditCatalog() {
+  await requirePermission('orders.update');
+  const products = await prisma.product.findMany({
+    where: { status: 'ACTIVE' }, orderBy: { name: 'asc' },
+    select: { id: true, name: true, weight: true, price: true, salePrice: true, stock: true, variants: { where: { isActive: true }, select: { id: true, label: true, price: true, salePrice: true, stock: true } } },
+  });
+  return products.flatMap((p: any) => (p.variants.length
+    ? p.variants.map((v: any) => ({ productId: p.id, variantId: v.id, label: `${p.name} · ${v.label}`, price: v.salePrice ?? v.price, stock: v.stock }))
+    : [{ productId: p.id, variantId: null, label: `${p.name}${p.weight ? ` · ${p.weight}` : ''}`, price: p.salePrice ?? p.price, stock: p.stock }]));
 }

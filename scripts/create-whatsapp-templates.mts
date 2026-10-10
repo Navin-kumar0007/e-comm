@@ -65,7 +65,10 @@ for (const [name, t] of Object.entries(WA_TEMPLATES)) {
     name,
     language: lang,
     category: t.category,
-    components: [{ type: "BODY", text: t.body, example: { body_text: [t.example.map(String)] } }],
+    components: [
+      { type: "BODY", text: t.body, example: { body_text: [t.example.map(String)] } },
+      ...(t.quickReplies?.length ? [{ type: "BUTTONS", buttons: t.quickReplies.map((text) => ({ type: "QUICK_REPLY", text })) }] : []),
+    ],
   };
   const res = await fetch(api, { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const json: any = await res.json();

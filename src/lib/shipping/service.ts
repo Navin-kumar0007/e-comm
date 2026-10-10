@@ -136,6 +136,7 @@ export async function autoBookShipment(orderId: string) {
     if (!provider.capabilities.autoBooking) return;
     const order = await prisma.order.findUnique({ where: { id: orderId }, include: { shipments: true } });
     if (!order || !["PROCESSING", "CONFIRMED"].includes(order.status)) return;
+    if (order.codStatus === "PENDING") return; // waits for the customer's WhatsApp confirmation
     if (order.shipments.some((s: any) => s.type === "FORWARD" && s.status !== "CANCELLED")) return;
     await createShipmentForOrder(orderId, {}, "auto-booking");
   } catch (e) {

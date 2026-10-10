@@ -19,6 +19,7 @@ export default function OrdersClient({
   counts,
   status,
   query,
+  channel = "",
 }: {
   initialOrders: any[];
   total: number;
@@ -27,6 +28,7 @@ export default function OrdersClient({
   counts: Record<string, number>;
   status: string;
   query: string;
+  channel?: string;
 }) {
   const router = useRouter();
   const [orders, setOrders] = useState(initialOrders);
@@ -40,11 +42,13 @@ export default function OrdersClient({
   const activeTab = status;
   const pages = Math.max(1, Math.ceil(total / pageSize));
   // Filters live in the URL so the server does the work (and links are shareable).
-  const go = (next: { status?: string; q?: string; page?: number }) => {
+  const go = (next: { status?: string; q?: string; page?: number; channel?: string }) => {
     const params = new URLSearchParams();
     const st = next.status ?? status;
     const qq = next.q ?? query;
+    const ch = next.channel ?? channel;
     if (st && st !== "all") params.set("status", st);
+    if (ch) params.set("channel", ch);
     if (qq) params.set("q", qq);
     if (next.page && next.page > 1) params.set("page", String(next.page));
     setSelectedIds([]);
@@ -182,9 +186,15 @@ export default function OrdersClient({
           <h1 className="text-3xl font-heading font-bold text-foreground">Orders</h1>
           <p className="text-muted-foreground mt-1">Manage and fulfill customer orders ({counts.all ?? 0} total)</p>
         </div>
-        <Link href="/admin/orders/new">
-          <Button className="rounded-full shadow-md"><Plus className="w-4 h-4 mr-2" /> Create Order</Button>
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <select aria-label="Sales channel" value={channel} onChange={(e) => go({ channel: e.target.value, page: 1 })} className="h-10 rounded-full border border-border bg-card px-3 text-sm">
+            <option value="">All channels</option><option value="WEBSITE">Website</option><option value="SHOP">Shop counter</option><option value="PHONE">Phone orders</option><option value="WHOLESALE">Wholesale</option>
+          </select>
+          <a href={`/api/admin/export-orders?${new URLSearchParams({ ...(status && status !== "all" ? { status } : {}), ...(channel ? { channel } : {}), ...(query ? { q: query } : {}) })}`} className="inline-flex h-10 items-center rounded-full border border-border bg-card px-4 text-sm font-medium hover:bg-muted">Export Excel</a>
+          <Link href="/admin/orders/new">
+            <Button className="rounded-full shadow-md"><Plus className="w-4 h-4 mr-2" /> Create Order</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex gap-1 p-1 bg-muted/50 rounded-xl w-fit flex-wrap">
@@ -264,6 +274,12 @@ export default function OrdersClient({
                       <td className="px-4 py-4">
                         <div className="font-semibold text-foreground">{order.customer}</div>
                         <div className="text-xs text-muted-foreground">{order.email}</div>
+                        {(order.channel !== "WEBSITE" || order.codPending) && (
+                          <div className="mt-1 flex gap-1">
+                            {order.channel !== "WEBSITE" && <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold">{({ SHOP: "Shop", PHONE: "Phone", WHOLESALE: "Wholesale" } as Record<string, string>)[order.channel] ?? order.channel}</span>}
+                            {order.codPending && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">COD not confirmed</span>}
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-4 text-muted-foreground whitespace-nowrap">{order.date}</td>
                       <td className="px-4 py-4 font-medium text-foreground whitespace-nowrap">₹{order.total.toFixed(2)}</td>

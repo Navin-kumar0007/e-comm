@@ -31,6 +31,11 @@ export async function buildDailySummary(now = new Date()) {
     prisma.order.count({ where: { createdAt: { gte: start, lt: end }, paymentMethod: "ONLINE", status: { in: ["EXPIRED", "FAILED"] } } }),
     prisma.auditLog.count({ where: { action: "auth.2fa_failed", createdAt: { gte: start, lt: end } } }),
   ]);
+  const [codPending, unreadChats, privacyDue] = await Promise.all([
+    prisma.order.count({ where: { codStatus: "PENDING", status: { in: ["PROCESSING", "CONFIRMED"] }, createdAt: { lt: new Date(now.getTime() - 12 * 36e5) } } }),
+    prisma.whatsAppLog.count({ where: { type: "INBOUND", readAt: null } }),
+    prisma.privacyRequest.count({ where: { status: "OPEN", dueAt: { lt: new Date(now.getTime() + 14 * 864e5) } } }),
+  ]);
 
   const sales = orders.reduce((s: number, o: any) => s + o.total, 0);
   const cod = orders.filter((o: any) => o.paymentMethod === "COD").length;
@@ -47,6 +52,9 @@ export async function buildDailySummary(now = new Date()) {
   if (positions.codDue > 0 && positions.codOldest && now.getTime() - new Date(positions.codOldest).getTime() > 10 * 864e5) alerts.push(`COD money ${inr(positions.codDue)} still with the courier (oldest over 10 days)`);
   if (positions.unpaidExpenseCount) alerts.push(`${positions.unpaidExpenseCount} unpaid bill${positions.unpaidExpenseCount === 1 ? "" : "s"} (${inr(positions.unpaidExpenses)})`);
   if (unpaidOnline) alerts.push(`${unpaidOnline} online checkout${unpaidOnline === 1 ? "" : "s"} not completed yesterday: follow up from Insights`);
+  if (codPending) alerts.push(`${codPending} COD order${codPending === 1 ? "" : "s"} not confirmed on WhatsApp for 12+ hours: call or cancel`);
+  if (unreadChats) alerts.push(`${unreadChats} unread WhatsApp message${unreadChats === 1 ? "" : "s"} in the inbox`);
+  if (privacyDue) alerts.push(`${privacyDue} privacy request${privacyDue === 1 ? "" : "s"} due within 14 days`);
   if (failed2fa >= 3) alerts.push(`${failed2fa} wrong two-step codes entered on admin logins: check the Activity log`);
 
   const rows: Array<[string, string]> = [

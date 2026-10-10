@@ -72,6 +72,8 @@ export async function bookShipmentAction(
   input: { providerId?: string; courierId?: string; weightGrams?: number; manual?: { awb: string; courierName: string; trackingUrl?: string } }
 ) {
   const who = await actor('shipping.manage');
+  const pending = await prisma.order.findFirst({ where: { id: orderId, codStatus: 'PENDING' }, select: { id: true } });
+  if (pending) return { error: 'This COD order is waiting for the customer to confirm on WhatsApp. Confirm it on the order page after calling them, then book.' };
   try {
     const shipment = await createShipmentForOrder(orderId, input, who);
     done(orderId);

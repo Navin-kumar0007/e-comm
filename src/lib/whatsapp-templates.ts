@@ -20,9 +20,10 @@ export type TemplateKey =
   | "price_drop"
   | "price_alert_subscribed"
   | "owner_daily_summary"
-  | "counter_invoice";
+  | "counter_invoice"
+  | "cod_confirm";
 
-export const WA_TEMPLATES: Record<TemplateKey, { env: string; category: "UTILITY" | "MARKETING"; body: string; example: string[] }> = {
+export const WA_TEMPLATES: Record<TemplateKey, { env: string; category: "UTILITY" | "MARKETING"; body: string; example: string[]; quickReplies?: string[] }> = {
   order_confirmed: {
     env: "WA_TEMPLATE_ORDER_CONFIRMED",
     category: "UTILITY",
@@ -101,11 +102,20 @@ export const WA_TEMPLATES: Record<TemplateKey, { env: string; category: "UTILITY
     body: "Thank you for shopping at Spicy Nuts! Your bill {{1}} for ₹{{2}} is ready. You can view and download your GST invoice here: {{3}} Please visit us again.",
     example: ["SN/2026-27/00042", "1,250", "https://www.spicynuts.in/bill/abc123/xyz"],
   },
+  cod_confirm: {
+    env: "WA_TEMPLATE_COD_CONFIRM",
+    category: "UTILITY",
+    body: "Hi {{1}}, thank you for your Spicy Nuts order #{{2}} for ₹{{3}}, to be paid in cash on delivery. Please tap Yes to confirm it so we can pack and ship it. If you did not place this order, tap Cancel.",
+    example: ["Priya", "1A2B3C4D", "650"],
+    quickReplies: ["Yes, confirm", "Cancel order"],
+  },
 };
 
 export interface TemplateRef {
   key: TemplateKey;
   params: Array<string | number>;
+  /** One payload per quick-reply button, returned to the webhook when the customer taps it. */
+  buttonPayloads?: string[];
 }
 
 /** Meta rejects template params with newlines/tabs or 4+ spaces in a row. */
@@ -121,6 +131,9 @@ export function buildTemplatePayload(ref: TemplateRef) {
   return {
     name,
     language: { code: process.env.WA_TEMPLATE_LANGUAGE || "en" },
-    components: [{ type: "body", parameters: ref.params.map((p) => ({ type: "text", text: cleanParam(p) })) }],
+    components: [
+      { type: "body", parameters: ref.params.map((p) => ({ type: "text", text: cleanParam(p) })) },
+      ...(ref.buttonPayloads ?? []).map((payload, i) => ({ type: "button", sub_type: "quick_reply", index: String(i), parameters: [{ type: "payload", payload }] })),
+    ],
   };
 }

@@ -21,6 +21,7 @@ export interface QueueOrder {
   awb: string | null;
   courierName: string | null;
   labelUrl: string | null;
+  codPending?: boolean;
 }
 
 const inr = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
@@ -54,7 +55,9 @@ export function FulfilmentClient({ orders, canBook, providerName }: { orders: Qu
   const printHref = (doc: string) => `/admin/print/${doc}?ids=${chosen.map((o) => o.id).join(",")}`;
 
   const bookAll = () => {
-    const targets = chosen.filter((o) => !o.awb);
+    const held = chosen.filter((o) => !o.awb && o.codPending).length;
+    if (held) toast.info(`${held} COD order${held === 1 ? " is" : "s are"} waiting for the customer's WhatsApp confirmation and won't be booked.`);
+    const targets = chosen.filter((o) => !o.awb && !o.codPending);
     if (!targets.length) return toast.info("Selected orders are already booked.");
     startBooking(async () => {
       let ok = 0;
@@ -158,6 +161,8 @@ export function FulfilmentClient({ orders, canBook, providerName }: { orders: Qu
                       <p className="font-mono text-xs">{o.awb}</p>
                       {o.labelUrl && <a href={o.labelUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-[#6E1A2C] hover:underline">Courier label <ExternalLink className="h-3 w-3" /></a>}
                     </div>
+                  ) : o.codPending ? (
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">Awaiting COD confirmation</span>
                   ) : (
                     <span className="text-xs text-muted-foreground">Not booked</span>
                   )}

@@ -146,6 +146,8 @@ model Order {
   channel         String          @default("WEBSITE") // WEBSITE, SHOP, WHOLESALE, PHONE
   cashReceived    Float? // counter sale paid in cash: amount handed over (change = this − total)
   paymentRef      String? // UPI / card reference for counter sales
+  codStatus       String? // website COD orders: PENDING until the customer confirms on WhatsApp, then CONFIRMED / DECLINED
+  codConfirmedAt  DateTime?
   razorpayOrderId String?
   paymentId       String?
   paidAt          DateTime?
@@ -181,6 +183,8 @@ model Order {
   @@index([customerEmail])
   @@index([razorpayOrderId])
   @@index([channel, createdAt])
+  @@index([codStatus])
+  @@index([customerPhone])
 }
 
 model OrderItem {
@@ -409,12 +413,13 @@ model WhatsAppSubscriber {
 }
 
 model WhatsAppLog {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   phone     String
   message   String
-  type      String // "OFFER", "NEW_RELEASE", "PRICE_UPDATE", "ORDER_UPDATE", "WELCOME"
-  status    String // "SENT", "SIMULATED", "FAILED"
-  createdAt DateTime @default(now())
+  type      String // "OFFER", "NEW_RELEASE", "PRICE_UPDATE", "ORDER_UPDATE", "WELCOME", "INBOUND", "REPLY"
+  status    String // "SENT", "SIMULATED", "FAILED", "RECEIVED"
+  readAt    DateTime? // inbound messages: when staff opened the chat
+  createdAt DateTime  @default(now())
 
   @@index([phone])
   @@index([type])
@@ -850,4 +855,33 @@ model ConsentRecord {
   @@index([userId])
   @@index([phone])
   @@index([purpose, createdAt])
+}
+
+// Staff notes on a customer (keyed by normalised phone, or email for customers without one).
+model CustomerNote {
+  id        String   @id @default(cuid())
+  key       String
+  note      String
+  createdBy String
+  createdAt DateTime @default(now())
+
+  @@index([key])
+}
+
+// A customer's request to see, correct or delete their data, or to withdraw consent (DPDP Act s.11-14).
+model PrivacyRequest {
+  id        String    @id @default(cuid())
+  userId    String?
+  email     String?
+  phone     String?
+  type      String // ACCESS, CORRECTION, ERASURE, WITHDRAW
+  details   String?
+  status    String    @default("OPEN") // OPEN, DONE, REJECTED
+  dueAt     DateTime // 90 days to answer (Rule 14)
+  closedAt  DateTime?
+  closedBy  String?
+  note      String?
+  createdAt DateTime  @default(now())
+
+  @@index([status, dueAt])
 }

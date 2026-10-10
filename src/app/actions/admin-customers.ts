@@ -109,3 +109,31 @@ export async function getWholesaleCustomers() {
   });
   return rows;
 }
+
+// ───────────── Customer directory and notes ─────────────
+
+export async function getCustomerDirectoryAction() {
+  await requirePermission('customers.view');
+  const { getCustomerDirectory } = await import('@/lib/customers');
+  return getCustomerDirectory();
+}
+
+export async function addCustomerNoteAction(key: string, note: string) {
+  await requirePermission('customers.view');
+  const { staffActor } = await import('@/lib/auth-guard');
+  const text = note.trim().slice(0, 1000);
+  if (!text) return { error: 'Write a note first.' };
+  if (!key || key.length > 120) return { error: 'Customer not found.' };
+  const createdBy = await staffActor();
+  await prisma.customerNote.create({ data: { key, note: text, createdBy } });
+  await audit({ action: 'customer.note', entity: 'Customer', entityId: key, summary: `Added a note: ${text.slice(0, 80)}` });
+  revalidatePath(`/admin/customers/${encodeURIComponent(key)}`);
+  return { success: true };
+}
+
+export async function deleteCustomerNoteAction(id: string, key: string) {
+  await requirePermission('customers.view');
+  await prisma.customerNote.delete({ where: { id } });
+  revalidatePath(`/admin/customers/${encodeURIComponent(key)}`);
+  return { success: true };
+}

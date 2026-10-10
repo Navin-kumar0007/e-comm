@@ -34,6 +34,7 @@ export default async function FulfilmentPage() {
     awb: o.shipments[0]?.awb ?? null,
     courierName: o.shipments[0]?.courierName ?? null,
     labelUrl: o.shipments[0]?.labelUrl ?? null,
+    codPending: o.codStatus === "PENDING",
   }));
 
   return (

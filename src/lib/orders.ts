@@ -67,6 +67,20 @@ export async function sendOrderConfirmedNotifications(orderId: string) {
     console.error("Order confirmation email failed:", e);
   }
 
+  // Website COD orders: ask the customer to confirm on WhatsApp first; the regular confirmation
+  // and courier booking follow when they tap Yes (see lib/cod.ts).
+  if (order.paymentMethod === "COD" && order.channel === "WEBSITE") {
+    try {
+      const { requestCodConfirmation } = await import("@/lib/cod");
+      if (await requestCodConfirmation(order)) {
+        await notifyAdminNewOrder(order.id, order.total, order.customerName, order.paymentMethod).catch((e) => console.error("Admin new-order notification failed:", e));
+        return;
+      }
+    } catch (e) {
+      console.error("COD confirmation request failed:", e);
+    }
+  }
+
   if (order.customerPhone) {
     try {
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";

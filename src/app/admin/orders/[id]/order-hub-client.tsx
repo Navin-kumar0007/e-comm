@@ -11,6 +11,7 @@ import Barcode from "@/components/ui/barcode";
 import { InvoiceDocument } from "@/components/invoice/invoice-document";
 import { computeInvoice, type InvoiceSettings } from "@/lib/invoice";
 import { FulfilmentPanel } from "./fulfilment-panel";
+import { OrderActions } from "./order-actions";
 
 export default function OrderHubClient({
   order,
@@ -55,6 +56,8 @@ export default function OrderHubClient({
           </div>
         </div>
       </div>
+
+      <OrderActions order={order} />
 
       {/* Tabs */}
       <div className="flex gap-4 border-b border-gray-200 print:hidden">

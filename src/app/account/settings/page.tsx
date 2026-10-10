@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import { redirect } from "next/navigation";
 import { SettingsForm } from "./settings-form";
+import { PrivacyCard } from "./privacy-card";
+import { getMyPrivacy } from "@/app/actions/privacy";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -12,9 +14,10 @@ export default async function SettingsPage() {
     include: { dietaryTags: true }
   });
 
-  const availableTags = await prisma.dietaryTag.findMany({
-    orderBy: { name: 'asc' }
-  });
+  const [availableTags, privacy] = await Promise.all([
+    prisma.dietaryTag.findMany({ orderBy: { name: 'asc' } }),
+    getMyPrivacy(),
+  ]);
 
   return (
     <div className="space-y-8">
@@ -24,6 +27,7 @@ export default async function SettingsPage() {
       </div>
 
       <SettingsForm user={user} availableTags={availableTags} />
+      <PrivacyCard initial={privacy} />
     </div>
   );
 }

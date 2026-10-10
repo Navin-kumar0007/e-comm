@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, ShoppingCart, RotateCcw, Users, Repeat, Printer, Warehouse, Barcode, Package, FolderTree,
   ChefHat, ListChecks, Ticket, MessageCircle, Sparkles, Star, MessageSquare, UserCog, Settings, Store,
-  Gauge, Wheat, Scissors, Boxes, ClipboardCheck, ClipboardList, Truck, TrendingUp, Receipt, Landmark, HandCoins, Lightbulb, ShieldCheck, History, ScanBarcode,
+  Gauge, Wheat, Scissors, Boxes, ClipboardCheck, ClipboardList, Truck, TrendingUp, Receipt, Landmark, HandCoins, Lightbulb, ShieldCheck, History, ScanBarcode, Inbox, ShieldHalf,
 } from "lucide-react";
 import type { Permission } from "@/lib/permissions";
 
@@ -22,6 +22,7 @@ export const NAV: NavGroup[] = [
       { href: "/admin/orders", label: "Orders", icon: ShoppingCart, permission: "orders.view" },
       { href: "/admin/returns", label: "Returns", icon: RotateCcw, permission: "returns.manage" },
       { href: "/admin/customers", label: "Customers", icon: Users, permission: "customers.view" },
+      { href: "/admin/inbox", label: "WhatsApp inbox", icon: Inbox, permission: "customers.view" },
       { href: "/admin/subscriptions", label: "Subscriptions", icon: Repeat, permission: "customers.view" },
     ],
   },
@@ -83,6 +84,7 @@ export const NAV: NavGroup[] = [
       { href: "/admin/staff", label: "Staff & Roles", icon: UserCog, permission: "staff.manage" },
       { href: "/admin/settings", label: "Settings", icon: Settings, permission: "settings.manage" },
       { href: "/admin/security", label: "Login security", icon: ShieldCheck, permission: "dashboard.view" },
+      { href: "/admin/privacy", label: "Privacy requests", icon: ShieldHalf, permission: "staff.manage" },
       { href: "/admin/audit", label: "Activity log", icon: History, permission: "staff.manage" },
     ],
   },

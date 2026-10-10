@@ -56,6 +56,12 @@ export async function POST(req: Request) {
           await prisma.whatsAppLog.create({
             data: { phone: String(m.from ?? ""), message: String(text).slice(0, 2000), type: "INBOUND", status: "RECEIVED" },
           });
+          // Quick-reply buttons on our templates (e.g. "Yes, confirm" on a COD order).
+          const payload = m.button?.payload ?? m.interactive?.button_reply?.id;
+          if (payload) {
+            const { handleCodButton } = await import("@/lib/cod");
+            await handleCodButton(String(payload), String(m.from ?? "")).catch((e) => console.error("[WhatsApp webhook] COD button failed:", e));
+          }
         }
         for (const s of value.statuses ?? []) {
           if (s.status === "failed") console.warn("[WhatsApp] Delivery failed:", s.recipient_id, JSON.stringify(s.errors ?? []).slice(0, 300));

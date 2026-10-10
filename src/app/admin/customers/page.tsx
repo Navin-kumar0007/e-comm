@@ -1,9 +1,11 @@
 import { requirePagePermission } from "@/lib/auth-guard";
-import { getAdminCustomers } from "@/app/actions/admin-customers";
+import { getCustomerDirectoryAction } from "@/app/actions/admin-customers";
 import CustomersClient from "./customers-client";
 
-export default async function CustomersPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+export const dynamic = "force-dynamic";
+
+export default async function CustomersPage({ searchParams }: { searchParams: Promise<{ q?: string; seg?: string }> }) {
   const staff = await requirePagePermission("customers.view");
-  const [customers, { q }] = await Promise.all([getAdminCustomers(), searchParams]);
-  return <CustomersClient initialCustomers={customers} initialQuery={q ?? ""} canEdit={staff.can("orders.create")} />;
+  const [customers, { q, seg }] = await Promise.all([getCustomerDirectoryAction(), searchParams]);
+  return <CustomersClient initialCustomers={customers} initialQuery={q ?? ""} initialSegment={seg ?? "all"} canEdit={staff.can("orders.create")} />;
 }
