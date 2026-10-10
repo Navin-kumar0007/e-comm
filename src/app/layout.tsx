@@ -9,10 +9,8 @@ import { Footer } from "@/components/storefront/Footer";
 import { StorefrontOnly } from "@/components/storefront/storefront-only";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/storefront/auth-provider";
-import { AIConcierge } from "@/components/storefront/ai-concierge";
 import { WhatsAppButton } from "@/components/storefront/whatsapp-button";
-import { WhatsAppWelcomePrompt } from "@/components/storefront/whatsapp-welcome-prompt";
-import { AccessibilityToolbar } from "@/components/accessibility/accessibility-toolbar";
+import { DeferredWidgets } from "@/components/storefront/deferred-widgets";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { BRAND_PHONE_TEL } from "@/lib/contact";
 import { CookieConsent } from "@/components/storefront/cookie-consent";
@@ -183,7 +181,7 @@ export default async function RootLayout({
             <StorefrontOnly><div className="print:hidden"><Navbar announcement={announcement} /></div></StorefrontOnly><main className="flex-1 pb-24 md:pb-0 print:m-0 print:p-0">
               {children}
             </main>
-            <StorefrontOnly><div className="print:hidden"><Footer contact={contact} /><MobileBottomNav /><AIConcierge /><WhatsAppButton /><WhatsAppWelcomePrompt enabled={popup.enabled} title={popup.title} text={popup.text} delaySeconds={popup.delaySeconds} /><AccessibilityToolbar /></div><ScrollReveal /></StorefrontOnly>
+            <StorefrontOnly><div className="print:hidden"><Footer contact={contact} /><MobileBottomNav /><WhatsAppButton /><DeferredWidgets popup={popup} /></div><ScrollReveal /></StorefrontOnly>
             <Toaster />
           </ThemeProvider>
         </AuthProvider>

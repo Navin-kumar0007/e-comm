@@ -3,8 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Gift, MessageCircle, X } from "lucide-react";
-import { WhatsAppVIPModal } from "./whatsapp-vip-modal";
+import dynamic from "next/dynamic";
 import { BRAND_WHATSAPP } from "@/lib/contact";
+
+// The sign-up form only downloads when the shopper opens it.
+const WhatsAppVIPModal = dynamic(() => import("./whatsapp-vip-modal").then((m) => m.WhatsAppVIPModal), { ssr: false });
 
 export function WhatsAppButton() {
   const [vipOpen, setVipOpen] = useState(false);
@@ -41,7 +44,7 @@ export function WhatsAppButton() {
         </Link>
       </div>
 
-      <WhatsAppVIPModal open={vipOpen} onOpenChange={setVipOpen} />
+      {vipOpen && <WhatsAppVIPModal open={vipOpen} onOpenChange={setVipOpen} />}
     </>
   );
 }

@@ -1,9 +1,9 @@
 /**
  * Jar label artwork exported from the label designs (public/labels).
- * `front` is the front panel without the net-weight band; `full` is the whole wrap.
+ * `front` is the front panel without the net-weight band; `full` is the whole wrap; `jar` is a lighter copy of it used as the turning jar's texture.
  */
 
-export type ProductLabel = { key: string; front: string; full: string; band: string; band1: string; gold: string; deep: string };
+export type ProductLabel = { key: string; front: string; full: string; jar: string; band: string; band1: string; gold: string; deep: string };
 
 const PALETTE: Record<string, { band: string; band1: string; gold: string; deep: string }> = {
   almond: { band: "#5A2C14", band1: "#8A4B26", gold: "#E9C987", deep: "#6A3416" },
@@ -80,5 +80,5 @@ const BY_SLUG: Record<string, string> = {
 export function getProductLabel(slug: string): ProductLabel | null {
   const key = BY_SLUG[slug];
   if (!key) return null;
-  return { key, front: `/labels/${key}-front.webp`, full: `/labels/${key}.webp`, ...PALETTE[key] };
+  return { key, front: `/labels/${key}-front.webp`, full: `/labels/${key}.webp`, jar: `/labels/jar/${key}.webp`, ...PALETTE[key] };
 }

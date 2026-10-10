@@ -34,7 +34,7 @@ const DESKTOP_LINKS = [
 function LogoPlaque() {
   return (
     <span className="inline-flex items-center rounded-xl border border-brand-gold bg-background px-2 py-0.5">
-      <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" width={140} height={111} priority className="h-[34px] w-auto md:h-[46px]" />
+      <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" width={64} height={51} priority className="h-[34px] w-auto md:h-[46px]" />
     </span>
   );
 }

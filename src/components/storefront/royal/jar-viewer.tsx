@@ -23,7 +23,7 @@ const LABEL_H = 384;
 export function JarViewer({ label, images, name, weight }: { label: ProductLabel; images: string[]; name: string; weight: string }) {
   // The jar is the biggest thing on the page; start downloading its label with the HTML,
   // not after scripts run (it is a CSS background, which browsers otherwise find late).
-  preload(label.full, { as: "image", fetchPriority: "high" });
+  preload(label.jar, { as: "image", fetchPriority: "high" });
   const [view, setView] = useState<View>("360° jar");
   const [rot, setRot] = useState(0);
   const [spinning, setSpinning] = useState(true);
@@ -79,7 +79,7 @@ export function JarViewer({ label, images, name, weight }: { label: ProductLabel
               <span
                 className="absolute inset-0 block"
                 style={{
-                  backgroundImage: `url(${label.full})`,
+                  backgroundImage: `url(${label.jar})`,
                   backgroundSize: `${bgW}px ${bgH}px`,
                   backgroundRepeat: "repeat-x",
                   backgroundPosition: `${pos}px 0`,

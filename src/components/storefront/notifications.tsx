@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/popover";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 
 export function NotificationsDropdown() {
   const { data: session } = useSession();
@@ -54,16 +53,9 @@ export function NotificationsDropdown() {
       <PopoverTrigger aria-label="Notifications" className="relative text-current hover:bg-white/10 transition-colors rounded-full p-2 h-10 w-10 inline-flex items-center justify-center">
         
           <Bell className="w-5 h-5" />
-          <AnimatePresence>
-            {unreadCount > 0 && (
-              <motion.span 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-                className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-background" 
-              />
-            )}
-          </AnimatePresence>
+          {unreadCount > 0 && (
+            <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-background" />
+          )}
         
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0 mr-4 glass-panel border-white/10 shadow-2xl bg-surface/95 backdrop-blur-3xl" align="end">
@@ -82,12 +74,9 @@ export function NotificationsDropdown() {
               <p className="text-sm">You're all caught up!</p>
             </div>
           ) : (
-            notifications.map((notif, i) => (
-              <motion.div 
+            notifications.map((notif) => (
+              <div
                 key={notif.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
                 className={`flex gap-4 p-4 border-b border-white/5 cursor-pointer hover:bg-white/5 transition-colors ${!notif.isRead ? 'bg-primary/5' : ''}`}
                 onClick={() => {
                   if (!notif.isRead) markAsRead(notif.id);
@@ -104,7 +93,7 @@ export function NotificationsDropdown() {
                   <p className={`text-sm font-medium ${!notif.isRead ? 'text-foreground' : 'text-muted-foreground'}`}>{notif.title}</p>
                   <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{notif.message}</p>
                 </div>
-              </motion.div>
+              </div>
             ))
           )}
         </div>

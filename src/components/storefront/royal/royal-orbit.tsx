@@ -13,6 +13,7 @@ const SPIN_SECONDS = 22;
  * Hero option A from the design board: the dry fruits orbit the Spicy Nuts seal
  * in CSS 3D. Each medallion counter-rotates so it always faces the viewer
  * (offset with a negative animation-delay). Tap one to shop that collection.
+ * Images are small (shown at 48–62 px) and low priority, so they never hold up the hero text.
  */
 export function RoyalOrbit({ size = "sm" }: { size?: "sm" | "lg" }) {
   const [picked, setPicked] = useState(ITEMS[0].slug);
@@ -33,7 +34,7 @@ export function RoyalOrbit({ size = "sm" }: { size?: "sm" | "lg" }) {
             className="seal-glow absolute flex items-center justify-center rounded-full border-[3px] border-brand-gold bg-background"
             style={{ width: seal, height: seal, left: -seal / 2, top: -seal / 2, transform: "rotateX(24deg) translateZ(0)" }}
           >
-            <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" width={140} height={111} priority className="h-auto" style={{ width: seal * 0.74 }} />
+            <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" width={128} height={101} fetchPriority="low" className="h-auto" style={{ width: seal * 0.74 }} />
           </div>
 
           <div className="orbit-ring" style={{ animationDuration: `${SPIN_SECONDS}s` }}>
@@ -60,9 +61,10 @@ export function RoyalOrbit({ size = "sm" }: { size?: "sm" | "lg" }) {
                     <Image
                       src={c.image}
                       alt=""
-                      width={140}
-                      height={140}
+                      width={64}
+                      height={64}
                       loading="eager"
+                      fetchPriority="low"
                       className={`rounded-full border-2 object-cover shadow-[0_10px_18px_rgba(0,0,0,0.45)] ${on ? "border-white" : "border-brand-gold"}`}
                       style={{ width: medal, height: medal }}
                     />

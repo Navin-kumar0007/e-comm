@@ -103,7 +103,7 @@ export function FounderSection() {
       <div className="flex flex-col gap-3 rounded-[22px] border border-border bg-card p-5 md:flex-row md:items-center md:gap-10 md:rounded-[26px] md:p-10">
         <div className="flex items-center gap-4 md:block">
           <span className="arch flex h-[100px] w-[80px] shrink-0 items-center justify-center border-2 border-brand-gold bg-muted md:h-[230px] md:w-[180px]">
-            <Image src="/spicy-nuts-logo.png" alt="" width={140} height={111} className="w-14 md:w-28" />
+            <Image src="/spicy-nuts-logo.png" alt="" width={112} height={89} className="w-14 md:w-28" />
           </span>
           <div className="md:hidden">
             <span className="eyebrow text-brand-gold-deep">Meet the founder</span>
