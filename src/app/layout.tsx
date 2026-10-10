@@ -38,6 +38,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  // Name under the icon when added to an iPhone home screen (otherwise the long page title).
+  appleWebApp: { capable: true, title: "Spicy Nuts", statusBarStyle: "default" },
   title: {
     default: "Spicy Nuts — Premium Dry Fruits, Nuts & Organic Spices | Buy Online India",
     template: "%s | Spicy Nuts",
