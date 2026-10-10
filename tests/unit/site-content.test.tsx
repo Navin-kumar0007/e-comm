@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { SimpleMarkdown } from "@/components/storefront/simple-markdown";
-import { liveBanners } from "@/lib/site-content";
+import { liveBanners } from "@/lib/site-content-shared";
 
 const md = (t: string) => renderToStaticMarkup(<SimpleMarkdown text={t} />);
 

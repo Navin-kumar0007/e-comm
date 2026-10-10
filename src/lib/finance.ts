@@ -6,6 +6,8 @@ import { stateCode } from "@/lib/gst";
 import {
   r2, monthRange, expenseCost, expenseLabel, buildGstr1, refundTax, itcTotals, type InvoiceForReturn,
 } from "@/lib/finance-core";
+import { receivedValue } from "@/lib/finance-core";
+export { receivedValue };
 
 /** Razorpay's usual domestic fee when the real fee hasn't been fetched yet (before GST on the fee). */
 export const ESTIMATED_GATEWAY_RATE = 0.02;
@@ -200,12 +202,6 @@ export async function getPositions() {
   };
 }
 
-/** What we owe for goods received on a PO (its total, pro rata to what arrived). */
-export function receivedValue(po: { total: number; lines: Array<{ qty: number; rate: number; receivedQty: number }> }) {
-  const ordered = po.lines.reduce((s, l) => s + l.qty * l.rate, 0);
-  const received = po.lines.reduce((s, l) => s + Math.min(l.qty, l.receivedQty) * l.rate, 0);
-  return ordered > 0 ? r2((po.total * received) / ordered) : 0;
-}
 
 // ───────────── GST ─────────────
 

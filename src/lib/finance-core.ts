@@ -191,3 +191,10 @@ const cell = (v: unknown) => {
 export function toCsv(headers: string[], rows: Array<Array<unknown>>) {
   return [headers, ...rows].map((r) => r.map(cell).join(",")).join("\n");
 }
+
+/** What we owe for goods received on a PO (its total, pro rata to what arrived). */
+export function receivedValue(po: { total: number; lines: Array<{ qty: number; rate: number; receivedQty: number }> }) {
+  const ordered = po.lines.reduce((s, l) => s + l.qty * l.rate, 0);
+  const received = po.lines.reduce((s, l) => s + Math.min(l.qty, l.receivedQty) * l.rate, 0);
+  return ordered > 0 ? r2((po.total * received) / ordered) : 0;
+}

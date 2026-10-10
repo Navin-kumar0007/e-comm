@@ -62,3 +62,7 @@ export type ContentKey = keyof typeof CONTENT_DEFAULTS;
 export type ContentOf<K extends ContentKey> = (typeof CONTENT_DEFAULTS)[K];
 export const CONTENT_KEYS = Object.keys(CONTENT_DEFAULTS) as ContentKey[];
 
+/** Banners that should show right now. */
+export function liveBanners(banners: Banner[], now = new Date()) {
+  return banners.filter((b) => b.enabled && b.image && (!b.startsAt || new Date(b.startsAt) <= now) && (!b.endsAt || new Date(b.endsAt) > now));
+}

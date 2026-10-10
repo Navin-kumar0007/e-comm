@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildGstr1, refundTax, itcTotals, monthRange, lastMonths, ymOf, gstPeriod, expenseCost, toCsv, type InvoiceForReturn } from "@/lib/finance-core";
+import { buildGstr1, refundTax, itcTotals, monthRange, lastMonths, ymOf, gstPeriod, expenseCost, toCsv, receivedValue, type InvoiceForReturn } from "@/lib/finance-core";
 
 const inv = (o: Partial<InvoiceForReturn>): InvoiceForReturn => ({
   invoiceNumber: "SN/26-27/0001", date: "2026-10-05T06:00:00Z", customerName: "A", customerGstin: null, placeOfSupply: "Karnataka", sameState: true, total: 1050,
@@ -67,7 +67,6 @@ describe("csv", () => {
 
 describe("supplier dues", () => {
   it("owes only for goods received, pro rata to the PO total", async () => {
-    const { receivedValue } = await import("@/lib/finance");
     expect(receivedValue({ total: 10500, lines: [{ qty: 10, rate: 500, receivedQty: 10 }, { qty: 10, rate: 500, receivedQty: 0 }] })).toBe(5250);
     expect(receivedValue({ total: 0, lines: [] })).toBe(0);
   });
