@@ -2,10 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Leaf, Package, User, Star, Settings } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { Leaf, Package, User, Star, Settings, Shield } from 'lucide-react';
+import { isStaffRole } from '@/lib/permissions';
+import { SignOutButton } from '@/components/sign-out-button';
 
 export function AccountNav() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const isStaff = isStaffRole((session?.user as { role?: string } | undefined)?.role);
 
   const navItems = [
     { href: '/account', label: 'Profile', icon: User },
@@ -37,6 +42,14 @@ export function AccountNav() {
           </Link>
         );
       })}
+      {isStaff && (
+        <Link href="/admin" className="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-primary hover:bg-primary/10">
+          <Shield className="w-4 h-4" /> Admin Panel
+        </Link>
+      )}
+      <div className="border-t border-border/60 pt-2">
+        <SignOutButton className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-left text-destructive hover:bg-destructive/10 disabled:opacity-60" />
+      </div>
     </nav>
   );
 }

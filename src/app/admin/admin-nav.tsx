@@ -9,6 +9,7 @@ import {
   Gauge, Wheat, Scissors, Boxes, ClipboardCheck, ClipboardList, Truck, TrendingUp, Receipt, Landmark, HandCoins, Lightbulb, ShieldCheck, History, ScanBarcode, Inbox, ShieldHalf, PanelsTopLeft,
 } from "lucide-react";
 import type { Permission } from "@/lib/permissions";
+import { SignOutButton } from "@/components/sign-out-button";
 
 type NavItem = { href: string; label: string; icon: typeof LayoutDashboard; permission: Permission | Permission[] };
 type NavGroup = { label: string; items: NavItem[] };
@@ -155,6 +156,7 @@ export function AdminNav({ permissions, staffName, roleName }: { permissions: st
         <Link href="/" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-[#d9cbb5] hover:bg-white/5 hover:text-white">
           <Store className="h-4 w-4" /> View store
         </Link>
+        <SignOutButton className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[13px] text-[#d9cbb5] hover:bg-white/5 hover:text-white disabled:opacity-60" />
       </div>
     </div>
   );

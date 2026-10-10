@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
+import { clearTwoStepCookieAction } from "@/app/actions/auth";
 import { isStaffRole } from "@/lib/permissions";
 import Link from "next/link";
 import { User, LogOut, Package, Settings, LogIn, Shield, Sparkles } from "lucide-react";
@@ -73,7 +74,7 @@ export function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={async () => { await clearTwoStepCookieAction().catch(() => {}); await signOut({ callbackUrl: "/" }); }}
           className="rounded-lg cursor-pointer text-destructive focus:text-destructive"
         >
           <LogOut className="w-4 h-4 mr-2" /> Sign Out

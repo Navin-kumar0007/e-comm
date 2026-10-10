@@ -123,3 +123,10 @@ Use coupon code *ROYAL10* at checkout for *10% OFF* on your first order!
     return { error: "Something went wrong during registration" };
   }
 }
+
+/** On sign-out, forget this browser's two-step check so the next person must enter a code. */
+export async function clearTwoStepCookieAction() {
+  const { cookies } = await import("next/headers");
+  const { TWO_STEP_COOKIE } = await import("@/lib/totp");
+  (await cookies()).delete(TWO_STEP_COOKIE);
+}
