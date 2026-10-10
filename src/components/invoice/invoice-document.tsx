@@ -76,7 +76,7 @@ export function InvoiceDocument({
               <tr><td className="pr-3 text-[#6b5a52]">{inv.isFinalInvoice ? "Invoice No." : "Order No."}</td><td className="font-mono font-semibold">{inv.invoiceNumber}</td></tr>
               <tr><td className="pr-3 text-[#6b5a52]">Invoice Date</td><td className="font-semibold">{invoiceDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td></tr>
               <tr><td className="pr-3 text-[#6b5a52]">Order Ref.</td><td className="font-mono">NW-{order.id.slice(-8).toUpperCase()}</td></tr>
-              <tr><td className="pr-3 text-[#6b5a52]">Payment</td><td>{isCod ? "Cash on Delivery" : "Prepaid (Online)"}</td></tr>
+              <tr><td className="pr-3 text-[#6b5a52]">Payment</td><td>{({ COD: "Cash on Delivery", ONLINE: "Prepaid (Online)", CASH: "Paid in cash", UPI: "Paid by UPI", CARD: "Paid by card" } as Record<string, string>)[order.paymentMethod] ?? order.paymentMethod}</td></tr>
             </tbody>
           </table>
         </div>

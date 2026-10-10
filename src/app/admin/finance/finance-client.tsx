@@ -172,6 +172,7 @@ export function FinanceClient({ overview, detail, canManage }: { overview: Overv
             <tbody>
               {([
                 ["Online payments received", "onlineIn", 1],
+                ["Shop counter sales", "shopIn", 1],
                 ["COD paid by courier", "codIn", 1],
                 ["Gateway fees", "feesOut", -1],
                 ["Refunds paid", "refundsOut", -1],

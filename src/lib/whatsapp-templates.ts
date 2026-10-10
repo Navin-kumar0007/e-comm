@@ -19,7 +19,8 @@ export type TemplateKey =
   | "new_release"
   | "price_drop"
   | "price_alert_subscribed"
-  | "owner_daily_summary";
+  | "owner_daily_summary"
+  | "counter_invoice";
 
 export const WA_TEMPLATES: Record<TemplateKey, { env: string; category: "UTILITY" | "MARKETING"; body: string; example: string[] }> = {
   order_confirmed: {
@@ -93,6 +94,12 @@ export const WA_TEMPLATES: Record<TemplateKey, { env: string; category: "UTILITY
     category: "UTILITY",
     body: "Good morning! Here is the Spicy Nuts daily report for {{1}}. Orders received: {{2}}. Total sales: ₹{{3}}. Orders waiting to be packed: {{4}}. Things that need your attention today: {{5}}. Open the admin panel for full details: {{6}} Have a great day.",
     example: ["7 Oct", "12", "8,450", "5 orders", "3 low stock, 1 batch expiring", "https://www.spicynuts.in/admin"],
+  },
+  counter_invoice: {
+    env: "WA_TEMPLATE_COUNTER_INVOICE",
+    category: "UTILITY",
+    body: "Thank you for shopping at Spicy Nuts! Your bill {{1}} for ₹{{2}} is ready. You can view and download your GST invoice here: {{3}} Please visit us again.",
+    example: ["SN/2026-27/00042", "1,250", "https://www.spicynuts.in/bill/abc123/xyz"],
   },
 };
 

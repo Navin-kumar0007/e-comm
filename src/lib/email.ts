@@ -304,3 +304,16 @@ export async function sendOwnerDailySummary(subject: string, title: string, rows
     </div>
   `);
 }
+
+/** Shop counter bill: a link to the GST invoice. */
+export async function sendBillEmail(to: string, customerName: string, invoiceNumber: string, total: number, link: string) {
+  return sendEmail(to, `Your Spicy Nuts bill ${invoiceNumber} — ₹${total.toFixed(2)}`, `
+    <div style="${baseStyles}">
+      <h1 style="color:#6E1A2C;font-size:20px;margin:0 0 12px">Thank you for shopping at Spicy Nuts</h1>
+      <p>Namaste ${esc(customerName || "")},</p>
+      <p>Your bill <strong>${esc(invoiceNumber)}</strong> for <strong>₹${total.toFixed(2)}</strong> is ready.</p>
+      <p style="margin:20px 0"><a href="${link}" style="background:#6E1A2C;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">View &amp; download your GST invoice</a></p>
+      <p style="color:#666;font-size:12px">Keep this link private; anyone with it can see the bill.</p>
+    </div>
+  `);
+}

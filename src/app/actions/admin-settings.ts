@@ -27,6 +27,7 @@ export async function updateAdminSettingsAction(data: {
   businessState?: string | null;
   invoicePrefix?: string;
   fssaiLicense?: string | null;
+  upiId?: string | null;
   signatoryName?: string | null;
   invoiceTerms?: string | null;
   shippingProvider?: string;
@@ -53,6 +54,10 @@ export async function updateAdminSettingsAction(data: {
   if (data.fssaiLicense) {
     data.fssaiLicense = data.fssaiLicense.replace(/\s+/g, '');
     if (!/^\d{14}$/.test(data.fssaiLicense)) return { error: 'FSSAI licence number must be 14 digits' };
+  }
+  if (data.upiId) {
+    data.upiId = data.upiId.trim().toLowerCase();
+    if (!/^[a-z0-9.\-_]{2,256}@[a-z][a-z0-9.\-]{1,64}$/.test(data.upiId)) return { error: 'UPI ID should look like name@bank, e.g. spicynuts@okicici' };
   }
   if (data.invoicePrefix !== undefined) {
     data.invoicePrefix = data.invoicePrefix.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 10) || DEFAULT_STORE_SETTINGS.invoicePrefix;

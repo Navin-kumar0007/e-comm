@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, ShoppingCart, RotateCcw, Users, Repeat, Printer, Warehouse, Barcode, Package, FolderTree,
   ChefHat, ListChecks, Ticket, MessageCircle, Sparkles, Star, MessageSquare, UserCog, Settings, Store,
-  Gauge, Wheat, Scissors, Boxes, ClipboardCheck, ClipboardList, Truck, TrendingUp, Receipt, Landmark, HandCoins, Lightbulb, ShieldCheck, History,
+  Gauge, Wheat, Scissors, Boxes, ClipboardCheck, ClipboardList, Truck, TrendingUp, Receipt, Landmark, HandCoins, Lightbulb, ShieldCheck, History, ScanBarcode,
 } from "lucide-react";
 import type { Permission } from "@/lib/permissions";
 
@@ -18,6 +18,7 @@ export const NAV: NavGroup[] = [
   {
     label: "Sales",
     items: [
+      { href: "/admin/pos", label: "Counter billing", icon: ScanBarcode, permission: "orders.create" },
       { href: "/admin/orders", label: "Orders", icon: ShoppingCart, permission: "orders.view" },
       { href: "/admin/returns", label: "Returns", icon: RotateCcw, permission: "returns.manage" },
       { href: "/admin/customers", label: "Customers", icon: Users, permission: "customers.view" },

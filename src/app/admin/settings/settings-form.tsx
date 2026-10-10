@@ -89,6 +89,7 @@ export default function SettingsForm({ initialSettings, providers }: { initialSe
         businessState: ((fd.get("businessState") as string) || "").trim() || null,
         invoicePrefix: (fd.get("invoicePrefix") as string) || "SN",
         fssaiLicense: ((fd.get("fssaiLicense") as string) || "").trim() || null,
+        upiId: ((fd.get("upiId") as string) || "").trim() || null,
         signatoryName: ((fd.get("signatoryName") as string) || "").trim() || null,
         invoiceTerms: ((fd.get("invoiceTerms") as string) || "").trim() || null,
       };
@@ -257,6 +258,11 @@ export default function SettingsForm({ initialSettings, providers }: { initialSe
                     <Label>FSSAI Licence No.</Label>
                     <Input name="fssaiLicense" inputMode="numeric" maxLength={14} defaultValue={settings.fssaiLicense ?? ""} placeholder="14 digits" className="rounded-xl font-mono" />
                     <p className="text-xs text-muted-foreground">Food businesses must print this on every invoice.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Shop UPI ID</Label>
+                    <Input name="upiId" defaultValue={(settings as any).upiId ?? ""} placeholder="e.g. spicynuts@okicici" className="rounded-xl font-mono lowercase" />
+                    <p className="text-xs text-muted-foreground">Counter billing shows a payment QR with the exact bill amount.</p>
                   </div>
                   <div className="space-y-2">
                     <Label>Authorised Signatory</Label>

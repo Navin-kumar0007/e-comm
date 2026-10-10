@@ -145,6 +145,7 @@ export async function getProfitAndLoss(ym: string): Promise<PnL> {
 export interface CashMonth {
   ym: string;
   onlineIn: number;
+  shopIn: number;
   codIn: number;
   refundsOut: number;
   suppliersOut: number;
@@ -155,20 +156,21 @@ export interface CashMonth {
 
 export async function getCashMonth(ym: string): Promise<CashMonth> {
   const { start, end } = monthRange(ym);
-  const [online, cod, refunds, supplier, expenses] = await Promise.all([
+  const [online, cod, refunds, supplier, expenses, shop] = await Promise.all([
     prisma.order.findMany({ where: { paymentMethod: "ONLINE", paidAt: { gte: start, lt: end }, paymentId: { not: null } }, select: { total: true, paymentFee: true } }),
     prisma.codRemittance.aggregate({ where: { date: { gte: start, lt: end } }, _sum: { amount: true } }),
     prisma.refund.aggregate({ where: { createdAt: { gte: start, lt: end }, status: "PROCESSED" }, _sum: { amount: true } }),
     prisma.supplierPayment.aggregate({ where: { date: { gte: start, lt: end } }, _sum: { amount: true } }),
     prisma.expense.aggregate({ where: { paidAt: { gte: start, lt: end }, paidVia: { not: "UNPAID" } }, _sum: { total: true } }),
+    prisma.order.aggregate({ where: { channel: "SHOP", paidAt: { gte: start, lt: end }, paymentMethod: { in: ["CASH", "UPI", "CARD"] } }, _sum: { total: true } }),
   ]);
   const onlineIn = r2(online.reduce((s: number, o: any) => s + o.total, 0));
   const feesOut = r2(online.reduce((s: number, o: any) => s + (o.paymentFee ?? o.total * ESTIMATED_GATEWAY_RATE * 1.18), 0));
   const m = {
-    ym, onlineIn, codIn: r2(cod._sum.amount ?? 0), feesOut,
+    ym, onlineIn, shopIn: r2(shop._sum.total ?? 0), codIn: r2(cod._sum.amount ?? 0), feesOut,
     refundsOut: r2(refunds._sum.amount ?? 0), suppliersOut: r2(supplier._sum.amount ?? 0), expensesOut: r2(expenses._sum.total ?? 0),
   };
-  return { ...m, net: r2(m.onlineIn + m.codIn - m.feesOut - m.refundsOut - m.suppliersOut - m.expensesOut) };
+  return { ...m, net: r2(m.onlineIn + m.shopIn + m.codIn - m.feesOut - m.refundsOut - m.suppliersOut - m.expensesOut) };
 }
 
 /** Money owed to us and by us right now. */

@@ -142,7 +142,10 @@ model Order {
   cashbackPoints  Int             @default(0) // cashback credited (reversed on return)
   total           Float
   status          String          @default("PENDING") // PENDING, PROCESSING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED, EXPIRED, DELETED
-  paymentMethod   String          @default("ONLINE") // ONLINE, COD
+  paymentMethod   String          @default("ONLINE") // ONLINE, COD, or at the shop counter: CASH, UPI, CARD
+  channel         String          @default("WEBSITE") // WEBSITE, SHOP, WHOLESALE, PHONE
+  cashReceived    Float? // counter sale paid in cash: amount handed over (change = this − total)
+  paymentRef      String? // UPI / card reference for counter sales
   razorpayOrderId String?
   paymentId       String?
   paidAt          DateTime?
@@ -177,6 +180,7 @@ model Order {
   @@index([createdAt])
   @@index([customerEmail])
   @@index([razorpayOrderId])
+  @@index([channel, createdAt])
 }
 
 model OrderItem {
@@ -230,6 +234,7 @@ model Settings {
 
   // Invoice / compliance
   fssaiLicense  String?
+  upiId         String? // shop UPI ID for the counter payment QR, e.g. spicynuts@okicici
   signatoryName String?
   invoiceTerms  String?
 }

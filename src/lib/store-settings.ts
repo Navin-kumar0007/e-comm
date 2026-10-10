@@ -29,6 +29,7 @@ export const DEFAULT_STORE_SETTINGS = {
   codMaxOrderValue: 5000,
   returnWindowHours: 48,
   fssaiLicense: null as string | null,
+  upiId: null as string | null,
   signatoryName: null as string | null,
   invoiceTerms: null as string | null,
 };
