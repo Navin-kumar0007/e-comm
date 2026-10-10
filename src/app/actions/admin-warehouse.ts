@@ -449,3 +449,63 @@ export async function cancelStockCountAction(countId: string) {
   revalidatePath('/admin/stock-counts');
   return { success: true };
 }
+
+export interface BulkOpeningInput {
+  mfgDate: string; // packed on, YYYY-MM-DD
+  items: Array<{ productId: string; variantId: string | null; qty: number; shelfLifeMonths: number; unitCost?: number | null }>;
+}
+
+/** Best-before = packed date + months (same day of month, capped at month end). */
+function addMonths(d: Date, months: number) {
+  const r = new Date(d);
+  const day = r.getUTCDate();
+  r.setUTCDate(1);
+  r.setUTCMonth(r.getUTCMonth() + months);
+  const last = new Date(Date.UTC(r.getUTCFullYear(), r.getUTCMonth() + 1, 0)).getUTCDate();
+  r.setUTCDate(Math.min(day, last));
+  return r;
+}
+
+/**
+ * Gives every selected product's shelf stock a batch in one go (one batch per product / pack size).
+ * Stock numbers don't change. Each item is its own small transaction.
+ */
+export async function createBulkOpeningLotsAction(input: BulkOpeningInput) {
+  const actor = await who();
+  const mfg = asDate(input.mfgDate);
+  if (!mfg) return { error: 'Choose the packed date.' };
+  if (mfg.getTime() > Date.now() + 864e5) return { error: 'Packed date is in the future.' };
+  const items = (input.items || []).filter((i) => Number(i.qty) > 0);
+  if (!items.length) return { error: 'Tick at least one product.' };
+  if (items.some((i) => !(Number(i.shelfLifeMonths) >= 1 && Number(i.shelfLifeMonths) <= 36))) return { error: 'Shelf life should be 1 to 36 months.' };
+
+  const created: Array<{ id: string; lotNumber: string; qty: number }> = [];
+  const skipped: string[] = [];
+  for (const it of items) {
+    const qty = Math.floor(Number(it.qty));
+    try {
+      const lot = await prisma.$transaction(async (tx: any) => {
+        const stock = it.variantId
+          ? await tx.productVariant.findUnique({ where: { id: it.variantId }, select: { stock: true, costPrice: true } })
+          : await tx.product.findUnique({ where: { id: it.productId }, select: { stock: true, costPrice: true } });
+        if (!stock) throw new UserError('Product not found.');
+        const agg = await tx.stockLot.aggregate({ where: { kind: 'PACK', productId: it.productId, variantId: it.variantId }, _sum: { qtyLeft: true } });
+        const free = Math.max(0, stock.stock - (agg._sum.qtyLeft ?? 0));
+        const take = Math.min(qty, free);
+        if (take <= 0) return null;
+        return createPackLot(tx, {
+          productId: it.productId, variantId: it.variantId, qty: take, unitCost: Number(it.unitCost) || stock.costPrice || 0, source: 'OPENING', actor,
+          mfgDate: mfg, expiryDate: addMonths(mfg, Number(it.shelfLifeMonths)), note: 'Stock already on hand (bulk)',
+        });
+      }, { timeout: 15000, maxWait: 5000 });
+      if (lot) created.push({ id: lot.id, lotNumber: lot.lotNumber, qty: lot.qtyIn });
+      else skipped.push(it.productId);
+    } catch (e) {
+      const r = fail(e);
+      return { error: `${r.error} ${created.length} batches were created before this; run again to finish.` };
+    }
+  }
+  await audit({ action: 'lot.opening_bulk', entity: 'StockLot', summary: `Gave shelf stock batches: ${created.length} products, packed ${input.mfgDate}`, data: { lots: created.map((c) => c.lotNumber) } });
+  touch('/admin/batches');
+  return { success: true as const, created: created.length, skipped: skipped.length, lots: created };
+}
