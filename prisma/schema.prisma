@@ -67,35 +67,38 @@ model Product {
 }
 
 model User {
-  id                String         @id @default(cuid())
+  id                String          @id @default(cuid())
   name              String
-  email             String         @unique
+  email             String          @unique
   password          String?
   provider          String? // "credentials" or "google"
   image             String? // Google profile picture URL
-  role              String         @default("USER") // USER or ADMIN
-  points            Int            @default(0)
+  role              String          @default("USER") // USER or ADMIN
+  points            Int             @default(0)
   address           String?
   city              String?
   state             String?
   pincode           String?
   phone             String?
-  whatsappOptIn     Boolean        @default(true)
-  customerType      String         @default("RETAIL") // RETAIL, WHOLESALE
+  whatsappOptIn     Boolean         @default(false) // marketing on WhatsApp; only true after a ticked box
+  customerType      String          @default("RETAIL") // RETAIL, WHOLESALE
   businessName      String?
   gstin             String? // business buyer's GSTIN, printed on their invoices
   wholesaleDiscount Float? // % off retail prices on manual orders
   totpSecret        String? // two-step login secret (encrypted)
   totpEnabledAt     DateTime?
   totpBackupCodes   String? // JSON array of SHA-256 hashes of one-time codes
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+  emailOptIn        Boolean         @default(false) // marketing emails
+  termsAcceptedAt   DateTime? // privacy notice + terms accepted, and 18+ confirmed
+  consents          ConsentRecord[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
   orders            Order[]
   recipes           Recipe[]
   reviews           Review[]
   blogPosts         BlogPost[]
   notifications     Notification[]
-  dietaryTags       DietaryTag[]   @relation("UserDietaryTags")
+  dietaryTags       DietaryTag[]    @relation("UserDietaryTags")
   subscriptions     Subscription[]
 }
 
@@ -823,4 +826,23 @@ model AuditLog {
   @@index([createdAt])
   @@index([entity, entityId])
   @@index([actor])
+}
+
+// Every consent given or withdrawn (DPDP Act s.6): what, when, how, and which notice version.
+model ConsentRecord {
+  id            String   @id @default(cuid())
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  phone         String?
+  email         String?
+  purpose       String // TERMS, WHATSAPP_OFFERS, EMAIL_OFFERS, ANALYTICS
+  granted       Boolean
+  source        String // SIGNUP, CHECKOUT, ACCOUNT, POPUP, ADMIN
+  noticeVersion String
+  ip            String?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+  @@index([phone])
+  @@index([purpose, createdAt])
 }

@@ -111,7 +111,11 @@ export function buildGstr1(invoices: InvoiceForReturn[], businessState: string |
   const b2b: Array<{ gstin: string; name: string; invoice: string; date: string; value: number; pos: string; rate: number } & TaxSplit> = [];
   const b2cl: Array<{ invoice: string; date: string; value: number; pos: string; rate: number } & TaxSplit> = [];
   const b2cs = new Map<string, { pos: string; rate: number; type: "Intra-state" | "Inter-state" } & TaxSplit>();
-  const hsn = new Map<string, { hsn: string; description: string; qty: number; rate: number; value: number } & TaxSplit>();
+  type HsnRow = { hsn: string; description: string; qty: number; rate: number; value: number } & TaxSplit;
+  const hsn = new Map<string, HsnRow>();
+  // GSTR-1 table 12 is reported separately for sales to registered buyers (B2B) and consumers (B2C).
+  const hsnB2b = new Map<string, HsnRow>();
+  const hsnB2c = new Map<string, HsnRow>();
   const posName = (s: string | null) => {
     const name = s || businessState || "";
     const code = stateCode(name);
@@ -127,9 +131,11 @@ export function buildGstr1(invoices: InvoiceForReturn[], businessState: string |
       const cur = byRate.get(l.rate) ?? { taxable: 0, tax: 0 };
       byRate.set(l.rate, { taxable: r2(cur.taxable + l.taxable), tax: r2(cur.tax + l.tax) });
       const key = `${l.hsnCode ?? "—"}|${l.rate}`;
-      const h = hsn.get(key) ?? { hsn: l.hsnCode ?? "—", description: l.description, qty: 0, rate: l.rate, value: 0, ...ZERO };
-      const t = add(h, split(l.taxable, l.tax, intra));
-      hsn.set(key, { ...h, ...t, qty: h.qty + l.qty, value: r2(h.value + l.taxable + l.tax) });
+      const part = split(l.taxable, l.tax, intra);
+      for (const m of [hsn, inv.customerGstin ? hsnB2b : hsnB2c]) {
+        const h = m.get(key) ?? { hsn: l.hsnCode ?? "—", description: l.description, qty: 0, rate: l.rate, value: 0, ...ZERO };
+        m.set(key, { ...h, ...add(h, part), qty: h.qty + l.qty, value: r2(h.value + l.taxable + l.tax) });
+      }
     }
     for (const [rate, v] of byRate) {
       const s = split(v.taxable, v.tax, intra);
@@ -151,6 +157,8 @@ export function buildGstr1(invoices: InvoiceForReturn[], businessState: string |
     b2cl,
     b2cs: [...b2cs.values()].sort((a, b) => a.pos.localeCompare(b.pos) || a.rate - b.rate),
     hsn: [...hsn.values()].sort((a, b) => a.hsn.localeCompare(b.hsn) || a.rate - b.rate),
+    hsnB2b: [...hsnB2b.values()].sort((a, b) => a.hsn.localeCompare(b.hsn) || a.rate - b.rate),
+    hsnB2c: [...hsnB2c.values()].sort((a, b) => a.hsn.localeCompare(b.hsn) || a.rate - b.rate),
     docs: { from: numbers[0] ?? null, to: numbers[numbers.length - 1] ?? null, count: numbers.length },
     totals: all,
   };

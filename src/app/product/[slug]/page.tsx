@@ -17,6 +17,14 @@ import { getCleanProductImage } from "@/lib/utils";
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
 
+// Cache each product page and rebuild it in the background at most every 2 minutes,
+// or straight away when the product is edited in admin (revalidatePath in admin actions).
+// Stock is always re-checked at checkout, so a page up to 2 minutes old is safe.
+export const revalidate = 120;
+export async function generateStaticParams() {
+  return []; // build on first visit, then serve from cache
+}
+
 export async function generateMetadata({
   params,
 }: {

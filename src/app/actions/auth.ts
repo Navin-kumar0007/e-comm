@@ -3,23 +3,36 @@
 import { prisma } from "@/lib/db/prisma";
 import * as bcrypt from "bcryptjs";
 import { formatWhatsAppNumber, sendWhatsAppMessage } from "@/lib/whatsapp";
+import { recordConsent } from "@/lib/consent";
 
 export async function registerUser({
   name,
   email,
   password,
   phone,
+  acceptTerms,
+  whatsappOffers = false,
+  emailOffers = false,
 }: {
   name: string;
   email: string;
   password: string;
   phone?: string;
+  /** Privacy notice and terms accepted, and 18 or older (required). */
+  acceptTerms?: boolean;
+  /** Ticked box: offers on WhatsApp (optional, off by default). */
+  whatsappOffers?: boolean;
+  emailOffers?: boolean;
 }) {
   email = email.toLowerCase().trim();
   name = name.trim();
   try {
     if (!name || !email || !password) {
       return { error: "Missing required fields" };
+    }
+
+    if (!acceptTerms) {
+      return { error: "Please confirm you are 18 or older and agree to the Privacy Policy and Terms." };
     }
 
     if (password.length < 6) {
@@ -52,7 +65,9 @@ export async function registerUser({
         email,
         password: hashedPassword,
         phone: cleanPhone,
-        whatsappOptIn: true,
+        whatsappOptIn: !!(whatsappOffers && cleanPhone),
+        emailOptIn: !!emailOffers,
+        termsAcceptedAt: new Date(),
         role: "USER",
       },
     });
@@ -60,8 +75,12 @@ export async function registerUser({
     // Clean up OTP records for this email
     await prisma.otpVerification.deleteMany({ where: { email } });
 
-    // If phone provided, enroll in WhatsApp marketing & send instant welcome message
-    if (cleanPhone && cleanPhone.length >= 10) {
+    await recordConsent({ purpose: "TERMS", granted: true, source: "SIGNUP", userId: user.id, email, phone: cleanPhone });
+    await recordConsent({ purpose: "WHATSAPP_OFFERS", granted: !!(whatsappOffers && cleanPhone), source: "SIGNUP", userId: user.id, phone: cleanPhone });
+    await recordConsent({ purpose: "EMAIL_OFFERS", granted: !!emailOffers, source: "SIGNUP", userId: user.id, email });
+
+    // Offers and the welcome coupon on WhatsApp only when the box was ticked (order updates don't need it).
+    if (whatsappOffers && cleanPhone && cleanPhone.length >= 10) {
       try {
         await prisma.whatsAppSubscriber.upsert({
           where: { phone: cleanPhone },

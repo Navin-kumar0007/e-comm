@@ -72,3 +72,13 @@ describe("supplier dues", () => {
     expect(receivedValue({ total: 0, lines: [] })).toBe(0);
   });
 });
+
+describe("hsn split", () => {
+  it("reports HSN for business buyers and consumers separately", () => {
+    const r = buildGstr1([inv({}), inv({ invoiceNumber: "X", customerGstin: "29ABCDE1234F1Z5" })], "Karnataka");
+    expect(r.hsnB2b).toHaveLength(1);
+    expect(r.hsnB2c).toHaveLength(1);
+    expect(r.hsn[0].qty).toBe(4);
+    expect(r.hsnB2b[0].qty).toBe(2);
+  });
+});

@@ -1,15 +1,6 @@
-'use client';
-
-import { motion } from 'framer-motion';
-
+// Page wrapper. It used to fade every page in from opacity 0 with JavaScript, which kept the
+// whole page invisible until scripts loaded (6–7 s on slow phones). The slide-in below is pure
+// CSS and never hides content, so the page paints as soon as the HTML arrives.
 export default function Template({ children }: { children: React.ReactNode }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className="page-enter">{children}</div>;
 }

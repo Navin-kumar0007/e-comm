@@ -275,5 +275,11 @@ export async function getGstReturn(ym: string) {
   const cancelledInvoices = await prisma.order.findMany({ where: { createdAt: { gte: start, lt: end }, status: { notIn: BOOKED_STATUSES }, invoiceNumber: { not: null } }, select: { invoiceNumber: true }, orderBy: { invoiceNumber: "asc" } });
   const uninvoiced = await prisma.order.aggregate({ where: { createdAt: { gte: start, lt: end }, status: { in: BOOKED_STATUSES }, invoiceNumber: null }, _count: { _all: true }, _sum: { total: true } });
   const missingHsn = orders.reduce((s: number, o: any) => s + o.items.filter((i: any) => !i.hsnCode).length, 0);
-  return { ym, gstin: settings.gstin, legalName: settings.legalName, businessState: settings.businessState, gstr1, creditNotes, cnTotals, itcRows, itc, outward, payable, missingHsn, invoiceCount: orders.length, uninvoiced: { count: uninvoiced._count._all, value: r2(uninvoiced._sum.total ?? 0) }, cancelledInvoices: cancelledInvoices.map((o: any) => o.invoiceNumber as string) };
+  return { ym, gstin: settings.gstin, legalName: settings.legalName, businessState: settings.businessState, gstr1, creditNotes, cnTotals, itcRows, itc, outward, payable, missingHsn, invoiceCount: orders.length, uninvoiced: { count: uninvoiced._count._all, value: r2(uninvoiced._sum.total ?? 0) }, cancelledInvoices: cancelledInvoices.map((o: any) => o.invoiceNumber as string), docsIssued: docsIssued(orders.map((o: any) => o.invoiceNumber), cancelledInvoices.map((o: any) => o.invoiceNumber)) };
+}
+
+/** GSTR-1 table 13: the full invoice-number range issued in the month, cancelled ones included. */
+function docsIssued(valid: string[], cancelled: string[]) {
+  const all = [...valid, ...cancelled].filter(Boolean).sort();
+  return { from: all[0] ?? null, to: all[all.length - 1] ?? null, total: all.length, cancelled: cancelled.length };
 }

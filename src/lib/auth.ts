@@ -68,15 +68,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
           } else {
             // Create new user from Google profile
-            await prisma.user.create({
+            const created = await prisma.user.create({
               data: {
                 name: user.name || "User",
                 email,
                 provider: "google",
                 image: user.image || null,
                 role: "USER",
+                termsAcceptedAt: new Date(), // shown under the Google button on the login page
               }
             });
+            const { recordConsent } = await import("@/lib/consent");
+            await recordConsent({ purpose: "TERMS", granted: true, source: "SIGNUP", userId: created.id, email });
           }
         } catch (error) {
           console.error("Error during Google sign-in:", error);

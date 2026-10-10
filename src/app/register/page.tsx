@@ -135,6 +135,9 @@ export default function RegisterPage() {
     const phone = (formData.get("phone") as string) || "";
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
+    const acceptTerms = formData.get("acceptTerms") === "on";
+    const whatsappOffers = formData.get("whatsappOffers") === "on";
+    const emailOffers = formData.get("emailOffers") === "on";
 
     if (password !== confirmPassword) {
       toast.error("Passwords don\'t match");
@@ -142,7 +145,13 @@ export default function RegisterPage() {
       return;
     }
 
-    const result = await registerUser({ name, email, password, phone });
+    if (!acceptTerms) {
+      toast.error("Please confirm you are 18 or older and agree to the Privacy Policy and Terms.");
+      setIsLoading(false);
+      return;
+    }
+
+    const result = await registerUser({ name, email, password, phone, acceptTerms, whatsappOffers, emailOffers });
 
     if (result.error) {
       toast.error(result.error);
@@ -151,7 +160,7 @@ export default function RegisterPage() {
     }
 
     toast.success("Account created! 🎉", {
-      description: phone ? "Check your WhatsApp for your 10% welcome coupon (ROYAL10)!" : "Please sign in with your new credentials.",
+      description: phone && whatsappOffers ? "Check your WhatsApp for your 10% welcome coupon (ROYAL10)!" : "Please sign in with your new credentials.",
     });
     router.push("/login");
   };
@@ -352,6 +361,28 @@ export default function RegisterPage() {
                     className="pl-10 h-11 rounded-xl"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-3 rounded-xl border border-border bg-muted/30 p-4 text-sm">
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  We use your name, email, phone and address only to run your account, deliver your orders and send order updates.
+                  We never sell your data. You can download or delete it any time.{" "}
+                  <Link href="/privacy-policy" target="_blank" className="font-medium text-primary underline">Privacy Policy</Link>
+                </p>
+                <label className="flex items-start gap-2.5">
+                  <input type="checkbox" name="acceptTerms" required className="mt-0.5 h-4 w-4 shrink-0 accent-primary" />
+                  <span>I am 18 or older and I agree to the{" "}
+                    <Link href="/privacy-policy" target="_blank" className="text-primary underline">Privacy Policy</Link> and{" "}
+                    <Link href="/terms" target="_blank" className="text-primary underline">Terms</Link>.</span>
+                </label>
+                <label className="flex items-start gap-2.5">
+                  <input type="checkbox" name="whatsappOffers" className="mt-0.5 h-4 w-4 shrink-0 accent-primary" />
+                  <span>Send me offers, new products and price drops on WhatsApp <span className="text-muted-foreground">(optional, includes a 10% welcome code)</span></span>
+                </label>
+                <label className="flex items-start gap-2.5">
+                  <input type="checkbox" name="emailOffers" className="mt-0.5 h-4 w-4 shrink-0 accent-primary" />
+                  <span>Send me offers by email <span className="text-muted-foreground">(optional)</span></span>
+                </label>
               </div>
 
               <Button

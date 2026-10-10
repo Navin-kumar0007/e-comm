@@ -146,6 +146,7 @@ export function WhatsAppWelcomePrompt() {
                 )}
               </Button>
             </form>
+            <p className="mt-1.5 text-[10px] leading-snug text-muted-foreground">By tapping Get Code you agree to receive offers on WhatsApp from Spicy Nuts. Reply STOP any time. <a href="/privacy-policy" className="underline">Privacy</a></p>
           </div>
         )}
       </div>

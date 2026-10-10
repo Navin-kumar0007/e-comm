@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db/prisma";
+import { recordConsent } from "@/lib/consent";
 import { requirePermission } from "@/lib/auth-guard";
 import {
   sendWhatsAppMessage,
@@ -41,6 +42,9 @@ export async function subscribeWhatsAppAction(
         subscribedPriceDrops: topics.priceDrops ?? true,
       },
     });
+
+    // The person typed their number and pressed the button next to the WhatsApp-offers notice.
+    await recordConsent({ purpose: "WHATSAPP_OFFERS", granted: true, source: "POPUP", phone: cleanPhone });
 
     // Send a warm welcome message with an instant 10% coupon
     await sendWhatsAppMessage({

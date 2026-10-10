@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Plus, Receipt, Trash2, CheckCircle2, Download } from "lucide-react";
 import { deleteExpenseAction, payExpenseAction, saveExpenseAction, type ExpenseInput } from "@/app/actions/admin-finance";
-import { EXPENSE_CATEGORIES, PAY_METHODS, expenseCost, expenseLabel, lastMonths, monthLabel, toCsv } from "@/lib/finance-core";
+import { EXPENSE_CATEGORIES, PAY_METHODS, expenseCost, expenseLabel, lastMonths, monthLabel } from "@/lib/finance-core";
 import { PageHeader, Panel, Stat, SidePanel, Field, Empty, inputCls, btnPrimary, btnSecondary, btnGhost, thCls, tdCls, inr, dateFmt, isoDay } from "@/components/admin/ui";
 
 const blank = (): ExpenseInput => ({ date: isoDay(), category: "PACKAGING", description: "", vendor: "", vendorGstin: "", billNo: "", amount: 0, gstAmount: 0, paidVia: "UPI", notes: "" });
@@ -43,13 +43,10 @@ export function ExpensesClient({ ym, rows, unpaid }: { ym: string; rows: any[]; 
   const pay = (id: string) => start(async () => { await payExpenseAction(id, "UPI"); toast.success("Marked as paid"); router.refresh(); });
   const remove = (id: string) => start(async () => { await deleteExpenseAction(id); toast.success("Deleted"); router.refresh(); });
 
-  const exportCsv = () => {
-    const csv = toCsv(["Date", "Category", "Description", "Vendor", "Vendor GSTIN", "Bill no.", "Amount", "GST", "Total", "Paid via"],
-      rows.map((r) => [new Date(r.date).toISOString().slice(0, 10), expenseLabel(r.category), r.description, r.vendor, r.vendorGstin, r.billNo, r.amount, r.gstAmount, r.total, methodLabel(r.paidVia)]));
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    a.download = `expenses-${ym}.csv`;
-    a.click();
+  const exportExcel = async () => {
+    const { downloadExcel } = await import("@/lib/excel");
+    await downloadExcel(`expenses-${ym}`, "Expenses", ["Date", "Category", "Description", "Vendor", "Vendor GSTIN", "Bill no.", "Amount", "GST", "Total", "Paid via"],
+      rows.map((r) => [new Date(r.date).toISOString().slice(0, 10), expenseLabel(r.category), r.description, r.vendor, r.vendorGstin, r.billNo, r.amount, r.gstAmount, r.total, methodLabel(r.paidVia)]), [6, 7, 8]);
   };
 
   return (
@@ -61,7 +58,7 @@ export function ExpensesClient({ ym, rows, unpaid }: { ym: string; rows: any[]; 
           <select className={`${inputCls} w-40`} value={ym} onChange={(e) => router.push(`/admin/expenses?m=${e.target.value}`)} aria-label="Month">
             {lastMonths(12).reverse().map((m) => <option key={m} value={m}>{monthLabel(m, true)}</option>)}
           </select>
-          <button className={btnSecondary} onClick={exportCsv} disabled={!rows.length}><Download className="h-4 w-4" /> CSV</button>
+          <button className={btnSecondary} onClick={exportExcel} disabled={!rows.length}><Download className="h-4 w-4" /> Excel</button>
           <button className={btnPrimary} onClick={() => { setForm(blank()); setGstMode("none"); }}><Plus className="h-4 w-4" /> Add expense</button>
         </>}
       />

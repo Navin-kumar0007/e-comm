@@ -1,25 +1,6 @@
 import type { Metadata } from "next";
 import { Cinzel, Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
-import Script from 'next/script';
-
-function Analytics() {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
-  if (!gaId) return null;
-  return (
-    <>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="afterInteractive" />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){window.dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${gaId}');
-        `}
-      </Script>
-    </>
-  );
-}
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/storefront/Navbar";
 import { MobileBottomNav } from "@/components/storefront/mobile-bottom-nav";
@@ -34,6 +15,7 @@ import { WhatsAppWelcomePrompt } from "@/components/storefront/whatsapp-welcome-
 import { AccessibilityToolbar } from "@/components/accessibility/accessibility-toolbar";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { BRAND_PHONE_TEL } from "@/lib/contact";
+import { CookieConsent } from "@/components/storefront/cookie-consent";
 
 // Fonts: Manrope for interface and prices, Cormorant Garamond for headings, Cinzel for royal eyebrows
 const manrope = Manrope({
@@ -203,7 +185,7 @@ export default function RootLayout({
             <Toaster />
           </ThemeProvider>
         </AuthProvider>
-        <Analytics />
+        <StorefrontOnly><CookieConsent gaId={process.env.NEXT_PUBLIC_GA_ID} /></StorefrontOnly>
       </body>
     </html>
   );

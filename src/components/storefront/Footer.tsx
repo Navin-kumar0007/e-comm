@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CookieSettingsLink } from "./cookie-consent";
 import Link from "next/link";
 import { BRAND_PHONE_DISPLAY, BRAND_PHONE_TEL } from "@/lib/contact";
 
@@ -75,7 +76,10 @@ export function Footer() {
           <LinkColumn title="Shop" links={footerLinks.shop} />
           <LinkColumn title="Company" links={footerLinks.company} />
           <div className="col-span-2 md:col-span-1">
-            <LinkColumn title="Support" links={footerLinks.support} />
+            <div>
+              <LinkColumn title="Support" links={footerLinks.support} />
+              <CookieSettingsLink className="mt-3 text-left text-[15px] text-white/70 transition-colors hover:text-brand-gold" />
+            </div>
           </div>
         </div>
 

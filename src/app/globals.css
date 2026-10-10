@@ -386,3 +386,11 @@
 /* Pause so a medallion is easy to tap or click */
 .orbit-stage:hover .orbit-ring, .orbit-stage:hover .orbit-face,
 .orbit-stage:focus-within .orbit-ring, .orbit-stage:focus-within .orbit-face { animation-play-state: paused; }
+
+/* Gentle slide when a page opens. Transform only: content is visible from the first paint. */
+@keyframes page-enter {
+  from { transform: translateY(4px); }
+  to { transform: none; }
+}
+.page-enter { animation: page-enter 0.3s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .page-enter { animation: none; } }

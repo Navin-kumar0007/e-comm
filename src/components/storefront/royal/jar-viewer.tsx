@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { preload } from "react-dom";
 import type { ProductLabel } from "@/lib/product-labels";
 import { JarFrame, LABEL_FRONT_RATIO } from "./jar-shot";
 
@@ -20,6 +21,9 @@ const LABEL_H = 384;
  * slider), the flat full label to read every detail, and the product photos.
  */
 export function JarViewer({ label, images, name, weight }: { label: ProductLabel; images: string[]; name: string; weight: string }) {
+  // The jar is the biggest thing on the page; start downloading its label with the HTML,
+  // not after scripts run (it is a CSS background, which browsers otherwise find late).
+  preload(label.full, { as: "image", fetchPriority: "high" });
   const [view, setView] = useState<View>("360° jar");
   const [rot, setRot] = useState(0);
   const [spinning, setSpinning] = useState(true);
