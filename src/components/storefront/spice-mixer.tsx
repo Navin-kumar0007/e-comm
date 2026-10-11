@@ -288,7 +288,7 @@ export function SpiceMixer() {
 
         {isFormulating && (
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
-            <RefreshCw className="w-8 h-8 text-secondary animate-spin" />
+            <RefreshCw className="w-8 h-8 text-brand-gold-deep animate-spin" />
             <span className="text-sm font-bold text-primary animate-pulse">Blending aroma coordinates...</span>
           </div>
         )}
@@ -334,7 +334,7 @@ export function SpiceMixer() {
                       <button
                         key={b.id}
                         onClick={() => setBase(b)}
-                        className={'py-2 px-1 rounded-lg border text-[9px] font-bold transition-all leading-tight ' + (base.id === b.id ? 'border-primary bg-primary/10 text-primary' : 'border-border/30 hover:border-primary/30')}
+                        className={'py-2 px-1 rounded-lg border text-xs font-bold transition-all leading-tight ' + (base.id === b.id ? 'border-primary bg-primary/10 text-primary' : 'border-border/30 hover:border-primary/30')}
                       >
                         {b.name}
                       </button>
@@ -364,7 +364,7 @@ export function SpiceMixer() {
                       <button
                         key={h.id}
                         onClick={() => setHeat(h)}
-                        className={'py-2 px-1 rounded-lg border text-[9px] font-bold transition-all leading-tight ' + (heat.id === h.id ? 'border-red-500 bg-red-500/10 text-red-500' : 'border-border/30 hover:border-red-500/30')}
+                        className={'py-2 px-1 rounded-lg border text-xs font-bold transition-all leading-tight ' + (heat.id === h.id ? 'border-red-500 bg-red-500/10 text-red-500' : 'border-border/30 hover:border-red-500/30')}
                       >
                         {h.name}
                       </button>
@@ -384,17 +384,17 @@ export function SpiceMixer() {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="flex items-center gap-2 text-sm font-bold text-foreground">
-                      <Sparkles className="w-4 h-4 text-secondary" />
+                      <Sparkles className="w-4 h-4 text-brand-gold-deep" />
                       3. Aromatic Notes (rate ₹/%)
                     </span>
-                    <span className="text-sm font-bold text-secondary">{aromaticPct}%</span>
+                    <span className="text-sm font-bold text-brand-gold-deep">{aromaticPct}%</span>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5">
                     {AROMATICS.map(a => (
                       <button
                         key={a.id}
                         onClick={() => setAromatic(a)}
-                        className={'py-2 px-1 rounded-lg border text-[9px] font-bold transition-all leading-tight ' + (aromatic.id === a.id ? 'border-secondary bg-secondary/10 text-secondary' : 'border-border/30 hover:border-secondary/30')}
+                        className={'py-2 px-1 rounded-lg border text-xs font-bold transition-all leading-tight ' + (aromatic.id === a.id ? 'border-secondary bg-secondary/10 text-brand-gold-deep' : 'border-border/30 hover:border-secondary/30')}
                       >
                         {a.name}
                       </button>
@@ -414,7 +414,7 @@ export function SpiceMixer() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <span className="flex items-center gap-2 text-sm font-bold text-foreground">
-                    <Wand2 className="w-4 h-4 text-secondary" />
+                    <Wand2 className="w-4 h-4 text-brand-gold-deep" />
                     AI Sensory Blender
                   </span>
                   <p className="text-xs text-muted-foreground">
@@ -543,8 +543,8 @@ export function SpiceMixer() {
               })}
             </svg>
             
-            <div className="mt-3 flex items-center gap-1 text-[9px] text-muted-foreground bg-background px-2 py-0.5 rounded-full border border-border/30">
-              <Info className="w-3 h-3 text-secondary animate-pulse" /> Hover dots for details
+            <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground bg-background px-2 py-0.5 rounded-full border border-border/30">
+              <Info className="w-3 h-3 text-brand-gold-deep animate-pulse" /> Hover dots for details
             </div>
           </div>
 

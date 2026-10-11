@@ -94,7 +94,7 @@ export function FinanceClient({ overview, detail, canManage }: { overview: Overv
         <Stat label="Net revenue" value={inr(cur.netRevenue)} hint={<>{cur.orders} orders · excl. GST{delta(cur.netRevenue, prev.netRevenue)}</>} />
         <Stat label="Gross profit" value={inr(cur.grossProfit)} hint={`${pct(cur.grossProfit, cur.netRevenue)} margin after cost of goods`} tone={cur.grossProfit < 0 ? "bad" : undefined} />
         <Stat label="Net profit" value={inr(cur.netProfit)} hint={`${pct(cur.netProfit, cur.netRevenue)} after all costs`} tone={cur.netProfit < 0 ? "bad" : "good"} />
-        <Stat label="GST collected" value={inr(cur.gstCollected)} hint={<Link href={`/admin/gst?m=${cur.ym}`} className="text-[#6E1A2C] hover:underline">See GST return →</Link>} />
+        <Stat label="GST collected" value={inr(cur.gstCollected)} hint={<Link href={`/admin/gst?m=${cur.ym}`} className="text-primary hover:underline">See GST return →</Link>} />
       </div>
 
       {(cur.cogsMissingUnits > 0 || cur.gatewayEstimated > 0) && (
@@ -125,8 +125,8 @@ export function FinanceClient({ overview, detail, canManage }: { overview: Overv
                 const p = prev.expenses.find((x) => x.category === e.category)?.amount ?? 0;
                 return <tr key={e.category}><td className={`${tdCls} pl-7 text-muted-foreground`}>{e.label}</td><td className={`${tdCls} text-right tabular-nums`}>−{inr(e.amount)}</td><td className={`${tdCls} hidden text-right tabular-nums text-muted-foreground sm:table-cell`}>{pct(e.amount, cur.netRevenue)}</td><td className={`${tdCls} text-right tabular-nums text-muted-foreground`}>{p ? `−${inr(p)}` : "—"}</td></tr>;
               })}
-              {cur.expenses.length === 0 && <tr><td className={`${tdCls} pl-7 text-muted-foreground`} colSpan={4}>No expenses recorded {canManage && <Link href="/admin/expenses" className="ml-1 font-semibold text-[#6E1A2C] hover:underline">Add expenses</Link>}</td></tr>}
-              <tr className="border-t-2 border-[#6E1A2C]/30 bg-[#fbf6ee] text-base font-bold">
+              {cur.expenses.length === 0 && <tr><td className={`${tdCls} pl-7 text-muted-foreground`} colSpan={4}>No expenses recorded {canManage && <Link href="/admin/expenses" className="ml-1 font-semibold text-primary hover:underline">Add expenses</Link>}</td></tr>}
+              <tr className="border-t-2 border-primary/30 bg-background text-base font-bold">
                 <td className={tdCls}>Net profit</td>
                 <td className={`${tdCls} text-right tabular-nums ${cur.netProfit < 0 ? "text-red-700" : "text-[#2a0a12]"}`}>{inr(cur.netProfit)}{delta(cur.netProfit, prev.netProfit)}</td>
                 <td className={`${tdCls} hidden text-right tabular-nums sm:table-cell`}>{pct(cur.netProfit, cur.netRevenue)}</td>
@@ -137,7 +137,7 @@ export function FinanceClient({ overview, detail, canManage }: { overview: Overv
         </Panel>
 
         <div className="space-y-6 xl:col-span-2">
-          <Panel title="Last 6 months" action={<span className="flex items-center gap-3 text-[11px] text-muted-foreground"><span className="flex items-center gap-1"><i className="inline-block h-2.5 w-2.5 rounded-sm bg-[#e9d8b4]" />Revenue</span><span className="flex items-center gap-1"><i className="inline-block h-2.5 w-2.5 rounded-sm bg-[#6E1A2C]" />Net profit</span></span>}>
+          <Panel title="Last 6 months" action={<span className="flex items-center gap-3 text-[11px] text-muted-foreground"><span className="flex items-center gap-1"><i className="inline-block h-2.5 w-2.5 rounded-sm bg-[#e9d8b4]" />Revenue</span><span className="flex items-center gap-1"><i className="inline-block h-2.5 w-2.5 rounded-sm bg-primary" />Net profit</span></span>}>
             <div className="p-3"><TrendChart pnl={overview.pnl} /></div>
           </Panel>
 
@@ -160,12 +160,12 @@ export function FinanceClient({ overview, detail, canManage }: { overview: Overv
                 <span className="text-right tabular-nums"><b>{inr(pos.unpaidExpenses)}</b><br /><span className="text-xs text-muted-foreground">{pos.unpaidExpenseCount} bills</span></span>
               </li>
             </ul>
-            {canManage && <div className="flex gap-3 border-t border-border/60 px-4 py-2.5 text-xs font-semibold"><Link href="/admin/payments" className="text-[#6E1A2C] hover:underline">Match payments</Link><Link href="/admin/expenses" className="text-[#6E1A2C] hover:underline">Expenses</Link></div>}
+            {canManage && <div className="flex gap-3 border-t border-border/60 px-4 py-2.5 text-xs font-semibold"><Link href="/admin/payments" className="text-primary hover:underline">Match payments</Link><Link href="/admin/expenses" className="text-primary hover:underline">Expenses</Link></div>}
           </Panel>
         </div>
       </div>
 
-      <Panel title={<span className="flex items-center gap-2"><Wallet className="h-4 w-4 text-[#c9a45a]" /> Cash flow</span>} action={<span className="text-xs text-muted-foreground">Money actually in and out, by month</span>}>
+      <Panel title={<span className="flex items-center gap-2"><Wallet className="h-4 w-4 text-brand-gold" /> Cash flow</span>} action={<span className="text-xs text-muted-foreground">Money actually in and out, by month</span>}>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/30"><tr><th className={thCls}></th>{overview.cash.map((c) => <th key={c.ym} className={`${thCls} text-right`}>{monthLabel(c.ym)}</th>)}</tr></thead>

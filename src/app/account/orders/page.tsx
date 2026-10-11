@@ -103,11 +103,11 @@ export default async function OrdersPage() {
                   </p>
                 </div>
                 <div className="mt-4 md:mt-0 text-right">
-                  <p className="text-xl font-bold text-secondary">₹{order.total.toFixed(2)}</p>
+                  <p className="text-xl font-bold text-brand-gold-deep">₹{order.total.toFixed(2)}</p>
                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mt-2 ${
                     order.status === 'DELIVERED' ? 'bg-primary/20 text-primary border border-primary/30' :
                     ['CANCELLED', 'EXPIRED', 'RTO', 'RETURNED'].includes(order.status) ? 'bg-destructive/20 text-destructive border border-destructive/30' :
-                    'bg-secondary/20 text-secondary border border-secondary/30'
+                    'bg-secondary/20 text-brand-gold-deep border border-secondary/30'
                   }`}>
                     {(ORDER_STATUS_LABELS[order.status as OrderStatus] ?? order.status).toUpperCase()}
                   </span>

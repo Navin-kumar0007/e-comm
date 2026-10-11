@@ -41,7 +41,7 @@ export function NotificationsDropdown() {
   const getIcon = (type: string) => {
     switch(type) {
       case 'ORDER': return <Package className="w-4 h-4 text-primary" />;
-      case 'PROMO': return <Tag className="w-4 h-4 text-secondary" />;
+      case 'PROMO': return <Tag className="w-4 h-4 text-brand-gold-deep" />;
       default: return <Info className="w-4 h-4 text-muted-foreground" />;
     }
   };

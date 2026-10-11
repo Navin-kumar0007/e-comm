@@ -38,7 +38,7 @@ export function CountsClient({ counts }: { counts: any[] }) {
             <tbody className="divide-y divide-border/60">
               {counts.map((c) => (
                 <tr key={c.id} className="hover:bg-muted/20">
-                  <td className={tdCls}><Link href={`/admin/stock-counts/${c.id}`} className="font-semibold text-[#6E1A2C] hover:underline">{c.number}</Link>{c.notes && <p className="text-xs text-muted-foreground">{c.notes}</p>}</td>
+                  <td className={tdCls}><Link href={`/admin/stock-counts/${c.id}`} className="font-semibold text-primary hover:underline">{c.number}</Link>{c.notes && <p className="text-xs text-muted-foreground">{c.notes}</p>}</td>
                   <td className={tdCls}>{dateFmt(c.createdAt)}</td>
                   <td className={tdCls}>{c.createdBy.split(":").pop()}</td>
                   <td className={tdCls}>{c.counted} of {c.lines} counted</td>

@@ -53,7 +53,7 @@ export function JarViewer({ label, images, name, weight }: { label: ProductLabel
   const pos = -(FRONT_X / LABEL_W) * bgW + (rot / 360) * bgW;
 
   return (
-    <div className="jaali relative flex h-full min-h-[430px] flex-col items-center justify-between overflow-hidden px-5 pb-6 pt-6 text-white md:min-h-[520px] md:rounded-[28px]">
+    <div className="jaali relative flex h-full min-h-[430px] flex-col items-center justify-between overflow-hidden px-5 pb-6 pt-6 text-white md:min-h-[520px] md:rounded-[var(--radius-sheet)]">
       <div className="absolute left-1/2 top-[44%] h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-gold/35 bg-primary md:h-[340px] md:w-[340px]" />
 
       <div className="relative flex w-full flex-1 items-center justify-center">
@@ -94,7 +94,7 @@ export function JarViewer({ label, images, name, weight }: { label: ProductLabel
             <div className="overflow-x-auto rounded-xl border border-brand-gold/40 bg-background shadow-lg">
               <Image src={label.full} alt={`${name} full label`} width={1536} height={768} className="block h-auto w-[860px] max-w-none md:w-full md:max-w-full" />
             </div>
-            <p className="mt-2 text-center text-[11.5px] font-semibold text-white/80 md:hidden">Swipe to read the whole label</p>
+            <p className="mt-2 text-center text-xs font-semibold text-white/80 md:hidden">Swipe to read the whole label</p>
           </div>
         )}
 

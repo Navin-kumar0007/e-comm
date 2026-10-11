@@ -52,7 +52,7 @@ export function SecurityClient({ status }: { status: any }) {
       <PageHeader title="Login security" subtitle="Two-step login asks for a code from your phone after the password, so a stolen password alone can't open the admin." />
 
       {codes && (
-        <Panel title={<span className="flex items-center gap-2"><KeyRound className="h-4 w-4 text-[#c9a45a]" /> Your backup codes</span>} className="border-[#c9a45a]">
+        <Panel title={<span className="flex items-center gap-2"><KeyRound className="h-4 w-4 text-brand-gold" /> Your backup codes</span>} className="border-brand-gold">
           <div className="space-y-3 p-4">
             <p className="text-sm">Each code works once, if you lose your phone. Save them somewhere safe (not on the same phone). They won&apos;t be shown again.</p>
             <div className="grid max-w-md grid-cols-2 gap-2 font-mono text-lg">{codes.map((c) => <span key={c} className="rounded-lg bg-muted/50 px-3 py-1.5 text-center">{c}</span>)}</div>

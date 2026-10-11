@@ -217,7 +217,7 @@ export function WhatsAppVIPModal({
                 </>
               )}
             </Button>
-            <p className="text-[11px] text-center text-muted-foreground">
+            <p className="text-xs text-center text-muted-foreground">
               Zero spam. You can reply STOP at any time to unsubscribe.
             </p>
           </form>

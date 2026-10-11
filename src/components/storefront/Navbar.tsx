@@ -7,7 +7,8 @@ import Link from "next/link";
 import { UserMenu } from "./user-menu";
 import { CommandPalette } from "./command-palette";
 import { useState } from "react";
-import { CartDrawer } from "./cart-drawer";
+import { CartDrawer, CartSheet } from "./cart-drawer";
+import { usePathname } from "next/navigation";
 import { NotificationsDropdown } from "./notifications";
 import { Menu, Search, BookOpen, Award, MapPin, Sparkles, Phone } from "lucide-react";
 import {
@@ -43,6 +44,8 @@ export function Navbar({ announcement }: { announcement?: { enabled: boolean; me
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const close = () => setDrawerOpen(false);
+  // On phones the cart lives in the bottom tab bar; product pages hide that bar, so they keep a header bag.
+  const headerCart = (usePathname() || "").startsWith("/product/");
 
   return (
     <header className="jaali fixed left-0 right-0 top-0 z-50 w-full text-white shadow-[0_6px_20px_rgba(42,10,18,0.25)]">
@@ -121,11 +124,12 @@ export function Navbar({ announcement }: { announcement?: { enabled: boolean; me
           </button>
           <span className="hidden md:inline-flex"><NotificationsDropdown /></span>
           <span className="hidden md:inline-flex"><UserMenu /></span>
-          <span className="md:hidden"><CartDrawer tone="dark" /></span>
+          {headerCart && <span className="md:hidden"><CartDrawer tone="dark" /></span>}
           <span className="hidden md:inline-flex"><CartDrawer variant="pill" /></span>
         </div>
       </div>
       <CommandPalette open={searchOpen} setOpen={setSearchOpen} />
+      <CartSheet />
     </header>
   );
 }

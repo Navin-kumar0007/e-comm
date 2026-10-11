@@ -21,7 +21,7 @@ export function PackViewer({ images, name, weight }: { images: string[]; name: s
   const W = 168, H = 224, D = 36;
 
   return (
-    <div className="jaali relative flex h-full min-h-[430px] flex-col items-center justify-between overflow-hidden px-5 pb-6 pt-6 text-white md:min-h-[520px] md:rounded-[28px]">
+    <div className="jaali relative flex h-full min-h-[430px] flex-col items-center justify-between overflow-hidden px-5 pb-6 pt-6 text-white md:min-h-[520px] md:rounded-[var(--radius-sheet)]">
       <div className="absolute left-1/2 top-[44%] h-[270px] w-[270px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-gold/35 bg-primary md:h-[320px] md:w-[320px]" />
 
       <div className="relative flex flex-1 items-center justify-center">

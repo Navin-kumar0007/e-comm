@@ -64,7 +64,7 @@ export function PurchaseForm({ data, existing, supplierId }: { data: Data; exist
     return (
       <div className="space-y-6">
         <PageHeader title="New purchase order" />
-        <Panel><div className="p-8 text-center text-sm">Add a supplier first. <Link className="font-semibold text-[#6E1A2C] underline" href="/admin/suppliers">Go to Suppliers</Link></div></Panel>
+        <Panel><div className="p-8 text-center text-sm">Add a supplier first. <Link className="font-semibold text-primary underline" href="/admin/suppliers">Go to Suppliers</Link></div></Panel>
       </div>
     );
   }
@@ -98,7 +98,7 @@ export function PurchaseForm({ data, existing, supplierId }: { data: Data; exist
         </div>}
       >
         {!data.materials.length && (
-          <p className="border-b border-border/60 bg-[#fbf6ee] px-4 py-2 text-xs text-[#5a4a32]">
+          <p className="border-b border-border/60 bg-background px-4 py-2 text-xs text-[#5a4a32]">
             Buying in bulk (e.g. 25 kg bags)? <Link href="/admin/materials" className="font-semibold underline">Add bulk items</Link> first, then you can order them by the kg.
           </p>
         )}

@@ -1,67 +1,104 @@
 'use client';
 
-import { useState, useSyncExternalStore } from 'react';
+import { useRef, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ShoppingBag, Minus, Plus, Truck, Lock } from 'lucide-react';
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { useCartStore } from '@/lib/store/cart-store';
+import { useCartSheet } from '@/lib/store/ui-store';
 import { getCleanProductImage } from "@/lib/utils";
 
 export const FREE_SHIPPING_AT = 999;
 const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
 const noopSubscribe = () => () => {};
+const subscribeWide = (cb: () => void) => {
+  const mq = window.matchMedia('(min-width: 768px)');
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+};
 
 /**
- * Cart sheet. `variant="pill"` is the gold "2 · ₹1,000" button from the desktop
- * header; `variant="icon"` is the bag icon for the mobile header and tab bar.
+ * Cart button. `variant="pill"` is the "2 · ₹1,000" button in the desktop header;
+ * `variant="icon"` is the bag icon in the phone header. Both open the one cart sheet.
  */
 export function CartDrawer({ variant = 'icon', tone = 'light' }: { variant?: 'icon' | 'pill'; tone?: 'light' | 'dark' }) {
+  const getTotal = useCartStore((s) => s.getTotal);
+  const getItemCount = useCartStore((s) => s.getItemCount);
+  useCartStore((s) => s.items);
+  const setOpen = useCartSheet((s) => s.setOpen);
+  // Zustand's persisted cart only exists after hydration
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const itemCount = mounted ? getItemCount() : 0;
+  const total = mounted ? getTotal() : 0;
+
+  return variant === 'pill' ? (
+    <button type="button" onClick={() => setOpen(true)} aria-label={`Cart, ${itemCount} items`} className="flex h-10 items-center gap-2 rounded-full border border-brand-gold/60 bg-white/10 px-4 text-[13px] font-extrabold text-white hover:bg-white/15">
+      <ShoppingBag className="h-5 w-5 text-brand-gold" />
+      <span className="tnum">{itemCount} · {inr(total)}</span>
+    </button>
+  ) : (
+    <button type="button" onClick={() => setOpen(true)} aria-label={`Cart, ${itemCount} items`} className={`relative flex h-11 w-11 items-center justify-center rounded-full ${tone === 'dark' ? 'text-white' : 'text-current'}`}>
+      <ShoppingBag className="h-5 w-5" />
+      {itemCount > 0 && (
+        <span className="absolute right-0.5 top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-secondary px-1 text-xs font-extrabold text-secondary-foreground">
+          {itemCount}
+        </span>
+      )}
+    </button>
+  );
+}
+
+/** The cart itself: a bottom sheet on phones (drag the top down to close), a side panel on larger screens. */
+export function CartSheet() {
   const items = useCartStore((s) => s.items);
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const getTotal = useCartStore((s) => s.getTotal);
   const getItemCount = useCartStore((s) => s.getItemCount);
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
-  // Zustand's persisted cart only exists after hydration
+  const isOpen = useCartSheet((s) => s.open);
+  const setIsOpen = useCartSheet((s) => s.setOpen);
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const wide = useSyncExternalStore(subscribeWide, () => window.matchMedia('(min-width: 768px)').matches, () => true);
 
   const itemCount = mounted ? getItemCount() : 0;
   const total = mounted ? getTotal() : 0;
   const left = FREE_SHIPPING_AT - total;
   const pct = Math.min(100, Math.round((total / FREE_SHIPPING_AT) * 100));
 
-  const trigger =
-    variant === 'pill' ? (
-      <button aria-label={`Cart, ${itemCount} items`} className="flex h-10 items-center gap-2 rounded-full bg-secondary px-4 text-[13px] font-extrabold text-secondary-foreground" />
-    ) : (
-      <button aria-label={`Cart, ${itemCount} items`} className={`relative flex h-11 w-11 items-center justify-center rounded-full ${tone === 'dark' ? 'text-white' : 'text-current'}`} />
-    );
+  // Drag the sheet's top band down to close it, like a native bottom sheet.
+  const drag = useRef<{ y: number; dy: number; el: HTMLElement | null } | null>(null);
+  const onDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (wide || (e.target as HTMLElement).closest('button,a')) return;
+    drag.current = { y: e.clientY, dy: 0, el: e.currentTarget.closest('[data-slot="sheet-content"]') };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d?.el) return;
+    d.dy = Math.max(0, e.clientY - d.y);
+    d.el.style.transition = 'none';
+    d.el.style.transform = `translateY(${d.dy}px)`;
+  };
+  const onUp = () => {
+    const d = drag.current;
+    drag.current = null;
+    if (!d?.el) return;
+    d.el.style.transition = '';
+    d.el.style.transform = '';
+    if (d.dy > 90) setIsOpen(false);
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger render={trigger}>
-        <ShoppingBag className="h-5 w-5" />
-        {variant === 'pill' ? (
-          <span className="tnum">{itemCount} · {inr(total)}</span>
-        ) : (
-          itemCount > 0 && (
-            <span className="absolute right-0.5 top-1 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-secondary px-1 text-[10px] font-extrabold text-secondary-foreground">
-              {itemCount}
-            </span>
-          )
-        )}
-      </SheetTrigger>
-
-      <SheetContent side="right" className="flex w-full max-w-full flex-col gap-0 bg-background p-0 sm:w-[400px]">
-        <div className="jaali px-5 pb-4 pt-5 text-white">
+      <SheetContent
+        side={wide ? 'right' : 'bottom'}
+        className={wide ? 'flex w-full max-w-full flex-col gap-0 bg-background p-0 sm:w-[400px]' : 'flex max-h-[88dvh] flex-col gap-0 overflow-hidden rounded-t-[var(--radius-sheet)] border-0 bg-background p-0'}
+      >
+        <div className="jaali touch-none px-5 pb-4 pt-5 text-white md:touch-auto" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}>
+          {!wide && <span className="sheet-handle -mt-3 mb-3 bg-white/40" aria-hidden="true" />}
           <SheetTitle className="font-heading text-[26px] font-bold text-white">
             Your cart <span className="font-sans text-[13px] font-semibold text-white/75">{itemCount} {itemCount === 1 ? 'item' : 'items'}</span>
           </SheetTitle>
@@ -78,9 +115,9 @@ export function CartDrawer({ variant = 'icon', tone = 'light' }: { variant?: 'ic
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4">
           {!mounted || items.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center gap-3 py-10 text-center">
+            <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
               <span className="arch flex h-24 w-20 items-center justify-center border-2 border-brand-gold bg-muted">
                 <ShoppingBag className="h-7 w-7 text-primary" />
               </span>
@@ -125,7 +162,7 @@ export function CartDrawer({ variant = 'icon', tone = 'light' }: { variant?: 'ic
         </div>
 
         {mounted && items.length > 0 && (
-          <div className="border-t border-border bg-card p-4 pb-6 shadow-[0_-10px_26px_rgba(74,15,29,0.12)]">
+          <div className="border-t border-border bg-card p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-[var(--shadow-float)]">
             <div className="mb-3 flex items-baseline justify-between">
               <span className="text-sm font-bold text-muted-foreground">Item total</span>
               <span className="tnum text-lg font-extrabold">{inr(total)}</span>
@@ -137,7 +174,7 @@ export function CartDrawer({ variant = 'icon', tone = 'light' }: { variant?: 'ic
               <Lock className="h-4 w-4 text-brand-gold" />
               Proceed to checkout ›
             </button>
-            <p className="mt-2 text-center text-[11px] text-muted-foreground">Coupons and delivery are applied at checkout · prices include GST</p>
+            <p className="mt-2 text-center text-xs text-muted-foreground">Coupons and delivery are applied at checkout · prices include GST</p>
           </div>
         )}
       </SheetContent>

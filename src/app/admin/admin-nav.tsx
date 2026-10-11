@@ -105,12 +105,12 @@ export function AdminNav({ permissions, staffName, roleName }: { permissions: st
   return (
     <div className="flex h-full flex-col bg-[#2a0a12] text-[#efe4d2]">
       <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
-        <span className="flex rounded-lg bg-[#fffdf8] px-2 py-1 ring-1 ring-[#c9a45a]">
+        <span className="flex rounded-lg bg-[#fffdf8] px-2 py-1 ring-1 ring-brand-gold">
           <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" width={64} height={50} className="h-8 w-auto" />
         </span>
         <div className="leading-tight">
           <p className="text-[13px] font-bold tracking-wide text-white">Operations</p>
-          <p className="text-[10.5px] uppercase tracking-[0.18em] text-[#c9a45a]">Spicy Nuts</p>
+          <p className="text-[10.5px] uppercase tracking-[0.18em] text-brand-gold">Spicy Nuts</p>
         </div>
       </div>
 
@@ -120,7 +120,7 @@ export function AdminNav({ permissions, staffName, roleName }: { permissions: st
           if (!items.length) return null;
           return (
             <div key={group.label} className="mb-3">
-              <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#c9a45a]/80">{group.label}</p>
+              <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-brand-gold/80">{group.label}</p>
               {items.map((item) => {
                 const active = isActive(item.href);
                 return (
@@ -132,7 +132,7 @@ export function AdminNav({ permissions, staffName, roleName }: { permissions: st
                       active ? "bg-white/10 text-white" : "text-[#d9cbb5] hover:bg-white/5 hover:text-white"
                     }`}
                   >
-                    {active && <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full bg-[#c9a45a]" />}
+                    {active && <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full bg-brand-gold" />}
                     <item.icon className={`h-4 w-4 ${active ? "text-[#e9c987]" : "text-[#b8a68c] group-hover:text-[#e9c987]"}`} />
                     {item.label}
                   </Link>
@@ -145,12 +145,12 @@ export function AdminNav({ permissions, staffName, roleName }: { permissions: st
 
       <div className="border-t border-white/10 p-3">
         <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c9a45a] text-sm font-bold text-[#2a0a12]">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-gold text-sm font-bold text-[#2a0a12]">
             {staffName.slice(0, 1).toUpperCase()}
           </span>
           <span className="min-w-0 leading-tight">
             <span className="block truncate text-[13px] font-semibold text-white">{staffName}</span>
-            <span className="block text-[11px] text-[#c9a45a]">{roleName}</span>
+            <span className="block text-[11px] text-brand-gold">{roleName}</span>
           </span>
         </div>
         <Link href="/" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-[#d9cbb5] hover:bg-white/5 hover:text-white">

@@ -149,7 +149,7 @@ export function ShopSidebar({ variant }: { variant: "mobile" | "desktop" }) {
             <SlidersHorizontal className="h-4 w-4" />
             Filter
             {activeFilterCount > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] text-primary-foreground">
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs text-primary-foreground">
                 {activeFilterCount}
               </span>
             )}

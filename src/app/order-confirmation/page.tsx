@@ -15,7 +15,7 @@ import {
   Leaf
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { InstallAppCard } from '@/components/storefront/install-app-card';
 
 interface OrderData {
   orderNumber: string;
@@ -74,22 +74,14 @@ export default function OrderConfirmationPage() {
     <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pt-[calc(var(--header-h)+32px)] pb-16">
       
       {/* Celebration Header (Hidden on Print) */}
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 18 }}
-        className="text-center mb-10 print:hidden"
+      <div className="rise-in text-center mb-10 print:hidden"
       >
         <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 dark:bg-primary/20 mb-5">
           <CheckCircle2 className="w-12 h-12 text-primary dark:text-primary" />
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: -10 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="absolute -top-2 -right-2"
+          <div style={{ animationDelay: '0.3s' }} className="rise-in absolute -top-2 -right-2"
           >
             <PartyPopper className="w-7 h-7 text-brand-gold" />
-          </motion.div>
+          </div>
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-heading font-bold text-foreground mb-2">
@@ -98,14 +90,10 @@ export default function OrderConfirmationPage() {
         <p className="text-base text-muted-foreground max-w-lg mx-auto">
           Thank you for choosing <span className="font-semibold text-foreground">Spicy Nuts</span>. Your single-estate harvest is being freshly packed and prepared for dispatch.
         </p>
-      </motion.div>
+      </div>
 
       {/* Main Order Receipt Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="rounded-3xl bg-card border border-border/60 overflow-hidden shadow-lg print:border-none print:shadow-none"
+      <div style={{ animationDelay: '0.2s' }} className="rise-in rounded-3xl bg-card border border-border/60 overflow-hidden shadow-lg print:border-none print:shadow-none"
       >
         {/* Banner Header with Order Number */}
         <div className="bg-primary/5 dark:bg-primary/10 p-6 sm:p-8 border-b border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -117,7 +105,7 @@ export default function OrderConfirmationPage() {
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Order Receipt</span>
                 {order.paymentMethod && (
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                     {order.paymentMethod}
                   </span>
                 )}
@@ -181,7 +169,7 @@ export default function OrderConfirmationPage() {
                   </div>
                   <div className="text-right shrink-0">
                     <span className="font-bold text-sm text-foreground">₹{(item.price * item.quantity).toFixed(2)}</span>
-                    <p className="text-[11px] text-muted-foreground">₹{item.price.toFixed(2)} / unit</p>
+                    <p className="text-xs text-muted-foreground">₹{item.price.toFixed(2)} / unit</p>
                   </div>
                 </div>
               ))}
@@ -213,7 +201,7 @@ export default function OrderConfirmationPage() {
                 <span>{order.paymentMethod?.startsWith('Cash') ? 'Total Payable' : 'Total Paid'}</span>
                 <span className="text-primary text-lg">₹{order.total.toFixed(2)}</span>
               </div>
-              <p className="text-[11px] text-muted-foreground text-right">Inclusive of GST (₹{order.tax.toFixed(2)})</p>
+              <p className="text-xs text-muted-foreground text-right">Inclusive of GST (₹{order.tax.toFixed(2)})</p>
             </div>
           </div>
 
@@ -229,7 +217,9 @@ export default function OrderConfirmationPage() {
           </div>
 
         </div>
-      </motion.div>
+      </div>
+
+      <InstallAppCard />
 
       {/* Action Navigation Buttons (Hidden on Print) */}
       <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center print:hidden">

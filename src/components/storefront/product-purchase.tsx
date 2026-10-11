@@ -93,7 +93,7 @@ export function ProductPurchase({
               >
                 <PouchIcon scale={1 + i * 0.22} filled={on} />
                 <span className="text-sm font-extrabold">{s.label}</span>
-                <span className="text-[11.5px] font-bold text-muted-foreground">{inr(Number(s.salePrice ?? s.price))}</span>
+                <span className="text-xs font-bold text-muted-foreground">{inr(Number(s.salePrice ?? s.price))}</span>
               </button>
             );
           })}
@@ -105,17 +105,17 @@ export function ProductPurchase({
       {/* Desktop / tablet actions */}
       <div className="mt-4 hidden gap-2.5 md:flex">
         {stepper}
-        <button onClick={() => add()} disabled={stock <= 0} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-extrabold text-primary-foreground disabled:opacity-60">
+        <button onClick={() => add()} disabled={stock <= 0} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-control)] border border-brand-gold/70 bg-primary text-sm font-extrabold text-primary-foreground disabled:opacity-60">
           {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
           {added ? "Added" : "Add to cart"}
         </button>
-        <button onClick={() => add(true)} disabled={stock <= 0} className="h-12 flex-1 rounded-xl bg-secondary text-sm font-extrabold text-secondary-foreground disabled:opacity-60">
+        <button onClick={() => add(true)} disabled={stock <= 0} className="h-12 flex-1 rounded-[var(--radius-control)] border-[1.5px] border-primary bg-transparent text-sm font-extrabold text-primary hover:bg-muted disabled:opacity-60">
           Buy now
         </button>
       </div>
 
       {/* Mobile sticky buy bar */}
-      <div className="fixed inset-x-0 bottom-0 z-50 flex items-center gap-2.5 border-t border-border bg-card px-3.5 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 shadow-[0_-10px_26px_rgba(74,15,29,0.12)] md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-50 flex items-center gap-2.5 border-t border-border bg-card px-3.5 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 shadow-[var(--shadow-float)] md:hidden">
         {stepper}
         <button onClick={() => add()} disabled={stock <= 0} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-brand-gold bg-primary text-sm font-extrabold text-primary-foreground disabled:opacity-60">
           {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}

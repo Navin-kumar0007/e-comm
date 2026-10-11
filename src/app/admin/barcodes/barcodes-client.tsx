@@ -46,7 +46,7 @@ export function BarcodesClient({ rows }: { rows: BarcodeRow[] }) {
 
   const status = (r: BarcodeRow, draft: string | undefined, valid: boolean) =>
     draft !== undefined && draft !== (r.barcode ?? "") ? (
-      <button onClick={() => save(r)} disabled={!valid || pending} className="h-9 shrink-0 rounded-lg bg-[#6E1A2C] px-3 text-xs font-semibold text-white disabled:opacity-40">Save</button>
+      <button onClick={() => save(r)} disabled={!valid || pending} className="h-9 shrink-0 rounded-lg bg-primary px-3 text-xs font-semibold text-white disabled:opacity-40">Save</button>
     ) : r.barcode && !isValidEan13(r.barcode) ? (
       <span className="inline-flex shrink-0 items-center gap-1 text-xs text-red-700"><AlertCircle className="h-3.5 w-3.5" /> Invalid</span>
     ) : r.barcode ? (
@@ -65,7 +65,7 @@ export function BarcodesClient({ rows }: { rows: BarcodeRow[] }) {
           <p className="text-sm text-muted-foreground">EAN-13 for every product and pack size. Print stickers for jars, shelves and scanners.</p>
         </div>
         <button onClick={generate} disabled={!missing || pending}
-          className="inline-flex h-10 items-center gap-2 rounded-lg bg-[#6E1A2C] px-4 text-sm font-semibold text-white disabled:opacity-40">
+          className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-white disabled:opacity-40">
           <Wand2 className="h-4 w-4" /> Generate {missing || ""} missing
         </button>
       </div>
@@ -82,7 +82,7 @@ export function BarcodesClient({ rows }: { rows: BarcodeRow[] }) {
           </div>
         ))}
       </div>
-      <p className="rounded-lg border border-[#c9a45a]/40 bg-[#fbf6ee] px-4 py-3 text-sm text-[#5a4a32]">
+      <p className="rounded-lg border border-brand-gold/40 bg-background px-4 py-3 text-sm text-[#5a4a32]">
         In-store codes (starting 21) scan fine in your shop but are not accepted by retail chains or marketplaces. When you get GS1 India codes (starting 890), type or scan them into the box and save.
       </p>
 
@@ -145,7 +145,7 @@ export function BarcodesClient({ rows }: { rows: BarcodeRow[] }) {
       {total > 0 && (
         <div className="fixed inset-x-0 bottom-0 z-30 flex items-center gap-2 border-t border-border bg-white p-3 shadow-[0_-6px_20px_rgba(0,0,0,0.08)] md:hidden">
           <button type="button" onClick={() => setCopies({})} className="h-11 rounded-lg border border-border px-3 text-sm">Clear</button>
-          <a href={printHref} target="_blank" rel="noreferrer" className="flex h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-[#6E1A2C] text-sm font-semibold text-white">
+          <a href={printHref} target="_blank" rel="noreferrer" className="flex h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold text-white">
             <Printer className="h-4 w-4" /> Print {total} sticker{total === 1 ? "" : "s"}
           </a>
         </div>

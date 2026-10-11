@@ -37,7 +37,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <AdminSearch />
           <div className="ml-auto flex items-center gap-2">
             {staff.can("orders.create") && (
-              <Link href="/admin/orders/new" className="hidden sm:inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#6E1A2C] px-3 text-[13px] font-semibold text-white hover:bg-[#5a1424]">
+              <Link href="/admin/orders/new" className="hidden sm:inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-[13px] font-semibold text-white hover:bg-primary/90">
                 <Plus className="h-4 w-4" /> New order
               </Link>
             )}

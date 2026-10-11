@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Shield, Leaf, Sun, Package, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -81,13 +80,9 @@ export default function TraceabilityPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Timeline and Search Result Column */}
           <div className="lg:col-span-7">
-            <AnimatePresence mode="wait">
+            <>
               {result ? (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="bg-card border border-border/40 rounded-3xl p-6 md:p-8 shadow-xl"
+                <div className="rise-in bg-card border border-border/40 rounded-3xl p-6 md:p-8 shadow-xl"
                 >
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-border/40 pb-6 mb-8 gap-4">
                     <div>
@@ -108,12 +103,10 @@ export default function TraceabilityPage() {
                     
                     <div className="space-y-8">
                       {result.timeline.map((item, i) => (
-                        <motion.div 
+                        <div 
                           key={i}
-                          initial={{ opacity: 0, x: -25 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.1 }}
-                          className="relative pl-14"
+                          style={{ animationDelay: `${i * 0.1}s` }}
+                          className="rise-in relative pl-14"
                         >
                           <div className="absolute left-2.5 top-1 -translate-x-1/2 w-8 h-8 rounded-full bg-background border-2 border-primary flex items-center justify-center shadow-md">
                             {getIcon(item.icon)}
@@ -123,17 +116,17 @@ export default function TraceabilityPage() {
                             <h3 className="text-lg font-bold mt-2">{item.title}</h3>
                             <p className="text-muted-foreground text-sm mt-1 leading-relaxed">{item.description}</p>
                           </div>
-                        </motion.div>
+                        </div>
                       ))}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ) : (
                 <div className="bg-card/50 border border-dashed border-border/60 rounded-3xl p-12 text-center text-muted-foreground">
                   Trace details will appear here. Try searching for "BATCH-2026-X7" to test the system.
                 </div>
               )}
-            </AnimatePresence>
+            </>
           </div>
 
           {/* High performance Flat Route Map Graphic (5 cols) */}

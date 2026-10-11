@@ -20,7 +20,7 @@ export default function FounderPage() {
           <div className="relative aspect-[4/3.8] rounded-2xl overflow-hidden shadow-lg border border-border/40">
             <Image src="https://images.unsplash.com/photo-1508061253366-f7da158b6d46?q=80&w=800&auto=format&fit=crop" alt="Spicy Nuts - Pure Origin Harvest" fill className="object-cover" priority />
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-brand-gold font-mono">Founding Vision</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-brand-gold font-mono">Founding Vision</span>
               <p className="font-heading font-bold text-xl">Spicy Nuts</p>
               <p className="text-xs text-white/80">Founder &amp; Chief Curator</p>
             </div>

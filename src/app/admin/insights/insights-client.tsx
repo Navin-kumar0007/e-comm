@@ -26,7 +26,7 @@ export function InsightsClient({ data, canSeeCustomers }: { data: any; canSeeCus
   }, [data.productRows, sort]);
   const maxState = Math.max(1, ...data.stateRows.map((r: any) => r.revenue));
   const th = (key: SortKey, label: string) => (
-    <th className={`${thCls} cursor-pointer select-none text-right hover:text-foreground ${sort === key ? "text-[#6E1A2C]" : ""}`} onClick={() => setSort(key)}>{label}{sort === key ? " ↓" : ""}</th>
+    <th className={`${thCls} cursor-pointer select-none text-right hover:text-foreground ${sort === key ? "text-primary" : ""}`} onClick={() => setSort(key)}>{label}{sort === key ? " ↓" : ""}</th>
   );
 
   return (
@@ -113,7 +113,7 @@ export function InsightsClient({ data, canSeeCustomers }: { data: any; canSeeCus
                   <td className={`${tdCls} text-right tabular-nums`}>{c.customers}</td>
                   <td className={`${tdCls} text-right tabular-nums`}>{c.returned}</td>
                   <td className={tdCls}>
-                    <div className="flex items-center gap-2"><div className="h-2 w-28 overflow-hidden rounded-full bg-muted"><div className="h-full bg-[#6E1A2C]" style={{ width: `${c.rate}%` }} /></div><span className="tabular-nums">{c.customers ? `${c.rate}%` : "—"}</span></div>
+                    <div className="flex items-center gap-2"><div className="h-2 w-28 overflow-hidden rounded-full bg-muted"><div className="h-full bg-primary" style={{ width: `${c.rate}%` }} /></div><span className="tabular-nums">{c.customers ? `${c.rate}%` : "—"}</span></div>
                   </td>
                 </tr>
               ))}
@@ -128,7 +128,7 @@ export function InsightsClient({ data, canSeeCustomers }: { data: any; canSeeCus
               {data.stateRows.slice(0, 12).map((r: any) => (
                 <li key={r.state}>
                   <div className="flex justify-between"><span>{r.state} <span className="text-xs text-muted-foreground">· {r.orders} orders{r.rtoRate !== null ? ` · ${r.rtoRate}% returned undelivered` : ""}</span></span><span className="font-semibold tabular-nums">{inr(r.revenue)}</span></div>
-                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-[#c9a45a]" style={{ width: `${(r.revenue / maxState) * 100}%` }} /></div>
+                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-brand-gold" style={{ width: `${(r.revenue / maxState) * 100}%` }} /></div>
                 </li>
               ))}
             </ul>

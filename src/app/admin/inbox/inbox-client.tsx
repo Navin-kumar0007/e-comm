@@ -59,7 +59,7 @@ export function InboxClient({ initial, initialPhone }: { initial: any[]; initial
             <ul className="divide-y divide-border/60">
               {convos.map((c) => (
                 <li key={c.phone}>
-                  <button onClick={() => setPhone(c.phone)} className={`flex w-full flex-col gap-0.5 px-4 py-3 text-left ${c.phone === phone ? "bg-[#fbf6ee]" : "hover:bg-muted/30"}`}>
+                  <button onClick={() => setPhone(c.phone)} className={`flex w-full flex-col gap-0.5 px-4 py-3 text-left ${c.phone === phone ? "bg-background" : "hover:bg-muted/30"}`}>
                     <span className="flex items-center justify-between gap-2">
                       <span className="truncate font-semibold">{c.name ?? `+91 ${c.phone}`}</span>
                       {c.unread > 0 && <span className="rounded-full bg-[#25D366] px-1.5 text-[11px] font-bold text-white">{c.unread}</span>}
@@ -76,7 +76,7 @@ export function InboxClient({ initial, initialPhone }: { initial: any[]; initial
             className={phone ? "" : "hidden lg:block"}
             title={current ? <span className="flex min-w-0 items-center gap-2">
               <button type="button" onClick={() => setPhone(null)} aria-label="Back to all chats" className="-ml-1 rounded-lg p-1 hover:bg-muted lg:hidden"><ArrowLeft className="h-4 w-4" /></button>
-              <User className="hidden h-4 w-4 shrink-0 text-[#c9a45a] sm:block" /><span className="truncate">{current.name ?? `+91 ${current.phone}`}</span> {current.name && <span className="hidden font-normal text-muted-foreground sm:inline">+91 {current.phone}</span>}</span> : "Choose a chat"}
+              <User className="hidden h-4 w-4 shrink-0 text-brand-gold sm:block" /><span className="truncate">{current.name ?? `+91 ${current.phone}`}</span> {current.name && <span className="hidden font-normal text-muted-foreground sm:inline">+91 {current.phone}</span>}</span> : "Choose a chat"}
             action={current ? <div className="flex gap-2">
               <a href={`tel:+91${current.phone}`} className={btnSecondary}><Phone className="h-4 w-4" /> Call</a>
               <Link href={`/admin/customers/${current.phone}`} className={btnSecondary}>Profile</Link>

@@ -307,7 +307,7 @@ export default function CheckoutPage() {
             {[["Cart", true], ["Address", true], ["Payment", false]].map(([label, done]) => (
               <li key={label as string} className="flex flex-col gap-1.5">
                 <span className={`h-1 rounded-full ${done ? "bg-brand-gold" : "bg-white/25"}`} />
-                <span className={`font-royal text-[10.5px] font-bold tracking-[0.16em] ${done ? "text-brand-gold" : "text-white/70"}`}>{(label as string).toUpperCase()}</span>
+                <span className={`font-royal text-xs font-bold tracking-[0.16em] ${done ? "text-brand-gold" : "text-white/70"}`}>{(label as string).toUpperCase()}</span>
               </li>
             ))}
           </ol>
@@ -535,7 +535,7 @@ export default function CheckoutPage() {
                 <span>•</span>
                 <span>Insured Delivery</span>
               </div>
-              <p className="text-center text-[11px] leading-snug text-muted-foreground">
+              <p className="text-center text-xs leading-snug text-muted-foreground">
                 Your name, phone, email and address are used only to deliver this order, issue its GST invoice and send order updates (including on WhatsApp).
                 {" "}<a href="/privacy-policy" target="_blank" className="underline">Privacy Policy</a>
               </p>
@@ -592,7 +592,7 @@ export default function CheckoutPage() {
                 <div className="pt-3 border-t border-border/50 flex items-center justify-between">
                   <div className="flex flex-col">
                     <span className="text-xs font-semibold text-foreground">Redeem Spice Points</span>
-                    <span className="text-[11px] text-muted-foreground">{userPoints} pts available (worth ₹{(userPoints/10).toFixed(0)})</span>
+                    <span className="text-xs text-muted-foreground">{userPoints} pts available (worth ₹{(userPoints/10).toFixed(0)})</span>
                   </div>
                   <input 
                     type="checkbox" 
@@ -634,7 +634,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {shippingFee > 0 && quote?.freeShippingThreshold ? (
-                  <p className="text-[11px] text-muted-foreground">Free shipping on orders of ₹{quote.freeShippingThreshold} or more.</p>
+                  <p className="text-xs text-muted-foreground">Free shipping on orders of ₹{quote.freeShippingThreshold} or more.</p>
                 ) : null}
 
                 {quote?.error && (
@@ -646,7 +646,7 @@ export default function CheckoutPage() {
                   <span className="text-primary text-xl">₹{total.toFixed(2)}</span>
                 </div>
                 {quoteReady && (quote?.taxAmount ?? 0) > 0 && (
-                  <p className="text-[11px] text-muted-foreground text-right">Inclusive of GST (₹{quote!.taxAmount!.toFixed(2)})</p>
+                  <p className="text-xs text-muted-foreground text-right">Inclusive of GST (₹{quote!.taxAmount!.toFixed(2)})</p>
                 )}
               </div>
 

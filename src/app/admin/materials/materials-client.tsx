@@ -168,7 +168,7 @@ export function MaterialsClient({ materials, products }: { materials: any[]; pro
                 </select>
               </Field>
             </div>
-            {form.id && <label className="flex items-center gap-2 text-sm"><input type="checkbox" className="h-4 w-4 accent-[#6E1A2C]" checked={form.isActive ?? true} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} /> Active</label>}
+            {form.id && <label className="flex items-center gap-2 text-sm"><input type="checkbox" className="h-4 w-4 accent-primary" checked={form.isActive ?? true} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} /> Active</label>}
           </div>
         )}
       </SidePanel>

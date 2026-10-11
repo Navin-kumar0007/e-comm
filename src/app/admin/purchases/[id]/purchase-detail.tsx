@@ -63,7 +63,7 @@ export function PurchaseDetail({ po }: { po: any }) {
       />
 
       {receiving && (
-        <Panel title="Receive goods" className="border-[#c9a45a]">
+        <Panel title="Receive goods" className="border-brand-gold">
           <div className="space-y-4 p-4">
             <p className="text-sm text-muted-foreground">Enter what actually arrived. Each line becomes a batch with its own code. Write the batch code on the bag or stamp it on the packs. Leave the code empty to get one automatically.</p>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -144,14 +144,14 @@ export function PurchaseDetail({ po }: { po: any }) {
               {po.notes && <p className="whitespace-pre-line border-t border-border/60 pt-2 text-muted-foreground">{po.notes}</p>}
             </div>
           </Panel>
-          <Panel title="Batches received" action={<Link href="/admin/batches" className="text-xs font-semibold text-[#6E1A2C] hover:underline">All batches</Link>}>
+          <Panel title="Batches received" action={<Link href="/admin/batches" className="text-xs font-semibold text-primary hover:underline">All batches</Link>}>
             {po.lots.length === 0 ? (
               <p className="p-4 text-sm text-muted-foreground">Nothing received yet.</p>
             ) : (
               <ul className="divide-y divide-border/60">
                 {po.lots.map((l: any) => (
                   <li key={l.id} className="flex items-center justify-between gap-2 px-4 py-2.5 text-sm">
-                    <div className="flex items-center gap-2"><Boxes className="h-4 w-4 text-[#c9a45a]" /><span className="font-mono font-semibold">{l.lotNumber}</span></div>
+                    <div className="flex items-center gap-2"><Boxes className="h-4 w-4 text-brand-gold" /><span className="font-mono font-semibold">{l.lotNumber}</span></div>
                     <div className="text-right text-xs text-muted-foreground">
                       <p>{qtyFmt(l.qtyIn, l.kind === "MATERIAL" ? "kg" : "packs")} · {dateFmt(l.receivedAt)}</p>
                       {l.expiryDate && <p>Best before {dateFmt(l.expiryDate)}</p>}

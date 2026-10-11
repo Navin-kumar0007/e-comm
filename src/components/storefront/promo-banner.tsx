@@ -27,7 +27,7 @@ export function PromoBanner({ enabled = true, messages = DEFAULT }: { enabled?: 
 
   return (
     <div className="relative border-b border-brand-gold/25 text-brand-gold">
-      <div className="container mx-auto flex h-[30px] items-center justify-center gap-x-4 px-9 text-[11px] font-semibold tracking-[0.04em] md:h-[34px] md:text-xs">
+      <div className="container mx-auto flex h-[30px] items-center justify-center gap-x-4 px-9 text-xs font-semibold tracking-[0.04em] md:h-[34px] md:text-xs">
         {messages.map((m, i) => (
           <Fragment key={i}>
             {i > 0 && <span className={`text-brand-gold/40 ${i === mobileIndex || i - 1 === mobileIndex ? "hidden sm:inline" : "hidden md:inline"}`} aria-hidden="true">|</span>}

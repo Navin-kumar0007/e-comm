@@ -60,7 +60,7 @@ export function Footer({ contact }: { contact?: FooterContact }) {
               </div>
               <div className="flex flex-col text-left">
                 <span className="font-heading text-xl font-bold leading-none text-brand-gold">SPICY NUTS</span>
-                <span className="mt-1 font-royal text-[9px] font-semibold uppercase tracking-[0.22em] text-white/75">Fine Nuts &amp; Spices</span>
+                <span className="mt-1 font-royal text-xs font-semibold uppercase tracking-[0.22em] text-white/75">Fine Nuts &amp; Spices</span>
               </div>
             </Link>
             <p className="mb-4 text-[13.5px] leading-relaxed text-white/80">

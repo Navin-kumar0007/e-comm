@@ -75,7 +75,7 @@ export default function CustomersClient({ initialCustomers, initialQuery = "", i
       </div>
 
       <Panel
-        title={<div className="flex flex-wrap gap-1">{SEGMENTS.map((s) => <button key={s.key} title={s.hint} onClick={() => setSeg(s.key)} className={`rounded-lg px-2.5 py-1 text-sm font-medium ${seg === s.key ? "bg-[#6E1A2C] text-white" : "text-muted-foreground hover:text-foreground"}`}>{s.label} <span className="text-xs opacity-70">{counts[s.key]}</span></button>)}</div>}
+        title={<div className="flex flex-wrap gap-1">{SEGMENTS.map((s) => <button key={s.key} title={s.hint} onClick={() => setSeg(s.key)} className={`rounded-lg px-2.5 py-1 text-sm font-medium ${seg === s.key ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"}`}>{s.label} <span className="text-xs opacity-70">{counts[s.key]}</span></button>)}</div>}
         action={<div className="flex h-9 w-60 items-center gap-2 rounded-lg border border-border px-3"><Search className="h-4 w-4 text-muted-foreground" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name, phone, email" className="w-full bg-transparent text-sm outline-none" /></div>}
       >
         {list.length === 0 ? <Empty icon={<Users className="h-8 w-8" />} title="No customers here" /> : (
@@ -86,8 +86,8 @@ export default function CustomersClient({ initialCustomers, initialQuery = "", i
                 {list.slice(0, 400).map((c) => (
                   <tr key={c.key} className="hover:bg-muted/20">
                     <td className={tdCls}>
-                      <Link href={`/admin/customers/${encodeURIComponent(c.key)}`} className="font-semibold text-[#6E1A2C] hover:underline">
-                        {c.businessName ? <span className="inline-flex items-center gap-1"><Building2 className="h-3.5 w-3.5 text-[#c9a45a]" />{c.businessName}</span> : c.name}
+                      <Link href={`/admin/customers/${encodeURIComponent(c.key)}`} className="font-semibold text-primary hover:underline">
+                        {c.businessName ? <span className="inline-flex items-center gap-1"><Building2 className="h-3.5 w-3.5 text-brand-gold" />{c.businessName}</span> : c.name}
                       </Link>
                       {c.businessName && <p className="text-xs text-muted-foreground">{c.name}</p>}
                       {!c.hasAccount && <p className="text-[11px] text-muted-foreground">Guest (no account)</p>}

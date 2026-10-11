@@ -2,95 +2,87 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useSyncExternalStore } from "react";
-import { Home, LayoutGrid, Gift, Heart, User } from "lucide-react";
+import { useSyncExternalStore } from "react";
+import { Home, LayoutGrid, Gift, ShoppingBag, User } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart-store";
-import { FREE_SHIPPING_AT } from "./cart-drawer";
+import { useCartSheet, haptic } from "@/lib/store/ui-store";
 import { isDocumentRoute } from "./storefront-only";
 
 const noopSubscribe = () => () => {};
-const inr = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
 
-/** Maroon bar above the tab bar showing the running total and the free-shipping gap. */
-function FloatingCartBar() {
-  const items = useCartStore((s) => s.items);
-  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
-  const visible = mounted && items.length > 0;
-  // While this bar shows, pages keep extra space at the bottom so nothing hides behind it.
-  useEffect(() => {
-    if (!visible) return;
-    const root = document.documentElement;
-    root.style.setProperty("--mobile-chrome-bottom", "10.5rem");
-    return () => { root.style.removeProperty("--mobile-chrome-bottom"); };
-  }, [visible]);
-  if (!visible) return null;
-  const count = items.reduce((n, i) => n + i.quantity, 0);
-  const total = items.reduce((n, i) => n + i.price * i.quantity, 0);
-  const left = FREE_SHIPPING_AT - total;
+const tabClass =
+  "relative flex min-h-12 flex-col items-center justify-center gap-0.5 text-tab tap";
+const tone = (active: boolean) => (active ? "text-primary font-extrabold" : "text-muted-foreground font-semibold");
 
-  return (
-    <Link
-      href="/checkout"
-      className="fixed inset-x-3 bottom-[88px] z-40 flex h-14 items-center justify-between rounded-2xl border border-brand-gold bg-primary py-0 pl-4 pr-2 text-primary-foreground shadow-[0_14px_28px_rgba(74,15,29,0.35)] md:hidden"
-      style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}
-    >
-      <span className="flex flex-col leading-tight">
-        <span className="text-[11.5px] opacity-85">
-          {count} {count === 1 ? "item" : "items"} · {left > 0 ? `${inr(left)} to free shipping` : "free shipping"}
-        </span>
-        <strong className="tnum text-base">{inr(total)}</strong>
-      </span>
-      <span className="flex h-10 items-center rounded-xl bg-secondary px-4 text-sm font-extrabold text-secondary-foreground">Checkout ›</span>
-    </Link>
-  );
+/** Gold bar above the active tab. */
+function Indicator({ on }: { on: boolean }) {
+  return on ? <span aria-hidden="true" className="absolute top-1.5 h-[3px] w-[18px] rounded-full bg-gradient-to-r from-[#b8893a] via-[#f0d49a] to-[#b8893a]" /> : null;
 }
 
-const itemClass = "flex flex-col items-center justify-center gap-0.5 min-h-12 text-[10.5px]";
-
+/**
+ * Phone tab bar, the way native shopping apps work: Home, Shop, Gifts, Cart and Account,
+ * all within thumb reach. Cart opens the cart sheet and shows a count that bumps on add.
+ */
 export function MobileBottomNav() {
   const pathname = usePathname();
+  const count = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0));
+  const cartOpen = useCartSheet((s) => s.open);
+  const setCartOpen = useCartSheet((s) => s.setOpen);
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const shown = mounted ? count : 0;
 
-  // Do not show bottom nav on admin routes or during checkout
-  // Product pages have their own sticky buy bar
+  // No tab bar on admin, checkout, documents, or product pages (they have their own buy bar).
   if (pathname.startsWith("/admin") || pathname.startsWith("/checkout") || pathname.startsWith("/product/") || isDocumentRoute(pathname)) return null;
 
-  const tone = (active: boolean) => (active ? "text-primary font-extrabold" : "text-muted-foreground font-semibold");
-  const isCat = pathname.startsWith("/shop") || pathname.startsWith("/category");
+  const isHome = pathname === "/";
+  const isShop = pathname.startsWith("/shop") || pathname.startsWith("/category") || pathname.startsWith("/search");
+  const isAccount = pathname.startsWith("/account");
 
   return (
-    <>
-      <FloatingCartBar />
-      <nav
-        aria-label="Mobile navigation"
-        className="glass fixed inset-x-2.5 bottom-2.5 z-40 rounded-3xl md:hidden"
-        style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}
-      >
-        <div className="grid h-[66px] grid-cols-5 items-center">
-          <Link href="/" aria-current={pathname === "/" ? "page" : undefined} className={`${itemClass} ${tone(pathname === "/")}`}>
-            <Home className="h-[21px] w-[21px]" />
-            Home
-          </Link>
-          <Link href="/shop" aria-current={isCat ? "page" : undefined} className={`${itemClass} ${tone(isCat)}`}>
-            <LayoutGrid className="h-[21px] w-[21px]" />
-            Categories
-          </Link>
-          <Link
-            href="/#gift"
-            aria-label="Gifting"
-            className="-mt-8 flex h-[58px] w-[58px] items-center justify-center justify-self-center rounded-full border-4 border-background bg-secondary text-secondary-foreground shadow-[0_10px_20px_rgba(122,87,28,0.45)]"
-          >
-            <Gift className="h-6 w-6" />
-          </Link>
-          <Link href="/account/wishlist" aria-current={pathname.startsWith("/account/wishlist") ? "page" : undefined} className={`${itemClass} ${tone(pathname.startsWith("/account/wishlist"))}`}>
-            <Heart className="h-[21px] w-[21px]" />
-            Wishlist
-          </Link>
-          <Link href="/account" aria-current={pathname === "/account" ? "page" : undefined} className={`${itemClass} ${tone(pathname === "/account")}`}>
-            <User className="h-[21px] w-[21px]" />
-            Account
-          </Link>
-        </div>
-      </nav>
-    </>
+    <nav
+      aria-label="Main"
+      className="fixed inset-x-2.5 bottom-2.5 z-40 rounded-[var(--radius-card)] border border-brand-gold/35 bg-card/90 shadow-[var(--shadow-float)] backdrop-blur-xl backdrop-saturate-150 md:hidden"
+      style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}
+    >
+      <div className="grid h-[64px] grid-cols-5 items-center">
+        <Link href="/" aria-current={isHome ? "page" : undefined} className={`${tabClass} ${tone(isHome)}`}>
+          <Indicator on={isHome} />
+          <Home className="h-[22px] w-[22px]" />
+          Home
+        </Link>
+        <Link href="/shop" aria-current={isShop ? "page" : undefined} className={`${tabClass} ${tone(isShop)}`}>
+          <Indicator on={isShop} />
+          <LayoutGrid className="h-[22px] w-[22px]" />
+          Shop
+        </Link>
+        <Link href="/#gift" className={`${tabClass} ${tone(false)}`}>
+          <Gift className="h-[22px] w-[22px]" />
+          Gifts
+        </Link>
+        <button
+          type="button"
+          onClick={() => { haptic(); setCartOpen(true); }}
+          aria-label={`Cart, ${shown} ${shown === 1 ? "item" : "items"}`}
+          className={`${tabClass} ${tone(cartOpen)}`}
+        >
+          <Indicator on={cartOpen} />
+          <ShoppingBag className="h-[22px] w-[22px]" />
+          Cart
+          {shown > 0 && (
+            <span
+              key={shown}
+              className="badge-bump absolute left-[calc(50%+3px)] top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-card bg-primary px-1 text-[10.5px] font-extrabold leading-none text-primary-foreground"
+            >
+              {shown}
+            </span>
+          )}
+        </button>
+        <Link href="/account" aria-current={isAccount ? "page" : undefined} className={`${tabClass} ${tone(isAccount)}`}>
+          <Indicator on={isAccount} />
+          <User className="h-[22px] w-[22px]" />
+          Account
+        </Link>
+      </div>
+    </nav>
   );
 }

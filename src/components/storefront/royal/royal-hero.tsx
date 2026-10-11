@@ -30,8 +30,8 @@ export function RoyalHero({
           {subtitle}
         </p>
         <div className="mt-4 flex gap-2.5">
-          <Link href={primaryLink} className="flex h-11 flex-1 items-center justify-center rounded-xl bg-secondary text-[13.5px] font-extrabold text-secondary-foreground">{primaryText}</Link>
-          <Link href={secondaryLink} className="flex h-11 flex-1 items-center justify-center rounded-xl border-[1.5px] border-brand-gold text-[13.5px] font-bold">{secondaryText}</Link>
+          <Link href={primaryLink} className="flex h-11 flex-1 items-center justify-center rounded-[var(--radius-control)] border border-brand-gold bg-card text-[13.5px] font-extrabold text-primary">{primaryText}</Link>
+          <Link href={secondaryLink} className="flex h-11 flex-1 items-center justify-center rounded-[var(--radius-control)] border-[1.5px] border-brand-gold text-[13.5px] font-bold">{secondaryText}</Link>
         </div>
       </div>
 
@@ -47,8 +47,8 @@ export function RoyalHero({
             {subtitle}
           </p>
           <div className="mt-1 flex gap-3">
-            <Link href={primaryLink} className="flex h-12 items-center rounded-xl bg-secondary px-7 text-[15px] font-extrabold text-secondary-foreground">{primaryText}</Link>
-            <Link href={secondaryLink} className="flex h-12 items-center rounded-xl border-[1.5px] border-brand-gold px-7 text-[15px] font-bold">{secondaryText}</Link>
+            <Link href={primaryLink} className="flex h-12 items-center rounded-[var(--radius-control)] border border-brand-gold bg-card px-7 text-[15px] font-extrabold text-primary">{primaryText}</Link>
+            <Link href={secondaryLink} className="flex h-12 items-center rounded-[var(--radius-control)] border-[1.5px] border-brand-gold px-7 text-[15px] font-bold">{secondaryText}</Link>
           </div>
         </div>
 

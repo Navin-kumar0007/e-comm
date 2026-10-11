@@ -122,7 +122,7 @@ export default async function RewardsPage() {
 
           {/* How to Earn */}
           <div className="bg-secondary/5 border border-secondary/15 rounded-3xl p-8">
-            <h3 className="font-heading font-bold text-lg text-secondary mb-4 flex items-center gap-2">
+            <h3 className="font-heading font-bold text-lg text-brand-gold-deep mb-4 flex items-center gap-2">
               <TrendingUp className="w-5 h-5" /> How it Works
             </h3>
             <div className="space-y-6">

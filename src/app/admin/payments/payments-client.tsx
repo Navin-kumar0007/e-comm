@@ -70,8 +70,8 @@ export function PaymentsClient({ initialTab, rzp, cod, payables }: { initialTab:
       <PageHeader title="Payments" subtitle="Check that every rupee arrived: Razorpay payouts, COD money from couriers, and what you owe suppliers." />
       <div className="grid gap-3 sm:grid-cols-3">
         {TABS.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)} className={`flex items-center gap-3 rounded-xl border bg-white p-4 text-left shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${tab === t.key ? "border-[#6E1A2C] ring-2 ring-[#6E1A2C]/10" : "border-border/70 hover:border-[#c9a45a]"}`}>
-            <t.icon className="h-5 w-5 text-[#c9a45a]" />
+          <button key={t.key} onClick={() => setTab(t.key)} className={`flex items-center gap-3 rounded-xl border bg-white p-4 text-left shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${tab === t.key ? "border-primary ring-2 ring-primary/10" : "border-border/70 hover:border-brand-gold"}`}>
+            <t.icon className="h-5 w-5 text-brand-gold" />
             <span>
               <span className="block text-[12px] font-medium uppercase tracking-wide text-muted-foreground">{t.label}</span>
               <span className="block text-xl font-bold tabular-nums text-[#2a0a12]">{t.value}</span>
@@ -94,7 +94,7 @@ export function PaymentsClient({ initialTab, rzp, cod, payables }: { initialTab:
                     const old = daysSince(o.paidAt) > 5;
                     return (
                       <tr key={o.id}>
-                        <td className={tdCls}><Link href={`/admin/orders/${o.id}`} className="font-semibold text-[#6E1A2C] hover:underline">{o.ref}</Link><p className="text-xs text-muted-foreground">{o.customerName}</p></td>
+                        <td className={tdCls}><Link href={`/admin/orders/${o.id}`} className="font-semibold text-primary hover:underline">{o.ref}</Link><p className="text-xs text-muted-foreground">{o.customerName}</p></td>
                         <td className={`${tdCls} ${old ? "font-semibold text-amber-700" : ""}`}>{dateFmt(o.paidAt)}{old ? ` · ${daysSince(o.paidAt)} days` : ""}</td>
                         <td className={`${tdCls} text-right tabular-nums`}>{inr(o.total, 2)}</td>
                         <td className={`${tdCls} text-right tabular-nums text-muted-foreground`}>{o.paymentFee !== null ? `−${inr(o.paymentFee, 2)}` : "not synced"}</td>
@@ -136,16 +136,16 @@ export function PaymentsClient({ initialTab, rzp, cod, payables }: { initialTab:
             {codList.length === 0 ? <Empty icon={<Banknote className="h-8 w-8" />} title="All COD money received">Every delivered cash order has been paid out by the courier.</Empty> : (
               <table className="w-full text-sm">
                 <thead className="bg-muted/30"><tr>
-                  <th className={`${thCls} w-10`}><input type="checkbox" aria-label="Select all" className="h-4 w-4 accent-[#6E1A2C]" checked={codList.length > 0 && codList.every((o: any) => picked.has(o.id))} onChange={(e) => setPicked(e.target.checked ? new Set(codList.map((o: any) => o.id)) : new Set())} /></th>
+                  <th className={`${thCls} w-10`}><input type="checkbox" aria-label="Select all" className="h-4 w-4 accent-primary" checked={codList.length > 0 && codList.every((o: any) => picked.has(o.id))} onChange={(e) => setPicked(e.target.checked ? new Set(codList.map((o: any) => o.id)) : new Set())} /></th>
                   <th className={thCls}>Order</th><th className={thCls}>AWB</th><th className={thCls}>Delivered</th><th className={`${thCls} text-right`}>COD</th>
                 </tr></thead>
                 <tbody className="divide-y divide-border/60">
                   {codList.map((o: any) => {
                     const age = daysSince(o.deliveredAt);
                     return (
-                      <tr key={o.id} className={picked.has(o.id) ? "bg-[#fbf6ee]" : ""}>
-                        <td className={tdCls}><input type="checkbox" aria-label={`Select ${o.ref}`} className="h-4 w-4 accent-[#6E1A2C]" checked={picked.has(o.id)} onChange={() => setPicked((s) => { const n = new Set(s); if (n.has(o.id)) n.delete(o.id); else n.add(o.id); return n; })} /></td>
-                        <td className={tdCls}><Link href={`/admin/orders/${o.id}`} className="font-semibold text-[#6E1A2C] hover:underline">{o.ref}</Link><p className="text-xs text-muted-foreground">{o.customerName}</p></td>
+                      <tr key={o.id} className={picked.has(o.id) ? "bg-background" : ""}>
+                        <td className={tdCls}><input type="checkbox" aria-label={`Select ${o.ref}`} className="h-4 w-4 accent-primary" checked={picked.has(o.id)} onChange={() => setPicked((s) => { const n = new Set(s); if (n.has(o.id)) n.delete(o.id); else n.add(o.id); return n; })} /></td>
+                        <td className={tdCls}><Link href={`/admin/orders/${o.id}`} className="font-semibold text-primary hover:underline">{o.ref}</Link><p className="text-xs text-muted-foreground">{o.customerName}</p></td>
                         <td className={`${tdCls} font-mono text-xs`}>{o.awb ?? "—"}</td>
                         <td className={`${tdCls} ${age > 10 ? "font-semibold text-red-700" : ""}`}>{dateFmt(o.deliveredAt)}{age > 10 ? ` · ${age} days` : ""}</td>
                         <td className={`${tdCls} text-right font-semibold tabular-nums`}>{inr(o.total, 2)}</td>
@@ -183,7 +183,7 @@ export function PaymentsClient({ initialTab, rzp, cod, payables }: { initialTab:
                       <div className="flex items-center gap-3"><b className="tabular-nums text-red-700">{inr(s.due, 2)}</b><button className={btnGhost} onClick={() => setPay({ supplierId: s.id, date: isoDay(), amount: s.due, method: "BANK", reference: "", note: "" })}>Pay</button></div>
                     </div>
                     <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                      {s.pos.map((p: any) => <Link key={p.id} href={`/admin/purchases/${p.id}`} className="hover:text-[#6E1A2C] hover:underline">{p.number}{p.billNo ? ` (bill ${p.billNo})` : ""}: {inr(p.due, 2)} · {daysSince(p.date)} days</Link>)}
+                      {s.pos.map((p: any) => <Link key={p.id} href={`/admin/purchases/${p.id}`} className="hover:text-primary hover:underline">{p.number}{p.billNo ? ` (bill ${p.billNo})` : ""}: {inr(p.due, 2)} · {daysSince(p.date)} days</Link>)}
                     </div>
                   </li>
                 ))}

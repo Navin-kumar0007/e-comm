@@ -3,7 +3,9 @@ import { PincodeChecker } from "@/components/storefront/pincode-checker";
 import { ProductPurchase } from "@/components/storefront/product-purchase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ShieldCheck, Truck, ArrowLeft, Star } from "lucide-react";
+import { ShieldCheck, Truck, ArrowLeft, Star, MessageCircle, ChevronRight } from "lucide-react";
+import { ViewTransition } from "react";
+import { BRAND_WHATSAPP } from "@/lib/contact";
 import { prisma } from "@/lib/db/prisma";
 import { WishlistButton } from "@/components/storefront/wishlist-button";
 import { ProductReviews } from "./product-reviews";
@@ -201,9 +203,13 @@ export default async function ProductPage({
         }}
       />
 
-      {/* Mobile: full-bleed 3D stage under the header */}
+      {/* Mobile: full-bleed 3D stage under the header. Shares its name with the shop card's jar so the jar flies in. */}
       <div className="pt-header md:hidden">
-        {jarLabel ? <JarViewer label={jarLabel} images={displayImages} name={product.name} weight={product.weight || "250g"} /> : <PackViewer images={displayImages} name={product.name} weight={product.weight || "250g"} />}
+        <ViewTransition name={`jar-${product.slug}`}>
+          <div>
+            {jarLabel ? <JarViewer label={jarLabel} images={displayImages} name={product.name} weight={product.weight || "250g"} /> : <PackViewer images={displayImages} name={product.name} weight={product.weight || "250g"} />}
+          </div>
+        </ViewTransition>
       </div>
 
       <div className="container mx-auto max-w-7xl md:px-6 md:pt-[calc(var(--header-h)+20px)] lg:px-8">
@@ -220,7 +226,7 @@ export default async function ProductPage({
             {jarLabel ? <JarViewer label={jarLabel} images={displayImages} name={product.name} weight={product.weight || "250g"} /> : <PackViewer images={displayImages} name={product.name} weight={product.weight || "250g"} />}
           </div>
 
-          <div className="relative -mt-6 flex flex-col gap-3 rounded-t-[26px] bg-background px-4 pt-5 md:mt-0 md:rounded-none md:px-0 md:pt-2">
+          <div className="relative -mt-6 flex flex-col gap-3 rounded-t-[var(--radius-sheet)] bg-background px-4 pt-5 md:mt-0 md:rounded-none md:px-0 md:pt-2">
             <span className="eyebrow text-brand-gold-deep">Dry fruits &amp; seeds</span>
             <h1 className="-mt-1 font-heading text-[34px] font-bold leading-[0.95] text-primary md:text-[46px]">{product.name}</h1>
             {reviewCount > 0 ? (
@@ -257,8 +263,8 @@ export default async function ProductPage({
               />
             </div>
 
-            <div className="jaali flex items-center gap-3 rounded-2xl p-3.5 text-white">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-dashed border-brand-gold font-royal text-[10px] font-bold text-brand-gold">%</span>
+            <div className="jaali flex items-center gap-3 rounded-[var(--radius-card)] p-3.5 text-white">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-dashed border-brand-gold font-royal text-xs font-bold text-brand-gold">%</span>
               <span className="flex flex-1 flex-col leading-tight">
                 <strong className="text-sm">15% off with ROYAL15</strong>
                 <span className="text-xs text-white/80">Apply the code at checkout</span>
@@ -269,19 +275,34 @@ export default async function ProductPage({
               <PincodeChecker price={product.salePrice ? Number(product.salePrice) : Number(product.price)} />
             </div>
 
+            {/* WhatsApp help sits here instead of a floating button over the page on phones */}
+            <a
+              href={`https://wa.me/${BRAND_WHATSAPP}?text=${encodeURIComponent(`Hi Spicy Nuts! I have a question about ${product.name}.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="royal-card tap flex min-h-14 items-center gap-3 p-3.5"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-muted text-primary"><MessageCircle className="h-[19px] w-[19px]" /></span>
+              <span className="flex flex-1 flex-col leading-tight">
+                <strong className="text-sm">Ask on WhatsApp</strong>
+                <span className="text-[13px] text-muted-foreground">Questions about this product</span>
+              </span>
+              <ChevronRight className="h-[18px] w-[18px] text-muted-foreground" />
+            </a>
+
             <div className="grid grid-cols-2 gap-2.5">
               <div className="flex items-start gap-2.5 rounded-2xl border border-border bg-muted p-3">
                 <ShieldCheck className="h-5 w-5 shrink-0 text-primary" />
                 <div>
                   <h4 className="text-[13px] font-bold">Certified Quality</h4>
-                  <p className="text-[11.5px] text-muted-foreground">Lab tested for purity</p>
+                  <p className="text-xs text-muted-foreground">Lab tested for purity</p>
                 </div>
               </div>
               <div className="flex items-start gap-2.5 rounded-2xl border border-border bg-muted p-3">
                 <Truck className="h-5 w-5 shrink-0 text-primary" />
                 <div>
                   <h4 className="text-[13px] font-bold">Fast Delivery</h4>
-                  <p className="text-[11.5px] text-muted-foreground">Free shipping over ₹999</p>
+                  <p className="text-xs text-muted-foreground">Free shipping over ₹999</p>
                 </div>
               </div>
             </div>

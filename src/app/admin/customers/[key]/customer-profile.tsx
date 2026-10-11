@@ -63,7 +63,7 @@ export function CustomerProfile({ p, canPrivacy }: { p: any; canPrivacy: boolean
                 <tbody className="divide-y divide-border/60">
                   {p.orders.map((o: any) => (
                     <tr key={o.id} className="hover:bg-muted/20">
-                      <td className={tdCls}><Link href={`/admin/orders/${o.id}`} className="font-semibold text-[#6E1A2C] hover:underline">{orderRef(o.id)}</Link><p className="text-[11px] text-muted-foreground">{CHANNEL[o.channel] ?? o.channel} · {o.paymentMethod}</p></td>
+                      <td className={tdCls}><Link href={`/admin/orders/${o.id}`} className="font-semibold text-primary hover:underline">{orderRef(o.id)}</Link><p className="text-[11px] text-muted-foreground">{CHANNEL[o.channel] ?? o.channel} · {o.paymentMethod}</p></td>
                       <td className={`${tdCls} whitespace-nowrap`}>{dateFmt(o.createdAt)}</td>
                       <td className={`${tdCls} max-w-[260px]`}><p className="truncate text-xs">{o.items.map((i: any) => `${i.productName} ${i.weight}×${i.quantity}`).join(", ")}</p></td>
                       <td className={tdCls}><StatusPill status={o.status === "DELIVERED" ? "RECEIVED" : o.status === "CANCELLED" || o.status === "RTO" ? "CANCELLED" : "ORDERED"} label={o.status.charAt(0) + o.status.slice(1).toLowerCase()} /></td>
@@ -77,7 +77,7 @@ export function CustomerProfile({ p, canPrivacy }: { p: any; canPrivacy: boolean
         </Panel>
 
         <div className="space-y-6">
-          <Panel title={<span className="flex items-center gap-2"><StickyNote className="h-4 w-4 text-[#c9a45a]" /> Staff notes</span>}>
+          <Panel title={<span className="flex items-center gap-2"><StickyNote className="h-4 w-4 text-brand-gold" /> Staff notes</span>}>
             <div className="space-y-3 p-4">
               <div className="flex gap-2">
                 <input className={inputCls} value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Prefers Saturday delivery" onKeyDown={(e) => { if (e.key === "Enter" && note.trim()) addNote(); }} />
@@ -104,7 +104,7 @@ export function CustomerProfile({ p, canPrivacy }: { p: any; canPrivacy: boolean
             {u?.gstin && <p className="border-t border-border/60 px-4 py-2 font-mono text-xs">GSTIN {u.gstin}</p>}
           </Panel>
 
-          <Panel title={<span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[#c9a45a]" /> Consent & privacy</span>}>
+          <Panel title={<span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-brand-gold" /> Consent & privacy</span>}>
             <div className="space-y-2 p-4 text-sm">
               {u && (
                 <div className="flex flex-wrap gap-1.5">
@@ -118,16 +118,16 @@ export function CustomerProfile({ p, canPrivacy }: { p: any; canPrivacy: boolean
                   {p.consents.slice(0, 8).map((c: any) => <li key={c.id}>{when(c.createdAt)} · {PURPOSE[c.purpose] ?? c.purpose}: <b className={c.granted ? "text-emerald-700" : "text-red-700"}>{c.granted ? "yes" : "no"}</b> ({c.source.toLowerCase()})</li>)}
                 </ul>
               )}
-              {p.requests.length > 0 && <p className="text-xs">Privacy requests: {p.requests.map((r: any) => `${r.type.toLowerCase()} (${r.status.toLowerCase()})`).join(", ")} {canPrivacy && <Link href="/admin/privacy" className="font-semibold text-[#6E1A2C] underline">Open</Link>}</p>}
+              {p.requests.length > 0 && <p className="text-xs">Privacy requests: {p.requests.map((r: any) => `${r.type.toLowerCase()} (${r.status.toLowerCase()})`).join(", ")} {canPrivacy && <Link href="/admin/privacy" className="font-semibold text-primary underline">Open</Link>}</p>}
               {!u && p.consents.length === 0 && <p className="text-xs text-muted-foreground">Guest: details are used only for their orders.</p>}
             </div>
           </Panel>
 
           {p.chats.length > 0 && (
-            <Panel title="WhatsApp" action={p.phone ? <Link href={`/admin/inbox?phone=${p.phone}`} className="text-xs font-semibold text-[#6E1A2C] hover:underline">Open chat</Link> : undefined}>
+            <Panel title="WhatsApp" action={p.phone ? <Link href={`/admin/inbox?phone=${p.phone}`} className="text-xs font-semibold text-primary hover:underline">Open chat</Link> : undefined}>
               <ul className="max-h-72 space-y-1.5 overflow-y-auto p-3 text-xs">
                 {p.chats.slice(0, 15).map((m: any) => (
-                  <li key={m.id} className={`max-w-[85%] rounded-lg px-2.5 py-1.5 ${m.type === "INBOUND" ? "bg-muted" : "ml-auto bg-[#fbf6ee]"}`}>
+                  <li key={m.id} className={`max-w-[85%] rounded-lg px-2.5 py-1.5 ${m.type === "INBOUND" ? "bg-muted" : "ml-auto bg-background"}`}>
                     <p className="line-clamp-3 whitespace-pre-line">{m.message}</p>
                     <p className="mt-0.5 text-[10px] text-muted-foreground">{when(m.createdAt)}{m.type !== "INBOUND" ? ` · ${m.status.toLowerCase()}` : ""}</p>
                   </li>

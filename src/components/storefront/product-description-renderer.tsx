@@ -136,7 +136,7 @@ export function ProductDescriptionRenderer({ description, productName }: Product
               </h4>
               <p className="text-xs text-muted-foreground">Values per 100g of pure harvest</p>
             </div>
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-secondary/15 text-brand-gold-deep dark:text-brand-gold font-mono">
+            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-secondary/15 text-brand-gold-deep dark:text-brand-gold font-mono">
               Lab Verified
             </span>
           </div>

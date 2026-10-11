@@ -71,7 +71,7 @@ export function GstClient({ data }: { data: any }) {
         <Stat label="GST to pay (est.)" value={inr(totalPayable, 2)} hint={`Due by 20 ${monthLabel(nextYm(data.ym))}`} tone={totalPayable ? "warn" : undefined} />
       </div>
 
-      <Panel title={<span className="flex items-center gap-2"><Landmark className="h-4 w-4 text-[#c9a45a]" /> GSTR-3B summary · {monthLabel(data.ym, true)}</span>}>
+      <Panel title={<span className="flex items-center gap-2"><Landmark className="h-4 w-4 text-brand-gold" /> GSTR-3B summary · {monthLabel(data.ym, true)}</span>}>
         <table className="w-full text-sm">
           <thead className="bg-muted/30"><tr><th className={thCls}></th>{taxHead}</tr></thead>
           <tbody className="divide-y divide-border/60">
@@ -79,7 +79,7 @@ export function GstClient({ data }: { data: any }) {
             <tr><td className={`${tdCls} text-muted-foreground`}>Less: refunds / credit notes</td>{taxCells({ taxable: -cnTotals.taxable, igst: -cnTotals.igst, cgst: -cnTotals.cgst, sgst: -cnTotals.sgst })}</tr>
             <tr className="bg-muted/20 font-semibold"><td className={tdCls}>Output tax</td>{taxCells(outward)}</tr>
             <tr><td className={tdCls}>4(A)(5) Input tax credit, all other ITC</td><td className={tdCls}></td><td className={`${tdCls} text-right tabular-nums`}>{inr(itc.igst, 2)}</td><td className={`${tdCls} text-right tabular-nums`}>{inr(itc.cgst, 2)}</td><td className={`${tdCls} text-right tabular-nums`}>{inr(itc.sgst, 2)}</td></tr>
-            <tr className="border-t-2 border-[#6E1A2C]/30 bg-[#fbf6ee] font-bold"><td className={tdCls}>Payable in cash (estimate)</td><td className={tdCls}></td>
+            <tr className="border-t-2 border-primary/30 bg-background font-bold"><td className={tdCls}>Payable in cash (estimate)</td><td className={tdCls}></td>
               {(["igst", "cgst", "sgst"] as const).map((k) => <td key={k} className={`${tdCls} text-right tabular-nums ${payable[k] < 0 ? "text-emerald-700" : ""}`}>{payable[k] < 0 ? `${inr(-payable[k], 2)} credit` : inr(payable[k], 2)}</td>)}
             </tr>
           </tbody>

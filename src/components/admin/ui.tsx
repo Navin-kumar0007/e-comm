@@ -102,7 +102,7 @@ export function SidePanel({ open, onOpenChange, title, description, children, fo
 export function Empty({ icon, title, children }: { icon?: ReactNode; title: string; children?: ReactNode }) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 px-6 py-14 text-center">
-      {icon && <div className="text-[#c9a45a]">{icon}</div>}
+      {icon && <div className="text-brand-gold">{icon}</div>}
       <p className="font-semibold text-[#2a0a12]">{title}</p>
       {children && <div className="max-w-md text-sm text-muted-foreground">{children}</div>}
     </div>

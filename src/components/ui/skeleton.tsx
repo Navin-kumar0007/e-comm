@@ -6,7 +6,7 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("animate-shimmer rounded-md", className)}
+      className={cn("skeleton rounded-[var(--radius-control)]", className)}
       {...props}
     />
   )

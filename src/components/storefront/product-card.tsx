@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore, ViewTransition } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { WishlistButton } from "./wishlist-button";
 import { PackShot } from "./royal/pack-shot";
@@ -74,8 +74,10 @@ export function ProductCard({ product, className = '' }: { product: ProductCardP
   };
 
   return (
-    <article className={`flex h-full flex-col gap-1.5 rounded-[20px] border border-border bg-card px-2.5 pb-2.5 pt-3 md:rounded-[22px] md:gap-2 md:p-3.5 ${className}`}>
+    <article className={`flex h-full flex-col gap-1.5 rounded-[var(--radius-card)] border border-border bg-card px-2.5 pb-2.5 pt-3 shadow-[var(--shadow-card)] md:gap-2 md:p-3.5 ${className}`}>
       <div className="relative">
+        {/* Same name as the product page's jar, so the jar flies between the two screens */}
+        <ViewTransition name={`jar-${product.slug}`}>
         <Link
           href={`/product/${product.slug}`}
           aria-label={product.name}
@@ -94,11 +96,12 @@ export function ProductCard({ product, className = '' }: { product: ProductCardP
           )}
           <span className="absolute bottom-1 left-1/2 h-2.5 w-[90px] -translate-x-1/2 rounded-[50%] bg-royal-deep/30 blur-[5px] md:bottom-3 md:w-[120px]" />
         </Link>
+        </ViewTransition>
         <div className="absolute right-0 top-0 z-10 scale-90 md:right-1 md:top-1">
           <WishlistButton productId={product.id} />
         </div>
         {discount && (
-          <span className="absolute left-0 top-0 z-10 rounded-full bg-success px-2 py-0.5 text-[10.5px] font-extrabold text-white md:left-1.5 md:top-1.5">
+          <span className="absolute left-0 top-0 z-10 rounded-full bg-success px-2 py-0.5 text-xs font-extrabold text-white md:left-1.5 md:top-1.5">
             {discount}% off
           </span>
         )}
@@ -110,19 +113,19 @@ export function ProductCard({ product, className = '' }: { product: ProductCardP
 
       <div className="flex flex-wrap items-baseline gap-x-1.5">
         <span className="tnum text-base font-extrabold md:text-lg">{inr(price)}</span>
-        {discount && <span className="tnum text-[11px] text-muted-foreground line-through">{inr(mrp)}</span>}
-        <span className="tnum text-[11px] text-muted-foreground md:text-xs">{per100 ? `${inr(per100)}/100 g` : weight}</span>
+        {discount && <span className="tnum text-xs text-muted-foreground line-through">{inr(mrp)}</span>}
+        <span className="tnum text-xs text-muted-foreground md:text-xs">{per100 ? `${inr(per100)}/100 g` : weight}</span>
       </div>
 
       {sizes.length > 1 && (
-        <div role="radiogroup" aria-label="Pack size" className="grid overflow-hidden rounded-lg border border-border" style={{ gridTemplateColumns: `repeat(${sizes.length}, minmax(0, 1fr))` }}>
+        <div role="radiogroup" aria-label="Pack size" className="grid overflow-hidden rounded-[var(--radius-control)] border border-border" style={{ gridTemplateColumns: `repeat(${sizes.length}, minmax(0, 1fr))` }}>
           {sizes.map((v) => (
             <button
               key={v.id}
               role="radio"
               aria-checked={v.id === sizeId}
               onClick={() => setSizeId(v.id)}
-              className={`h-9 text-[11px] font-extrabold transition-colors ${v.id === sizeId ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}
+              className={`h-9 text-xs font-extrabold transition-colors ${v.id === sizeId ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}
             >
               {v.label}
             </button>
@@ -132,9 +135,9 @@ export function ProductCard({ product, className = '' }: { product: ProductCardP
 
       <div className="mt-auto">
         {soldOut ? (
-          <span className="flex h-10 items-center justify-center rounded-xl bg-muted text-[13px] font-bold text-muted-foreground md:h-11">Sold out</span>
+          <span className="flex h-10 items-center justify-center rounded-[var(--radius-control)] bg-muted text-[13px] font-bold text-muted-foreground md:h-11">Sold out</span>
         ) : line ? (
-          <div className="flex h-10 items-center justify-between rounded-xl bg-primary text-primary-foreground md:h-11">
+          <div className="flex h-10 items-center justify-between rounded-[var(--radius-control)] border border-brand-gold/70 bg-primary text-primary-foreground md:h-11">
             <button aria-label={`Remove one ${product.name}`} onClick={() => updateQuantity(product.id, weight, line.quantity - 1)} className="flex h-10 w-10 items-center justify-center md:h-11 md:w-11">
               <Minus className="h-4 w-4" />
             </button>
@@ -147,7 +150,7 @@ export function ProductCard({ product, className = '' }: { product: ProductCardP
           <button
             onClick={add}
             aria-label={`Add ${product.name} to cart`}
-            className="h-10 w-full rounded-xl bg-primary text-[13px] font-extrabold tracking-[0.06em] text-primary-foreground transition-transform active:scale-[0.98] md:h-11 md:text-sm md:tracking-normal"
+            className="h-10 w-full rounded-[var(--radius-control)] border border-brand-gold/70 bg-primary text-[13px] font-extrabold tracking-[0.06em] text-primary-foreground transition-transform active:scale-[0.98] md:h-11 md:text-sm md:tracking-normal"
           >
             <span className="md:hidden">ADD</span>
             <span className="hidden md:inline">Add to cart</span>

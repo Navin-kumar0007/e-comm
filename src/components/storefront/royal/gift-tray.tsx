@@ -55,7 +55,7 @@ export function GiftTray({ options }: { options: GiftOption[] }) {
 
   return (
     <section id="gift" className="mx-4 mt-10 scroll-mt-28 md:container md:mx-auto md:mt-16 md:max-w-7xl md:px-6">
-      <div className="jaali overflow-hidden rounded-[24px] px-4 py-6 text-white md:flex md:items-center md:gap-12 md:rounded-[30px] md:px-12 md:py-10">
+      <div className="jaali overflow-hidden rounded-[var(--radius-card)] px-4 py-6 text-white md:flex md:items-center md:gap-12  md:px-12 md:py-10">
         <div className="text-center md:flex-1 md:text-left">
           <span className="eyebrow text-brand-gold">Diwali gifting</span>
           <h2 className="font-heading text-[30px] font-bold leading-none md:text-[44px]">Fill a royal tray</h2>
@@ -84,7 +84,7 @@ export function GiftTray({ options }: { options: GiftOption[] }) {
             <button
               onClick={addTray}
               disabled={chosen.length < 3}
-              className="h-11 rounded-xl bg-secondary px-5 text-sm font-extrabold text-secondary-foreground disabled:opacity-60 md:h-12 md:px-6"
+              className="h-11 rounded-[var(--radius-control)] border border-brand-gold bg-card px-5 text-sm font-extrabold text-primary disabled:opacity-60 md:h-12 md:px-6"
             >
               Add gift tray
             </button>

@@ -49,7 +49,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
         </div>
         <div className="flex gap-1 p-1 bg-white ring-1 ring-border rounded-xl">
           {(Object.keys(RANGES) as RangeKey[]).map((r) => (
-            <Link key={r} href={`/admin?range=${r}`} className={`px-3 py-1.5 rounded-lg text-sm ${r === range ? "bg-[#6E1A2C] text-white font-semibold" : "text-muted-foreground hover:text-foreground"}`}>
+            <Link key={r} href={`/admin?range=${r}`} className={`px-3 py-1.5 rounded-lg text-sm ${r === range ? "bg-primary text-white font-semibold" : "text-muted-foreground hover:text-foreground"}`}>
               {RANGE_LABELS[r]}
             </Link>
           ))}

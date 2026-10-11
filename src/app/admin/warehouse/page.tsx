@@ -40,7 +40,7 @@ export default async function WarehousePage() {
       )}
 
       <div className="grid gap-6 xl:grid-cols-5">
-        <Panel title="Reorder now" className="xl:col-span-3" action={canBuy ? <Link href="/admin/purchases/new" className="text-xs font-semibold text-[#6E1A2C] hover:underline">Create PO</Link> : undefined}>
+        <Panel title="Reorder now" className="xl:col-span-3" action={canBuy ? <Link href="/admin/purchases/new" className="text-xs font-semibold text-primary hover:underline">Create PO</Link> : undefined}>
           {o.reorder.length === 0 ? <p className="p-4 text-sm text-muted-foreground">Nothing needs reordering. Stock covers sales for longer than delivery takes.</p> : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -65,13 +65,13 @@ export default async function WarehousePage() {
           )}
           {o.lowMaterials.length > 0 && (
             <div className="border-t border-border/60 px-4 py-3 text-sm">
-              <p className="mb-1 flex items-center gap-1.5 font-semibold"><Wheat className="h-4 w-4 text-[#c9a45a]" /> Bulk below reorder level</p>
+              <p className="mb-1 flex items-center gap-1.5 font-semibold"><Wheat className="h-4 w-4 text-brand-gold" /> Bulk below reorder level</p>
               {o.lowMaterials.map((m: any) => <p key={m.id} className="text-muted-foreground">{m.name}: <b className="text-amber-700">{qtyFmt(m.stockQty, m.unit)}</b> (reorder at {m.reorderLevel} {m.unit})</p>)}
             </div>
           )}
         </Panel>
 
-        <Panel title="Expiring or expired" className="xl:col-span-2" action={<Link href="/admin/batches" className="text-xs font-semibold text-[#6E1A2C] hover:underline">All batches</Link>}>
+        <Panel title="Expiring or expired" className="xl:col-span-2" action={<Link href="/admin/batches" className="text-xs font-semibold text-primary hover:underline">All batches</Link>}>
           {o.expiring.length === 0 ? <p className="p-4 text-sm text-muted-foreground">No batch expires in the next 45 days.</p> : (
             <ul className="divide-y divide-border/60">
               {o.expiring.slice(0, 12).map((l: any) => {
@@ -95,14 +95,14 @@ export default async function WarehousePage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Panel title={`Purchase orders on the way${lateCount ? ` · ${lateCount} late` : ""}`} action={canBuy ? <Link href="/admin/purchases" className="text-xs font-semibold text-[#6E1A2C] hover:underline">All POs</Link> : undefined}>
+        <Panel title={`Purchase orders on the way${lateCount ? ` · ${lateCount} late` : ""}`} action={canBuy ? <Link href="/admin/purchases" className="text-xs font-semibold text-primary hover:underline">All POs</Link> : undefined}>
           {o.openPOs.length === 0 ? <p className="p-4 text-sm text-muted-foreground">Nothing on order.</p> : (
             <ul className="divide-y divide-border/60">
               {o.openPOs.slice(0, 8).map((p: any) => {
                 const late = p.expectedDate && new Date(p.expectedDate) < new Date();
                 return (
                   <li key={p.id} className="flex items-center justify-between px-4 py-2.5 text-sm">
-                    <div>{canBuy ? <Link href={`/admin/purchases/${p.id}`} className="font-semibold text-[#6E1A2C] hover:underline">{p.number}</Link> : <b>{p.number}</b>} <span className="text-muted-foreground">· {p.supplier.name}</span></div>
+                    <div>{canBuy ? <Link href={`/admin/purchases/${p.id}`} className="font-semibold text-primary hover:underline">{p.number}</Link> : <b>{p.number}</b>} <span className="text-muted-foreground">· {p.supplier.name}</span></div>
                     <div className="text-right"><p className="tabular-nums">{inr(p.total)}</p><p className={`text-xs ${late ? "font-semibold text-red-700" : "text-muted-foreground"}`}>{late ? "Late · " : ""}due {dateFmt(p.expectedDate)}</p></div>
                   </li>
                 );
@@ -110,14 +110,14 @@ export default async function WarehousePage() {
             </ul>
           )}
         </Panel>
-        <Panel title="Recent packing" action={<Link href="/admin/repack" className="text-xs font-semibold text-[#6E1A2C] hover:underline">Pack from bulk</Link>}>
+        <Panel title="Recent packing" action={<Link href="/admin/repack" className="text-xs font-semibold text-primary hover:underline">Pack from bulk</Link>}>
           {o.recentRepacks.length === 0 ? <p className="p-4 text-sm text-muted-foreground">No packing runs yet.</p> : (
             <ul className="divide-y divide-border/60">
               {o.recentRepacks.map((r: any) => {
                 const pct = r.inputQty ? (r.wastageQty / r.inputQty) * 100 : 0;
                 return (
                   <li key={r.id} className="flex items-center justify-between px-4 py-2.5 text-sm">
-                    <div className="flex items-center gap-2"><Boxes className="h-4 w-4 text-[#c9a45a]" /><span>{r.material.name}</span><span className="text-xs text-muted-foreground">{dateFmt(r.createdAt)}</span></div>
+                    <div className="flex items-center gap-2"><Boxes className="h-4 w-4 text-brand-gold" /><span>{r.material.name}</span><span className="text-xs text-muted-foreground">{dateFmt(r.createdAt)}</span></div>
                     <div className="text-right text-xs"><p className="tabular-nums">{qtyFmt(r.inputQty, "kg")} used</p><p className={pct > 5 ? "font-semibold text-red-700" : "text-muted-foreground"}>{pct.toFixed(1)}% wastage</p></div>
                   </li>
                 );

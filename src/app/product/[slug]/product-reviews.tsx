@@ -284,7 +284,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                   ) : (
                     <>
                       <Camera className="w-5 h-5" />
-                      <span className="text-[10px] font-bold">Add</span>
+                      <span className="text-xs font-bold">Add</span>
                     </>
                   )}
                 </button>
@@ -315,7 +315,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                   </div>
                 ))}
               </div>
-              <p className="text-[11px] text-muted-foreground mt-1.5">
+              <p className="text-xs text-muted-foreground mt-1.5">
                 JPG, PNG, or WebP up to 5MB (Max 4 photos).
               </p>
             </div>
@@ -323,7 +323,7 @@ export function ProductReviews({ productId }: { productId: string }) {
             <Button
               type="submit"
               disabled={isSubmitting || isUploading}
-              className="w-full h-11 rounded-xl bg-royal-deep hover:bg-[#051912] dark:bg-secondary dark:hover:bg-secondary dark:text-zinc-950 text-white font-bold text-xs shadow-md transition-all"
+              className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-md transition-all"
             >
               {isSubmitting ? (
                 <>
@@ -366,12 +366,12 @@ export function ProductReviews({ productId }: { productId: string }) {
                             {rev.reviewerName}
                           </span>
                           {rev.verifiedPurchase && (
-                            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-primary/15 text-primary dark:text-primary">
+                            <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-primary/15 text-primary dark:text-primary">
                               Verified Purchase
                             </span>
                           )}
                         </div>
-                        <span className="text-[11px] text-muted-foreground">
+                        <span className="text-xs text-muted-foreground">
                           {new Date(rev.createdAt).toLocaleDateString("en-IN", {
                             day: "numeric",
                             month: "short",

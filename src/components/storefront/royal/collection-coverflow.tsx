@@ -59,7 +59,7 @@ export function CollectionCoverflow() {
               <span className="arch relative block h-[62px] w-[54px] overflow-hidden border-[1.5px] border-brand-gold">
                 <Image src={c.image} alt="" fill sizes="54px" className="object-cover" />
               </span>
-              <span className="text-[11px] font-bold leading-tight">{c.name}</span>
+              <span className="text-xs font-bold leading-tight">{c.name}</span>
             </Link>
           ))}
         </div>
@@ -67,7 +67,7 @@ export function CollectionCoverflow() {
 
       {/* Desktop */}
       <section className="container relative z-10 mx-auto -mt-12 hidden max-w-7xl px-6 md:block">
-        <div className="rounded-[26px] border border-border bg-card p-6 shadow-[0_20px_40px_rgba(74,15,29,0.12)] lg:p-7">
+        <div className="rounded-[var(--radius-sheet)] border border-border bg-card p-6 shadow-[0_20px_40px_rgba(74,15,29,0.12)] lg:p-7">
           <div className="mb-5 flex items-end justify-between">
             <div>
               <span className="eyebrow text-brand-gold-deep">Shop by category</span>

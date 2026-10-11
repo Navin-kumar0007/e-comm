@@ -86,12 +86,12 @@ export function ExpensesClient({ ym, rows, unpaid }: { ym: string; rows: any[]; 
         <Panel title="By category">
           {byCat.length === 0 ? <p className="p-4 text-sm text-muted-foreground">Nothing yet.</p> : (
             <ul className="space-y-2.5 p-4 text-sm">
-              <li><button onClick={() => setCat("ALL")} className={`w-full text-left ${cat === "ALL" ? "font-semibold text-[#6E1A2C]" : ""}`}>All · {inr(total)}</button></li>
+              <li><button onClick={() => setCat("ALL")} className={`w-full text-left ${cat === "ALL" ? "font-semibold text-primary" : ""}`}>All · {inr(total)}</button></li>
               {byCat.map((c) => (
                 <li key={c.key}>
-                  <button onClick={() => setCat(c.key)} className={`w-full text-left ${cat === c.key ? "font-semibold text-[#6E1A2C]" : ""}`}>
+                  <button onClick={() => setCat(c.key)} className={`w-full text-left ${cat === c.key ? "font-semibold text-primary" : ""}`}>
                     <span className="flex justify-between"><span>{expenseLabel(c.key)}</span><span className="tabular-nums">{inr(c.sum)}</span></span>
-                    <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-muted"><span className="block h-full bg-[#c9a45a]" style={{ width: `${(c.sum / total) * 100}%` }} /></span>
+                    <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-muted"><span className="block h-full bg-brand-gold" style={{ width: `${(c.sum / total) * 100}%` }} /></span>
                   </button>
                 </li>
               ))}
@@ -144,7 +144,7 @@ export function ExpensesClient({ ym, rows, unpaid }: { ym: string; rows: any[]; 
                 </select>
               </Field>
             </div>
-            {form.category === "WALLET" && <p className="rounded-lg bg-[#fbf6ee] px-3 py-2 text-xs text-[#5a4a32]">Wallet top-ups count as cash spent, not as cost. The cost of each shipment is already counted from the courier booking.</p>}
+            {form.category === "WALLET" && <p className="rounded-lg bg-background px-3 py-2 text-xs text-[#5a4a32]">Wallet top-ups count as cash spent, not as cost. The cost of each shipment is already counted from the courier booking.</p>}
             <Field label="What for"><input className={inputCls} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="e.g. 500 PET jars 250 g" /></Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Vendor"><input className={inputCls} value={form.vendor ?? ""} onChange={(e) => set("vendor", e.target.value)} /></Field>

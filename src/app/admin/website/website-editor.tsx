@@ -72,7 +72,7 @@ export function WebsiteEditor({ data, initialTab }: { data: any; initialTab?: st
         <Panel className="h-fit">
           <nav className="p-2">
             {TABS.map((t) => (
-              <button key={t.key} onClick={() => setTab(t.key)} className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium ${tab === t.key ? "bg-[#6E1A2C] text-white" : "text-foreground/80 hover:bg-muted"}`}>
+              <button key={t.key} onClick={() => setTab(t.key)} className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium ${tab === t.key ? "bg-primary text-white" : "text-foreground/80 hover:bg-muted"}`}>
                 <t.icon className="h-4 w-4" /> {t.label}
               </button>
             ))}
@@ -102,7 +102,7 @@ export function WebsiteEditor({ data, initialTab }: { data: any; initialTab?: st
           >
             <div className="space-y-5 p-5">
               {tab === "announcement" && (<>
-                <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" className="h-4 w-4 accent-[#6E1A2C]" checked={v.enabled} onChange={(e) => set({ enabled: e.target.checked })} /> Show the bar</label>
+                <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" className="h-4 w-4 accent-primary" checked={v.enabled} onChange={(e) => set({ enabled: e.target.checked })} /> Show the bar</label>
                 <div className="space-y-3">
                   {v.messages.map((m: any, i: number) => (
                     <div key={i} className="grid gap-2 rounded-xl border border-border p-3 sm:grid-cols-[1fr_140px_100px_auto]">
@@ -133,7 +133,7 @@ export function WebsiteEditor({ data, initialTab }: { data: any; initialTab?: st
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#e9c987]">{v.eyebrow}</p>
                     <p className="mt-1 font-serif text-4xl font-bold">{v.title}</p>
                     <p className="mt-2 max-w-md text-sm text-white/85">{v.subtitle}</p>
-                    <div className="mt-3 flex gap-2"><span className="rounded-lg bg-[#c9a45a] px-4 py-2 text-sm font-bold text-[#2a0a12]">{v.primaryText}</span><span className="rounded-lg border border-[#c9a45a] px-4 py-2 text-sm font-bold">{v.secondaryText}</span></div>
+                    <div className="mt-3 flex gap-2"><span className="rounded-lg bg-brand-gold px-4 py-2 text-sm font-bold text-[#2a0a12]">{v.primaryText}</span><span className="rounded-lg border border-brand-gold px-4 py-2 text-sm font-bold">{v.secondaryText}</span></div>
                   </div>
                 </div>
               )}
@@ -143,7 +143,7 @@ export function WebsiteEditor({ data, initialTab }: { data: any; initialTab?: st
                 {v.map((b: any, i: number) => (
                   <div key={b.id ?? i} className="space-y-3 rounded-xl border border-border p-4">
                     <div className="flex items-center justify-between">
-                      <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" className="h-4 w-4 accent-[#6E1A2C]" checked={b.enabled} onChange={(e) => set(v.map((x: any, j: number) => (j === i ? { ...x, enabled: e.target.checked } : x)))} /> Show</label>
+                      <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" className="h-4 w-4 accent-primary" checked={b.enabled} onChange={(e) => set(v.map((x: any, j: number) => (j === i ? { ...x, enabled: e.target.checked } : x)))} /> Show</label>
                       <div className="flex gap-1">
                         <button aria-label="Move up" className={btnGhost} disabled={i === 0} onClick={() => { const n = [...v]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; set(n); }}><ArrowUp className="h-3.5 w-3.5" /></button>
                         <button aria-label="Move down" className={btnGhost} disabled={i === v.length - 1} onClick={() => { const n = [...v]; [n[i + 1], n[i]] = [n[i], n[i + 1]]; set(n); }}><ArrowDown className="h-3.5 w-3.5" /></button>
@@ -193,7 +193,7 @@ export function WebsiteEditor({ data, initialTab }: { data: any; initialTab?: st
 
               {tab === "popup" && (
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="flex items-center gap-2 text-sm font-medium sm:col-span-2"><input type="checkbox" className="h-4 w-4 accent-[#6E1A2C]" checked={v.enabled} onChange={(e) => set({ enabled: e.target.checked })} /> Show the WhatsApp offer popup to new visitors</label>
+                  <label className="flex items-center gap-2 text-sm font-medium sm:col-span-2"><input type="checkbox" className="h-4 w-4 accent-primary" checked={v.enabled} onChange={(e) => set({ enabled: e.target.checked })} /> Show the WhatsApp offer popup to new visitors</label>
                   <Field label="Heading"><input className={inputCls} value={v.title} maxLength={60} onChange={(e) => set({ title: e.target.value })} /></Field>
                   <Field label="Show after (seconds)" hint="Later is less annoying; 8–15 s works well"><input type="number" min={2} max={120} className={inputCls} value={v.delaySeconds} onChange={(e) => set({ delaySeconds: Number(e.target.value) })} /></Field>
                   <Field label="Text" className="sm:col-span-2"><input className={inputCls} value={v.text} maxLength={160} onChange={(e) => set({ text: e.target.value })} /></Field>
@@ -228,7 +228,7 @@ export function WebsiteEditor({ data, initialTab }: { data: any; initialTab?: st
               {tab === "policies" && (<>
                 <div className="flex flex-wrap gap-1">
                   {([["privacy", "Privacy"], ["terms", "Terms"], ["shipping", "Shipping"], ["returns", "Returns & refunds"]] as const).map(([k, l]) => (
-                    <button key={k} onClick={() => setPolicy(k)} className={`rounded-lg px-3 py-1.5 text-sm font-medium ${policy === k ? "bg-[#6E1A2C] text-white" : "bg-muted/60"}`}>{l}{v[k]?.trim() ? " ✎" : ""}</button>
+                    <button key={k} onClick={() => setPolicy(k)} className={`rounded-lg px-3 py-1.5 text-sm font-medium ${policy === k ? "bg-primary text-white" : "bg-muted/60"}`}>{l}{v[k]?.trim() ? " ✎" : ""}</button>
                   ))}
                 </div>
                 <p className="text-xs text-muted-foreground">Leave empty to keep the built-in page. Formatting: <code># Heading</code>, <code>- bullet</code>, <code>**bold**</code>, <code>[link](/page)</code>, blank line for a new paragraph. Ask your CA or lawyer to check legal wording.</p>

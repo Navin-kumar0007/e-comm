@@ -126,7 +126,7 @@ export function PosClient({ data, today: initialToday }: { data: { items: PosIte
         subtitle="Scan, take payment, and give a GST bill. Shop sales use the same stock, invoices and reports as online orders."
         actions={<div className="flex rounded-lg bg-white p-0.5 ring-1 ring-border">
           {(["bill", "today"] as const).map((t) => (
-            <button key={t} onClick={() => setTab(t)} className={`rounded-md px-3.5 py-1.5 text-sm font-semibold ${tab === t ? "bg-[#6E1A2C] text-white" : "text-muted-foreground"}`}>{t === "bill" ? "New bill" : `Today · ${inr(today.totals.all)}`}</button>
+            <button key={t} onClick={() => setTab(t)} className={`rounded-md px-3.5 py-1.5 text-sm font-semibold ${tab === t ? "bg-primary text-white" : "text-muted-foreground"}`}>{t === "bill" ? "New bill" : `Today · ${inr(today.totals.all)}`}</button>
           ))}
         </div>}
       />
@@ -198,7 +198,7 @@ export function PosClient({ data, today: initialToday }: { data: { items: PosIte
               <div className="space-y-3 p-4">
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <ScanBarcode className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#6E1A2C]" />
+                    <ScanBarcode className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" />
                     <input
                       ref={scanRef}
                       value={scan}
@@ -207,7 +207,7 @@ export function PosClient({ data, today: initialToday }: { data: { items: PosIte
                       placeholder="Scan a barcode, or type a product name"
                       aria-label="Scan or search"
                       autoComplete="off"
-                      className="h-12 w-full rounded-xl border-2 border-[#6E1A2C]/30 bg-white pl-11 pr-3 text-base outline-none focus:border-[#6E1A2C]"
+                      className="h-12 w-full rounded-xl border-2 border-primary/30 bg-white pl-11 pr-3 text-base outline-none focus:border-primary"
                     />
                   </div>
                   <button className={`${btnSecondary} h-12`} onClick={() => setCamera((c) => !c)} aria-pressed={camera}>
@@ -233,7 +233,7 @@ export function PosClient({ data, today: initialToday }: { data: { items: PosIte
 
             <Panel title={`Bill · ${units} item${units === 1 ? "" : "s"}`} action={lines.length ? <button className={btnGhost} onClick={() => setLines([])}><Trash2 className="h-3.5 w-3.5" /> Clear</button> : undefined}>
               {lines.length === 0 ? (
-                <div className="flex flex-col items-center gap-2 px-6 py-12 text-center text-sm text-muted-foreground"><Store className="h-8 w-8 text-[#c9a45a]" />Scan the first pack to start a bill.</div>
+                <div className="flex flex-col items-center gap-2 px-6 py-12 text-center text-sm text-muted-foreground"><Store className="h-8 w-8 text-brand-gold" />Scan the first pack to start a bill.</div>
               ) : (
                 <ul className="divide-y divide-border/60">
                   {lines.map((l) => (
@@ -287,7 +287,7 @@ export function PosClient({ data, today: initialToday }: { data: { items: PosIte
                 </dl>
                 <div className="grid grid-cols-3 gap-2">
                   {([["CASH", "Cash", Banknote], ["UPI", "UPI", Smartphone], ["CARD", "Card", CreditCard]] as const).map(([m, label, Icon]) => (
-                    <button key={m} onClick={() => setMethod(m)} className={`flex flex-col items-center gap-1 rounded-xl border-2 py-2.5 text-sm font-semibold ${method === m ? "border-[#6E1A2C] bg-[#6E1A2C]/5 text-[#6E1A2C]" : "border-border text-muted-foreground"}`}>
+                    <button key={m} onClick={() => setMethod(m)} className={`flex flex-col items-center gap-1 rounded-xl border-2 py-2.5 text-sm font-semibold ${method === m ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground"}`}>
                       <Icon className="h-5 w-5" />{label}
                     </button>
                   ))}

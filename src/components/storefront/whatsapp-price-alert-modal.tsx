@@ -134,7 +134,7 @@ export function WhatsAppPriceAlertModal({
                   maxLength={15}
                 />
               </div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Zero spam. You will only receive an automated notification when the price drops.
               </p>
             </div>

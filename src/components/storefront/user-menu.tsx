@@ -52,7 +52,7 @@ export function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuItem render={<Link href="/account/vault" />} className="rounded-lg cursor-pointer">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-secondary" /> Pantry Vault
+            <Sparkles className="w-4 h-4 text-brand-gold-deep" /> Pantry Vault
           </div>
         </DropdownMenuItem>
         <DropdownMenuItem render={<Link href="/account/orders" />} className="rounded-lg cursor-pointer">

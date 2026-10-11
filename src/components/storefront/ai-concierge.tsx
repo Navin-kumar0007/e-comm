@@ -74,7 +74,7 @@ export function AIConcierge() {
                 <h3 className="font-heading font-bold text-sm text-brand-gold leading-none">
                   Spicy Nuts Concierge
                 </h3>
-                <span className="text-[10px] text-brand-gold font-mono">
+                <span className="text-xs text-brand-gold font-mono">
                   AI Sommelier &amp; Guide
                 </span>
               </div>

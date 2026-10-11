@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cinzel, Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -25,17 +25,24 @@ const manrope = Manrope({
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["600", "700"],
   variable: "--font-cormorant",
 });
 
 const cinzel = Cinzel({
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["700"],
   variable: "--font-cinzel",
 });
 
 const siteUrl = SITE_URL;
+
+// Paint the phone's browser bar maroon and let the page reach under the iPhone home bar,
+// so the tab bar's safe-area padding works in the installed app.
+export const viewport: Viewport = {
+  themeColor: "#4a0f1d",
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

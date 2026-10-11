@@ -95,14 +95,14 @@ export function FulfilmentClient({ orders, canBook, providerName }: { orders: Qu
       <div className="flex flex-wrap gap-1 rounded-xl bg-white p-1 ring-1 ring-border w-fit">
         {TABS.map((t) => (
           <button key={t.key} onClick={() => { setTab(t.key); setSelected(new Set()); }}
-            className={`rounded-lg px-3.5 py-1.5 text-sm font-medium ${tab === t.key ? "bg-[#6E1A2C] text-white" : "text-muted-foreground hover:text-foreground"}`}>
+            className={`rounded-lg px-3.5 py-1.5 text-sm font-medium ${tab === t.key ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"}`}>
             {t.label} <span className="ml-1 tabular-nums opacity-70">{counts[t.key]}</span>
           </button>
         ))}
       </div>
 
       {/* Bulk bar */}
-      <div className={`sticky top-0 z-10 flex flex-wrap items-center gap-2 rounded-xl border bg-white p-3 shadow-sm ${chosen.length ? "border-[#c9a45a]" : "border-border"}`}>
+      <div className={`sticky top-0 z-10 flex flex-wrap items-center gap-2 rounded-xl border bg-white p-3 shadow-sm ${chosen.length ? "border-brand-gold" : "border-border"}`}>
         <p className="mr-2 text-sm font-semibold">{chosen.length ? `${chosen.length} selected` : "Select orders to print"}</p>
         {actions.map((a) => (
           <Link key={a.doc} href={chosen.length ? printHref(a.doc) : "#"} target="_blank" aria-disabled={!chosen.length}
@@ -112,7 +112,7 @@ export function FulfilmentClient({ orders, canBook, providerName }: { orders: Qu
         ))}
         {canBook && (
           <button onClick={bookAll} disabled={!chosen.length || booking}
-            className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#6E1A2C] px-3 text-[13px] font-semibold text-white disabled:opacity-40">
+            className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-[13px] font-semibold text-white disabled:opacity-40">
             <Truck className="h-4 w-4" /> {booking ? "Booking…" : `Book with ${providerName}`}
           </button>
         )}
@@ -122,7 +122,7 @@ export function FulfilmentClient({ orders, canBook, providerName }: { orders: Qu
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="w-10 px-4 py-3"><input type="checkbox" checked={allChecked} onChange={toggleAll} aria-label="Select all" className="h-4 w-4 accent-[#6E1A2C]" /></th>
+              <th className="w-10 px-4 py-3"><input type="checkbox" checked={allChecked} onChange={toggleAll} aria-label="Select all" className="h-4 w-4 accent-primary" /></th>
               <th className="px-2 py-3">Order</th>
               <th className="px-2 py-3">Customer</th>
               <th className="px-2 py-3 hidden md:table-cell">Items</th>
@@ -135,8 +135,8 @@ export function FulfilmentClient({ orders, canBook, providerName }: { orders: Qu
               <tr><td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">Nothing here. All caught up.</td></tr>
             )}
             {list.map((o) => (
-              <tr key={o.id} className={selected.has(o.id) ? "bg-[#fbf6ee]" : "hover:bg-muted/30"}>
-                <td className="px-4 py-3"><input type="checkbox" checked={selected.has(o.id)} onChange={() => toggle(o.id)} aria-label={`Select ${o.ref}`} className="h-4 w-4 accent-[#6E1A2C]" /></td>
+              <tr key={o.id} className={selected.has(o.id) ? "bg-background" : "hover:bg-muted/30"}>
+                <td className="px-4 py-3"><input type="checkbox" checked={selected.has(o.id)} onChange={() => toggle(o.id)} aria-label={`Select ${o.ref}`} className="h-4 w-4 accent-primary" /></td>
                 <td className="px-2 py-3">
                   <Link href={`/admin/orders/${o.id}`} className="font-semibold hover:underline">{o.ref}</Link>
                   <p className="text-xs text-muted-foreground">{ageLabel(o.createdAt)}</p>
@@ -159,7 +159,7 @@ export function FulfilmentClient({ orders, canBook, providerName }: { orders: Qu
                     <div>
                       <p className="text-xs font-semibold">{o.courierName}</p>
                       <p className="font-mono text-xs">{o.awb}</p>
-                      {o.labelUrl && <a href={o.labelUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-[#6E1A2C] hover:underline">Courier label <ExternalLink className="h-3 w-3" /></a>}
+                      {o.labelUrl && <a href={o.labelUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">Courier label <ExternalLink className="h-3 w-3" /></a>}
                     </div>
                   ) : o.codPending ? (
                     <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">Awaiting COD confirmation</span>

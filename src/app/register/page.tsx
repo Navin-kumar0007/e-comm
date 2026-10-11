@@ -319,7 +319,7 @@ export default function RegisterPage() {
                     maxLength={15}
                   />
                 </div>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Get your instant 10% welcome coupon (ROYAL10) and order tracking on WhatsApp.
                 </p>
               </div>

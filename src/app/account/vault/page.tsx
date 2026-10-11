@@ -189,7 +189,7 @@ export default async function VaultPage() {
             Tracking the dynamic sensory potency and essential oil decay of your custom artisanal selections.
           </p>
         </div>
-        <div className="flex items-center gap-2 bg-secondary/10 border border-secondary/20 px-3.5 py-1.5 rounded-full text-xs font-bold text-secondary">
+        <div className="flex items-center gap-2 bg-secondary/10 border border-secondary/20 px-3.5 py-1.5 rounded-full text-xs font-bold text-brand-gold-deep">
           <ShieldCheck className="w-4 h-4" /> 100% Aroma-Lock Guarantee
         </div>
       </div>
@@ -209,7 +209,7 @@ export default async function VaultPage() {
             tip = 'Aroma compounds have faded. Best for slow stocks or baking; re-blend!';
           } else if (item.status === 'MELLOW') {
             statusText = 'Mellowing Intensity';
-            statusColor = 'text-secondary border-secondary/20 bg-secondary/10';
+            statusColor = 'text-brand-gold-deep border-secondary/20 bg-secondary/10';
             dialColor = 'stroke-secondary';
             tip = 'Aroma is warm and mild. Use 1.25x dosage for full strength.';
           }
@@ -221,7 +221,7 @@ export default async function VaultPage() {
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <h3 className="font-heading font-bold text-lg text-foreground">{item.name}</h3>
-                  <span className="text-[10px] text-muted-foreground block uppercase mt-0.5">Purchased {item.ageDays} days ago</span>
+                  <span className="text-xs text-muted-foreground block uppercase mt-0.5">Purchased {item.ageDays} days ago</span>
                 </div>
                 
                 {/* SVG circular gauge */}
@@ -247,10 +247,10 @@ export default async function VaultPage() {
               {/* Status Badge */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${statusColor}`}>
+                  <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${statusColor}`}>
                     {statusText}
                   </span>
-                  <span className="text-[10px] text-muted-foreground capitalize">
+                  <span className="text-xs text-muted-foreground capitalize">
                     {item.type} grind
                   </span>
                 </div>
@@ -277,7 +277,7 @@ export default async function VaultPage() {
       <div className="bg-secondary/5 border border-secondary/15 rounded-3xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
         <div className="md:col-span-8 space-y-2">
           <h3 className="font-heading font-bold text-lg text-primary flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-secondary animate-pulse" /> Optimal Shelf-Life Storage Tips
+            <Sparkles className="w-5 h-5 text-brand-gold-deep animate-pulse" /> Optimal Shelf-Life Storage Tips
           </h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Spicy Nuts organic spices are packed immediately post-roasting in certified aroma-lock glass jars. 

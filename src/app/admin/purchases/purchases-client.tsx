@@ -52,7 +52,7 @@ export function PurchasesClient({ orders }: { orders: Row[] }) {
         title={
           <div className="flex gap-1">
             {TABS.map((t) => (
-              <button key={t.key} onClick={() => setTab(t.key)} className={`rounded-lg px-3 py-1 text-sm font-medium ${tab === t.key ? "bg-[#6E1A2C] text-white" : "text-muted-foreground hover:text-foreground"}`}>{t.label}</button>
+              <button key={t.key} onClick={() => setTab(t.key)} className={`rounded-lg px-3 py-1 text-sm font-medium ${tab === t.key ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"}`}>{t.label}</button>
             ))}
           </div>
         }
@@ -79,7 +79,7 @@ export function PurchasesClient({ orders }: { orders: Row[] }) {
                   const isLate = ["ORDERED", "PARTIAL"].includes(o.status) && o.expectedDate && new Date(o.expectedDate).getTime() < now;
                   return (
                     <tr key={o.id} className="hover:bg-muted/20">
-                      <td className={tdCls}><Link href={`/admin/purchases/${o.id}`} className="font-semibold text-[#6E1A2C] hover:underline">{o.number}</Link>
+                      <td className={tdCls}><Link href={`/admin/purchases/${o.id}`} className="font-semibold text-primary hover:underline">{o.number}</Link>
                         {o.supplierInvoiceNo && <p className="text-xs text-muted-foreground">Bill {o.supplierInvoiceNo}</p>}</td>
                       <td className={tdCls}>{o.supplier}<p className="text-xs text-muted-foreground">{o.lines} item{o.lines === 1 ? "" : "s"}</p></td>
                       <td className={tdCls}>{dateFmt(o.orderDate)}</td>

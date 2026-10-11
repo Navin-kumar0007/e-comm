@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { BlendSpec } from '@/lib/blend-pricing';
+import { haptic } from '@/lib/store/ui-store';
 
 export interface CartItem {
   productId: string;
@@ -32,6 +33,7 @@ export const useCartStore = create<CartState>()(
       items: [],
 
       addItem: (item) => {
+        haptic();
         const existing = get().items.find(
           (i) => i.productId === item.productId && i.weight === item.weight
         );
@@ -57,6 +59,7 @@ export const useCartStore = create<CartState>()(
       },
 
       updateQuantity: (productId, weight, quantity) => {
+        haptic(6);
         if (quantity <= 0) {
           get().removeItem(productId, weight);
           return;

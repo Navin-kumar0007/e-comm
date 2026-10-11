@@ -102,7 +102,7 @@ export default function LoginPage() {
             )}
             {isGoogleLoading ? "Redirecting..." : "Continue with Google"}
           </Button>
-          <p className="-mt-4 mb-6 text-center text-[11px] leading-snug text-muted-foreground">
+          <p className="-mt-4 mb-6 text-center text-xs leading-snug text-muted-foreground">
             By continuing with Google you confirm you are 18 or older and agree to our{" "}
             <Link href="/privacy-policy" className="underline">Privacy Policy</Link> and <Link href="/terms" className="underline">Terms</Link>.
           </p>

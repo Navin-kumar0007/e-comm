@@ -45,7 +45,7 @@ export function PrivacyClient({ rows }: { rows: any[] }) {
                 return (
                   <tr key={r.id}>
                     <td className={tdCls}>{dateFmt(r.createdAt)}</td>
-                    <td className={tdCls}>{key ? <Link className="font-medium text-[#6E1A2C] hover:underline" href={`/admin/customers/${encodeURIComponent(key)}`}>{r.email ?? r.phone}</Link> : "—"}{r.email && r.phone && <p className="text-xs text-muted-foreground">{r.phone}</p>}</td>
+                    <td className={tdCls}>{key ? <Link className="font-medium text-primary hover:underline" href={`/admin/customers/${encodeURIComponent(key)}`}>{r.email ?? r.phone}</Link> : "—"}{r.email && r.phone && <p className="text-xs text-muted-foreground">{r.phone}</p>}</td>
                     <td className={tdCls}>{TYPE[r.type] ?? r.type}{r.details && <p className="text-xs text-muted-foreground">{r.details}</p>}{r.note && <p className="text-xs text-emerald-700">{r.note}</p>}</td>
                     <td className={`${tdCls} ${late ? "font-semibold text-red-700" : ""}`}>{r.status === "OPEN" ? dateFmt(r.dueAt) : "—"}</td>
                     <td className={tdCls}><StatusPill status={r.status === "DONE" ? "RECEIVED" : r.status === "REJECTED" ? "CANCELLED" : late ? "CANCELLED" : "PARTIAL"} label={r.status === "OPEN" ? (late ? "Overdue" : "Open") : r.status === "DONE" ? "Done" : "Rejected"} /></td>

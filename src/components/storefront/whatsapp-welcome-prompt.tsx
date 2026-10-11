@@ -67,7 +67,7 @@ export function WhatsAppWelcomePrompt({ enabled = true, title = "Get 10% OFF on 
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-[156px] left-3 right-3 sm:left-6 sm:right-auto sm:max-w-md z-40 animate-in fade-in slide-in-from-bottom-5 duration-300">
+    <div className="fixed bottom-[calc(88px+env(safe-area-inset-bottom))] left-3 md:bottom-24 right-3 sm:left-6 sm:right-auto sm:max-w-md z-40 animate-in fade-in slide-in-from-bottom-5 duration-300">
       <div className="relative p-4 sm:p-5 rounded-2xl bg-card/95 backdrop-blur-md border border-primary/30 shadow-2xl">
         {/* Close Button */}
         <button
@@ -105,7 +105,7 @@ export function WhatsAppWelcomePrompt({ enabled = true, title = "Get 10% OFF on 
                   <h4 className="font-heading font-bold text-sm text-foreground">
                     {title}
                   </h4>
-                  <span className="text-[10px] font-bold bg-muted text-brand-gold-deep px-1.5 py-0.5 rounded-full">
+                  <span className="text-xs font-bold bg-muted text-brand-gold-deep px-1.5 py-0.5 rounded-full">
                     VIP
                   </span>
                 </div>
@@ -147,7 +147,7 @@ export function WhatsAppWelcomePrompt({ enabled = true, title = "Get 10% OFF on 
                 )}
               </Button>
             </form>
-            <p className="mt-1.5 text-[10px] leading-snug text-muted-foreground">By tapping Get Code you agree to receive offers on WhatsApp from Spicy Nuts. Reply STOP any time. <a href="/privacy-policy" className="underline">Privacy</a></p>
+            <p className="mt-1.5 text-xs leading-snug text-muted-foreground">By tapping Get Code you agree to receive offers on WhatsApp from Spicy Nuts. Reply STOP any time. <a href="/privacy-policy" className="underline">Privacy</a></p>
           </div>
         )}
       </div>

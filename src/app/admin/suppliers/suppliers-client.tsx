@@ -85,7 +85,7 @@ export function SuppliersClient({ suppliers }: { suppliers: Supplier[] }) {
                     <td className={`${tdCls} text-right tabular-nums`}>{inr(s.spend)}</td>
                     <td className={tdCls}>{dateFmt(s.lastOrder)}</td>
                     <td className={`${tdCls} whitespace-nowrap text-right`}>
-                      <Link href={`/admin/purchases/new?supplier=${s.id}`} className="mr-2 text-xs font-semibold text-[#6E1A2C] hover:underline">New PO</Link>
+                      <Link href={`/admin/purchases/new?supplier=${s.id}`} className="mr-2 text-xs font-semibold text-primary hover:underline">New PO</Link>
                       <button onClick={() => setForm({ ...s })} className="text-xs font-medium text-muted-foreground hover:text-foreground">Edit</button>
                     </td>
                   </tr>
@@ -124,7 +124,7 @@ export function SuppliersClient({ suppliers }: { suppliers: Supplier[] }) {
             </div>
             <Field label="Notes"><textarea className={`${inputCls} h-16 py-2`} value={form.notes ?? ""} onChange={(e) => set("notes", e.target.value)} placeholder="Payment terms, quality notes…" /></Field>
             {form.id && (
-              <label className="flex items-center gap-2 text-sm"><input type="checkbox" className="h-4 w-4 accent-[#6E1A2C]" checked={form.isActive ?? true} onChange={(e) => set("isActive", e.target.checked)} /> Active supplier</label>
+              <label className="flex items-center gap-2 text-sm"><input type="checkbox" className="h-4 w-4 accent-primary" checked={form.isActive ?? true} onChange={(e) => set("isActive", e.target.checked)} /> Active supplier</label>
             )}
           </div>
         )}

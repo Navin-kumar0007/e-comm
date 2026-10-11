@@ -104,7 +104,7 @@ export function BatchesClient({ lots, unassigned, canTrace, initialQuery }: { lo
       </div>
 
       {made && made.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#c9a45a] bg-[#fbf6ee] px-4 py-3 text-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-gold bg-background px-4 py-3 text-sm">
           <span><b>{made.length} batches created</b> ({made.map((m) => m.lotNumber).slice(0, 4).join(", ")}{made.length > 4 ? "…" : ""}). Stick a batch label on each pack, or stamp the code and dates.</span>
           <span className="flex gap-2">
             <a href={stickerHref(made)} target="_blank" rel="noreferrer" className={btnPrimary}><Printer className="h-4 w-4" /> Print stickers ({made.reduce((t, m) => t + m.qty, 0)})</a>
@@ -114,13 +114,13 @@ export function BatchesClient({ lots, unassigned, canTrace, initialQuery }: { lo
       )}
 
       {unassignedUnits > 0 && (
-        <Panel title={<span className="flex items-center gap-2"><Tags className="h-4 w-4 text-[#c9a45a]" /> Packs without a batch ({unassignedUnits})</span>}
+        <Panel title={<span className="flex items-center gap-2"><Tags className="h-4 w-4 text-brand-gold" /> Packs without a batch ({unassignedUnits})</span>}
           action={<button className={btnPrimary} onClick={openBulk}><Layers className="h-4 w-4" /> Give all a batch</button>}>
           <p className="border-b border-border/60 px-4 py-2 text-xs text-muted-foreground">This stock was added before batches were tracked. Give it a batch with its best-before date so expiry alerts and recalls cover it. Stock numbers don't change.</p>
           <div className="flex flex-wrap gap-2 p-4">
             {unassigned.slice(0, 60).map((u) => (
               <button key={u.key} onClick={() => setAssign({ productId: u.productId, variantId: u.variantId, qty: u.unassigned, label: `${u.name} · ${u.pack}`, max: u.unassigned, unitCost: u.costPrice ?? undefined })}
-                className="rounded-lg border border-border bg-white px-3 py-1.5 text-left text-xs hover:border-[#c9a45a] hover:bg-[#fbf6ee]">
+                className="rounded-lg border border-border bg-white px-3 py-1.5 text-left text-xs hover:border-brand-gold hover:bg-background">
                 <span className="font-semibold">{u.name}</span> · {u.pack} <span className="ml-1 rounded bg-muted px-1.5 font-semibold tabular-nums">{u.unassigned}</span>
               </button>
             ))}
@@ -137,7 +137,7 @@ export function BatchesClient({ lots, unassigned, canTrace, initialQuery }: { lo
               ))}
             </div>
             {FILTERS.map((f) => (
-              <button key={f.key} onClick={() => setFilter(f.key)} className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${filter === f.key ? "bg-[#6E1A2C] text-white" : "text-muted-foreground hover:text-foreground"}`}>{f.label}</button>
+              <button key={f.key} onClick={() => setFilter(f.key)} className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${filter === f.key ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"}`}>{f.label}</button>
             ))}
           </div>
         }
@@ -172,7 +172,7 @@ export function BatchesClient({ lots, unassigned, canTrace, initialQuery }: { lo
                       <td className={tdCls}>{l.kind === "PACK" ? <>{l.product?.name}<span className="text-muted-foreground"> · {l.variant?.label ?? ""}</span></> : l.material?.name}</td>
                       <td className={tdCls}>
                         <p>{SOURCE[l.source] ?? l.source}</p>
-                        <p className="text-xs text-muted-foreground">{l.supplier?.name ?? ""}{l.po ? <> · <Link className="text-[#6E1A2C] hover:underline" href={`/admin/purchases/${l.po.id}`}>{l.po.number}</Link></> : null}</p>
+                        <p className="text-xs text-muted-foreground">{l.supplier?.name ?? ""}{l.po ? <> · <Link className="text-primary hover:underline" href={`/admin/purchases/${l.po.id}`}>{l.po.number}</Link></> : null}</p>
                       </td>
                       <td className={`${tdCls} text-right tabular-nums`}><b>{qtyFmt(l.qtyLeft, unit)}</b><span className="text-muted-foreground"> / {qtyFmt(l.qtyIn, unit)}</span></td>
                       <td className={`${tdCls} text-right tabular-nums`}>{inr(l.unitCost, 2)}<span className="text-xs text-muted-foreground">/{unit || "pack"}</span></td>
@@ -207,10 +207,10 @@ export function BatchesClient({ lots, unassigned, canTrace, initialQuery }: { lo
                 <input type="number" min={1} max={36} className={inputCls} value={bulk.months} onChange={(e) => { const m = Math.max(1, Math.min(36, Number(e.target.value) || 1)); setBulk({ ...bulk, months: m, rows: bulk.rows.map((r) => ({ ...r, months: m })) }); }} />
               </Field>
             </div>
-            <p className="rounded-lg bg-[#fbf6ee] px-3 py-2 text-xs text-[#5a4a32]">Typical shelf life: dry fruits and nuts 6–9 months; dates, figs and raisins 9–12 months; seeds 6 months; roasted or spiced 3–4 months. Use what your packing supplier or FSSAI label says.</p>
+            <p className="rounded-lg bg-background px-3 py-2 text-xs text-[#5a4a32]">Typical shelf life: dry fruits and nuts 6–9 months; dates, figs and raisins 9–12 months; seeds 6 months; roasted or spiced 3–4 months. Use what your packing supplier or FSSAI label says.</p>
             <table className="w-full text-sm">
               <thead className="bg-muted/30"><tr>
-                <th className={`${thCls} w-8`}><input type="checkbox" aria-label="Select all" className="h-4 w-4 accent-[#6E1A2C]" checked={bulk.rows.every((r) => r.on)} onChange={(e) => setBulk({ ...bulk, rows: bulk.rows.map((r) => ({ ...r, on: e.target.checked })) })} /></th>
+                <th className={`${thCls} w-8`}><input type="checkbox" aria-label="Select all" className="h-4 w-4 accent-primary" checked={bulk.rows.every((r) => r.on)} onChange={(e) => setBulk({ ...bulk, rows: bulk.rows.map((r) => ({ ...r, on: e.target.checked })) })} /></th>
                 <th className={thCls}>Product</th><th className={`${thCls} w-24`}>Packs</th><th className={`${thCls} w-24`}>Months</th><th className={`${thCls} w-28`}>Cost / pack ₹</th>
               </tr></thead>
               <tbody className="divide-y divide-border/60">
@@ -218,7 +218,7 @@ export function BatchesClient({ lots, unassigned, canTrace, initialQuery }: { lo
                   const upd = (patch: Partial<typeof r>) => setBulk({ ...bulk, rows: bulk.rows.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
                   return (
                     <tr key={r.key} className={r.on ? "" : "opacity-40"}>
-                      <td className={tdCls}><input type="checkbox" aria-label={`Include ${r.label}`} className="h-4 w-4 accent-[#6E1A2C]" checked={r.on} onChange={(e) => upd({ on: e.target.checked })} /></td>
+                      <td className={tdCls}><input type="checkbox" aria-label={`Include ${r.label}`} className="h-4 w-4 accent-primary" checked={r.on} onChange={(e) => upd({ on: e.target.checked })} /></td>
                       <td className={tdCls}>{r.label}</td>
                       <td className={tdCls}><input type="number" min={1} max={r.max} className={inputCls} value={r.qty} onChange={(e) => upd({ qty: Math.max(0, Math.min(r.max, Math.floor(Number(e.target.value) || 0))) })} /></td>
                       <td className={tdCls}><input type="number" min={1} max={36} className={inputCls} value={r.months} onChange={(e) => upd({ months: Math.max(1, Math.min(36, Number(e.target.value) || 1)) })} /></td>
@@ -273,7 +273,7 @@ export function BatchesClient({ lots, unassigned, canTrace, initialQuery }: { lo
               <tbody className="divide-y divide-border/60">
                 {trace.rows.map((r: any, i: number) => (
                   <tr key={i}>
-                    <td className={tdCls}>{r.orderId ? <Link className="font-semibold text-[#6E1A2C] hover:underline" href={`/admin/orders/${r.orderId}`}>{r.ref}</Link> : <span className="text-muted-foreground">Write-off / correction</span>}</td>
+                    <td className={tdCls}>{r.orderId ? <Link className="font-semibold text-primary hover:underline" href={`/admin/orders/${r.orderId}`}>{r.ref}</Link> : <span className="text-muted-foreground">Write-off / correction</span>}</td>
                     <td className={tdCls}>{r.customer ?? "—"}</td>
                     <td className={tdCls}>{r.phone ? <a href={`tel:${r.phone}`} className="hover:underline">{r.phone}</a> : "—"}</td>
                     <td className={`${tdCls} text-right tabular-nums`}>{r.qty}</td>

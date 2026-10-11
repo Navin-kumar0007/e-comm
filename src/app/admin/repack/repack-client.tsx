@@ -59,7 +59,7 @@ export function RepackClient({ materials, units, runs, initialMaterial }: { mate
       <PageHeader title="Pack from bulk" subtitle="Turn bulk stock into jars and pouches. Wastage is worked out for you, and its cost is added to each pack." />
 
       {materials.length === 0 ? (
-        <Panel><Empty icon={<Scissors className="h-8 w-8" />} title="No bulk items yet">Add your bulk items and their stock on the <Link className="font-semibold text-[#6E1A2C] underline" href="/admin/materials">Bulk stock</Link> page first.</Empty></Panel>
+        <Panel><Empty icon={<Scissors className="h-8 w-8" />} title="No bulk items yet">Add your bulk items and their stock on the <Link className="font-semibold text-primary underline" href="/admin/materials">Bulk stock</Link> page first.</Empty></Panel>
       ) : (
         <div className="grid gap-6 lg:grid-cols-3">
           <Panel title="New packing run" className="lg:col-span-2">
@@ -103,7 +103,7 @@ export function RepackClient({ materials, units, runs, initialMaterial }: { mate
                 <Field label="Note"><input className={inputCls} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Packed by…" /></Field>
               </div>
 
-              <div className={`flex flex-wrap items-center justify-between gap-3 rounded-lg px-4 py-3 text-sm ${plan.error && inputQty ? "bg-red-50 text-red-800" : "bg-[#fbf6ee] text-[#5a4a32]"}`}>
+              <div className={`flex flex-wrap items-center justify-between gap-3 rounded-lg px-4 py-3 text-sm ${plan.error && inputQty ? "bg-red-50 text-red-800" : "bg-background text-[#5a4a32]"}`}>
                 {plan.error && inputQty ? <span>{plan.error}</span> : (
                   <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
                     <span><b>{qtyFmt(Number(inputQty) || 0, "kg")}</b> bulk</span><ArrowRight className="h-4 w-4" />

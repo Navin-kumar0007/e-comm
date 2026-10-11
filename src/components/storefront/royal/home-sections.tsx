@@ -47,7 +47,7 @@ function AtelierCard({ wide }: { wide?: boolean }) {
   return (
     <Link
       href="/blend-creator"
-      className={`flex overflow-hidden rounded-[22px] ${wide ? "min-h-[170px] bg-primary text-white" : "items-center gap-4 border border-border bg-card p-4"}`}
+      className={`flex overflow-hidden rounded-[var(--radius-card)] ${wide ? "min-h-[170px] bg-primary text-white" : "items-center gap-4 border border-border bg-card p-4"}`}
     >
       {wide ? (
         <>
@@ -85,7 +85,7 @@ export function UseAndAtelier() {
       </section>
       <section className="container mx-auto mt-14 hidden max-w-7xl grid-cols-4 gap-4 px-6 md:grid">
         {USES.map((u) => (
-          <Link key={u.title} href={u.href} className="tilt-hover flex flex-col gap-1.5 rounded-[22px] border border-border bg-card p-5">
+          <Link key={u.title} href={u.href} className="tilt-hover flex flex-col gap-1.5 rounded-[var(--radius-card)] border border-border bg-card p-5">
             <span className="eyebrow text-brand-gold-deep">{u.eyebrow}</span>
             <span className="font-heading text-2xl font-bold leading-none text-primary">{u.title}</span>
             <span className="text-[13px] text-muted-foreground">{u.body}</span>
@@ -100,7 +100,7 @@ export function UseAndAtelier() {
 export function FounderSection() {
   return (
     <section className="mx-4 mt-4 md:container md:mx-auto md:mt-14 md:max-w-7xl md:px-6">
-      <div className="flex flex-col gap-3 rounded-[22px] border border-border bg-card p-5 md:flex-row md:items-center md:gap-10 md:rounded-[26px] md:p-10">
+      <div className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-card p-5 md:flex-row md:items-center md:gap-10 md:rounded-[var(--radius-sheet)] md:p-10">
         <div className="flex items-center gap-4 md:block">
           <span className="arch flex h-[100px] w-[80px] shrink-0 items-center justify-center border-2 border-brand-gold bg-muted md:h-[230px] md:w-[180px]">
             <Image src="/spicy-nuts-logo.png" alt="" width={112} height={89} className="w-14 md:w-28" />
@@ -139,7 +139,7 @@ const TRUST = [
 export function TrustStrip() {
   return (
     <section className="mx-4 mb-8 mt-4 md:container md:mx-auto md:mb-16 md:mt-14 md:max-w-7xl md:px-6">
-      <div className="grid grid-cols-2 gap-3 rounded-[22px] bg-muted p-4 md:grid-cols-4 md:gap-4 md:p-6">
+      <div className="grid grid-cols-2 gap-3 rounded-[var(--radius-card)] bg-muted p-4 md:grid-cols-4 md:gap-4 md:p-6">
         {TRUST.map(({ icon: Icon, title, body }) => (
           <div key={title} className="flex flex-col items-center gap-1.5 text-center md:flex-row md:text-left">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-card text-primary">
@@ -147,7 +147,7 @@ export function TrustStrip() {
             </span>
             <span className="flex flex-col leading-tight">
               <strong className="text-[13px]">{title}</strong>
-              <span className="text-[11.5px] text-muted-foreground">{body}</span>
+              <span className="text-xs text-muted-foreground">{body}</span>
             </span>
           </div>
         ))}
