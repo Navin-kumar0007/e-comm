@@ -23,4 +23,8 @@ export async function lookupPincode(pincode: string): Promise<Place | null> {
   return place;
 }
 
-export const placeLabel = (p: Place | null | undefined) => (p ? `${p.city}, ${p.state}` : null);
+/** "BIDAR" / "bidar" -> "Bidar"; keeps short words like "of" lower-case. */
+const titleCase = (s: string) =>
+  s.trim().toLowerCase().replace(/\b([a-z])([a-z]*)/g, (w, a: string, b: string) => (["of", "and"].includes(w) ? w : a.toUpperCase() + b));
+
+export const placeLabel = (p: Place | null | undefined) => (p ? `${titleCase(p.city)}, ${titleCase(p.state)}` : null);
