@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { getStoreSettings } from "@/lib/store-settings";
 import { checkBillToken } from "@/lib/bill-link";
 import { InvoiceDocument } from "@/components/invoice/invoice-document";
+import { InvoiceSummary } from "@/components/invoice/invoice-summary";
 import InvoicePrintButton from "@/app/account/orders/invoice/[id]/print-button";
 
 export const dynamic = "force-dynamic";
@@ -20,10 +21,11 @@ export default async function BillPage({ params }: { params: Promise<{ id: strin
   if (!order || !order.invoiceNumber) notFound();
   return (
     <div className="mx-auto max-w-4xl space-y-4 px-4 pb-16 pt-6 sm:px-0">
-      <div className="flex items-center justify-between print:hidden">
-        <p className="text-sm text-muted-foreground">Thank you for shopping at Spicy Nuts. Save this page as PDF to keep your bill.</p>
+      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+        <p className="min-w-0 flex-1 text-sm text-muted-foreground">Thank you for shopping at Spicy Nuts. Save this page as PDF to keep your bill.</p>
         <InvoicePrintButton />
       </div>
+      <InvoiceSummary order={order} />
       <InvoiceDocument order={order} settings={settings} notes={order.invoiceNotes || undefined} />
     </div>
   );

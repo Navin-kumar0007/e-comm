@@ -6,16 +6,18 @@ import QRCode from "react-qr-code";
 const money = (n: number) => (Math.round(n * 100) / 100).toFixed(2);
 const LABEL: Record<string, string> = { CASH: "Cash", UPI: "UPI", CARD: "Card", ONLINE: "Online", COD: "Cash on delivery" };
 
-/** 80 mm thermal receipt (about 72 mm printable). Opens the print dialog by itself. */
+/** 80 mm thermal receipt (about 72 mm printable). On a computer it opens the print dialog by itself; on phones use the Print button. */
 export function Receipt({ r }: { r: any }) {
   useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) return; // phones and tablets: no surprise print dialog
     const t = setTimeout(() => window.print(), 400);
     return () => clearTimeout(t);
   }, []);
   const d = new Date(r.date);
   const ist = d.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
   return (
-    <div className="flex justify-center bg-[#f6f3ee] py-6 print:block print:bg-white print:py-0">
+    <div className="flex flex-col items-center gap-3 bg-[#f6f3ee] py-6 print:block print:bg-white print:py-0">
+      <button type="button" onClick={() => window.print()} className="h-11 rounded-lg bg-[#6E1A2C] px-6 text-sm font-semibold text-white print:hidden">Print receipt</button>
       <style>{"@page { size: 80mm auto; margin: 3mm 4mm; } @media print { body * { visibility: hidden; } .receipt, .receipt * { visibility: visible; } .receipt { position: absolute; left: 0; top: 0; } }"}</style>
       <div className="receipt w-[72mm] bg-white p-2 font-mono text-[11px] leading-snug text-black shadow print:shadow-none">
         <div className="text-center">
@@ -34,14 +36,14 @@ export function Receipt({ r }: { r: any }) {
           {r.customerGstin && <p>Buyer GSTIN: {r.customerGstin}</p>}
         </div>
         <table className="mt-1 w-full border-y border-dashed border-black">
-          <thead><tr className="text-left"><th className="py-0.5 font-bold">Item</th><th className="text-right font-bold">Qty</th><th className="text-right font-bold">Rate</th><th className="text-right font-bold">Amt</th></tr></thead>
+          <thead><tr className="text-left"><th className="py-0.5 font-bold">Item</th><th className="pl-1.5 text-right font-bold">Qty</th><th className="pl-1.5 text-right font-bold">Rate</th><th className="pl-1.5 text-right font-bold">Amt</th></tr></thead>
           <tbody>
             {r.items.map((i: any, k: number) => (
               <tr key={k} className="align-top">
                 <td className="py-0.5 pr-1">{i.name} {i.pack}{i.hsn ? <span className="block text-[9px]">HSN {i.hsn}</span> : null}</td>
-                <td className="text-right">{i.qty}</td>
-                <td className="text-right">{money(i.price)}</td>
-                <td className="text-right">{money(i.price * i.qty)}</td>
+                <td className="whitespace-nowrap pl-1.5 text-right">{i.qty}</td>
+                <td className="whitespace-nowrap pl-1.5 text-right">{money(i.price)}</td>
+                <td className="whitespace-nowrap pl-1.5 text-right">{money(i.price * i.qty)}</td>
               </tr>
             ))}
           </tbody>

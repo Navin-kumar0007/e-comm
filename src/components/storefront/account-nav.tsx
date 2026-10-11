@@ -21,7 +21,8 @@ export function AccountNav() {
   ];
 
   return (
-    <nav className="space-y-2">
+    // Phones: one row of buttons that scrolls sideways, so the page itself shows first. Computers: a list.
+    <nav className="flex gap-1 overflow-x-auto md:block md:space-y-2">
       {navItems.map((item) => {
         // Exact match for /account, otherwise startsWith for subroutes
         const isActive = item.href === '/account' 
@@ -32,7 +33,7 @@ export function AccountNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+            className={`flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-2 rounded-lg transition-colors md:gap-3 ${
               isActive 
                 ? 'bg-primary/10 text-primary font-medium' 
                 : 'hover:bg-primary/10 hover:text-primary text-muted-foreground'
@@ -43,12 +44,12 @@ export function AccountNav() {
         );
       })}
       {isStaff && (
-        <Link href="/admin" className="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-primary hover:bg-primary/10">
+        <Link href="/admin" className="flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-2 rounded-lg font-medium text-primary hover:bg-primary/10 md:gap-3">
           <Shield className="w-4 h-4" /> Admin Panel
         </Link>
       )}
-      <div className="border-t border-border/60 pt-2">
-        <SignOutButton className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-left text-destructive hover:bg-destructive/10 disabled:opacity-60" />
+      <div className="shrink-0 md:border-t md:border-border/60 md:pt-2">
+        <SignOutButton className="flex w-full items-center gap-2 whitespace-nowrap px-3 py-2 rounded-lg text-left text-destructive hover:bg-destructive/10 disabled:opacity-60 md:gap-3" />
       </div>
     </nav>
   );

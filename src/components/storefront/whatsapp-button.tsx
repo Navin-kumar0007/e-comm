@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Gift, MessageCircle, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import { BRAND_WHATSAPP } from "@/lib/contact";
@@ -11,10 +12,12 @@ const WhatsAppVIPModal = dynamic(() => import("./whatsapp-vip-modal").then((m) =
 
 export function WhatsAppButton() {
   const [vipOpen, setVipOpen] = useState(false);
+  // On a phone at checkout the button would sit on top of the address form.
+  const onCheckout = (usePathname() || "").startsWith("/checkout");
 
   return (
     <>
-      <div className="fixed bottom-[156px] right-3.5 md:bottom-6 md:right-6 z-40 flex items-center gap-2">
+      <div className={`fixed bottom-[156px] right-3.5 md:bottom-6 md:right-6 z-40 items-center gap-2 ${onCheckout ? "hidden md:flex" : "flex"}`}>
         {/* VIP 10% OFF Pill (Clickable) */}
         <button
           type="button"

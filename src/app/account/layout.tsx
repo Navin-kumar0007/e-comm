@@ -18,8 +18,8 @@ export default async function AccountLayout({ children }: { children: React.Reac
       <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
         {/* Sidebar */}
         <aside className="w-full md:w-64 shrink-0">
-          <div className="royal-card p-5 sticky top-[calc(var(--header-h)+16px)]">
-            <div className="flex items-center gap-4 mb-8">
+          <div className="royal-card p-2 md:sticky md:top-[calc(var(--header-h)+16px)] md:p-5">
+            <div className="mb-8 hidden items-center gap-4 md:flex">
               <div className="arch w-12 h-14 bg-primary border-2 border-brand-gold flex items-center justify-center text-primary-foreground font-heading font-bold text-2xl">
                 {session.user.name?.charAt(0) || 'U'}
               </div>

@@ -4,7 +4,7 @@ import { Printer } from "lucide-react";
 export default function InvoicePrintButton() {
   return (
     <Button onClick={() => window.print()} variant="outline">
-      <Printer className="w-4 h-4 mr-2" /> Print Invoice
+      <Printer className="w-4 h-4 mr-2" /> Print / Save PDF
     </Button>
   );
 }

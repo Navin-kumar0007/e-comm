@@ -6,7 +6,7 @@ import { Navbar } from "@/components/storefront/Navbar";
 import { MobileBottomNav } from "@/components/storefront/mobile-bottom-nav";
 import { PromoBanner } from "@/components/storefront/promo-banner";
 import { Footer } from "@/components/storefront/Footer";
-import { StorefrontOnly } from "@/components/storefront/storefront-only";
+import { NotOnDocuments, StorefrontOnly } from "@/components/storefront/storefront-only";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/storefront/auth-provider";
 import { WhatsAppButton } from "@/components/storefront/whatsapp-button";
@@ -178,10 +178,10 @@ export default async function RootLayout({
             forcedTheme="light"
             disableTransitionOnChange
           >
-            <StorefrontOnly><div className="print:hidden"><Navbar announcement={announcement} /></div></StorefrontOnly><main className="flex-1 pb-24 md:pb-0 print:m-0 print:p-0">
+            <StorefrontOnly><div className="print:hidden"><Navbar announcement={announcement} /></div></StorefrontOnly><main className="flex-1 pb-[var(--mobile-chrome-bottom,6rem)] md:pb-0 print:m-0 print:p-0">
               {children}
             </main>
-            <StorefrontOnly><div className="print:hidden"><Footer contact={contact} /><MobileBottomNav /><WhatsAppButton /><DeferredWidgets popup={popup} /></div><ScrollReveal /></StorefrontOnly>
+            <StorefrontOnly><div className="print:hidden"><Footer contact={contact} /><MobileBottomNav /><NotOnDocuments><WhatsAppButton /><DeferredWidgets popup={popup} /></NotOnDocuments></div><ScrollReveal /></StorefrontOnly>
             <Toaster />
           </ThemeProvider>
         </AuthProvider>

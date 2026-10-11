@@ -422,3 +422,8 @@
   .admin-shell select,
   .admin-shell textarea { font-size: 16px; }
 }
+
+/* Documents shrunk to fit a phone screen print at full size. */
+@media print {
+  .fit-width-inner { zoom: 1 !important; }
+}

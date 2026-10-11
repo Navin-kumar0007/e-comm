@@ -50,12 +50,12 @@ export function AIConcierge() {
 
   return (
     <>
-      {/* Floating Trigger Button - positioned safely above mobile nav */}
+      {/* Floating trigger: computers only. Phones keep just the WhatsApp button so floating buttons don't cover the page. */}
       <Button
         onClick={() => setIsOpen(true)}
         aria-label="Open AI Shopping Concierge"
         className={`fixed bottom-[214px] right-3.5 md:bottom-24 md:right-6 rounded-full w-11 h-11 md:w-14 md:h-14 shadow-2xl z-40 bg-gradient-to-br from-royal-deep to-royal-deep hover:from-royal-deep hover:to-royal-deep text-brand-gold border border-brand-gold/40 hover:scale-105 active:scale-95 transition-all ${
-          isOpen ? "hidden" : "flex"
+          isOpen ? "hidden" : "hidden md:flex"
         }`}
       >
         <Sparkles className="w-5 h-5 md:w-6 md:h-6 animate-pulse text-brand-gold" />

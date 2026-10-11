@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Home, LayoutGrid, Gift, Heart, User } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart-store";
 import { FREE_SHIPPING_AT } from "./cart-drawer";
+import { isDocumentRoute } from "./storefront-only";
 
 const noopSubscribe = () => () => {};
 const inr = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
@@ -14,7 +15,15 @@ const inr = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
 function FloatingCartBar() {
   const items = useCartStore((s) => s.items);
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
-  if (!mounted || items.length === 0) return null;
+  const visible = mounted && items.length > 0;
+  // While this bar shows, pages keep extra space at the bottom so nothing hides behind it.
+  useEffect(() => {
+    if (!visible) return;
+    const root = document.documentElement;
+    root.style.setProperty("--mobile-chrome-bottom", "10.5rem");
+    return () => { root.style.removeProperty("--mobile-chrome-bottom"); };
+  }, [visible]);
+  if (!visible) return null;
   const count = items.reduce((n, i) => n + i.quantity, 0);
   const total = items.reduce((n, i) => n + i.price * i.quantity, 0);
   const left = FREE_SHIPPING_AT - total;
@@ -43,7 +52,7 @@ export function MobileBottomNav() {
 
   // Do not show bottom nav on admin routes or during checkout
   // Product pages have their own sticky buy bar
-  if (pathname.startsWith("/admin") || pathname.startsWith("/checkout") || pathname.startsWith("/product/")) return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/checkout") || pathname.startsWith("/product/") || isDocumentRoute(pathname)) return null;
 
   const tone = (active: boolean) => (active ? "text-primary font-extrabold" : "text-muted-foreground font-semibold");
   const isCat = pathname.startsWith("/shop") || pathname.startsWith("/category");

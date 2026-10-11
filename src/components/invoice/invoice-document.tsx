@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { FitWidth } from "@/components/fit-width";
 import { computeInvoice, type InvoiceOrder, type InvoiceSettings } from "@/lib/invoice";
 import { amountInWords, stateCode } from "@/lib/gst";
 import { BRAND_EMAIL, BRAND_PHONE_DISPLAY } from "@/lib/contact";
@@ -46,8 +47,10 @@ export function InvoiceDocument({
   const isCod = order.paymentMethod === "COD";
   const halfTax = inv.sameState === true;
 
+  // Always laid out at A4 width; on phones FitWidth shrinks the whole page instead of squashing columns.
   return (
-    <div className="invoice-a4 w-full max-w-[210mm] bg-white text-[#1f1712] text-[11px] leading-[1.45] rounded-xl shadow-sm border print:shadow-none print:border-none print:rounded-none print:mx-auto">
+    <FitWidth width={794}>
+    <div className="invoice-a4 w-[210mm] max-w-none print:w-full print:max-w-[210mm] bg-white text-[#1f1712] text-[11px] leading-[1.45] rounded-xl shadow-sm border print:shadow-none print:border-none print:rounded-none print:mx-auto">
       {/* Header band */}
       <div className="flex items-stretch justify-between gap-6 border-b-[3px] border-[#6E1A2C] px-8 pt-7 pb-5">
         <div className="flex items-start gap-4">
@@ -244,5 +247,6 @@ export function InvoiceDocument({
         <p className="pb-5 text-center text-[8.5px] text-[#8a7a70]">This is a computer-generated invoice and does not require a physical signature.</p>
       )}
     </div>
+    </FitWidth>
   );
 }

@@ -8,3 +8,12 @@ export function StorefrontOnly({ children }: { children: React.ReactNode }) {
   if (pathname.startsWith("/admin")) return null;
   return <>{children}</>;
 }
+
+/** Bills and invoices are documents: no floating cart bar, chat buttons or popups over them. */
+export const isDocumentRoute = (pathname: string) => pathname.startsWith("/bill/") || pathname.startsWith("/account/orders/invoice/");
+
+export function NotOnDocuments({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname() || "";
+  if (isDocumentRoute(pathname)) return null;
+  return <>{children}</>;
+}

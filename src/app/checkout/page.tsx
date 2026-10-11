@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCartStore } from "@/lib/store/cart-store";
@@ -27,6 +27,8 @@ import {
   Tag
 } from "lucide-react";
 import { orderRef } from "@/lib/site";
+
+const noopSubscribe = () => () => {};
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -124,11 +126,14 @@ export default function CheckoutPage() {
     toast.success("Coupon applied!");
   };
   
+  // The saved cart loads just after the first render; only send people back to the shop
+  // once it has loaded and really is empty (otherwise a refresh here bounced to /shop).
+  const cartLoaded = useSyncExternalStore(noopSubscribe, () => true, () => false);
   useEffect(() => {
-    if (items.length === 0 && !isProcessing) {
+    if (cartLoaded && items.length === 0 && !isProcessing) {
       router.push("/shop");
     }
-  }, [items, router, isProcessing]);
+  }, [cartLoaded, items, router, isProcessing]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
