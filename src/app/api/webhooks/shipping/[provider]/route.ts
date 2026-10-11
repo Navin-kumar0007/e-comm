@@ -14,9 +14,23 @@ import { applyShipmentUpdate } from "@/lib/shipping/service";
  */
 const PROVIDER_ALIASES: Record<string, string> = { PARCEL: "SHIPROCKET" };
 
+/** Token from ?token=, x-webhook-token, x-api-key or Authorization (with or without "Bearer "). */
+function tokenOf(req: Request) {
+  const auth = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "").trim();
+  return new URL(req.url).searchParams.get("token") || req.headers.get("x-webhook-token") || req.headers.get("x-api-key") || auth || "";
+}
+
+/** Partner panels "test" the address with a plain request; answer OK (and whether the secret is set up). */
+export async function GET() {
+  return NextResponse.json({ ok: true, configured: !!process.env.SHIPPING_WEBHOOK_SECRET });
+}
+export async function HEAD() {
+  return new Response(null, { status: 200 });
+}
+
 export async function POST(req: Request, { params }: { params: Promise<{ provider: string }> }) {
   const secret = process.env.SHIPPING_WEBHOOK_SECRET;
-  const token = new URL(req.url).searchParams.get("token") || req.headers.get("x-webhook-token") || req.headers.get("x-api-key") || "";
+  const token = tokenOf(req);
   if (!secret || token.length !== secret.length || !crypto.timingSafeEqual(Buffer.from(token), Buffer.from(secret))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -30,7 +44,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ provide
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Bad payload" }, { status: 400 });
+    // An empty or non-JSON body is a connection test from the partner's panel.
+    return NextResponse.json({ ok: true, received: 0, applied: 0 });
   }
 
   const updates = provider.parseWebhook(body);
