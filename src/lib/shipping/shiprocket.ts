@@ -58,9 +58,50 @@ async function call(path: string, init: { method: "GET" | "POST"; body?: unknown
   if (!res.ok) {
     const errs = json?.errors ? Object.values(json.errors).flat().join(" ") : "";
     const msg = json?.message || errs || `HTTP ${res.status}`;
-    throw new ShippingError(`Shiprocket: ${typeof msg === "string" ? msg : JSON.stringify(msg)}`);
+    const text = typeof msg === "string" ? msg : JSON.stringify(msg);
+    const names = /pickup location/i.test(text) ? pickupNamesIn(json?.data) : [];
+    throw new ShippingError(
+      names.length
+        ? `Shiprocket: pickup name not found. Your Shiprocket pickup names are: ${names.map((n) => `"${n}"`).join(", ")}. Put one of these in Admin → Settings → Shipping → Warehouse / pickup name.`
+        : `Shiprocket: ${text}`,
+    );
   }
   return json;
+}
+
+/** Pickup location names found anywhere in a Shiprocket response (its shape varies by endpoint). */
+function pickupNamesIn(data: unknown): string[] {
+  const out = new Set<string>();
+  const walk = (v: any) => {
+    if (Array.isArray(v)) v.forEach(walk);
+    else if (v && typeof v === "object") {
+      if (typeof v.pickup_location === "string" && v.pickup_location.trim()) out.add(v.pickup_location);
+      Object.values(v).forEach(walk);
+    }
+  };
+  walk(data);
+  return [...out];
+}
+
+/**
+ * Shiprocket needs the pickup nickname exactly as saved in its panel. Use the saved name when it
+ * matches (ignoring capitals and spaces), or the only pickup address if there is just one.
+ */
+async function resolvePickupLocation(wanted: string): Promise<string> {
+  let names: string[] = [];
+  try {
+    names = pickupNamesIn((await call("/settings/company/pickup", { method: "GET" }))?.data);
+  } catch {
+    return wanted; // lookup unavailable: try the saved name as-is
+  }
+  const norm = (x: string) => x.trim().toLowerCase().replace(/\s+/g, " ");
+  const match = names.find((n) => n === wanted) ?? names.find((n) => norm(n) === norm(wanted));
+  if (match) return match;
+  if (names.length === 1) return names[0];
+  if (names.length > 1) {
+    throw new ShippingError(`Pickup name "${wanted}" is not in Shiprocket. Your Shiprocket pickup names are: ${names.map((n) => `"${n}"`).join(", ")}. Put one of these in Admin → Settings → Shipping → Warehouse / pickup name.`);
+  }
+  throw new ShippingError("Shiprocket has no pickup address yet. Add and verify one in Shiprocket → Settings → Pickup Addresses.");
 }
 
 /** Maps Shiprocket status text (current_status / sr-status-label) to our normalized statuses. */
@@ -140,12 +181,13 @@ export const shiprocketProvider: ShippingProvider = {
     const [first, ...rest] = input.consignee.name.trim().split(/\s+/);
 
     // 1. Create the order in Shiprocket.
+    const pickupLocation = await resolvePickupLocation(input.pickup.warehouseName);
     const created = await call("/orders/create/adhoc", {
       method: "POST",
       body: {
         order_id: input.orderNumber,
         order_date: orderDate(),
-        pickup_location: input.pickup.warehouseName,
+        pickup_location: pickupLocation,
         billing_customer_name: first || input.consignee.name,
         billing_last_name: rest.join(" "),
         billing_address: input.consignee.address,
