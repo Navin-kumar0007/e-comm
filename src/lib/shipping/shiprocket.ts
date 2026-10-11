@@ -121,8 +121,10 @@ export const shiprocketProvider: ShippingProvider = {
       throw e;
     }
     const list: any[] = Array.isArray(json?.data?.available_courier_companies) ? json.data.available_courier_companies : [];
+    const first = list[0];
     return {
       serviceable: list.length > 0,
+      place: first?.city && first?.state ? { city: String(first.city), state: String(first.state) } : undefined,
       options: list.map((c) => ({
         id: String(c.courier_company_id),
         name: String(c.courier_name ?? "Courier"),

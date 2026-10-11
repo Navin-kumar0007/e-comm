@@ -15,6 +15,7 @@ import {
 import { ShippingError, type PaymentMode, type TrackingEvent } from "./types";
 import { estimateOrderWeight } from "./weight";
 import { orderRef } from "@/lib/site";
+import { lookupPincode, placeLabel, type Place } from "@/lib/pincode";
 export { parseWeightGrams, estimateOrderWeight } from "./weight";
 
 export function parseAddress(order: { shippingAddress: string; shippingState?: string | null }) {
@@ -285,27 +286,40 @@ export interface DeliveryCheck {
   codAvailable: boolean;
   checked: boolean; // false => courier API unavailable, we allowed the order anyway
   message: string;
+  /** "Bidar, Karnataka" when known (only with opts.withPlace). */
+  place: string | null;
+  /** Courier delivery estimate in days, e.g. [2, 4]. */
+  etaDays: [number, number] | null;
 }
 
-const cache = new Map<string, { at: number; value: { serviceable: boolean; cod: boolean } }>();
+const cache = new Map<string, { at: number; value: { serviceable: boolean; cod: boolean; eta: [number, number] | null; place: Place | null } }>();
 const CACHE_MS = 6 * 60 * 60 * 1000;
 
-export async function checkDelivery(pincode: string, opts: { orderValue?: number; weightGrams?: number; paymentMode?: PaymentMode } = {}): Promise<DeliveryCheck> {
+const etaText = (eta: [number, number] | null) => (!eta ? "" : eta[0] === eta[1] ? ` · usually ${eta[0]} day${eta[0] === 1 ? "" : "s"}` : ` · usually ${eta[0]}–${eta[1]} days`);
+
+export async function checkDelivery(
+  pincode: string,
+  opts: { orderValue?: number; weightGrams?: number; paymentMode?: PaymentMode; withPlace?: boolean } = {},
+): Promise<DeliveryCheck> {
   const settings = await getStoreSettings();
   const orderValue = opts.orderValue ?? 0;
   const codAllowedBySettings = settings.codEnabled && (!orderValue || orderValue <= settings.codMaxOrderValue);
   const provider = getActiveProvider(settings.shippingProvider);
 
   if (!/^[1-9]\d{5}$/.test(pincode)) {
-    return { serviceable: false, codAvailable: false, checked: true, message: "Enter a valid 6-digit pincode." };
+    return { serviceable: false, codAvailable: false, checked: true, message: "Enter a valid 6-digit pincode.", place: null, etaDays: null };
   }
+  const placeLookup = opts.withPlace ? lookupPincode(pincode) : Promise.resolve(null);
 
   if (!provider.capabilities.serviceability || !provider.checkServiceability || !settings.pickupPincode) {
+    const place = placeLabel(await placeLookup);
     return {
       serviceable: true,
       codAvailable: codAllowedBySettings,
       checked: false,
-      message: "Delivery available across India.",
+      message: place ? `Delivery available to ${place}.` : "Delivery available across India.",
+      place,
+      etaDays: null,
     };
   }
 
@@ -318,25 +332,36 @@ export async function checkDelivery(pincode: string, opts: { orderValue?: number
         provider.checkServiceability({ ...base, paymentMode: "PREPAID" }),
         provider.checkServiceability({ ...base, paymentMode: "COD" }),
       ]);
-      entry = { at: Date.now(), value: { serviceable: prepaid.serviceable || cod.serviceable, cod: cod.serviceable } };
+      const days = prepaid.options.concat(cod.options).map((o) => o.etaDays).filter((d): d is number => typeof d === "number" && d > 0);
+      entry = {
+        at: Date.now(),
+        value: {
+          serviceable: prepaid.serviceable || cod.serviceable,
+          cod: cod.serviceable,
+          eta: days.length ? [Math.min(...days), Math.min(Math.max(...days), Math.min(...days) + 3)] : null,
+          place: prepaid.place ?? cod.place ?? null,
+        },
+      };
       cache.set(key, entry);
     } catch (e) {
       // Fail open: never block sales because the courier API is down.
       console.error(`[SERVICEABILITY] ${provider.id} ${pincode}:`, e);
-      return { serviceable: true, codAvailable: codAllowedBySettings, checked: false, message: "Delivery available." };
+      const place = placeLabel(await placeLookup);
+      return { serviceable: true, codAvailable: codAllowedBySettings, checked: false, message: place ? `Delivery available to ${place}.` : "Delivery available.", place, etaDays: null };
     }
   }
 
-  const { serviceable, cod } = entry.value;
+  const { serviceable, cod, eta } = entry.value;
+  const place = placeLabel(entry.value.place ?? (await placeLookup));
   const codAvailable = serviceable && cod && codAllowedBySettings;
   return {
     serviceable,
     codAvailable,
     checked: true,
+    place,
+    etaDays: eta,
     message: !serviceable
-      ? "Sorry, we don't deliver to this pincode yet."
-      : codAvailable
-      ? "Delivery available · Cash on Delivery available."
-      : "Delivery available · Prepaid only for this pincode/order.",
+      ? `Sorry, we don't deliver to ${place ?? "this pincode"} yet.`
+      : `${place ? `Delivering to ${place}` : "Delivery available"}${etaText(eta)} · ${codAvailable ? "Cash on Delivery available" : "Prepaid only for this pincode/order"}.`,
   };
 }

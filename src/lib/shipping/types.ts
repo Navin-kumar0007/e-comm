@@ -38,6 +38,8 @@ export interface CourierOption {
 export interface ServiceabilityResult {
   serviceable: boolean;
   options: CourierOption[];
+  /** Delivery city/state when the partner reports it. */
+  place?: { city: string; state: string };
 }
 
 export interface CreateShipmentInput {

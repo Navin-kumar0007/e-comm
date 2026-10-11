@@ -42,7 +42,7 @@ export async function getCheckoutQuote(input: {
     });
 
     const delivery = input.pincode && /^[1-9]\d{5}$/.test(input.pincode)
-      ? await checkDelivery(input.pincode, { orderValue: quote.total })
+      ? await checkDelivery(input.pincode, { orderValue: quote.total, withPlace: true })
       : null;
 
     return {

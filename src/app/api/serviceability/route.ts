@@ -10,10 +10,12 @@ export async function GET(req: Request) {
   const pincode = (url.searchParams.get("pincode") || "").trim();
   const orderValue = Number(url.searchParams.get("value")) || undefined;
 
-  const result = await checkDelivery(pincode, { orderValue });
+  const result = await checkDelivery(pincode, { orderValue, withPlace: true });
   return NextResponse.json({
     serviceable: result.serviceable,
     codAvailable: result.codAvailable,
     message: result.message,
+    place: result.place,
+    etaDays: result.etaDays,
   });
 }
