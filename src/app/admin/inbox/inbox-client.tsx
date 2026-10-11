@@ -3,15 +3,20 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { MessageCircle, Send, Phone, User, Clock } from "lucide-react";
+import { MessageCircle, Send, Phone, User, Clock, ArrowLeft } from "lucide-react";
 import { getConversations, getThread, sendReplyAction } from "@/app/actions/admin-inbox";
 import { PageHeader, Panel, Empty, inputCls, btnPrimary, btnSecondary, inr } from "@/components/admin/ui";
+import { orderRef } from "@/lib/site";
 
 const when = (d: string) => new Date(d).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" });
 
 export function InboxClient({ initial, initialPhone }: { initial: any[]; initialPhone: string | null }) {
   const [convos, setConvos] = useState(initial);
-  const [phone, setPhone] = useState<string | null>(initialPhone);
+  // Computers open the newest chat; phones start on the chat list unless a chat was asked for.
+  const [phone, setPhone] = useState<string | null>(initialPhone ?? initial[0]?.phone ?? null);
+  useEffect(() => {
+    if (!initialPhone && window.matchMedia("(max-width: 1023px)").matches) setPhone(null);
+  }, [initialPhone]);
   const [thread, setThread] = useState<any | null>(null);
   const [text, setText] = useState("");
   const [pending, start] = useTransition();
@@ -48,8 +53,9 @@ export function InboxClient({ initial, initialPhone }: { initial: any[]; initial
       {convos.length === 0 ? (
         <Panel><Empty icon={<MessageCircle className="h-8 w-8" />} title="No messages yet">When customers message your WhatsApp number, their messages appear here.</Empty></Panel>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
-          <Panel className="lg:max-h-[72vh] lg:overflow-y-auto">
+        <div className="grid gap-4 lg:grid-cols-[320px_1fr] [&>*]:min-w-0">
+          {/* Phones show the chat list or one chat, not both */}
+          <Panel className={`lg:max-h-[72vh] lg:overflow-y-auto ${phone ? "hidden lg:block" : ""}`}>
             <ul className="divide-y divide-border/60">
               {convos.map((c) => (
                 <li key={c.phone}>
@@ -67,7 +73,10 @@ export function InboxClient({ initial, initialPhone }: { initial: any[]; initial
           </Panel>
 
           <Panel
-            title={current ? <span className="flex items-center gap-2"><User className="h-4 w-4 text-[#c9a45a]" />{current.name ?? "Customer"} <span className="font-normal text-muted-foreground">+91 {current.phone}</span></span> : "Choose a chat"}
+            className={phone ? "" : "hidden lg:block"}
+            title={current ? <span className="flex min-w-0 items-center gap-2">
+              <button type="button" onClick={() => setPhone(null)} aria-label="Back to all chats" className="-ml-1 rounded-lg p-1 hover:bg-muted lg:hidden"><ArrowLeft className="h-4 w-4" /></button>
+              <User className="hidden h-4 w-4 shrink-0 text-[#c9a45a] sm:block" /><span className="truncate">{current.name ?? `+91 ${current.phone}`}</span> {current.name && <span className="hidden font-normal text-muted-foreground sm:inline">+91 {current.phone}</span>}</span> : "Choose a chat"}
             action={current ? <div className="flex gap-2">
               <a href={`tel:+91${current.phone}`} className={btnSecondary}><Phone className="h-4 w-4" /> Call</a>
               <Link href={`/admin/customers/${current.phone}`} className={btnSecondary}>Profile</Link>
@@ -79,7 +88,7 @@ export function InboxClient({ initial, initialPhone }: { initial: any[]; initial
                   <div className="flex flex-wrap gap-2 border-b border-border/60 px-4 py-2 text-xs">
                     {thread.orders.map((o: any) => (
                       <Link key={o.id} href={`/admin/orders/${o.id}`} className="rounded-full bg-muted px-2.5 py-1 hover:bg-muted/70">
-                        NW-{o.id.slice(-8).toUpperCase()} · {o.status.toLowerCase()} · {inr(o.total)}{o.codStatus === "PENDING" ? " · COD not confirmed" : ""}
+                        {orderRef(o.id)} · {o.status.toLowerCase()} · {inr(o.total)}{o.codStatus === "PENDING" ? " · COD not confirmed" : ""}
                       </Link>
                     ))}
                   </div>

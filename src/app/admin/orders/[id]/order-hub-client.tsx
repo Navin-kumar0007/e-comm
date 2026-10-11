@@ -210,7 +210,7 @@ export default function OrderHubClient({
                   <div className="flex justify-center">
                     <Barcode value={order.id.slice(0, 10).toUpperCase()} width={1.2} height={30} fontSize={10} displayValue={true} />
                   </div>
-                  <p className="text-[10px] text-gray-500">nuttyworld.com</p>
+                  <p className="text-[10px] text-gray-500">spicynuts.in</p>
                 </div>
               </div>
             )}

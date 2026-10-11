@@ -15,6 +15,7 @@ import { ScrollReveal } from "@/components/scroll-reveal";
 import { BRAND_PHONE_TEL } from "@/lib/contact";
 import { CookieConsent } from "@/components/storefront/cookie-consent";
 import { getSiteContent } from "@/lib/site-content";
+import { SITE_URL } from "@/lib/site";
 
 // Fonts: Manrope for interface and prices, Cormorant Garamond for headings, Cinzel for royal eyebrows
 const manrope = Manrope({
@@ -34,7 +35,7 @@ const cinzel = Cinzel({
   variable: "--font-cinzel",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://spicynuts.in";
+const siteUrl = SITE_URL;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -97,9 +98,6 @@ export const metadata: Metadata = {
     title: "Spicy Nuts — Premium Dry Fruits & Organic Spices Online",
     description:
       "Premium dry fruits, organic spices & handcrafted masalas. Free shipping above ₹999. Shop now!",
-  },
-  alternates: {
-    canonical: siteUrl,
   },
   robots: {
     index: true,

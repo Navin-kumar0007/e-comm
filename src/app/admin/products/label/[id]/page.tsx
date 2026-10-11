@@ -21,7 +21,7 @@ export default async function ProductLabelPage({ params }: { params: Promise<{ i
     notFound();
   }
 
-  const batchNumber = `NW-LOT-${product.id.slice(-6).toUpperCase()}`;
+  const batchNumber = `SN-LOT-${product.id.slice(-6).toUpperCase()}`;
   const packedDate = new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
   const bestBefore = new Date(Date.now() + 270 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
 

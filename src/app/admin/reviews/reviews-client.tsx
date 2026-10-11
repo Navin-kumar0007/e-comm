@@ -28,7 +28,7 @@ export function ReviewsClient({ filter, reviews, counts }: { filter: string; rev
         <p className="text-muted-foreground mt-1">Reviews from verified buyers publish instantly; all others wait here for approval.</p>
       </div>
 
-      <div className="flex gap-1 p-1 bg-muted/50 rounded-xl w-fit">
+      <div className="flex flex-wrap gap-1 p-1 bg-muted/50 rounded-xl w-fit">
         {TABS.map((t) => (
           <Link key={t} href={`/admin/reviews?status=${t}`} className={`px-3 py-1.5 rounded-lg text-sm ${filter === t ? "bg-card shadow-sm font-semibold" : "text-muted-foreground"}`}>
             {t.charAt(0) + t.slice(1).toLowerCase()}

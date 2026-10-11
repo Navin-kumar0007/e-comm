@@ -29,12 +29,15 @@ export function StickerSheet({ stickers, size }: { stickers: BarcodeRow[]; size:
         : "@page { size: 50mm 25mm; margin: 0; } .sticker { page-break-after: always; break-after: page; }"}</style>
       <PrintToolbar title="Barcode stickers" count={stickers.length} note={a4 ? "A4 sheet, 65 per page (38.1 × 21.2 mm)" : "50 × 25 mm thermal labels"} />
       {stickers.length === 0 && <p className="text-sm text-muted-foreground">No stickers selected, or the selected items have no barcode yet.</p>}
+      {/* On a phone screen the A4 preview scrolls sideways; printing is unaffected. */}
+      <div className="overflow-x-auto print:overflow-visible">
       <div className={a4 ? "mx-auto grid w-fit grid-cols-5 gap-0 bg-white print:mx-0" : "flex flex-wrap gap-3 print:block"}>
         {stickers.map((r, i) => (
           <div key={i} className={a4 ? "" : "border border-dashed border-border print:border-0"}>
             <Sticker r={r} a4={a4} />
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

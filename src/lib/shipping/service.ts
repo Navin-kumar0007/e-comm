@@ -14,6 +14,7 @@ import {
 } from "./status";
 import { ShippingError, type PaymentMode, type TrackingEvent } from "./types";
 import { estimateOrderWeight } from "./weight";
+import { orderRef } from "@/lib/site";
 export { parseWeightGrams, estimateOrderWeight } from "./weight";
 
 export function parseAddress(order: { shippingAddress: string; shippingState?: string | null }) {
@@ -70,7 +71,7 @@ export async function createShipmentForOrder(orderId: string, opts: BookShipment
 
   const booked = await provider.createShipment({
     orderId: order.id,
-    orderNumber: `NW-${order.id.slice(-8).toUpperCase()}`,
+    orderNumber: orderRef(order.id),
     paymentMode: isCod ? "COD" : "PREPAID",
     orderValue: order.total,
     codAmount: isCod ? order.total : 0,

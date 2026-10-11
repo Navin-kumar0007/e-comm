@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db/prisma";
 import { getStoreSettings } from "@/lib/store-settings";
 import { getActiveProvider } from "@/lib/shipping";
 import { FulfilmentClient, type QueueOrder } from "./fulfilment-client";
+import { orderRef } from "@/lib/site";
 
 export default async function FulfilmentPage() {
   const staff = await requirePagePermission("orders.view");
@@ -22,7 +23,7 @@ export default async function FulfilmentPage() {
 
   const queue: QueueOrder[] = orders.map((o: any) => ({
     id: o.id,
-    ref: `NW-${o.id.slice(-8).toUpperCase()}`,
+    ref: orderRef(o.id),
     createdAt: o.createdAt.toISOString(),
     customerName: o.customerName,
     city: o.shippingAddress.split(",").slice(-3, -2)[0]?.trim() || "",

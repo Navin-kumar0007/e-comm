@@ -20,7 +20,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const nav = <AdminNav permissions={permissions} staffName={staff.user.name || staff.user.email} roleName={ROLE_LABELS[staff.role].name} />;
 
   return (
-    <div className="admin-shell flex h-screen bg-[#f6f3ee] text-foreground print:block print:h-auto print:bg-white">
+    <div className="admin-shell flex h-dvh overflow-hidden bg-[#f6f3ee] text-foreground print:block print:h-auto print:overflow-visible print:bg-white">
       {/* Desktop sidebar */}
       <aside className="hidden w-60 shrink-0 lg:block print:hidden">{nav}</aside>
 

@@ -2,6 +2,7 @@
 // Pure functions — safe to use from server and client components.
 
 import { splitGst } from "./gst";
+import { orderRef } from "@/lib/site";
 
 export interface InvoiceSettings {
   storeName: string;
@@ -112,7 +113,7 @@ export function computeInvoice(order: InvoiceOrder, settings: InvoiceSettings): 
   }
 
   return {
-    invoiceNumber: order.invoiceNumber ?? `NW-${order.id.slice(-8).toUpperCase()}`,
+    invoiceNumber: order.invoiceNumber ?? orderRef(order.id),
     isFinalInvoice: !!order.invoiceNumber,
     isTaxInvoice: !!settings.gstin,
     sameState,

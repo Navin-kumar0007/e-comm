@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { updateProductAction } from "@/app/actions/admin-products";
 import Barcode from "@/components/ui/barcode";
 import QRCode from "react-qr-code";
+import { SITE_URL } from "@/lib/site";
 
 export default function EditProductForm({ product, categories, dietaryTags }: { product: any, categories: {id: string, name: string}[], dietaryTags: {id: string, name: string}[] }) {
   const router = useRouter();
@@ -129,7 +130,7 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
     }
   };
 
-  const productUrl = `https://nuttyworld.com/shop/${product.slug}`;
+  const productUrl = `${SITE_URL}/product/${product.slug}`;
   const finalBarcode = barcodeValue || product.id.slice(0, 12).toUpperCase();
   const formWeight = typeof window !== 'undefined' ? (document.getElementById('weight') as HTMLInputElement)?.value || product.weight || "250g" : "250g";
   const formPrice = typeof window !== 'undefined' ? (document.getElementById('price') as HTMLInputElement)?.value || product.price : product.price;

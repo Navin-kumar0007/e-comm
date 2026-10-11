@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { ArrowLeft, Phone, MessageCircle, Mail, MapPin, Trash2, ShieldCheck, Building2, StickyNote } from "lucide-react";
 import { addCustomerNoteAction, deleteCustomerNoteAction } from "@/app/actions/admin-customers";
 import { PageHeader, Panel, Stat, StatusPill, inputCls, btnPrimary, btnSecondary, thCls, tdCls, inr, dateFmt } from "@/components/admin/ui";
+import { orderRef } from "@/lib/site";
 
 const PURPOSE: Record<string, string> = { TERMS: "Privacy notice & terms", WHATSAPP_OFFERS: "WhatsApp offers", EMAIL_OFFERS: "Email offers", ANALYTICS: "Analytics cookies" };
 const CHANNEL: Record<string, string> = { WEBSITE: "Website", SHOP: "Shop", PHONE: "Phone", WHOLESALE: "Wholesale" };
@@ -62,7 +63,7 @@ export function CustomerProfile({ p, canPrivacy }: { p: any; canPrivacy: boolean
                 <tbody className="divide-y divide-border/60">
                   {p.orders.map((o: any) => (
                     <tr key={o.id} className="hover:bg-muted/20">
-                      <td className={tdCls}><Link href={`/admin/orders/${o.id}`} className="font-semibold text-[#6E1A2C] hover:underline">NW-{o.id.slice(-8).toUpperCase()}</Link><p className="text-[11px] text-muted-foreground">{CHANNEL[o.channel] ?? o.channel} · {o.paymentMethod}</p></td>
+                      <td className={tdCls}><Link href={`/admin/orders/${o.id}`} className="font-semibold text-[#6E1A2C] hover:underline">{orderRef(o.id)}</Link><p className="text-[11px] text-muted-foreground">{CHANNEL[o.channel] ?? o.channel} · {o.paymentMethod}</p></td>
                       <td className={`${tdCls} whitespace-nowrap`}>{dateFmt(o.createdAt)}</td>
                       <td className={`${tdCls} max-w-[260px]`}><p className="truncate text-xs">{o.items.map((i: any) => `${i.productName} ${i.weight}×${i.quantity}`).join(", ")}</p></td>
                       <td className={tdCls}><StatusPill status={o.status === "DELIVERED" ? "RECEIVED" : o.status === "CANCELLED" || o.status === "RTO" ? "CANCELLED" : "ORDERED"} label={o.status.charAt(0) + o.status.slice(1).toLowerCase()} /></td>

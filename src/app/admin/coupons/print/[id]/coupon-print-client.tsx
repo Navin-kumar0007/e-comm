@@ -6,10 +6,11 @@ import { ArrowLeft, Printer, Ticket, Leaf, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import QRCode from "react-qr-code";
 import Barcode from "@/components/ui/barcode";
+import { SITE_URL } from "@/lib/site";
 
 export default function CouponPrintClient({ coupon }: { coupon: any }) {
   const [orientation, setOrientation] = useState<"LANDSCAPE" | "PORTRAIT">("LANDSCAPE");
-  const storeUrl = `https://nuttyworld.com/?coupon=${coupon.code}`;
+  const storeUrl = `${SITE_URL}/?coupon=${coupon.code}`;
 
   const formatDiscount = () => {
     return coupon.discountType === "PERCENTAGE" 

@@ -41,7 +41,7 @@ export function ReturnsClient({ requests }: { requests: any[] }) {
           <h1 className="text-3xl font-heading font-bold text-foreground">Returns</h1>
           <p className="text-muted-foreground mt-1">Damaged / wrong / missing item reports from customers</p>
         </div>
-        <div className="flex gap-1 p-1 bg-muted/50 rounded-xl">
+        <div className="flex flex-wrap gap-1 p-1 bg-muted/50 rounded-xl">
           {(["OPEN", "ALL"] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-sm ${filter === f ? "bg-card shadow-sm font-semibold" : "text-muted-foreground"}`}>
               {f === "OPEN" ? `Open (${requests.filter((r) => ["REQUESTED", "APPROVED"].includes(r.status)).length})` : "All"}

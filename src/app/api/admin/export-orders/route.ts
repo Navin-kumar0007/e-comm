@@ -3,6 +3,8 @@ import ExcelJS from "exceljs";
 import { getStaffContext } from "@/lib/auth-guard";
 import { prisma } from "@/lib/db/prisma";
 import { audit } from "@/lib/audit";
+import { orderRef } from "@/lib/site";
+import { stripOrderRef } from "@/lib/site";
 
 const STATUS: Record<string, string> = {
   Pending: "PENDING", Processing: "PROCESSING", Confirmed: "CONFIRMED", Shipped: "SHIPPED", Delivered: "DELIVERED",
@@ -19,7 +21,8 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const status = STATUS[url.searchParams.get("status") ?? ""];
   const channel = url.searchParams.get("channel") || undefined;
-  const q = url.searchParams.get("q")?.trim().replace(/^NW-/i, "").replace(/^#/, "");
+  const qRaw = url.searchParams.get("q");
+  const q = qRaw ? stripOrderRef(qRaw) : undefined;
   const from = url.searchParams.get("from");
   const to = url.searchParams.get("to");
 
@@ -66,7 +69,7 @@ export async function GET(req: Request) {
     const parts = String(o.shippingAddress || "").split(",").map((p: string) => p.trim());
     const pincode = /^\d{6}$/.test(parts[parts.length - 1] ?? "") ? parts[parts.length - 1] : "";
     ws.addRow({
-      ref: `NW-${o.id.slice(-8).toUpperCase()}`,
+      ref: orderRef(o.id),
       invoice: o.invoiceNumber ?? "",
       date: new Date(o.createdAt.getTime() + 5.5 * 36e5).toISOString().slice(0, 10),
       channel: CHANNEL[o.channel] ?? o.channel,

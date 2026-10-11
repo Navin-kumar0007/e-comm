@@ -394,3 +394,31 @@
 }
 .page-enter { animation: page-enter 0.3s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .page-enter { animation: none; } }
+
+/* ───────── Admin on phones and tablets ─────────
+   1. Any box that directly holds a table scrolls sideways inside itself, so wide tables
+      never push the whole screen sideways (the "shaking") and no column is cut off.
+   2. Inputs use 16px text on phones, otherwise iPhones zoom in on every tap and the
+      screen stops fitting.
+   3. The page itself never scrolls sideways; only tables and marked strips do. */
+@media screen and (max-width: 1023px) {
+  .admin-shell main :where(div, section):has(> table) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .admin-shell main table { min-width: 100%; }
+  /* Grid columns may shrink below their content, so the table inside scrolls instead. */
+  .admin-shell main .grid > * { min-width: 0; }
+  .admin-shell main th { white-space: nowrap; }
+  .admin-shell main { overflow-x: hidden; }
+}
+@media screen and (max-width: 480px) {
+  /* 4 × 6 in shipping label preview fits a phone screen; print size is unchanged. */
+  .admin-shell .sheet-4x6 { zoom: 0.88; }
+}
+@media screen and (max-width: 767px) {
+  .admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  .admin-shell select,
+  .admin-shell textarea { font-size: 16px; }
+}

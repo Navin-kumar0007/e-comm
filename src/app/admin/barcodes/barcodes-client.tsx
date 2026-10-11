@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Wand2, Printer, Search, CheckCircle2, AlertCircle } from "lucide-react";
+import { Wand2, Printer, Search, CheckCircle2, AlertCircle, Minus, Plus } from "lucide-react";
 import { generateMissingBarcodesAction, setBarcodeAction, type BarcodeRow } from "@/app/actions/admin-barcodes";
 import { isInStoreCode, isValidEan13, formatEan13 } from "@/lib/barcode";
 
@@ -41,6 +41,21 @@ export function BarcodesClient({ rows }: { rows: BarcodeRow[] }) {
     });
 
   const printHref = `/admin/barcodes/print?size=${size}&items=${chosen.map(([id, n]) => `${id}:${n}`).join(",")}`;
+  const total = chosen.reduce((s, [, n]) => s + n, 0);
+  const setCount = (id: string, n: number) => setCopies((c) => ({ ...c, [id]: Math.max(0, Math.min(500, n)) }));
+
+  const status = (r: BarcodeRow, draft: string | undefined, valid: boolean) =>
+    draft !== undefined && draft !== (r.barcode ?? "") ? (
+      <button onClick={() => save(r)} disabled={!valid || pending} className="h-9 shrink-0 rounded-lg bg-[#6E1A2C] px-3 text-xs font-semibold text-white disabled:opacity-40">Save</button>
+    ) : r.barcode && !isValidEan13(r.barcode) ? (
+      <span className="inline-flex shrink-0 items-center gap-1 text-xs text-red-700"><AlertCircle className="h-3.5 w-3.5" /> Invalid</span>
+    ) : r.barcode ? (
+      <span className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground" title={formatEan13(r.barcode)}>
+        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> {isInStoreCode(r.barcode) ? "In-store" : "GS1"}
+      </span>
+    ) : (
+      <span className="inline-flex shrink-0 items-center gap-1 text-xs text-amber-700"><AlertCircle className="h-3.5 w-3.5" /> Missing</span>
+    );
 
   return (
     <div className="space-y-6">
@@ -82,11 +97,61 @@ export function BarcodesClient({ rows }: { rows: BarcodeRow[] }) {
         </select>
         <a href={chosen.length ? printHref : undefined} target="_blank" rel="noreferrer" aria-disabled={!chosen.length}
           className={`inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-sm font-medium ${chosen.length ? "border-border hover:bg-muted" : "pointer-events-none border-border/50 text-muted-foreground/50"}`}>
-          <Printer className="h-4 w-4" /> Print {chosen.reduce((s, [, n]) => s + n, 0) || ""} stickers
+          <Printer className="h-4 w-4" /> Print {total || ""} stickers
         </a>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-border bg-white">
+      {/* Phones: one card per pack with a big − / + counter */}
+      <div className="space-y-2 pb-20 md:hidden">
+        {list.map((r) => {
+          const draft = edits[r.id];
+          const value = draft ?? r.barcode ?? "";
+          const valid = !value || isValidEan13(value);
+          const n = copies[r.id] ?? 0;
+          return (
+            <div key={r.id} className="rounded-xl border border-border bg-white p-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="font-medium leading-snug">{r.name}</p>
+                  <p className="text-xs text-muted-foreground">{r.pack}{r.sku ? ` · ${r.sku}` : ""}</p>
+                </div>
+                {status(r, draft, valid)}
+              </div>
+              <div className="mt-2.5 flex items-center gap-2">
+                <input
+                  value={value}
+                  inputMode="numeric"
+                  maxLength={13}
+                  onChange={(e) => setEdits((x) => ({ ...x, [r.id]: e.target.value.replace(/\D/g, "") }))}
+                  placeholder="Barcode not set"
+                  aria-label={`Barcode for ${r.name} ${r.pack}`}
+                  className={`h-10 min-w-0 flex-1 rounded-lg border px-2 font-mono ${valid ? "border-border" : "border-red-400 bg-red-50"}`}
+                />
+                <div className={`flex shrink-0 items-center rounded-lg border border-border ${r.barcode ? "" : "opacity-40"}`}>
+                  <button type="button" disabled={!r.barcode || n === 0} onClick={() => setCount(r.id, n - 1)} aria-label={`Fewer stickers for ${r.name} ${r.pack}`} className="flex h-10 w-10 items-center justify-center disabled:opacity-40"><Minus className="h-4 w-4" /></button>
+                  <input type="number" min={0} max={500} value={n} disabled={!r.barcode}
+                    onChange={(e) => setCount(r.id, Number(e.target.value) || 0)}
+                    aria-label={`Sticker copies for ${r.name} ${r.pack}`}
+                    className="h-10 w-12 border-x border-border bg-transparent text-center tabular-nums" />
+                  <button type="button" disabled={!r.barcode} onClick={() => setCount(r.id, n + 1)} aria-label={`More stickers for ${r.name} ${r.pack}`} className="flex h-10 w-10 items-center justify-center disabled:opacity-40"><Plus className="h-4 w-4" /></button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Phones: print bar stays at the bottom once stickers are picked */}
+      {total > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-30 flex items-center gap-2 border-t border-border bg-white p-3 shadow-[0_-6px_20px_rgba(0,0,0,0.08)] md:hidden">
+          <button type="button" onClick={() => setCopies({})} className="h-11 rounded-lg border border-border px-3 text-sm">Clear</button>
+          <a href={printHref} target="_blank" rel="noreferrer" className="flex h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-[#6E1A2C] text-sm font-semibold text-white">
+            <Printer className="h-4 w-4" /> Print {total} sticker{total === 1 ? "" : "s"}
+          </a>
+        </div>
+      )}
+
+      <div className="hidden overflow-x-auto rounded-xl border border-border bg-white md:block">
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
@@ -119,22 +184,12 @@ export function BarcodesClient({ rows }: { rows: BarcodeRow[] }) {
                         aria-label={`Barcode for ${r.name} ${r.pack}`}
                         className={`h-9 w-40 rounded-lg border px-2 font-mono text-sm ${valid ? "border-border" : "border-red-400 bg-red-50"}`}
                       />
-                      {draft !== undefined && draft !== (r.barcode ?? "") ? (
-                        <button onClick={() => save(r)} disabled={!valid || pending} className="h-9 rounded-lg bg-[#6E1A2C] px-3 text-xs font-semibold text-white disabled:opacity-40">Save</button>
-                      ) : r.barcode && !isValidEan13(r.barcode) ? (
-                        <span className="inline-flex items-center gap-1 text-xs text-red-700"><AlertCircle className="h-3.5 w-3.5" /> Invalid</span>
-                      ) : r.barcode ? (
-                        <span className="inline-flex items-center gap-1 text-xs text-muted-foreground" title={formatEan13(r.barcode)}>
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> {isInStoreCode(r.barcode) ? "In-store" : "GS1"}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-xs text-amber-700"><AlertCircle className="h-3.5 w-3.5" /> Missing</span>
-                      )}
+                      {status(r, draft, valid)}
                     </div>
                   </td>
                   <td className="px-2 py-2.5">
                     <input type="number" min={0} max={500} value={copies[r.id] ?? 0} disabled={!r.barcode}
-                      onChange={(e) => setCopies((c) => ({ ...c, [r.id]: Math.max(0, Math.min(500, Number(e.target.value) || 0)) }))}
+                      onChange={(e) => setCount(r.id, Number(e.target.value) || 0)}
                       aria-label={`Sticker copies for ${r.name} ${r.pack}`}
                       className="h-9 w-20 rounded-lg border border-border px-2 text-sm disabled:opacity-40" />
                   </td>

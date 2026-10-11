@@ -44,6 +44,7 @@ export async function generateMetadata({
   }
 
   return {
+    alternates: { canonical: `/product/${resolvedParams.slug}` },
     title: `${product.name} — Buy Online at Spicy Nuts`,
     description:
       product.description?.slice(0, 160) ||

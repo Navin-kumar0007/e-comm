@@ -2,6 +2,7 @@ import Image from "next/image";
 import { computeInvoice, type InvoiceOrder, type InvoiceSettings } from "@/lib/invoice";
 import { amountInWords, stateCode } from "@/lib/gst";
 import { BRAND_EMAIL, BRAND_PHONE_DISPLAY } from "@/lib/contact";
+import { orderRef } from "@/lib/site";
 
 type InvoiceDocumentOrder = Omit<InvoiceOrder, "items"> & {
   customerName: string;
@@ -75,7 +76,7 @@ export function InvoiceDocument({
             <tbody>
               <tr><td className="pr-3 text-[#6b5a52]">{inv.isFinalInvoice ? "Invoice No." : "Order No."}</td><td className="font-mono font-semibold">{inv.invoiceNumber}</td></tr>
               <tr><td className="pr-3 text-[#6b5a52]">Invoice Date</td><td className="font-semibold">{invoiceDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td></tr>
-              <tr><td className="pr-3 text-[#6b5a52]">Order Ref.</td><td className="font-mono">NW-{order.id.slice(-8).toUpperCase()}</td></tr>
+              <tr><td className="pr-3 text-[#6b5a52]">Order Ref.</td><td className="font-mono">{orderRef(order.id)}</td></tr>
               <tr><td className="pr-3 text-[#6b5a52]">Payment</td><td>{({ COD: "Cash on Delivery", ONLINE: "Prepaid (Online)", CASH: "Paid in cash", UPI: "Paid by UPI", CARD: "Paid by card" } as Record<string, string>)[order.paymentMethod] ?? order.paymentMethod}</td></tr>
             </tbody>
           </table>

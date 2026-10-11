@@ -12,6 +12,7 @@ import { nextAdminStatuses, ORDER_STATUSES, type OrderStatus } from '@/lib/order
 import { logOrderEvent } from '@/lib/order-events';
 import { adjustStock, StockError } from '@/lib/inventory';
 import { splitGst, isValidGstin } from '@/lib/gst';
+import { stripOrderRef } from "@/lib/site";
 
 function mapPrismaStatusToUI(status: string) {
   const m: Record<string, string> = {
@@ -53,7 +54,7 @@ export async function getAdminOrders(opts: { page?: number; q?: string; status?:
     Cancelled: 'CANCELLED', RTO: 'RTO', Returned: 'RETURNED', Expired: 'EXPIRED',
   }).find(([label]) => label === opts.status)?.[1];
 
-  const q = opts.q?.trim().replace(/^NW-/i, '').replace(/^#/, '');
+  const q = opts.q ? stripOrderRef(opts.q) : undefined;
   const search = q
     ? {
         OR: [

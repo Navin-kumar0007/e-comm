@@ -8,6 +8,7 @@ import { COLLECTIONS, getCollection, collectionWhere } from '@/lib/collections';
 import { PageHero } from '@/components/storefront/royal/page-hero';
 
 export const metadata = {
+  alternates: { canonical: '/shop' },
   title: 'Buy Premium Dry Fruits, Nuts & Seeds Online — Spicy Nuts Shop',
   description: 'Shop almonds, cashews, walnuts, pistachios, dates, raisins, figs, makhana and seeds. Free shipping above ₹999.',
   keywords: ['buy dry fruits online', 'almonds online', 'cashew nuts online', 'walnuts online', 'dates and raisins'],

@@ -7,7 +7,7 @@ import QRCode from "react-qr-code";
 
 export interface PrintOrder {
   id: string;
-  ref: string; // NW-XXXXXXXX
+  ref: string; // SN-XXXXXXXX
   invoiceNumber: string | null;
   createdAt: string;
   paymentMethod: string;

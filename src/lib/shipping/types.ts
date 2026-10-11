@@ -42,7 +42,7 @@ export interface ServiceabilityResult {
 
 export interface CreateShipmentInput {
   orderId: string;
-  orderNumber: string; // human-facing, e.g. NW-1A2B3C4D
+  orderNumber: string; // human-facing, e.g. SN-1A2B3C4D
   paymentMode: PaymentMode;
   orderValue: number;
   codAmount: number;

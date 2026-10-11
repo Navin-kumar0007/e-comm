@@ -9,6 +9,7 @@ import { parseGrams, repackPlan, round2, round3 } from '@/lib/wms-core';
 import {
   consumeMaterial, createPackLot, getSellableUnits, getWarehouseOverview, MaterialShortError, nextDocNumber, receiveMaterial, updatePackCost,
 } from '@/lib/wms';
+import { orderRef } from "@/lib/site";
 
 async function who() {
   await requirePermission('inventory.manage');
@@ -272,7 +273,7 @@ export async function traceLotAction(lotId: string) {
   const byId = new Map(orders.map((o: any) => [o.id, o]));
   const rows = lot.allocations.map((a: any) => {
     const o: any = a.orderId ? byId.get(a.orderId) : null;
-    return { qty: a.qty, at: a.createdAt, orderId: a.orderId, ref: a.orderId ? `NW-${a.orderId.slice(-8).toUpperCase()}` : null, customer: o?.customerName ?? null, phone: o?.customerPhone ?? null, status: o?.status ?? null };
+    return { qty: a.qty, at: a.createdAt, orderId: a.orderId, ref: a.orderId ? orderRef(a.orderId) : null, customer: o?.customerName ?? null, phone: o?.customerPhone ?? null, status: o?.status ?? null };
   });
   return json({ lot, rows, units: rows.reduce((s: number, r: any) => s + r.qty, 0), customers: orderIds.length });
 }

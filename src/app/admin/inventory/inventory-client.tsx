@@ -103,7 +103,7 @@ export function InventoryClient({ products, initialQuery = "" }: { products: Pro
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 p-1 bg-muted/50 rounded-xl">
+        <div className="flex flex-wrap gap-1 p-1 bg-muted/50 rounded-xl">
           {(["all", "low", "out"] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-sm ${filter === f ? "bg-card shadow-sm font-semibold" : "text-muted-foreground"}`}>
               {f === "all" ? "All" : f === "low" ? `Low (${summary.low})` : `Out (${summary.out})`}

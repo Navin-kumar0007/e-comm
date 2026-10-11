@@ -142,11 +142,11 @@ export function BatchesClient({ lots, unassigned, canTrace, initialQuery }: { lo
           </div>
         }
         action={
-          <div className="flex items-center gap-2">
-            <div className="w-40"><select className={inputCls} value={stickerSize} onChange={(e) => setStickerSize(e.target.value as "50x25" | "a4")} aria-label="Sticker size">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+            <div className="w-full sm:w-40"><select className={inputCls} value={stickerSize} onChange={(e) => setStickerSize(e.target.value as "50x25" | "a4")} aria-label="Sticker size">
               <option value="50x25">50 × 25 mm roll</option><option value="a4">A4 · 65 per sheet</option>
             </select></div>
-            <div className="flex h-9 w-56 items-center gap-2 rounded-lg border border-border px-3">
+            <div className="flex h-9 w-full items-center gap-2 rounded-lg border border-border px-3 sm:w-56">
               <Search className="h-4 w-4 text-muted-foreground" />
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Batch code, product, PO" className="w-full bg-transparent text-sm outline-none" />
             </div>

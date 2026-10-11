@@ -8,6 +8,7 @@ import { getRazorpay } from '@/lib/orders';
 import { isValidGstin } from '@/lib/gst';
 import { EXPENSE_CATEGORIES, PAY_METHODS, lastMonths, monthRange, r2, ymOf } from '@/lib/finance-core';
 import { getCashMonth, getGstReturn, getPositions, getProfitAndLoss, receivedValue } from '@/lib/finance';
+import { orderRef } from "@/lib/site";
 
 const json = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
 const clean = (s: unknown, max = 200) => (typeof s === 'string' ? s.trim().slice(0, max) : '') || null;
@@ -203,7 +204,7 @@ export async function getCodOutstanding() {
   ]);
   return json({
     orders: orders.map((o: any) => ({
-      id: o.id, ref: `NW-${o.id.slice(-8).toUpperCase()}`, customerName: o.customerName, total: o.total, deliveredAt: o.deliveredAt,
+      id: o.id, ref: orderRef(o.id), customerName: o.customerName, total: o.total, deliveredAt: o.deliveredAt,
       awb: o.shipments[0]?.awb ?? null, courier: o.shipments[0]?.courierName ?? (o.shipments[0]?.provider && o.shipments[0].provider !== 'MANUAL' ? o.shipments[0].provider : 'Self / manual'),
     })),
     remittances,
@@ -321,7 +322,7 @@ export async function getRazorpayStatus() {
   }
   return json({
     configured: !!getRazorpay(),
-    unsettled: unsettled.map((o: any) => ({ ...o, ref: `NW-${o.id.slice(-8).toUpperCase()}` })),
+    unsettled: unsettled.map((o: any) => ({ ...o, ref: orderRef(o.id) })),
     settlements: [...batches.values()].slice(0, 20),
   });
 }

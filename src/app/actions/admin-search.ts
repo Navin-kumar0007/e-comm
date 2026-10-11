@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/db/prisma";
 import { getStaffContext } from "@/lib/auth-guard";
+import { stripOrderRef } from "@/lib/site";
 
 export interface SearchHit {
   kind: "order" | "product" | "customer" | "purchase" | "supplier" | "batch";
@@ -22,8 +23,8 @@ export async function adminSearchAction(query: string): Promise<SearchHit[]> {
   const hits: SearchHit[] = [];
 
   if (staff.can("orders.view")) {
-    // Order refs are shown as NW-<last 8 of id>; accept either form.
-    const ref = q.replace(/^#?nw-?/i, "").toLowerCase();
+    // Order refs are shown as SN-<last 8 of id> (older ones NW-); accept any form.
+    const ref = stripOrderRef(q).toLowerCase();
     const orders = await prisma.order.findMany({
       where: {
         OR: [

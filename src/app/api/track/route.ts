@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
+import { stripOrderRef } from "@/lib/site";
 
 const NOT_FOUND = "No order found with that Order ID and email. Please check both and try again.";
 
@@ -18,8 +19,8 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Order ID and email are both required" }, { status: 400 });
   }
 
-  // Accept the full id, or the short "NW-XXXXXXXX" code (last 8 chars of the id).
-  const short = orderId.replace(/^NW-/i, "").replace(/^#/, "").toLowerCase();
+  // Accept the full id, or the short "SN-XXXXXXXX" code (older "NW-") — last 8 chars of the id.
+  const short = stripOrderRef(orderId).toLowerCase();
   const candidates = await prisma.order.findMany({
     where: {
       customerEmail: { equals: email, mode: "insensitive" },

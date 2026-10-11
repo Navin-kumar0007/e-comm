@@ -26,6 +26,7 @@ import {
   ShoppingBag,
   Tag
 } from "lucide-react";
+import { orderRef } from "@/lib/site";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -174,7 +175,7 @@ export default function CheckoutPage() {
 
       const saveConfirmation = (paymentLabel: string) => {
         sessionStorage.setItem('lastOrder', JSON.stringify({
-          orderNumber: `NW-${order.orderId.slice(-8).toUpperCase()}`,
+          orderNumber: orderRef(order.orderId),
           orderId: order.orderId,
           subtotal: order.subtotal,
           discount: order.discount,

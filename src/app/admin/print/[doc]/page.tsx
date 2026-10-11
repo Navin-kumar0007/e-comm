@@ -6,6 +6,7 @@ import { estimateOrderWeight, parseAddress } from "@/lib/shipping/service";
 import { InvoiceDocument } from "@/components/invoice/invoice-document";
 import { BRAND_PHONE_DISPLAY } from "@/lib/contact";
 import { PrintToolbar, ShippingLabel, PackingSlip, PickList, type PrintOrder } from "../print-docs";
+import { orderRef } from "@/lib/site";
 
 const DOCS = {
   invoices: { title: "Tax invoices", page: "A4", note: "A4 paper" },
@@ -42,7 +43,7 @@ export default async function PrintPage({ params, searchParams }: { params: Prom
     const ship = o.shipments[0];
     return {
       id: o.id,
-      ref: `NW-${o.id.slice(-8).toUpperCase()}`,
+      ref: orderRef(o.id),
       invoiceNumber: o.invoiceNumber,
       createdAt: o.createdAt.toISOString(),
       paymentMethod: o.paymentMethod,

@@ -60,7 +60,7 @@ export default function TrackOrderLookup() {
               type="text"
               value={orderId}
               onChange={(e) => setOrderId(e.target.value)}
-              placeholder="e.g. NW-A1B2C3D4 or full order ID"
+              placeholder="e.g. SN-A1B2C3D4 or full order ID"
               className="w-full px-4 py-3 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
             />
           </div>

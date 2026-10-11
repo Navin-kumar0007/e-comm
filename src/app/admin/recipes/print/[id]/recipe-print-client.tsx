@@ -6,10 +6,11 @@ import Link from "next/link";
 import { ArrowLeft, Printer, Clock, Users, ChefHat, Type } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import QRCode from "react-qr-code";
+import { SITE_URL } from "@/lib/site";
 
 export default function RecipePrintClient({ recipe }: { recipe: any }) {
   const [orientation, setOrientation] = useState<"PORTRAIT" | "LANDSCAPE">("PORTRAIT");
-  const recipeUrl = `https://nuttyworld.com/recipes/${recipe.slug}`;
+  const recipeUrl = `${SITE_URL}/recipes/${recipe.slug}`;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-20">
