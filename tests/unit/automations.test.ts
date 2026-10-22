@@ -1,4 +1,7 @@
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll, vi } from "vitest";
+
+// These are pure helpers; keep the database client from starting (CI has no DATABASE_URL).
+vi.mock("@/lib/db/prisma", () => ({ prisma: {} }));
 import { isSendingHours, customerKey, couponCode, istLabel } from "@/lib/automations";
 import { linkToken, checkLinkToken, cartRestoreUrl } from "@/lib/signed-link";
 import { WA_TEMPLATES } from "@/lib/whatsapp-templates";
