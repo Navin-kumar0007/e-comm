@@ -536,7 +536,7 @@ export default function CheckoutPage() {
                 <span>Insured Delivery</span>
               </div>
               <p className="text-center text-xs leading-snug text-muted-foreground">
-                Your name, phone, email and address are used only to deliver this order, issue its GST invoice and send order updates (including on WhatsApp).
+                Your name, phone, email and address are used only to deliver this order, issue its GST invoice and send order updates (including on WhatsApp): one reminder if your payment doesn’t go through, and a request to rate the order after delivery.
                 {" "}<a href="/privacy-policy" target="_blank" className="underline">Privacy Policy</a>
               </p>
             </div>

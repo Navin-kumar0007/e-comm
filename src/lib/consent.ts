@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/db/prisma";
 
 /** Bump when the privacy notice changes, so each consent shows which wording the person saw. */
-export const NOTICE_VERSION = "2026-10";
+export const NOTICE_VERSION = "2026-10b";
 
 export type ConsentPurpose = "TERMS" | "WHATSAPP_OFFERS" | "EMAIL_OFFERS" | "ANALYTICS";
 export type ConsentSource = "SIGNUP" | "CHECKOUT" | "ACCOUNT" | "POPUP" | "ADMIN";

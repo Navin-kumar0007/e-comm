@@ -21,7 +21,10 @@ export type TemplateKey =
   | "price_alert_subscribed"
   | "owner_daily_summary"
   | "counter_invoice"
-  | "cod_confirm";
+  | "cod_confirm"
+  | "payment_pending"
+  | "cart_coupon"
+  | "review_request";
 
 export const WA_TEMPLATES: Record<TemplateKey, { env: string; category: "UTILITY" | "MARKETING"; body: string; example: string[]; quickReplies?: string[] }> = {
   order_confirmed: {
@@ -108,6 +111,24 @@ export const WA_TEMPLATES: Record<TemplateKey, { env: string; category: "UTILITY
     body: "Hi {{1}}, thank you for your Spicy Nuts order #{{2}} for ₹{{3}}, to be paid in cash on delivery. Please tap Yes to confirm it so we can pack and ship it. If you did not place this order, tap Cancel.",
     example: ["Priya", "1A2B3C4D", "650"],
     quickReplies: ["Yes, confirm", "Cancel order"],
+  },
+  payment_pending: {
+    env: "WA_TEMPLATE_PAYMENT_PENDING",
+    category: "UTILITY",
+    body: "Hi {{1}}, the payment for your Spicy Nuts order #{{2}} for ₹{{3}} did not go through, so the order was not placed. Your items are saved. You can complete the order here: {{4}} Reply to this message if you need any help.",
+    example: ["Priya", "1A2B3C4D", "650", "https://www.spicynuts.in/cart/restore/abc/xyz"],
+  },
+  cart_coupon: {
+    env: "WA_TEMPLATE_CART_COUPON",
+    category: "MARKETING",
+    body: "Hi {{1}}, your Spicy Nuts items are still waiting for you. Use code {{2}} to get {{3}}% off when you complete your order before {{4}}. Your saved cart is here: {{5}} Happy snacking!",
+    example: ["Priya", "BACK5-7KQ2", "5", "24 Oct, 6 pm", "https://www.spicynuts.in/cart/restore/abc/xyz"],
+  },
+  review_request: {
+    env: "WA_TEMPLATE_REVIEW_REQUEST",
+    category: "UTILITY",
+    body: "Hi {{1}}, we hope you are enjoying your Spicy Nuts order #{{2}}. Please tell us how it was by rating it here: {{3}} It takes less than a minute and helps other customers. Thank you.",
+    example: ["Priya", "1A2B3C4D", "https://www.spicynuts.in/review/abc/xyz"],
   },
 };
 

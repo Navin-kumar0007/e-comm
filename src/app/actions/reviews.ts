@@ -121,6 +121,44 @@ export async function addReview(input: AddReviewInput) {
   }
 }
 
+/**
+ * Review from the private link in a review request. The link proves the person received this
+ * order, so the review counts as a verified purchase. One review per product per order.
+ */
+export async function addOrderReview(input: { orderId: string; token: string; productId: string; rating: number; comment?: string }) {
+  const { orderId, token, productId } = input;
+  const { checkLinkToken } = await import("@/lib/signed-link");
+  if (!orderId || !checkLinkToken("review", orderId, token)) return { error: "This review link is not valid." };
+  const rating = Math.round(Number(input.rating));
+  if (!(rating >= 1 && rating <= 5)) return { error: "Please choose 1 to 5 stars." };
+  const comment = (input.comment || "").trim();
+  if (comment.length > 2000) return { error: "Review is too long (maximum 2000 characters)." };
+
+  const ip = ((await headers()).get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+  if (!rateLimit(`review:${ip}`, 10, 10 * 60_000).allowed) return { error: "Too many reviews at once. Please try again in a few minutes." };
+
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: { status: true, customerName: true, customerEmail: true, userId: true, items: { select: { productId: true } } },
+  });
+  if (!order || order.status !== "DELIVERED") return { error: "Reviews open once your order is delivered." };
+  if (!order.items.some((i) => i.productId === productId)) return { error: "This product is not in your order." };
+  const already = await prisma.review.findFirst({ where: { productId, userEmail: { equals: order.customerEmail, mode: "insensitive" } }, select: { id: true } });
+  if (already) return { error: "You have already reviewed this product. Thank you!" };
+
+  // "Priya S." — first name and last initial only.
+  const [first, ...rest] = order.customerName.trim().split(/\s+/);
+  const userName = [first, rest.length ? `${rest[rest.length - 1][0].toUpperCase()}.` : ""].filter(Boolean).join(" ") || "Customer";
+  const product = await prisma.product.findUnique({ where: { id: productId }, select: { slug: true } });
+  await prisma.review.create({
+    data: { rating, comment: comment || null, productId, userId: order.userId, userName, userEmail: order.customerEmail, images: "[]", verifiedPurchase: true, status: "APPROVED" },
+  });
+  try {
+    if (product?.slug) revalidatePath(`/product/${product.slug}`, "page");
+  } catch {}
+  return { success: true };
+}
+
 export async function getReviews(productId: string) {
   try {
     const reviews = await prisma.review.findMany({

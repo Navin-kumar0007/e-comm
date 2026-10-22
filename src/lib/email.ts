@@ -317,3 +317,48 @@ export async function sendBillEmail(to: string, customerName: string, invoiceNum
     </div>
   `);
 }
+
+const button = (href: string, label: string) =>
+  `<p style="margin:20px 0"><a href="${href}" style="background:#6E1A2C;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">${label}</a></p>`;
+
+/** Online payment didn't complete: the order expired, the items are saved behind a private link. */
+export async function sendPaymentReminderEmail(to: string, customerName: string, orderId: string, total: number, link: string) {
+  const orderNum = orderId.slice(-8).toUpperCase();
+  return sendEmail(to, `Your Spicy Nuts order #${orderNum} is not complete`, `
+    <div style="${baseStyles}">
+      <h1 style="color:#6E1A2C;font-size:20px;margin:0 0 12px">Your payment did not go through</h1>
+      <p>Namaste ${esc(customerName || "")},</p>
+      <p>The payment for your order <strong>#${orderNum}</strong> for <strong>₹${total.toFixed(2)}</strong> did not complete, so the order was not placed and no money was taken.</p>
+      <p>Your items are saved. Tap below to finish your order in a minute.</p>
+      ${button(link, "Complete my order")}
+      <p style="color:#666;font-size:12px">Need help? Just reply to this email.</p>
+    </div>
+  `);
+}
+
+/** Second reminder, only for customers who agreed to offers: a one-time coupon. */
+export async function sendCartCouponEmail(to: string, customerName: string, code: string, percent: number, until: string, link: string) {
+  return sendEmail(to, `${percent}% off to complete your Spicy Nuts order`, `
+    <div style="${baseStyles}">
+      <h1 style="color:#6E1A2C;font-size:20px;margin:0 0 12px">Your items are still waiting</h1>
+      <p>Namaste ${esc(customerName || "")},</p>
+      <p>Use code <strong style="font-size:18px;letter-spacing:1px">${esc(code)}</strong> to get <strong>${percent}% off</strong> when you complete your order before <strong>${esc(until)}</strong>.</p>
+      ${button(link, "Open my saved cart")}
+      <p style="color:#666;font-size:12px">One use only. You're getting this because you agreed to receive offers from Spicy Nuts; you can turn them off any time in My Account.</p>
+    </div>
+  `);
+}
+
+/** A few days after delivery: rate the products in the order. */
+export async function sendReviewRequestEmail(to: string, customerName: string, orderId: string, link: string) {
+  const orderNum = orderId.slice(-8).toUpperCase();
+  return sendEmail(to, `How was your Spicy Nuts order #${orderNum}?`, `
+    <div style="${baseStyles}">
+      <h1 style="color:#6E1A2C;font-size:20px;margin:0 0 12px">How was your order?</h1>
+      <p>Namaste ${esc(customerName || "")},</p>
+      <p>We hope you are enjoying your order <strong>#${orderNum}</strong>. Please tell us how it was. It takes less than a minute and helps other customers choose.</p>
+      ${button(link, "Rate my order")}
+      <p style="color:#666;font-size:12px">Something wrong with the order? Reply to this email and we'll make it right.</p>
+    </div>
+  `);
+}

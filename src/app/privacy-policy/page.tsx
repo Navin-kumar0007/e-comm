@@ -34,7 +34,7 @@ function BuiltInPage() {
         <p>To exercise these rights, please contact our Data Protection Officer at spicynuts1973@gmail.com.</p>
 
         <h3>5. WhatsApp Messages</h3>
-        <p>If you give us your phone number, we send order updates (confirmation, shipping, delivery) on WhatsApp from +91 85500 07073 using the WhatsApp Business Platform by Meta. Offers are sent only if you opted in. Reply STOP at any time to stop offers. Messages you send us are used only to answer you and handle your order.</p>
+        <p>If you give us your phone number, we send order updates (confirmation, shipping, delivery, one reminder if an online payment does not go through, and one request to rate your order a few days after delivery) on WhatsApp from +91 85500 07073 using the WhatsApp Business Platform by Meta, and by email. Offers, including a one-time discount code for an unfinished order, are sent only if you opted in. Reply STOP at any time to stop offers. Messages you send us are used only to answer you and handle your order.</p>
 
         <h3 id="data-deletion">6. Deleting Your Data</h3>
         <p>You can ask us to delete your account and personal data at any time:</p>
