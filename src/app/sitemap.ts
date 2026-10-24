@@ -13,7 +13,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/blog', priority: 0.6 },
     { path: '/contact', priority: 0.6 },
     { path: '/blend-creator', priority: 0.6 },
-    { path: '/traceability', priority: 0.5 },
     { path: '/founder', priority: 0.5 },
     { path: '/help', priority: 0.4 },
     { path: '/privacy-policy', priority: 0.3 },

@@ -43,7 +43,7 @@ export default function SubscribePage() {
 
   return (
     <>
-      <PageHero eyebrow={"Organic & Homemade"} title={"Taste of Spicy Nuts Box"} subtitle={"Discover a curated selection of our finest Royal Dry Fruits (Mamra Almonds, Goan Cashews), freshly roasted organic snacks, and artisanal Chai masalas delivered to your door every month."} crumbs={[{ label: "Home", href: "/" }, { label: "Subscribe" }]} />
+      <PageHero eyebrow={"Handpicked & Homemade"} title={"Taste of Spicy Nuts Box"} subtitle={"Discover a curated selection of our finest Royal Dry Fruits (Mamra Almonds, Goan Cashews), freshly roasted snacks, and artisanal Chai masalas delivered to your door every month."} crumbs={[{ label: "Home", href: "/" }, { label: "Subscribe" }]} />
       <div className="container mx-auto max-w-6xl px-4 py-8 md:py-12 min-h-[60vh]">
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -65,7 +65,7 @@ export default function SubscribePage() {
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-              <span>1 Large pack of Organic Snacks (Makhana/Khakhra)</span>
+              <span>1 Large pack of Roasted Snacks (Makhana/Khakhra)</span>
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
@@ -107,7 +107,7 @@ export default function SubscribePage() {
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-              <span className="font-medium">3 Large packs of Organic Snacks</span>
+              <span className="font-medium">3 Large packs of Roasted Snacks</span>
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />

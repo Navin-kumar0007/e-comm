@@ -10,7 +10,7 @@ export function AIConcierge() {
     {
       role: "model",
       content:
-        "Greetings! I am the Spicy Nuts Royal Concierge. How may I assist you with our single-estate dry fruits, organic masalas, or custom spice blends today?",
+        "Greetings! I am the Spicy Nuts Royal Concierge. How may I assist you with our single-estate dry fruits, handcrafted masalas, or custom spice blends today?",
     },
   ]);
   const [input, setInput] = useState("");

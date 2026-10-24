@@ -209,7 +209,7 @@ export default async function RewardsPage() {
           <div className="bg-primary/5 rounded-3xl p-6 border border-primary/20 text-center">
             <h3 className="font-bold mb-2">Ready to earn more?</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Explore our latest organic collections and start building your Spice Points today.
+              Explore our latest collections and start building your Spice Points today.
             </p>
             <Link href="/shop" className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-3 rounded-xl font-bold shadow-md hover:bg-primary/90 transition-colors">
               <ShoppingBag className="w-4 h-4" /> Shop Now

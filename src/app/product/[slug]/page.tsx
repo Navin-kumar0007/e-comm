@@ -140,10 +140,10 @@ export default async function ProductPage({
     mainEntity: [
       {
         "@type": "Question",
-        name: `Is ${product.name} 100% natural and organic?`,
+        name: `Is ${product.name} 100% natural?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: `Yes, our ${product.name} is ${product.isOrganic ? "certified organic" : "100% natural"}, free from any artificial colors, preservatives, or additives. We source directly from trusted partner farms.`,
+          text: `Yes, our ${product.name} is 100% natural, free from any artificial colors, preservatives, or additives. We source directly from trusted partner farms.`,
         },
       },
       {
@@ -362,9 +362,7 @@ export default async function ProductPage({
                 <li className="flex justify-between border-b border-border/50 pb-2">
                   <span className="text-muted-foreground">Sourcing</span>
                   <span className="font-medium">
-                    {product.isOrganic
-                      ? "Certified Organic"
-                      : "Naturally sourced"}
+                    Naturally sourced
                   </span>
                 </li>
                 <li className="flex justify-between border-b border-border/50 pb-2">
@@ -390,7 +388,7 @@ export default async function ProductPage({
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   Yes, our {product.name} is{" "}
-                  {product.isOrganic ? "certified organic" : "100% natural"},
+                  100% natural,
                   free from any artificial colors, preservatives, or additives.
                   We source directly from trusted partner farms.
                 </p>

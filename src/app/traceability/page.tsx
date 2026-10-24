@@ -25,6 +25,7 @@ export default function TraceabilityPage() {
   const [batchNo, setBatchNo] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<TraceResult | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,8 +34,9 @@ export default function TraceabilityPage() {
     
     try {
       const res = await fetch('/api/traceability/' + batchNo);
-      const data = await res.json();
-      setResult(data);
+      if (!res.ok) { setResult(null); setNotFound(true); return; }
+      setNotFound(false);
+      setResult(await res.json());
     } catch (e) {
       console.error(e);
     } finally {
@@ -76,6 +78,11 @@ export default function TraceabilityPage() {
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
           </Button>
         </form>
+        {notFound && (
+          <p className="max-w-xl mx-auto -mt-10 mb-12 text-center text-sm text-muted-foreground">
+            We couldn&apos;t find that batch number yet. Check the code printed on your jar, or WhatsApp us at +91 85500 07073 and we&apos;ll tell you when and where it was packed.
+          </p>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Timeline and Search Result Column */}

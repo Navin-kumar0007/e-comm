@@ -52,8 +52,8 @@ export const CONTENT_DEFAULTS = {
     facebook: "",
   },
   seo: {
-    homeTitle: "Spicy Nuts — Premium Dry Fruits, Nuts & Organic Spices | Buy Online India",
-    homeDescription: "Buy premium dry fruits, organic spices, Mamra almonds, Kashmiri walnuts, cashews, pistachios, and handcrafted masalas online. Free shipping above ₹999. From B.M.V. Spices & Dry Fruits, Bidar, Karnataka.",
+    homeTitle: "Spicy Nuts — Premium Dry Fruits, Nuts & Spices | Buy Online India",
+    homeDescription: "Buy premium dry fruits, whole spices, Mamra almonds, Kashmiri walnuts, cashews, pistachios, and handcrafted masalas online. Free shipping above ₹999. From B.M.V. Spices & Dry Fruits, Bidar, Karnataka.",
   },
   policies: { privacy: "", terms: "", shipping: "", returns: "" },
 };

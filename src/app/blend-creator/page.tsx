@@ -5,13 +5,13 @@ import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
   title: 'Custom Spice Blend Creator | Spicy Nuts',
-  description: 'Mix your own custom organic spice blend.',
+  description: 'Mix your own custom spice blend.',
 };
 
 export default function BlendCreatorPage() {
   return (
     <div className="min-h-screen pb-20 bg-background overflow-hidden relative">
-      <PageHero eyebrow={"Spice Atelier"} title={"Create Your Signature Blend"} subtitle={"Choose your base, adjust the heat, and add aromatics. We'll hand-mix your custom organic spice blend and ship it straight to your door."} crumbs={[{ label: "Home", href: "/" }, { label: "Custom blend" }]} />
+      <PageHero eyebrow={"Spice Atelier"} title={"Create Your Signature Blend"} subtitle={"Choose your base, adjust the heat, and add aromatics. We'll hand-mix your custom spice blend and ship it straight to your door."} crumbs={[{ label: "Home", href: "/" }, { label: "Custom blend" }]} />
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -z-10 animate-pulse delay-1000" />
       

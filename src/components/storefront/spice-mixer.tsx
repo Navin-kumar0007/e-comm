@@ -53,7 +53,7 @@ export function SpiceMixer() {
   });
   
   const [blendName, setBlendName] = useState(paramName || '');
-  const [blendDescription, setBlendDescription] = useState('An artisanal organic formulation tailored to your kitchen.');
+  const [blendDescription, setBlendDescription] = useState('An artisanal blend tailored to your kitchen.');
   
   // Sommelier AI state
   const [activeTab, setActiveTab] = useState<'manual' | 'sommelier'>('manual');

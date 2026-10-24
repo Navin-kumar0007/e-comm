@@ -68,7 +68,7 @@ function esc(value: string) {
 const headerHtml = `
   <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #c59b27;">
     <h2 style="margin: 0; color: #052c1e; font-size: 24px;">✦ Spicy Nuts ✦</h2>
-    <p style="margin: 4px 0 0; color: #8a6d1f; font-size: 12px; letter-spacing: 2px;">PURE · NATURAL · ORGANIC</p>
+    <p style="margin: 4px 0 0; color: #8a6d1f; font-size: 12px; letter-spacing: 2px;">FROM BIDAR, KARNATAKA</p>
   </div>
 `;
 

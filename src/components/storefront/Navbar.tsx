@@ -10,7 +10,7 @@ import { useState } from "react";
 import { CartDrawer, CartSheet } from "./cart-drawer";
 import { usePathname } from "next/navigation";
 import { NotificationsDropdown } from "./notifications";
-import { Menu, Search, BookOpen, Award, MapPin, Sparkles, Phone } from "lucide-react";
+import { Menu, Search, BookOpen, Award, Sparkles, Phone } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -79,7 +79,6 @@ export function Navbar({ announcement }: { announcement?: { enabled: boolean; me
                   <p className="eyebrow px-1 pb-2 pt-6 text-brand-gold-deep">Spicy Nuts</p>
                   {[
                     { href: "/blend-creator", label: "Spice Atelier: custom blend", icon: Sparkles },
-                    { href: "/traceability", label: "Farm journey", icon: MapPin },
                     { href: "/recipes", label: "Recipes", icon: BookOpen },
                     { href: "/about", label: "Our story", icon: Award },
                   ].map(({ href, label, icon: Icon }) => (

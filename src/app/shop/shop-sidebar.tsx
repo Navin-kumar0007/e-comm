@@ -19,7 +19,6 @@ const PRICES = [
 ];
 
 const DIETARY = [
-  { label: "100% Organic", value: "organic" },
   { label: "Raw & unpolished", value: "raw" },
   { label: "Gluten-free", value: "gluten-free" },
   { label: "Vegan friendly", value: "vegan" },

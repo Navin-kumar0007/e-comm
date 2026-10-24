@@ -13,7 +13,6 @@ const footerLinks = {
   company: [
     { label: "Our Story", href: "/about" },
     { label: "Meet the Founder", href: "/founder" },
-    { label: "Farm Journey", href: "/traceability" },
     { label: "Recipes", href: "/recipes" },
   ],
   support: [

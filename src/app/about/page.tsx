@@ -7,12 +7,12 @@ import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
   title: "Our Story | Spicy Nuts",
-  description: "The story behind Spicy Nuts — our mission to bring pure, organic Indian food to every home.",
+  description: "The story behind Spicy Nuts — our mission to bring pure, honest Indian food to every home.",
 };
 
 export default function AboutPage() {
   const values = [
-    { icon: Leaf, title: "100% Organic", description: "Every product is certified organic. Zero pesticides, zero chemicals, zero compromises." },
+    { icon: Leaf, title: "Packed with care", description: "Every jar is graded by hand and packed in Bidar, with its batch number and packing date on the label." },
     { icon: ShieldCheck, title: "Lab Tested", description: "Every batch is tested for purity, heavy metals, and contamination. We share results openly." },
     { icon: Heart, title: "Fair Trade", description: "We pay our farmers 20-40% above market rates, ensuring dignified livelihoods." },
     { icon: Globe, title: "Sustainable", description: "From regenerative farming to eco-friendly packaging, sustainability drives every decision." },
@@ -22,7 +22,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen">
-      <PageHero eyebrow={"Est. 2023"} title={"Our Story"} subtitle={"Spicy Nuts was born from a simple belief: the food we eat should be pure, honest, and full of life. What started as a grandmother's kitchen wisdom has grown into a movement to bring authentic, organic Indian food to every home."} crumbs={[{ label: "Home", href: "/" }, { label: "Our Story" }]} />
+      <PageHero eyebrow={"Est. 2023"} title={"Our Story"} subtitle={"Spicy Nuts was born from a simple belief: the food we eat should be pure, honest, and full of life. What started as a grandmother's kitchen wisdom has grown into a movement to bring authentic Indian food to every home."} crumbs={[{ label: "Home", href: "/" }, { label: "Our Story" }]} />
 
 
       {/* Founder Section */}
@@ -42,7 +42,7 @@ export default function AboutPage() {
                   Growing up, our founders watched their families carefully select each raw spice, each batch of nuts, selecting the finest high-oil nuts and roasting wholesome traditional snacks — always choosing what was pure and natural. There were no shortcuts. No artificial colours. No preservatives. Just real food, prepared with love.
                 </p>
                 <p>
-                  Years later, when our team couldn't find that same purity in the supermarket aisles, she decided to source it herself — directly from organic farmers across India. What began as personal sourcing for family and friends soon became Spicy Nuts.
+                  Years later, when our team couldn't find that same purity in the supermarket aisles, she decided to source it herself — directly from growers and traders across India. What began as personal sourcing for family and friends soon became Spicy Nuts.
                 </p>
                 <p>
                   Today, we work with over 50 farming families across 8 states, bringing you ingredients that are as pure as what grandmother used to choose — with the convenience of modern delivery.
@@ -81,7 +81,7 @@ export default function AboutPage() {
             {[
               { number: "50+", label: "Farming Families" },
               { number: "8", label: "Indian States" },
-              { number: "100%", label: "Organic" },
+              { number: "FSSAI", label: "Registered" },
               { number: "10K+", label: "Happy Customers" },
             ].map((s, i) => (
               <div key={i}>
@@ -96,7 +96,7 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="py-10 md:py-12 px-4 text-center">
         <h2 className="text-2xl font-heading font-bold mb-3">Taste the Difference</h2>
-        <p className="text-muted-foreground mb-8 max-w-md mx-auto">Experience pure, organic food the way it was meant to be.</p>
+        <p className="text-muted-foreground mb-8 max-w-md mx-auto">Experience pure, honest food the way it was meant to be.</p>
         <Link href="/shop">
           <Button size="lg" className="rounded-full shadow-md px-8">Shop Now</Button>
         </Link>

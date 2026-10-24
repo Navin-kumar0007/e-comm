@@ -54,7 +54,7 @@ export default async function AccountPage() {
           Welcome back, {session?.user?.name?.split(" ")[0]}
         </h1>
         <p className="text-muted-foreground">
-          Here&apos;s a quick overview of your organic journey with us.
+          Here&apos;s a quick overview of your Spicy Nuts journey.
         </p>
       </div>
 

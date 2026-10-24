@@ -17,7 +17,7 @@ function BuiltInPage() {
       <div className="prose prose-stone dark:prose-invert max-w-none prose-headings:font-heading prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-sm">
 
         <h2>1. Return Eligibility</h2>
-        <p>Due to the perishable and consumable nature of our products (dry fruits, spices, nuts, and organic food items), we follow a strict return policy:</p>
+        <p>Due to the perishable and consumable nature of our products (dry fruits, spices, nuts and other food items), we follow a strict return policy:</p>
         <ul>
           <li><strong>Damaged items:</strong> If the product arrives damaged, crushed, or in a tampered package — eligible for return/replacement.</li>
           <li><strong>Incorrect items:</strong> If you receive a product different from what you ordered — eligible for return/replacement.</li>

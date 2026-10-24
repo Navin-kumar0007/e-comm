@@ -105,7 +105,7 @@ export function ProductPurchase({
       {/* Desktop / tablet actions */}
       <div className="mt-4 hidden gap-2.5 md:flex">
         {stepper}
-        <button onClick={() => add()} disabled={stock <= 0} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-control)] border border-brand-gold/70 bg-primary text-sm font-extrabold text-primary-foreground disabled:opacity-60">
+        <button onClick={() => add()} disabled={stock <= 0} className="flex h-12 flex-1 items-center justify-center gap-2 btn-buy rounded-[var(--radius-control)] text-sm font-extrabold disabled:opacity-60">
           {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
           {added ? "Added" : "Add to cart"}
         </button>
@@ -117,7 +117,7 @@ export function ProductPurchase({
       {/* Mobile sticky buy bar */}
       <div className="fixed inset-x-0 bottom-0 z-50 flex items-center gap-2.5 border-t border-border bg-card px-3.5 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 shadow-[var(--shadow-float)] md:hidden">
         {stepper}
-        <button onClick={() => add()} disabled={stock <= 0} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-brand-gold bg-primary text-sm font-extrabold text-primary-foreground disabled:opacity-60">
+        <button onClick={() => add()} disabled={stock <= 0} className="flex h-12 flex-1 items-center justify-center gap-2 btn-buy rounded-xl text-sm font-extrabold disabled:opacity-60">
           {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
           {stock <= 0 ? "Out of stock" : added ? "Added" : `Add to cart · ${inr(price * qty)}`}
         </button>

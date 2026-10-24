@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db/prisma";
 export const DEFAULT_STORE_SETTINGS = {
   storeName: "Spicy Nuts",
   contactEmail: "spicynuts1973@gmail.com",
-  storeDescription: "Pure, Natural, Organic Indian Groceries",
+  storeDescription: "Premium Dry Fruits & Spices from Bidar",
   freeShippingThreshold: 999,
   flatShippingRate: 50,
   gstRate: 5,

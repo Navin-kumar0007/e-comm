@@ -258,7 +258,7 @@ export default function CheckoutPage() {
         amount: order.amount,
         currency: "INR",
         name: "Spicy Nuts",
-        description: "Pure, Natural, Organic Gourmet Spices & Dry Fruits",
+        description: "Premium Dry Fruits & Spices",
         order_id: order.razorpayOrderId,
         handler,
         prefill: {
@@ -518,7 +518,8 @@ export default function CheckoutPage() {
               <Button 
                 type="submit" 
                 disabled={isProcessing || !quoteReady || notServiceable} 
-                className="w-full h-12 text-[15px] font-extrabold rounded-xl border border-brand-gold shadow-lg transition-all"
+                variant="buy"
+                className="w-full h-12 text-[15px] font-extrabold rounded-xl transition-all"
               >
                 {isProcessing 
                   ? "Securing Order..." 

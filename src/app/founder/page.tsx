@@ -12,7 +12,7 @@ export const metadata = {
 export default function FounderPage() {
   return (
     <div className="min-h-screen pb-20">
-      <PageHero eyebrow={"Our founder"} title={"Meet The Founder"} subtitle={"The story behind Spicy Nuts and our mission to bring pure, organic Indian flavors to your home."} crumbs={[{ label: "Home", href: "/" }, { label: "Founder" }]} />
+      <PageHero eyebrow={"Our founder"} title={"Meet The Founder"} subtitle={"The story behind Spicy Nuts and our mission to bring pure Indian flavors to your home."} crumbs={[{ label: "Home", href: "/" }, { label: "Founder" }]} />
 
       <div className="max-w-6xl mx-auto px-4 mt-10 md:mt-12">
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
@@ -34,7 +34,7 @@ export default function FounderPage() {
                 "I started Spicy Nuts with a simple realization: the flavors of my childhood were slowly disappearing from modern kitchens, replaced by heavily processed, artificially flavored alternatives."
               </p>
               <p className="text-zinc-600 leading-relaxed text-sm">
-                Growing up in a household where every spice was ground fresh and every nut was hand-graded with care, I knew that authentic taste comes from pure ingredients. That's why we partner directly with organic farmers across India to bring you the finest, unadulterated spices and dry fruits.
+                Growing up in a household where every spice was ground fresh and every nut was hand-graded with care, I knew that authentic taste comes from pure ingredients. That's why every spice and dry fruit we sell is graded by hand and packed by us in Bidar.
               </p>
             </div>
 
@@ -44,8 +44,8 @@ export default function FounderPage() {
                   <Leaf className="w-6 h-6 text-success" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm mb-1">100% Organic Commitment</h3>
-                  <p className="text-zinc-500">Every product we sell is certified organic, ensuring no harmful chemicals touch your food.</p>
+                  <h3 className="font-bold text-sm mb-1">Hand-graded in Bidar</h3>
+                  <p className="text-zinc-500">Every jar is graded by hand and carries its batch number, packing date and FSSAI registration.</p>
                 </div>
               </div>
               
@@ -71,7 +71,7 @@ export default function FounderPage() {
         <div className="mt-12 md:mt-20 text-center bg-primary text-white rounded-2xl md:rounded-[2.5rem] p-6 sm:p-10 md:p-14">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-3 md:mb-5">Taste the Difference</h2>
           <p className="text-sm text-white/80 max-w-2xl mx-auto mb-10">
-            Experience the authentic flavors of India with our premium range of organic spices, handcrafted masalas, and royal dry fruits.
+            Experience the authentic flavors of India with our premium range of whole spices, handcrafted masalas, and royal dry fruits.
           </p>
           <Link href="/shop" className="inline-flex h-14 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-white hover:bg-royal-deep">Explore Our Collection</Link>
         </div>

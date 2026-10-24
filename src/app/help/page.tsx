@@ -8,15 +8,15 @@ export default function HelpSupportPage() {
   const faqs = [
     {
       q: "Where do you source your ingredients?",
-      a: "We source our ingredients directly from organic farmers across India. Our spices come from Kerala and Karnataka, ensuring the highest quality and freshness."
+      a: "Our dry fruits and spices come from trusted growers and traders in India and abroad, and each jar's label names its origin. Everything is graded and packed by us in Bidar, Karnataka."
     },
     {
       q: "How long does shipping take?",
       a: "Standard shipping takes 3-5 business days within India. Express shipping is available for major cities and takes 1-2 business days."
     },
     {
-      q: "Are your products 100% organic?",
-      a: "Yes! All our products are certified organic, free from pesticides, artificial colors, and preservatives."
+      q: "Are your products organic?",
+      a: "Our products are not certified organic. They are graded by hand and packed in Bidar, and every jar lists its ingredients, batch number and packing date."
     },
     {
       q: "How can I track my order?",

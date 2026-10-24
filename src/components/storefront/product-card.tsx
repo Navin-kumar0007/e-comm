@@ -150,7 +150,7 @@ export function ProductCard({ product, className = '' }: { product: ProductCardP
           <button
             onClick={add}
             aria-label={`Add ${product.name} to cart`}
-            className="h-10 w-full rounded-[var(--radius-control)] border border-brand-gold/70 bg-primary text-[13px] font-extrabold tracking-[0.06em] text-primary-foreground transition-transform active:scale-[0.98] md:h-11 md:text-sm md:tracking-normal"
+            className="h-10 w-full btn-buy rounded-[var(--radius-control)] text-[13px] font-extrabold tracking-[0.06em] transition-transform active:scale-[0.98] md:h-11 md:text-sm md:tracking-normal"
           >
             <span className="md:hidden">ADD</span>
             <span className="hidden md:inline">Add to cart</span>

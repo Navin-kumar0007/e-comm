@@ -280,7 +280,7 @@ export default async function VaultPage() {
             <Sparkles className="w-5 h-5 text-brand-gold-deep animate-pulse" /> Optimal Shelf-Life Storage Tips
           </h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Spicy Nuts organic spices are packed immediately post-roasting in certified aroma-lock glass jars. 
+            Spicy Nuts spices are packed soon after roasting, in sealed jars. 
             For maximum essential oil longevity, store your vault items in a cool, dry pantry away from direct solar radiation or oven heats. 
             Whole spices retain potency up to 2x longer than fine ground masalas.
           </p>

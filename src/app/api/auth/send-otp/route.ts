@@ -31,7 +31,7 @@ async function sendOTPEmail(email: string, otp: string) {
             <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #052c1e; background: #f4f3ea; padding: 32px; border-radius: 12px;">
               <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #c59b27;">
                 <h2 style="margin: 0; color: #052c1e; font-size: 24px;">✦ Spicy Nuts ✦</h2>
-                <p style="margin: 4px 0 0; color: #8a6d1f; font-size: 12px; letter-spacing: 2px;">PURE · NATURAL · ORGANIC</p>
+                <p style="margin: 4px 0 0; color: #8a6d1f; font-size: 12px; letter-spacing: 2px;">FROM BIDAR, KARNATAKA</p>
               </div>
               <h1 style="color: #052c1e; font-size: 20px; text-align: center;">Your Verification Code</h1>
               <div style="background: white; padding: 24px; border-radius: 12px; margin: 20px 0; border: 1px solid #e3dec9; text-align: center;">

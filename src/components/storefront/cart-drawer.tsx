@@ -169,9 +169,9 @@ export function CartSheet() {
             </div>
             <button
               onClick={() => { setIsOpen(false); router.push('/checkout'); }}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-brand-gold bg-primary text-sm font-extrabold text-primary-foreground"
+              className="flex h-12 w-full items-center justify-center gap-2 btn-buy rounded-xl text-sm font-extrabold"
             >
-              <Lock className="h-4 w-4 text-brand-gold" />
+              <Lock className="h-4 w-4" />
               Proceed to checkout ›
             </button>
             <p className="mt-2 text-center text-xs text-muted-foreground">Coupons and delivery are applied at checkout · prices include GST</p>

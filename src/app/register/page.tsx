@@ -181,7 +181,7 @@ export default function RegisterPage() {
             <span className="font-heading text-2xl font-bold text-brand-gold">Spicy Nuts</span>
           </Link>
           <h1 className="font-heading text-[34px] font-bold leading-none text-white">Create Account</h1>
-          <p className="text-white/80 mt-2">Join the organic food revolution</p>
+          <p className="text-white/80 mt-2">Join the royal pantry</p>
         </div>
 
         {/* Form Card */}

@@ -7,7 +7,7 @@ import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata = {
   title: "Traditional Indian Recipes — Dry Fruits, Masalas & Healthy Cooking",
-  description: "Explore authentic Indian recipes featuring premium dry fruits, handcrafted masalas, and organic spices. From golden milk to masala chai, cook with the finest ingredients.",
+  description: "Explore authentic Indian recipes featuring premium dry fruits, handcrafted masalas, and whole spices. From golden milk to masala chai, cook with the finest ingredients.",
 };
 
 export default async function RecipesPage() {
@@ -18,7 +18,7 @@ export default async function RecipesPage() {
 
   return (
     <>
-      <PageHero eyebrow={"From our kitchen"} title={"Authentic Recipes"} subtitle={"Discover traditional Indian recipes crafted with our premium, organic spices. Bring the authentic taste of Spicy Nuts to your home."} crumbs={[{ label: "Home", href: "/" }, { label: "Recipes" }]} />
+      <PageHero eyebrow={"From our kitchen"} title={"Authentic Recipes"} subtitle={"Discover traditional Indian recipes crafted with our premium spices. Bring the authentic taste of Spicy Nuts to your home."} crumbs={[{ label: "Home", href: "/" }, { label: "Recipes" }]} />
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-8 md:pb-10">
       <div className="max-w-3xl mx-auto text-center mb-8">
       </div>

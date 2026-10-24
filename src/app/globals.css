@@ -47,6 +47,8 @@
   --color-royal-deep: var(--royal-deep);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-buy: var(--buy);
+  --color-buy-ink: var(--buy-ink);
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -97,7 +99,7 @@
 
     --border: #e8ddcc;
     --input: #e8ddcc;
-    --ring: #c9a45a;
+    --ring: #7a571c;
 
     --royal-deep: #4a0f1d;
     --success: #1e6b45;
@@ -106,6 +108,12 @@
     /* Temple gold for fills, antique gold for gold text on ivory (AA contrast) */
     --brand-gold: #c9a45a;
     --brand-gold-deep: #7a571c;
+
+    /* Kesar saffron: the one action colour. Only on buttons that buy (add to cart, checkout, pay, shop). */
+    --buy: #f4a62a;
+    --buy-hi: #ffc861;
+    --buy-deep: #d9821a;
+    --buy-ink: #3a0a12;
 
     --radius: 1rem;
   }
@@ -133,6 +141,15 @@
       transform: scale(0.97);
     }
   }
+}
+
+/* Buy button: saffron fill, dark maroon text (8.4:1). Same look as the landing page. */
+@utility btn-buy {
+  background-color: var(--buy);
+  background-image: linear-gradient(180deg, var(--buy-hi) 0%, var(--buy) 55%, var(--buy-deep) 100%);
+  color: var(--buy-ink);
+  border: 1px solid rgb(255 236 190 / 0.75);
+  box-shadow: 0 12px 26px -12px rgb(217 130 26 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.55);
 }
 
 /* Glassmorphism styling details */
