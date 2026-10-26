@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Minus, Plus, ShoppingBag, Check } from "lucide-react";
 import { toast } from "sonner";
@@ -30,17 +30,21 @@ function PouchIcon({ scale, filled }: { scale: number; filled: boolean }) {
 export function ProductPurchase({
   product,
   sizes,
-  initialQty = 1,
 }: {
   product: { id: string; name: string; slug: string; image: string; price: number; salePrice: number | null; stock: number; weight: string };
   sizes: Size[];
-  initialQty?: number;
 }) {
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
   const firstInStock = sizes.find((s) => s.stock > 0) ?? sizes[0];
   const [selectedId, setSelectedId] = useState<string | undefined>(firstInStock?.id);
-  const [qty, setQty] = useState(initialQty);
+  const [qty, setQty] = useState(1);
+  // ?qty=3 from the landing page pre-fills the quantity. Read in the browser: the page itself is pre-built (ISR).
+  useEffect(() => {
+    const q = Number.parseInt(new URLSearchParams(window.location.search).get("qty") ?? "", 10);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (Number.isFinite(q) && q > 1) setQty(Math.min(10, q));
+  }, []);
   const [added, setAdded] = useState(false);
   const selected = sizes.find((s) => s.id === selectedId);
 
