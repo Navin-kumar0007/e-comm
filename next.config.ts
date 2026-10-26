@@ -7,9 +7,9 @@ const withSerwist = require("@serwist/next").default({
 });
 
 const nextConfig: any = {
-  // The cinematic landing page (a static page in public/royal) on trial at /royal before it becomes the homepage
-  async rewrites() {
-    return [{ source: "/royal", destination: "/royal/index.html" }];
+  // The cinematic page is the homepage now; /royal was its trial address
+  async redirects() {
+    return [{ source: "/royal", destination: "/", permanent: false }];
   },
   allowedDevOrigins: ['.lhr.life', '192.0.0.2', 'localhost'],
   turbopack: {},

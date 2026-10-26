@@ -26,7 +26,7 @@ const DESKTOP_LINKS = [
   { href: "/shop?collection=walnuts", label: "Walnuts", wide: true },
   { href: "/shop?collection=dates", label: "Dates" },
   { href: "/shop?collection=seeds", label: "Seeds" },
-  { href: "/#gift", label: "Gifting", gold: true },
+  { href: "/home#gift", label: "Gifting", gold: true },
   { href: "/blend-creator", label: "Spice Atelier" },
   { href: "/about", label: "Our Story" },
 ];

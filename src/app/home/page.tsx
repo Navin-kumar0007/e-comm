@@ -16,7 +16,8 @@ export const revalidate = 600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSiteContent("seo");
-  return { title: { absolute: seo.homeTitle }, description: seo.homeDescription, alternates: { canonical: "/" } };
+  // The cinematic page is the homepage now; this overview (with the gift-tray builder) lives at /home.
+  return { title: { absolute: seo.homeTitle }, description: seo.homeDescription, alternates: { canonical: "/home" } };
 }
 
 // Gift tray picks, in display order (falls back to whatever is active).

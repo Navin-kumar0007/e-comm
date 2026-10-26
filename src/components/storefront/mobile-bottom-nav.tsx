@@ -55,7 +55,7 @@ export function MobileBottomNav() {
           <LayoutGrid className="h-[22px] w-[22px]" />
           Shop
         </Link>
-        <Link href="/#gift" className={`${tabClass} ${tone(false)}`}>
+        <Link href="/home#gift" className={`${tabClass} ${tone(false)}`}>
           <Gift className="h-[22px] w-[22px]" />
           Gifts
         </Link>

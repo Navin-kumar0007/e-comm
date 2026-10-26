@@ -52,7 +52,7 @@ export async function createCategoryAction(data: {
 
   revalidatePath('/admin/categories');
   revalidatePath('/shop');
-  revalidatePath('/');
+  revalidatePath('/'); revalidatePath('/home');
   return category;
 }
 
@@ -84,7 +84,7 @@ export async function updateCategoryAction(id: string, data: {
 
   revalidatePath('/admin/categories');
   revalidatePath('/shop');
-  revalidatePath('/');
+  revalidatePath('/'); revalidatePath('/home');
   return category;
 }
 
@@ -101,6 +101,6 @@ export async function deleteCategoryAction(id: string) {
 
   revalidatePath('/admin/categories');
   revalidatePath('/shop');
-  revalidatePath('/');
+  revalidatePath('/'); revalidatePath('/home');
   return { success: true };
 }
