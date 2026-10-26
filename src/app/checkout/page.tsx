@@ -15,17 +15,8 @@ import { getCheckoutQuote, type CheckoutQuoteResult } from "@/app/actions/checko
 import { getUserPoints, getUserProfile } from "@/app/actions/user";
 import { AddressMapSelector } from "@/components/storefront/address-map-selector";
 import { useSession } from "next-auth/react";
-import { 
-  CreditCard, 
-  Truck, 
-  ShieldCheck, 
-  ChevronDown, 
-  ChevronUp, 
-  UserCheck, 
-  Sparkles,
-  ShoppingBag,
-  Tag
-} from "lucide-react";
+import { Truck, ShieldCheck, ChevronDown, ChevronUp, UserCheck, Sparkles, ShoppingBag, Tag, Lock, MapPin, Smartphone, Banknote, BadgeCheck, Package } from "lucide-react";
+import { CheckoutSteps } from "@/components/storefront/royal/checkout-steps";
 import { orderRef } from "@/lib/site";
 
 const noopSubscribe = () => () => {};
@@ -258,7 +249,7 @@ export default function CheckoutPage() {
         amount: order.amount,
         currency: "INR",
         name: "Spicy Nuts",
-        description: "Premium Dry Fruits & Spices",
+        description: "Dry fruits from Bidar",
         order_id: order.razorpayOrderId,
         handler,
         prefill: {
@@ -267,7 +258,7 @@ export default function CheckoutPage() {
           contact: formData.phone,
         },
         theme: {
-          color: "#052c1e",
+          color: "#6e1a2c",
         },
         modal: {
           ondismiss: () => setIsProcessing(false),
@@ -287,382 +278,200 @@ export default function CheckoutPage() {
 
   if (items.length === 0 && !isProcessing) return null;
 
+  const itemCount = items.reduce((a, b) => a + b.quantity, 0);
+  const subtotal = quote?.subtotal ?? cartTotal;
+  const freeAt = quote?.freeShippingThreshold ?? 0;
+  const toFree = freeAt > 0 && shippingFee > 0 ? Math.max(0, freeAt - subtotal) : 0;
+  const money = (n: number) => `₹${n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const lines = (
+    <div className="space-y-2.5 text-sm">
+      <div className="flex justify-between text-white/75"><span>Subtotal · {itemCount} {itemCount === 1 ? "jar" : "jars"}</span><span className="tnum font-semibold text-white">{money(subtotal)}</span></div>
+      {discount > 0 && <div className="flex justify-between font-semibold text-brand-gold"><span>Coupon {appliedCoupon}</span><span className="tnum">−{money(discount)}</span></div>}
+      {pointsDiscount > 0 && <div className="flex justify-between font-semibold text-brand-gold"><span>Royal points</span><span className="tnum">−{money(pointsDiscount)}</span></div>}
+      <div className="flex justify-between text-white/75"><span>Delivery</span>{!validPincode ? <span className="text-white/60">Enter your pincode</span> : shippingFee === 0 ? <span className="font-bold text-brand-gold">Free</span> : <span className="tnum font-semibold text-white">{money(shippingFee)}</span>}</div>
+      {toFree > 0 && (
+        <div className="pt-1">
+          <div className="h-1.5 overflow-hidden rounded-full bg-white/10"><span className="journey-fill block h-full rounded-full bg-gradient-to-r from-[#b8893a] via-[#f6e2a8] to-[#e9c987]" style={{ width: `${Math.min(100, (subtotal / freeAt) * 100)}%` }} /></div>
+          <p className="mt-1.5 text-xs text-white/70">Add {money(toFree)} more for free delivery.</p>
+        </div>
+      )}
+      {quote?.error && <p className="text-xs font-semibold text-[#ffb4a6]">{quote.error}</p>}
+    </div>
+  );
+
   return (
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
-      
-      <section className="jaali pt-header pb-6 text-white">
-        <div className="container mx-auto max-w-6xl px-4 pt-5">
+
+      <section className="jaali pt-header pb-8 text-white">
+        <div className="container mx-auto max-w-6xl px-4 pt-6">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <span className="eyebrow text-brand-gold">Secure checkout</span>
-              <h1 className="font-heading text-[34px] font-bold leading-none md:text-[46px]">Secure Checkout</h1>
-              <p className="mt-1.5 text-[13px] text-white/80">Complete your order with single-estate harvest freshness</p>
+              <span className="eyebrow text-brand-gold">Spicy Nuts · Bidar</span>
+              <h1 className="font-heading text-[40px] font-bold leading-none md:text-[54px]">Checkout</h1>
+              <p className="mt-2 flex items-center gap-1.5 text-[13px] text-white/80"><Lock className="h-3.5 w-3.5 text-brand-gold" /> Payments are processed securely by Razorpay</p>
             </div>
-            <Link href="/shop" className="hidden items-center gap-1 text-[13px] font-bold text-brand-gold hover:text-white sm:inline-flex">
-              ← Continue Shopping
-            </Link>
+            <Link href="/shop" className="hidden items-center gap-1 text-[13px] font-bold text-brand-gold hover:text-white sm:inline-flex">← Keep shopping</Link>
           </div>
-          <ol aria-label="Checkout steps" className="mt-4 grid grid-cols-3 gap-2">
-            {[["Cart", true], ["Address", true], ["Payment", false]].map(([label, done]) => (
-              <li key={label as string} className="flex flex-col gap-1.5">
-                <span className={`h-1 rounded-full ${done ? "bg-brand-gold" : "bg-white/25"}`} />
-                <span className={`font-royal text-xs font-bold tracking-[0.16em] ${done ? "text-brand-gold" : "text-white/70"}`}>{(label as string).toUpperCase()}</span>
-              </li>
-            ))}
-          </ol>
+          <CheckoutSteps current={1} />
         </div>
       </section>
 
-      <div className="container mx-auto max-w-6xl px-4 pt-6 pb-16 min-h-[60vh]">
-        {/* Guest vs Logged-in Banner */}
+      <div className="container mx-auto max-w-6xl min-h-[60vh] px-4 pb-16 pt-6">
         {!session ? (
-          <div className="mb-6 p-4 rounded-2xl bg-secondary/10 border border-brand-gold/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
-            <div className="flex items-center gap-2.5 text-brand-gold-deep dark:text-brand-gold font-medium">
-              <Sparkles className="w-4 h-4 text-brand-gold-deep shrink-0" />
-              <span>Ordering as a guest. Want to save your address & earn 5% Royal points?</span>
+          <div className="lux-card mb-6 flex flex-col justify-between gap-3 p-4 text-sm sm:flex-row sm:items-center">
+            <div className="flex items-center gap-3 font-medium text-foreground">
+              <span className="medallion h-8 w-8"><Sparkles className="h-4 w-4" /></span>
+              <span>Checking out as a guest. Sign in to save your address and earn 5% back in Royal points.</span>
             </div>
-            <Link href="/login?callbackUrl=/checkout">
-              <Button variant="outline" size="sm" className="rounded-xl border-brand-gold/30 text-xs font-semibold h-8 shrink-0">
-                Sign In / Register
-              </Button>
+            <Link href="/login?callbackUrl=/checkout" className="shrink-0">
+              <Button variant="outline" size="sm" className="h-9 rounded-xl border-brand-gold/50 text-xs font-bold">Sign in or register</Button>
             </Link>
           </div>
         ) : (
-          <div className="mb-6 p-3 px-4 rounded-xl bg-primary/5 border border-primary/15 flex items-center gap-2.5 text-xs text-primary font-medium">
-            <UserCheck className="w-4 h-4 text-primary shrink-0" />
-            <span>Signed in as <strong>{session.user?.name || session.user?.email}</strong>. Royal points balance: {userPoints} pts.</span>
+          <div className="lux-card mb-6 flex items-center gap-3 p-3.5 px-4 text-sm text-primary">
+            <UserCheck className="h-5 w-5 shrink-0" />
+            <span>Signed in as <strong>{session.user?.name || session.user?.email}</strong> · {userPoints} Royal points</span>
           </div>
         )}
 
-        {/* Mobile Collapsible Order Summary Bar */}
-        <div className="lg:hidden mb-6">
-          <button
-            type="button"
-            onClick={() => setShowMobileSummary(!showMobileSummary)}
-            className="w-full p-4 royal-card flex items-center justify-between text-sm"
-          >
-            <div className="flex items-center gap-2 font-medium">
-              <ShoppingBag className="w-4 h-4 text-primary" />
-              <span>{showMobileSummary ? "Hide" : "View"} Order Summary ({items.reduce((a, b) => a + b.quantity, 0)} items)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-primary text-base">₹{total.toFixed(2)}</span>
-              {showMobileSummary ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
-            </div>
+        {/* phones: the order total folds open above the form */}
+        <div className="mb-6 lg:hidden">
+          <button type="button" onClick={() => setShowMobileSummary(!showMobileSummary)} aria-expanded={showMobileSummary} className="lux-dark flex w-full items-center justify-between p-4 text-sm">
+            <span className="flex items-center gap-2 font-semibold"><ShoppingBag className="h-4 w-4 text-brand-gold" />{showMobileSummary ? "Hide" : "Show"} your order · {itemCount} {itemCount === 1 ? "jar" : "jars"}</span>
+            <span className="flex items-center gap-2"><span className="tnum font-heading text-xl font-bold text-brand-gold">{money(total)}</span>{showMobileSummary ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}</span>
           </button>
-
           {showMobileSummary && (
-            <div className="p-4 mt-2 bg-card rounded-2xl border border-border/60 space-y-4 shadow-sm animate-in fade-in slide-in-from-top-2">
-              <div className="divide-y divide-border/40 max-h-60 overflow-y-auto">
+            <div className="lux-dark mt-2 space-y-4 p-4 animate-in fade-in slide-in-from-top-2">
+              <div className="max-h-60 divide-y divide-white/10 overflow-y-auto">
                 {items.map((item) => (
-                  <div key={`${item.productId}-${item.weight}`} className="py-2.5 flex items-center gap-3">
-                    <Image width={800} height={800} unoptimized={false} src={getCleanProductImage(item.image, item.name)} alt={item.name} className="w-12 h-12 rounded-lg object-cover border border-border/40 shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">{item.weight} × {item.quantity}</p>
-                    </div>
-                    <span className="text-sm font-semibold">₹{(item.price * item.quantity).toFixed(2)}</span>
+                  <div key={`${item.productId}-${item.weight}`} className="flex items-center gap-3 py-2.5">
+                    <Image width={96} height={96} src={getCleanProductImage(item.image, item.name)} alt={item.name} className="h-12 w-12 shrink-0 rounded-xl object-cover ring-1 ring-brand-gold/50" />
+                    <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{item.name}</p><p className="text-xs text-white/65">{item.weight} × {item.quantity}</p></div>
+                    <span className="tnum text-sm font-semibold">{money(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
-              <div className="pt-2 border-t border-border/50 text-xs space-y-1.5 text-muted-foreground">
-                <div className="flex justify-between"><span>Subtotal</span><span>₹{(quote?.subtotal ?? cartTotal).toFixed(2)}</span></div>
-                {discount > 0 && <div className="flex justify-between text-primary font-medium"><span>Promo Discount</span><span>-₹{discount.toFixed(2)}</span></div>}
-                {pointsDiscount > 0 && <div className="flex justify-between text-primary font-medium"><span>Points Redeemed</span><span>-₹{pointsDiscount.toFixed(2)}</span></div>}
-                <div className="flex justify-between"><span>Delivery</span>{shippingFee === 0 ? <span className="text-primary font-semibold">FREE</span> : <span>₹{shippingFee.toFixed(2)}</span>}</div>
-              </div>
+              {lines}
             </div>
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          
-          {/* Main Checkout Form */}
-          <form onSubmit={handleOrderSubmission} className="lg:col-span-7 space-y-6">
-            
-            {/* 1. Shipping Details Card */}
-            <div className="royal-card p-5 sm:p-6 space-y-5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-4">
-                <div>
-                  <h2 className="font-heading text-2xl font-bold text-primary flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">1</span>
-                    Shipping Destination
-                  </h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">Where should we courier your fresh harvest?</p>
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-10">
+          <form onSubmit={handleOrderSubmission} className="space-y-6 lg:col-span-7">
+            {/* 1. delivery details */}
+            <section className="lux-card space-y-5 p-5 sm:p-7" aria-labelledby="ship-h">
+              <div className="flex flex-col justify-between gap-3 border-b border-border/60 pb-4 sm:flex-row sm:items-center">
+                <div className="flex items-center gap-3">
+                  <span className="medallion">1</span>
+                  <div>
+                    <h2 id="ship-h" className="font-heading text-[28px] font-bold leading-none text-primary">Where should we send it?</h2>
+                    <p className="mt-1 text-xs text-muted-foreground">We pack in Bidar and hand over to the courier within 1–2 working days.</p>
+                  </div>
                 </div>
-                <AddressMapSelector 
-                  onSelectAddress={(data) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      address: data.address,
-                      city: data.city,
-                      state: data.state,
-                      pincode: data.pincode
-                    }));
-                  }} 
-                />
+                <AddressMapSelector onSelectAddress={(data) => { setFormData((prev) => ({ ...prev, address: data.address, city: data.city, state: data.state, pincode: data.pincode })); }} />
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5"><Label htmlFor="name" className="text-xs font-bold">Full name</Label><Input id="name" name="name" autoComplete="name" required value={formData.name} onChange={handleInputChange} placeholder="Rahul Sharma" className="lux-input" /></div>
+                <div className="space-y-1.5"><Label htmlFor="phone" className="text-xs font-bold">Mobile number <span className="font-medium text-muted-foreground">(for courier updates)</span></Label><Input id="phone" name="phone" type="tel" autoComplete="tel" required value={formData.phone} onChange={handleInputChange} placeholder="10-digit mobile" className="lux-input" /></div>
+                <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="email" className="text-xs font-bold">Email <span className="font-medium text-muted-foreground">(receipt and GST invoice)</span></Label><Input id="email" name="email" type="email" autoComplete="email" required value={formData.email} onChange={handleInputChange} placeholder="you@example.com" className="lux-input" /></div>
+                <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="address" className="text-xs font-bold">House, street and landmark</Label><Input id="address" name="address" autoComplete="street-address" required value={formData.address} onChange={handleInputChange} placeholder="Flat 402, Royal Palms, near the lake" className="lux-input" /></div>
+                <div className="space-y-1.5"><Label htmlFor="city" className="text-xs font-bold">City</Label><Input id="city" name="city" autoComplete="address-level2" required value={formData.city} onChange={handleInputChange} placeholder="Bengaluru" className="lux-input" /></div>
+                <div className="space-y-1.5"><Label htmlFor="state" className="text-xs font-bold">State</Label><Input id="state" name="state" autoComplete="address-level1" required value={formData.state} onChange={handleInputChange} placeholder="Karnataka" className="lux-input" /></div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="name" className="text-xs font-semibold">Full Name *</Label>
-                  <Input id="name" name="name" required value={formData.name} onChange={handleInputChange} placeholder="e.g. Rahul Sharma" className="rounded-xl h-11" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="phone" className="text-xs font-semibold">Phone Number (for Courier SMS) *</Label>
-                  <Input id="phone" name="phone" type="tel" required value={formData.phone} onChange={handleInputChange} placeholder="10-digit mobile number" className="rounded-xl h-11" />
-                </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label htmlFor="email" className="text-xs font-semibold">Email (for Order Receipt & Tax Invoice) *</Label>
-                  <Input id="email" name="email" type="email" required value={formData.email} onChange={handleInputChange} placeholder="your.name@example.com" className="rounded-xl h-11" />
-                </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label htmlFor="address" className="text-xs font-semibold">Street Address / House / Landmark *</Label>
-                  <Input id="address" name="address" required value={formData.address} onChange={handleInputChange} placeholder="e.g. Flat 402, Royal Palms, Near Lake" className="rounded-xl h-11" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="city" className="text-xs font-semibold">City *</Label>
-                  <Input id="city" name="city" required value={formData.city} onChange={handleInputChange} placeholder="e.g. Bengaluru" className="rounded-xl h-11" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="state" className="text-xs font-semibold">State *</Label>
-                  <Input id="state" name="state" required value={formData.state} onChange={handleInputChange} placeholder="e.g. Karnataka" className="rounded-xl h-11" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="pincode" className="text-xs font-semibold">Pincode (6-digits) *</Label>
-                  <Input id="pincode" name="pincode" inputMode="numeric" maxLength={6} required value={formData.pincode} onChange={handleInputChange} placeholder="e.g. 560001" className="rounded-xl h-11" />
+                  <Label htmlFor="pincode" className="text-xs font-bold">Pincode</Label>
+                  <Input id="pincode" name="pincode" inputMode="numeric" autoComplete="postal-code" maxLength={6} required value={formData.pincode} onChange={handleInputChange} placeholder="560001" className="lux-input tnum tracking-[0.2em]" />
                   {delivery && (
-                    <p className={`text-xs font-medium ${delivery.serviceable ? 'text-primary' : 'text-destructive'}`}>{delivery.message}</p>
+                    <p className={`flex items-center gap-1.5 text-xs font-semibold ${delivery.serviceable ? "text-success" : "text-destructive"}`}>
+                      {delivery.serviceable ? <Truck className="h-3.5 w-3.5" /> : <MapPin className="h-3.5 w-3.5" />}{delivery.message}
+                    </p>
                   )}
                 </div>
               </div>
-            </div>
+            </section>
 
-            {/* 2. Payment Method Selector */}
-            <div className="royal-card p-5 sm:p-6 space-y-4">
-              <div className="border-b border-border/40 pb-3">
-                <h2 className="font-heading text-2xl font-bold text-primary flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">2</span>
-                  Payment Method
-                </h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Select how you wish to settle this purchase</p>
+            {/* 2. payment */}
+            <section className="lux-card space-y-4 p-5 sm:p-7" aria-labelledby="pay-h">
+              <div className="flex items-center gap-3 border-b border-border/60 pb-4">
+                <span className="medallion">2</span>
+                <div>
+                  <h2 id="pay-h" className="font-heading text-[28px] font-bold leading-none text-primary">How would you like to pay?</h2>
+                  <p className="mt-1 text-xs text-muted-foreground">UPI, cards and netbanking through Razorpay, or cash when it arrives.</p>
+                </div>
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                {/* Online Payment Option */}
-                <label 
-                  className={`relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-                    paymentMethod === 'razorpay'
-                      ? 'border-primary bg-primary/5 shadow-sm'
-                      : 'border-border/60 hover:border-primary/40 bg-card'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="razorpay"
-                    checked={paymentMethod === 'razorpay'}
-                    onChange={() => setPaymentMethod('razorpay')}
-                    className="sr-only"
-                  />
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                      <CreditCard className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-semibold text-primary bg-muted dark:bg-primary/40 px-2 py-0.5 rounded-full">
-                      Recommended
-                    </span>
-                  </div>
-                  <span className="font-bold text-sm text-foreground">Online Payment</span>
-                  <span className="text-xs text-muted-foreground mt-0.5">UPI (GPay / PhonePe), Cards & NetBanking</span>
+              <div role="radiogroup" aria-label="Payment method" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label data-on={paymentMethod === "razorpay"} className="lux-choice flex cursor-pointer flex-col gap-2 p-4">
+                  <input type="radio" name="paymentMethod" value="razorpay" checked={paymentMethod === "razorpay"} onChange={() => setPaymentMethod("razorpay")} className="sr-only" />
+                  <span className="flex items-center justify-between"><span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary"><Smartphone className="h-5 w-5" /></span><span className="radio-dot" /></span>
+                  <span className="text-[15px] font-extrabold text-foreground">Pay online</span>
+                  <span className="flex flex-wrap gap-1.5">{["UPI", "GPay", "PhonePe", "Cards", "Netbanking"].map((t) => <span key={t} className="rounded-full border border-border bg-white/70 px-2 py-0.5 text-[11px] font-bold text-muted-foreground">{t}</span>)}</span>
                 </label>
-
-                {/* Cash on Delivery Option */}
-                <label 
-                  className={`relative flex flex-col p-4 rounded-2xl border-2 transition-all ${
-                    codBlocked
-                      ? 'border-border/40 bg-muted/30 opacity-60 cursor-not-allowed'
-                      : paymentMethod === 'cod'
-                      ? 'border-primary bg-primary/5 shadow-sm cursor-pointer'
-                      : 'border-border/60 hover:border-primary/40 bg-card cursor-pointer'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="cod"
-                    disabled={codBlocked}
-                    checked={paymentMethod === 'cod'}
-                    onChange={() => setPaymentMethod('cod')}
-                    className="sr-only"
-                  />
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="w-8 h-8 rounded-xl bg-secondary/10 text-brand-gold-deep dark:text-brand-gold flex items-center justify-center">
-                      <Truck className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-medium text-muted-foreground">
-                      Zero Advance
-                    </span>
-                  </div>
-                  <span className="font-bold text-sm text-foreground">Cash on Delivery (COD)</span>
-                  <span className="text-xs text-muted-foreground mt-0.5">
-                    {codBlocked ? 'Not available for this pincode / order value' : 'Pay in cash or UPI when package arrives at doorstep'}
-                  </span>
+                <label data-on={paymentMethod === "cod"} data-off={codBlocked} className={`lux-choice flex flex-col gap-2 p-4 ${codBlocked ? "" : "cursor-pointer"}`}>
+                  <input type="radio" name="paymentMethod" value="cod" disabled={codBlocked} checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} className="sr-only" />
+                  <span className="flex items-center justify-between"><span className="grid h-10 w-10 place-items-center rounded-xl bg-secondary/15 text-brand-gold-deep"><Banknote className="h-5 w-5" /></span><span className="radio-dot" /></span>
+                  <span className="text-[15px] font-extrabold text-foreground">Cash on delivery</span>
+                  <span className="text-xs text-muted-foreground">{codBlocked ? "Not available for this pincode or order value" : "Pay in cash or UPI when the parcel reaches you"}</span>
                 </label>
               </div>
-            </div>
+            </section>
 
-            {/* Submit CTA */}
-            <div className="space-y-3">
-              <Button 
-                type="submit" 
-                disabled={isProcessing || !quoteReady || notServiceable} 
-                variant="buy"
-                className="w-full h-12 text-[15px] font-extrabold rounded-xl transition-all"
-              >
-                {isProcessing 
-                  ? "Securing Order..." 
-                  : paymentMethod === 'cod' 
-                    ? `Confirm Cash on Delivery Order (₹${total.toFixed(2)})`
-                    : `Proceed to Pay ₹${total.toFixed(2)}`
-                }
+            <div className="space-y-4">
+              <Button type="submit" disabled={isProcessing || !quoteReady || notServiceable} variant="buy" className="shine h-14 w-full rounded-2xl text-base font-extrabold">
+                <Lock className="h-4 w-4" />
+                {isProcessing ? "Placing your order…" : paymentMethod === "cod" ? `Place order · pay ${money(total)} on delivery` : `Pay ${money(total)} securely`}
               </Button>
-
-              <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground pt-1">
-                <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4 text-primary" /> 100% Secure Checkout</span>
-                <span>•</span>
-                <span>Direct Terroir Harvest</span>
-                <span>•</span>
-                <span>Insured Delivery</span>
+              <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5"><ShieldCheck className="h-3.5 w-3.5 text-primary" /> Secured by Razorpay</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5"><BadgeCheck className="h-3.5 w-3.5 text-primary" /> FSSAI Reg. 21224035000151</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5"><Package className="h-3.5 w-3.5 text-primary" /> Packed in Bidar, Karnataka</span>
               </div>
               <p className="text-center text-xs leading-snug text-muted-foreground">
                 Your name, phone, email and address are used only to deliver this order, issue its GST invoice and send order updates (including on WhatsApp): one reminder if your payment doesn’t go through, and a request to rate the order after delivery.
                 {" "}<a href="/privacy-policy" target="_blank" className="underline">Privacy Policy</a>
               </p>
             </div>
-
           </form>
 
-          {/* Desktop Sticky Order Summary Column */}
-          <div className="lg:col-span-5 sticky top-28 space-y-6">
-            <div className="royal-card p-5 space-y-5">
-              <h2 className="font-heading text-2xl font-bold text-primary flex items-center justify-between">
-                <span>Order Summary</span>
-                <span className="text-xs font-normal text-muted-foreground">({items.length} unique items)</span>
-              </h2>
-
-              {/* Items List */}
-              <div className="space-y-3 max-h-72 overflow-y-auto divide-y divide-border/30 pr-1">
+          {/* order summary: maroon glass, sticky beside the form */}
+          <aside className="sticky top-28 hidden lg:col-span-5 lg:block" aria-labelledby="sum-h">
+            <div className="lux-dark space-y-5 p-6">
+              <div className="flex items-baseline justify-between">
+                <h2 id="sum-h" className="font-heading text-[30px] font-bold leading-none">Your order</h2>
+                <span className="text-xs font-semibold text-white/65">{itemCount} {itemCount === 1 ? "jar" : "jars"}</span>
+              </div>
+              <div className="max-h-72 space-y-3 overflow-y-auto pr-1">
                 {items.map((item) => (
-                  <div key={`${item.productId}-${item.weight}`} className="pt-3 first:pt-0 flex items-center gap-3">
-                    <div className="w-14 h-14 rounded-xl bg-muted/40 border border-border/50 overflow-hidden shrink-0">
-                      <Image width={800} height={800} unoptimized={false} src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  <div key={`${item.productId}-${item.weight}`} className="flex items-center gap-3 rounded-2xl bg-white/[0.06] p-2.5 ring-1 ring-white/10">
+                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl ring-1 ring-brand-gold/60">
+                      <Image width={112} height={112} src={getCleanProductImage(item.image, item.name)} alt={item.name} className="h-full w-full object-cover" />
+                      <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-[#f4a62a] px-1 text-[11px] font-extrabold text-[#3a0a12]">{item.quantity}</span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm line-clamp-1 text-foreground">{item.name}</h3>
-                      <p className="text-xs text-muted-foreground">{item.weight} × {item.quantity}</p>
-                    </div>
-                    <div className="font-bold text-sm text-foreground">
-                      ₹{(item.price * item.quantity).toFixed(2)}
-                    </div>
+                    <div className="min-w-0 flex-1"><h3 className="line-clamp-1 text-sm font-bold">{item.name}</h3><p className="text-xs text-white/65">{item.weight} · {money(item.price)} each</p></div>
+                    <div className="tnum text-sm font-bold">{money(item.price * item.quantity)}</div>
                   </div>
                 ))}
               </div>
-
-              {/* Promo Code Input */}
-              <div className="pt-4 border-t border-border/50 space-y-2">
-                <Label className="text-xs font-semibold flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5 text-primary" /> Promo or Gift Code
-                </Label>
+              <div className="space-y-2 border-t border-white/15 pt-4">
+                <Label htmlFor="coupon" className="flex items-center gap-1.5 text-xs font-bold text-white/85"><Tag className="h-3.5 w-3.5 text-brand-gold" /> Coupon or gift code</Label>
                 <div className="flex gap-2">
-                  <Input 
-                    value={couponCode} 
-                    onChange={e => setCouponCode(e.target.value)} 
-                    placeholder="e.g. ROYAL10" 
-                    className="h-10 text-xs font-mono uppercase rounded-xl" 
-                  />
-                  <Button type="button" variant="outline" size="sm" onClick={applyCoupon} className="rounded-xl px-4 text-xs font-semibold">
-                    Apply
-                  </Button>
+                  <Input id="coupon" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} placeholder="ROYAL10" className="lux-glass h-11 rounded-xl border-white/25 font-mono text-sm uppercase text-white placeholder:text-white/40" />
+                  <Button type="button" variant="outline" onClick={applyCoupon} className="h-11 rounded-xl border-brand-gold/60 bg-transparent px-5 text-xs font-bold text-brand-gold hover:bg-white/10 hover:text-white">Apply</Button>
                 </div>
               </div>
-
-              {/* Loyalty Points */}
               {session && userPoints > 0 && (
-                <div className="pt-3 border-t border-border/50 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-xs font-semibold text-foreground">Redeem Spice Points</span>
-                    <span className="text-xs text-muted-foreground">{userPoints} pts available (worth ₹{(userPoints/10).toFixed(0)})</span>
-                  </div>
-                  <input 
-                    type="checkbox" 
-                    checked={usePoints} 
-                    onChange={e => setUsePoints(e.target.checked)} 
-                    className="w-4 h-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
-                  />
-                </div>
+                <label className="flex cursor-pointer items-center justify-between gap-3 border-t border-white/15 pt-4">
+                  <span className="flex flex-col"><span className="text-sm font-bold">Use Royal points</span><span className="text-xs text-white/65">{userPoints} points · worth {money(userPoints / 10)}</span></span>
+                  <input type="checkbox" checked={usePoints} onChange={(e) => setUsePoints(e.target.checked)} className="h-5 w-5 cursor-pointer accent-[#f4a62a]" />
+                </label>
               )}
-
-              {/* Price Breakdown */}
-              <div className="pt-4 border-t border-border/50 space-y-2.5 text-sm">
-                <div className="flex justify-between text-muted-foreground text-xs">
-                  <span>Bag Subtotal</span>
-                  <span className="font-medium text-foreground">₹{(quote?.subtotal ?? cartTotal).toFixed(2)}</span>
-                </div>
-                
-                {discount > 0 && (
-                  <div className="flex justify-between text-primary text-xs font-medium">
-                    <span>Promo Code Discount</span>
-                    <span>-₹{discount.toFixed(2)}</span>
-                  </div>
-                )}
-
-                {pointsDiscount > 0 && (
-                  <div className="flex justify-between text-primary text-xs font-medium">
-                    <span>Royal Points Redeemed</span>
-                    <span>-₹{pointsDiscount.toFixed(2)}</span>
-                  </div>
-                )}
-
-                <div className="flex justify-between text-muted-foreground text-xs">
-                  <span>Courier Shipping</span>
-                  {shippingFee === 0 ? (
-                    <span className="text-primary font-semibold">FREE</span>
-                  ) : (
-                    <span className="font-medium text-foreground">₹{shippingFee.toFixed(2)}</span>
-                  )}
-                </div>
-
-                {shippingFee > 0 && quote?.freeShippingThreshold ? (
-                  <p className="text-xs text-muted-foreground">Free shipping on orders of ₹{quote.freeShippingThreshold} or more.</p>
-                ) : null}
-
-                {quote?.error && (
-                  <p className="text-xs text-destructive font-medium">{quote.error}</p>
-                )}
-
-                <div className="border-t border-border/60 pt-3 flex justify-between font-bold text-base md:text-lg text-foreground">
-                  <span>Grand Total</span>
-                  <span className="text-primary text-xl">₹{total.toFixed(2)}</span>
-                </div>
-                {quoteReady && (quote?.taxAmount ?? 0) > 0 && (
-                  <p className="text-xs text-muted-foreground text-right">Inclusive of GST (₹{quote!.taxAmount!.toFixed(2)})</p>
-                )}
+              <div className="border-t border-white/15 pt-4">{lines}</div>
+              <div className="flex items-end justify-between border-t border-white/15 pt-4">
+                <span className="font-heading text-2xl font-bold">Total</span>
+                <span className="text-right"><span className="tnum foil-text block font-heading text-[40px] font-bold leading-none">{money(total)}</span>{quoteReady && (quote?.taxAmount ?? 0) > 0 && <span className="text-xs text-white/60">incl. GST {money(quote!.taxAmount!)}</span>}</span>
               </div>
-
-              {/* Terroir / Eco Packaging Badge */}
-              <div className="p-3.5 rounded-2xl bg-primary/10 border border-primary/20 flex items-start gap-2.5 text-primary dark:text-primary text-xs">
-                <span className="text-lg">🌿</span>
-                <div>
-                  <p className="font-semibold">Single-Estate Provenance Insured</p>
-                  <p className="opacity-80 mt-0.5">Packed in food-grade, nitrogen-flushed airtight jars to maintain peak farm aromas.</p>
-                </div>
-              </div>
-
             </div>
-          </div>
-
+          </aside>
         </div>
       </div>
     </>

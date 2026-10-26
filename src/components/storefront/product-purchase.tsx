@@ -30,15 +30,17 @@ function PouchIcon({ scale, filled }: { scale: number; filled: boolean }) {
 export function ProductPurchase({
   product,
   sizes,
+  initialQty = 1,
 }: {
   product: { id: string; name: string; slug: string; image: string; price: number; salePrice: number | null; stock: number; weight: string };
   sizes: Size[];
+  initialQty?: number;
 }) {
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
   const firstInStock = sizes.find((s) => s.stock > 0) ?? sizes[0];
   const [selectedId, setSelectedId] = useState<string | undefined>(firstInStock?.id);
-  const [qty, setQty] = useState(1);
+  const [qty, setQty] = useState(initialQty);
   const [added, setAdded] = useState(false);
   const selected = sizes.find((s) => s.id === selectedId);
 

@@ -387,3 +387,94 @@
   .rise-in, .skeleton, .badge-bump { animation: none; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
+
+/* ───────── Royal glass: one family of surfaces for checkout, orders, tracking and admin ─────────
+   lux-card   frosted pearl on ivory pages, with a gold hairline that brightens at the top
+   lux-dark   maroon glass on dark (jaali) bands and the order summary
+   medallion  gold coin that numbers a step
+   Kesar saffron stays reserved for buying (btn-buy). */
+.lux-card {
+  position: relative;
+  border-radius: var(--radius-card);
+  background:
+    linear-gradient(var(--card), var(--card)) padding-box,
+    linear-gradient(160deg, rgb(201 164 90 / 0.75), rgb(232 221 204 / 0.9) 38%, rgb(232 221 204 / 0.9) 70%, rgb(201 164 90 / 0.5)) border-box;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.8) inset, 0 18px 40px -26px rgb(74 15 29 / 0.45);
+}
+.lux-dark {
+  position: relative;
+  color: #fff;
+  border-radius: var(--radius-card);
+  background:
+    linear-gradient(160deg, rgb(110 26 44 / 0.92), rgb(58 10 18 / 0.96) 60%, rgb(36 6 14 / 0.98)) padding-box,
+    linear-gradient(160deg, rgb(246 226 168 / 0.7), rgb(201 164 90 / 0.18) 45%, rgb(201 164 90 / 0.5)) border-box;
+  border: 1px solid transparent;
+  box-shadow: 0 30px 60px -30px rgb(36 6 14 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.1);
+}
+.lux-glass {
+  background: rgb(255 253 248 / 0.1);
+  border: 1px solid rgb(246 226 168 / 0.35);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.14), 0 20px 40px -24px rgb(0 0 0 / 0.6);
+}
+.medallion {
+  display: inline-grid; place-items: center; flex: none;
+  width: 34px; height: 34px; border-radius: 50%;
+  font-family: var(--font-cinzel), Georgia, serif; font-weight: 700; font-size: 14px; color: var(--buy-ink);
+  background: radial-gradient(circle at 35% 30%, #fff6d6, #e9c987 45%, #c9a45a 75%, #8a6424);
+  box-shadow: 0 0 0 3px rgb(201 164 90 / 0.18), inset 0 -2px 0 rgb(122 87 28 / 0.35);
+}
+.foil-text {
+  background: linear-gradient(100deg, #8a6424 0%, #f7e3a8 22%, #c9a45a 40%, #fff6d6 55%, #b8862f 72%, #f3d58f 90%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+/* A light sweep across buy buttons, once every few seconds */
+.shine { position: relative; overflow: hidden; isolation: isolate; }
+.shine::after {
+  content: ""; position: absolute; inset: -40% auto -40% -60%; width: 40%; z-index: -1; pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.55), transparent);
+  transform: skewX(-20deg); animation: shine 4.5s ease-in-out infinite;
+}
+@keyframes shine { 0%, 70% { left: -60%; } 100% { left: 130%; } }
+/* Form fields on lux cards */
+.lux-input {
+  height: 3rem; border-radius: 14px; background: rgb(255 255 255 / 0.75); border-color: #e3d5bd;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+.lux-input:focus-visible { background: #fff; border-color: var(--brand-gold); box-shadow: 0 0 0 4px rgb(201 164 90 / 0.22); }
+/* Choice tiles (payment method, pack size) */
+.lux-choice { position: relative; border-radius: 18px; border: 1.5px solid var(--border); background: rgb(255 255 255 / 0.6); transition: border-color 0.2s, box-shadow 0.25s, transform 0.2s; }
+.lux-choice:hover { border-color: rgb(201 164 90 / 0.7); }
+.lux-choice[data-on="true"] { border-color: var(--primary); background: linear-gradient(160deg, #fffdf8, #f6ecdc); box-shadow: 0 14px 30px -18px rgb(110 26 44 / 0.55), inset 0 0 0 1px rgb(110 26 44 / 0.15); }
+.lux-choice[data-off="true"] { opacity: 0.55; cursor: not-allowed; }
+.radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #cdbfa6; display: grid; place-items: center; flex: none; }
+.radio-dot::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); transform: scale(0); transition: transform 0.2s cubic-bezier(0.3, 1.6, 0.5, 1); }
+[data-on="true"] .radio-dot { border-color: var(--primary); }
+[data-on="true"] .radio-dot::after { transform: scale(1); }
+
+/* Delivery journey: gold rail fills up to the current step, the current step pulses */
+.journey-fill { transform-origin: left center; animation: journey-grow 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes journey-grow { from { transform: scaleX(0); } }
+.journey-fill-y { transform-origin: top center; animation: journey-grow-y 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes journey-grow-y { from { transform: scaleY(0); } }
+.pulse-ring { position: relative; }
+.pulse-ring::before { content: ""; position: absolute; inset: -6px; border-radius: inherit; border: 2px solid rgb(201 164 90 / 0.8); animation: pulse-ring 1.8s ease-out infinite; }
+@keyframes pulse-ring { from { transform: scale(0.85); opacity: 1; } to { transform: scale(1.45); opacity: 0; } }
+.van-glide { animation: van-glide 2.6s ease-in-out infinite alternate; }
+@keyframes van-glide { from { transform: translateX(-3px); } to { transform: translateX(3px); } }
+
+/* Gold seal on the order confirmation: the ring draws, then the tick */
+.seal-ring { stroke-dasharray: 302; stroke-dashoffset: 302; animation: seal-draw 0.9s 0.1s cubic-bezier(0.6, 0, 0.2, 1) forwards; }
+.seal-tick { stroke-dasharray: 60; stroke-dashoffset: 60; animation: seal-draw 0.5s 0.85s cubic-bezier(0.6, 0, 0.2, 1) forwards; }
+@keyframes seal-draw { to { stroke-dashoffset: 0; } }
+.seal-pop { animation: seal-pop 0.7s 0.05s cubic-bezier(0.3, 1.5, 0.5, 1) both; }
+@keyframes seal-pop { from { transform: scale(0.6); opacity: 0; } }
+.confetti-dot { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confetti-fall 1.6s cubic-bezier(0.2, 0.7, 0.4, 1) both; }
+@keyframes confetti-fall { from { transform: translate(0, 0) rotate(0); opacity: 1; } to { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .shine::after, .journey-fill, .journey-fill-y, .pulse-ring::before, .van-glide, .seal-pop, .confetti-dot { animation: none; }
+  .seal-ring, .seal-tick { animation: none; stroke-dashoffset: 0; }
+}

@@ -64,10 +64,15 @@ export async function generateMetadata({
 
 export default async function ProductPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ qty?: string }>;
 }) {
   const resolvedParams = await params;
+  // ?qty=3 (from the landing page's quantity sheet) pre-fills the quantity
+  const qtyParam = Number.parseInt((await searchParams).qty ?? "", 10);
+  const initialQty = Number.isFinite(qtyParam) ? Math.min(10, Math.max(1, qtyParam)) : 1;
   const found = await prisma.product.findUnique({
     where: { slug: resolvedParams.slug },
     include: { variants: { where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { price: "asc" }] } },
@@ -252,6 +257,7 @@ export default async function ProductPage({
                 weight: product.weight || "Standard",
               }}
               sizes={sizes}
+              initialQty={initialQty}
             />
 
             <div className="flex flex-wrap items-center gap-2">

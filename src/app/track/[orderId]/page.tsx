@@ -1,23 +1,15 @@
 import { prisma } from "@/lib/db/prisma";
-import { PageHero } from "@/components/storefront/royal/page-hero";
 import { auth } from "@/lib/auth";
 import { getStaffContext } from "@/lib/auth-guard";
 import { SHIPMENT_STATUS_LABELS, type ShipmentStatus } from "@/lib/shipping/status";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Package, Truck, CheckCircle2, Clock, XCircle, ArrowLeft, MapPin } from "lucide-react";
+import { Package, Truck, XCircle, ArrowLeft, MapPin, ExternalLink, MessageCircle } from "lucide-react";
+import { DeliveryJourney, JOURNEY } from "@/components/storefront/royal/delivery-journey";
 
 export const metadata = {
   title: "Track Order",
 };
-
-const statusSteps = [
-  { key: "PENDING", label: "Order Placed", icon: Clock, color: "text-yellow-600" },
-  { key: "PROCESSING", label: "Processing", icon: Package, color: "text-blue-600" },
-  { key: "CONFIRMED", label: "Confirmed", icon: CheckCircle2, color: "text-primary" },
-  { key: "SHIPPED", label: "Shipped", icon: Truck, color: "text-purple-600" },
-  { key: "DELIVERED", label: "Delivered", icon: CheckCircle2, color: "text-success" },
-];
 
 // Anyone with the tracking link can see this page, so personal details are
 // masked unless the viewer is the signed-in owner or an admin.
@@ -31,14 +23,6 @@ function maskAddress(address: string) {
   const parts = address.split(",").map((p) => p.trim()).filter(Boolean);
   return parts.slice(-3).join(", ");
 }
-
-const statusOrder: Record<string, number> = {
-  PENDING: 0,
-  PROCESSING: 1,
-  CONFIRMED: 2,
-  SHIPPED: 3,
-  DELIVERED: 4,
-};
 
 export default async function TrackOrderPage({ params }: { params: Promise<{ orderId: string }> }) {
   const { orderId } = await params;
@@ -68,184 +52,129 @@ export default async function TrackOrderPage({ params }: { params: Promise<{ ord
   try {
     courierEvents = shipment ? JSON.parse(shipment.events || "[]").slice(-6).reverse() : [];
   } catch {}
-  const currentStep = statusOrder[order.status] ?? 0;
+  // where the order is on its road: placed → packed in Bidar → with the courier → out for delivery → delivered
+  const currentStep =
+    order.status === "DELIVERED" ? JOURNEY.length
+    : order.status === "SHIPPED" ? (shipment?.status === "OUT_FOR_DELIVERY" ? 3 : 2)
+    : order.status === "PROCESSING" || order.status === "CONFIRMED" ? 1
+    : 0;
+  const placed = order.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
+  const nowLabel = isCancelled ? "Stopped" : currentStep >= JOURNEY.length ? "Delivered" : JOURNEY[currentStep].label;
+  const steps = JOURNEY.map((st, i) => (i === 0 ? { ...st, note: placed } : st));
 
   return (
     <>
-    <PageHero eyebrow="Order tracking" title={`Order #${order.id.slice(-8).toUpperCase()}`} subtitle={`Placed on ${order.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}`} compact />
-    <div className="min-h-[60vh] bg-background py-6 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Store
-        </Link>
-
-        <div className="royal-card p-5 sm:p-7 mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="font-heading text-2xl font-bold text-primary">Order #{order.id.slice(-8).toUpperCase()}</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Placed on {order.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Total</p>
-              <p className="text-xl font-bold tnum">₹{order.total.toFixed(2)}</p>
-            </div>
+      <section className="jaali relative overflow-hidden pt-header pb-24 text-white">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_70%_at_85%_20%,rgba(244,166,42,0.22),transparent_70%)]" />
+        <div className="relative container mx-auto max-w-4xl px-4 pt-6">
+          <Link href="/track" className="mb-4 inline-flex items-center gap-1.5 text-[13px] font-bold text-brand-gold hover:text-white"><ArrowLeft className="h-4 w-4" /> Track another order</Link>
+          <span className="eyebrow block text-brand-gold">Order tracking</span>
+          <div className="mt-1 flex flex-wrap items-end justify-between gap-4">
+            <h1 className="font-heading text-[40px] font-bold leading-[0.95] md:text-[56px]">Order <span className="font-mono text-[0.8em] tracking-wide">#{order.id.slice(-8).toUpperCase()}</span></h1>
+            <span className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-extrabold ${isCancelled ? "bg-[#ff7a66] text-[#3a0800]" : "lux-glass text-[#f6e2a8]"}`}>
+              {!isCancelled && <span className="h-2 w-2 rounded-full bg-[#f6e2a8] shadow-[0_0_0_4px_rgba(246,226,168,0.25)]" />}{nowLabel}
+            </span>
           </div>
+          <p className="mt-2 text-[13.5px] text-white/80">Placed on {placed} · <span className="tnum">₹{order.total.toFixed(2)}</span></p>
+        </div>
+      </section>
 
-          {/* Status Timeline */}
+      <div className="container relative mx-auto -mt-16 max-w-4xl px-4 pb-16">
+        <div className="lux-card mb-6 p-5 sm:p-8">
           {isCancelled ? (
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
-              <XCircle className="w-6 h-6 text-destructive" />
+            <div className="flex items-start gap-4">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-destructive/10 text-destructive"><XCircle className="h-6 w-6" /></span>
               <div>
-                <p className="font-semibold text-destructive">
-                  {{ EXPIRED: "Payment Not Completed", RTO: "Returned to Sender", RETURNED: "Order Returned" }[order.status as string] ?? "Order Cancelled"}
+                <p className="font-heading text-2xl font-bold text-destructive">
+                  {{ EXPIRED: "Payment not completed", RTO: "Returned to us", RETURNED: "Order returned" }[order.status as string] ?? "Order cancelled"}
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="mt-1 text-sm text-muted-foreground">
                   {order.status === "EXPIRED"
                     ? "We didn't receive payment for this order, so it was released. No money was charged."
                     : order.status === "RTO"
-                    ? "The courier couldn't deliver this order and returned it to us." + (order.paymentId ? " Your refund has been initiated." : "")
+                    ? "The courier couldn't deliver this order and returned it to us." + (order.paymentId ? " Your refund has been started." : "")
                     : order.status === "RETURNED"
                     ? "This order was returned and refunded."
                     : order.paymentId
-                    ? "This order has been cancelled. Your refund will be processed within 5-7 business days."
+                    ? "This order has been cancelled. Your refund will reach you in 5–7 working days."
                     : "This order has been cancelled."}
                 </p>
               </div>
             </div>
           ) : (
-            <div className="relative">
-              <div className="flex justify-between items-start">
-                {statusSteps.map((step, index) => {
-                  const isCompleted = index <= currentStep;
-                  const isCurrent = index === currentStep;
-                  const StepIcon = step.icon;
-
-                  return (
-                    <div key={step.key} className="flex flex-col items-center flex-1 relative">
-                      {/* Connector line */}
-                      {index < statusSteps.length - 1 && (
-                        <div
-                          className={`absolute top-5 left-1/2 w-full h-0.5 ${
-                            index < currentStep ? "bg-primary" : "bg-border"
-                          }`}
-                        />
-                      )}
-                      {/* Step circle */}
-                      <div
-                        className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
-                          isCurrent
-                            ? "border-primary bg-primary text-primary-foreground scale-110 shadow-lg"
-                            : isCompleted
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border bg-card text-muted-foreground"
-                        }`}
-                      >
-                        <StepIcon className="w-4 h-4" />
-                      </div>
-                      <span
-                        className={`mt-2 text-xs text-center font-medium ${
-                          isCurrent ? "text-foreground" : isCompleted ? "text-primary" : "text-muted-foreground"
-                        }`}
-                      >
-                        {step.label}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <>
+              <h2 className="mb-6 font-heading text-2xl font-bold text-primary">The road from Bidar to you</h2>
+              <DeliveryJourney current={currentStep} steps={steps} />
+            </>
           )}
         </div>
 
-        {/* Tracking Info */}
-        {order.trackingNumber && (
-          <div className="glass-card rounded-2xl p-6 mb-6">
-            <h2 className="font-heading font-semibold text-lg mb-3 flex items-center gap-2">
-              <Truck className="w-5 h-5 text-primary" />
-              Tracking Details
-            </h2>
-            <div className="flex items-center gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground">{shipment?.courierName || "Tracking Number"}</p>
-                <p className="font-mono font-semibold">{order.trackingNumber}</p>
-                {shipment && (
-                  <p className="text-sm text-primary font-medium mt-1">
-                    {SHIPMENT_STATUS_LABELS[shipment.status as ShipmentStatus] ?? shipment.status}
-                  </p>
-                )}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
+          {order.trackingNumber ? (
+            <div className="lux-dark p-6 md:col-span-3">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <span className="eyebrow text-brand-gold">{shipment?.courierName || "Courier"}</span>
+                  <p className="mt-1 font-mono text-xl font-bold tracking-wide">{order.trackingNumber}</p>
+                  {shipment && <p className="mt-1 text-sm font-semibold text-[#f6e2a8]">{SHIPMENT_STATUS_LABELS[shipment.status as ShipmentStatus] ?? shipment.status}</p>}
+                </div>
+                <span className="lux-glass grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-brand-gold"><Truck className="h-6 w-6" /></span>
               </div>
+              {courierEvents.length > 0 && (
+                <ol className="relative mt-5 space-y-4 pl-6 before:absolute before:bottom-1 before:left-[7px] before:top-1 before:w-[2px] before:rounded-full before:bg-white/15">
+                  {courierEvents.map((ev, i) => (
+                    <li key={i} className="relative text-sm">
+                      <span className={`absolute -left-6 top-1 h-4 w-4 rounded-full border-2 ${i === 0 ? "border-[#f6e2a8] bg-[#f6e2a8] pulse-ring" : "border-brand-gold/60 bg-[#3a0a12]"}`} />
+                      <span className="font-bold">{SHIPMENT_STATUS_LABELS[ev.status] ?? ev.status}</span>
+                      {ev.location && <span className="text-white/70"> · {ev.location}</span>}
+                      <span className="block text-xs text-white/55">{new Date(ev.at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
               {order.trackingUrl && (
-                <a
-                  href={order.trackingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-auto px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
-                >
-                  Track Package →
+                <a href={order.trackingUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl border border-brand-gold/60 px-4 text-sm font-bold text-brand-gold hover:bg-white/10 hover:text-white">
+                  Open on the courier&apos;s site <ExternalLink className="h-4 w-4" />
                 </a>
               )}
             </div>
-            {courierEvents.length > 0 && (
-              <ul className="mt-4 space-y-2 border-l-2 border-primary/20 pl-4">
-                {courierEvents.map((ev, i) => (
-                  <li key={i} className="text-sm">
-                    <span className="font-medium">{SHIPMENT_STATUS_LABELS[ev.status] ?? ev.status}</span>
-                    {ev.location && <span className="text-muted-foreground"> · {ev.location}</span>}
-                    <span className="block text-xs text-muted-foreground">
-                      {new Date(ev.at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
+          ) : (
+            <div className="lux-dark p-6 md:col-span-3">
+              <span className="eyebrow text-brand-gold">Courier</span>
+              <p className="mt-2 font-heading text-2xl font-bold">Tracking number coming soon</p>
+              <p className="mt-1 text-sm text-white/75">As soon as your parcel is booked with the courier, its tracking number and live updates will appear here and in an SMS.</p>
+            </div>
+          )}
 
-        {/* Shipping Address */}
-        <div className="glass-card rounded-2xl p-6 mb-6">
-          <h2 className="font-heading font-semibold text-lg mb-3 flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-primary" />
-            Shipping Address
-          </h2>
-          <p className="text-muted-foreground">
-            {canSeeDetails ? order.shippingAddress : maskAddress(order.shippingAddress)}
-          </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            {canSeeDetails
-              ? `${order.customerName} · ${order.customerPhone}`
-              : `${order.customerName.split(" ")[0]} · ${maskPhone(order.customerPhone)}`}
-          </p>
+          <div className="lux-card p-6 md:col-span-2">
+            <h2 className="mb-2 flex items-center gap-2 font-heading text-xl font-bold text-primary"><MapPin className="h-5 w-5" /> Delivering to</h2>
+            <p className="text-sm text-foreground">{canSeeDetails ? order.shippingAddress : maskAddress(order.shippingAddress)}</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {canSeeDetails ? `${order.customerName} · ${order.customerPhone}` : `${order.customerName.split(" ")[0]} · ${maskPhone(order.customerPhone)}`}
+            </p>
+            <div className="mt-4 flex items-start gap-2 rounded-xl bg-primary/5 p-3 text-xs text-muted-foreground"><MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span>Need help? WhatsApp <span className="tnum select-all font-bold text-foreground">+91 85500 07073</span></span></div>
+          </div>
         </div>
 
-        {/* Order Items */}
-        <div className="glass-card rounded-2xl p-6">
-          <h2 className="font-heading font-semibold text-lg mb-4">Order Items</h2>
-          <div className="divide-y divide-border">
+        <div className="lux-card mt-6 p-6">
+          <h2 className="mb-4 flex items-center gap-2 font-heading text-xl font-bold text-primary"><Package className="h-5 w-5" /> In this parcel</h2>
+          <div className="divide-y divide-border/60">
             {order.items.map((item) => (
-              <div key={item.id} className="flex items-center justify-between py-3">
-                <div>
-                  <p className="font-medium">{item.product?.name || (item as any).productName || "Product"}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {item.weight} × {item.quantity}
-                  </p>
+              <div key={item.id} className="flex items-center justify-between gap-4 py-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 font-heading text-lg font-bold text-primary">{item.quantity}</span>
+                  <div className="min-w-0"><p className="truncate font-bold">{item.product?.name || (item as any).productName || "Product"}</p><p className="text-xs text-muted-foreground">{item.weight}</p></div>
                 </div>
-                <p className="font-semibold tnum">₹{(item.price * item.quantity).toFixed(2)}</p>
+                <p className="tnum shrink-0 font-bold">₹{(item.price * item.quantity).toFixed(2)}</p>
               </div>
             ))}
           </div>
-          <div className="border-t border-border pt-3 mt-3 flex justify-between">
-            <span className="font-semibold">Total</span>
-            <span className="font-bold text-lg tnum">₹{order.total.toFixed(2)}</span>
+          <div className="mt-3 flex items-end justify-between border-t border-border/60 pt-4">
+            <span className="font-heading text-xl font-bold">Total</span>
+            <span className="tnum font-heading text-3xl font-bold text-primary">₹{order.total.toFixed(2)}</span>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }
