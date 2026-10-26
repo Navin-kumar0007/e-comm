@@ -164,3 +164,19 @@ async function getLowStock() {
   }
   return rows.sort((a, b) => a.stock - b.stock).slice(0, 10);
 }
+
+/** Every active product with its jars on the shelf (variants added up), for the dashboard's 3D stock view. */
+export async function getStockMap() {
+  const products = await prisma.product.findMany({
+    where: { status: "ACTIVE" },
+    orderBy: { name: "asc" },
+    select: { id: true, name: true, stock: true, price: true, salePrice: true, lowStockThreshold: true, variants: { where: { isActive: true }, select: { stock: true } } },
+  });
+  return (products as any[]).map((p) => ({
+    id: p.id as string,
+    name: p.name as string,
+    stock: p.variants.length ? p.variants.reduce((s: number, v: any) => s + v.stock, 0) : (p.stock as number),
+    price: (p.salePrice ?? p.price) as number,
+    alertAt: p.lowStockThreshold as number,
+  }));
+}
