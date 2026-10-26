@@ -103,14 +103,14 @@ export function AdminNav({ permissions, staffName, roleName }: { permissions: st
   const isActive = (href: string) => (href === "/admin" ? pathname === "/admin" : pathname === href || pathname.startsWith(`${href}/`));
 
   return (
-    <div className="flex h-full flex-col bg-[#2a0a12] text-[#efe4d2]">
-      <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
+    <div className="flex h-full flex-col border-r border-white/70 bg-white/50 text-[#3a1a20] shadow-[8px_0_30px_-24px_rgba(110,26,44,0.4)] backdrop-blur-xl">
+      <div className="flex items-center gap-3 border-b border-[#6e1a2c]/10 px-5 py-4">
         <span className="flex rounded-lg bg-[#fffdf8] px-2 py-1 ring-1 ring-brand-gold">
           <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" width={64} height={50} className="h-8 w-auto" />
         </span>
         <div className="leading-tight">
-          <p className="text-[13px] font-bold tracking-wide text-white">Operations</p>
-          <p className="text-[10.5px] uppercase tracking-[0.18em] text-brand-gold">Spicy Nuts</p>
+          <p className="text-[13px] font-bold tracking-wide text-[#2a0f17]">Operations</p>
+          <p className="text-[10.5px] uppercase tracking-[0.18em] text-[#8a6420]">Spicy Nuts</p>
         </div>
       </div>
 
@@ -120,7 +120,7 @@ export function AdminNav({ permissions, staffName, roleName }: { permissions: st
           if (!items.length) return null;
           return (
             <div key={group.label} className="mb-3">
-              <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-brand-gold/80">{group.label}</p>
+              <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8a6420]/80">{group.label}</p>
               {items.map((item) => {
                 const active = isActive(item.href);
                 return (
@@ -129,11 +129,11 @@ export function AdminNav({ permissions, staffName, roleName }: { permissions: st
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={`group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] font-medium transition-colors ${
-                      active ? "bg-white/10 text-white" : "text-[#d9cbb5] hover:bg-white/5 hover:text-white"
+                      active ? "bg-gradient-to-r from-[#6e1a2c] to-[#8a2a3e] text-white shadow-[0_8px_18px_-10px_rgba(110,26,44,0.8)]" : "text-[#5a4046] hover:bg-white/80 hover:text-[#2a0f17]"
                     }`}
                   >
                     {active && <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full bg-brand-gold" />}
-                    <item.icon className={`h-4 w-4 ${active ? "text-[#e9c987]" : "text-[#b8a68c] group-hover:text-[#e9c987]"}`} />
+                    <item.icon className={`h-4 w-4 ${active ? "text-[#e9c987]" : "text-[#9a8478] group-hover:text-[#6e1a2c]"}`} />
                     {item.label}
                   </Link>
                 );
@@ -143,20 +143,20 @@ export function AdminNav({ permissions, staffName, roleName }: { permissions: st
         })}
       </nav>
 
-      <div className="border-t border-white/10 p-3">
+      <div className="border-t border-[#6e1a2c]/10 p-3">
         <div className="flex items-center gap-3 rounded-lg px-3 py-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-gold text-sm font-bold text-[#2a0a12]">
             {staffName.slice(0, 1).toUpperCase()}
           </span>
           <span className="min-w-0 leading-tight">
-            <span className="block truncate text-[13px] font-semibold text-white">{staffName}</span>
-            <span className="block text-[11px] text-brand-gold">{roleName}</span>
+            <span className="block truncate text-[13px] font-semibold text-[#2a0f17]">{staffName}</span>
+            <span className="block text-[11px] text-[#8a6420]">{roleName}</span>
           </span>
         </div>
-        <Link href="/" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-[#d9cbb5] hover:bg-white/5 hover:text-white">
+        <Link href="/" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-[#5a4046] hover:bg-white/80 hover:text-[#2a0f17]">
           <Store className="h-4 w-4" /> View store
         </Link>
-        <SignOutButton className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[13px] text-[#d9cbb5] hover:bg-white/5 hover:text-white disabled:opacity-60" />
+        <SignOutButton className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[13px] text-[#5a4046] hover:bg-white/80 hover:text-[#2a0f17] disabled:opacity-60" />
       </div>
     </div>
   );

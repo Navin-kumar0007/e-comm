@@ -7,7 +7,7 @@ export type StockItem = { id: string; name: string; stock: number; price: number
 
 const inr = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
 const kind = (p: StockItem) => (p.stock <= 0 ? "out" : p.stock <= p.alertAt ? "low" : "ok");
-const COLOR = { ok: 0xe9c987, low: 0xf4a62a, out: 0xff6b6b } as const;
+const COLOR = { ok: 0xc99a4a, low: 0xd9821a, out: 0xd64545 } as const;
 const LABEL = { ok: "In stock", low: "Low", out: "Out" } as const;
 
 /**
@@ -32,13 +32,13 @@ export function StockSkyline({ items }: { items: StockItem[] }) {
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.1;
+      renderer.toneMappingExposure = 1.0;
       el.appendChild(renderer.domElement);
       renderer.domElement.setAttribute("aria-hidden", "true");
 
       const scene = new THREE.Scene();
       const cam = new THREE.PerspectiveCamera(38, 1, 0.1, 400);
-      scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+      scene.add(new THREE.AmbientLight(0xfff6e8, 1.5));
       const key = new THREE.PointLight(0xffd9a0, 3.2, 90, 0);
       key.position.set(0, 16, 8);
       scene.add(key);
@@ -59,21 +59,21 @@ export function StockSkyline({ items }: { items: StockItem[] }) {
       const glowTex = new THREE.CanvasTexture(glowCanvas);
       glowTex.colorSpace = THREE.SRGBColorSpace;
       const glow = (hex: number, s: number, opacity = 0.9) => {
-        const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: hex, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false }));
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: hex, transparent: true, opacity, depthWrite: false }));
         sp.scale.set(s, s, 1);
         return sp;
       };
 
       // the ring grows with the catalogue
       const R = Math.max(8.5, (items.length * 1.5) / (Math.PI * 2));
-      const floor = new THREE.Mesh(new THREE.CylinderGeometry(R + 5.4, R + 5.8, 0.4, 96), new THREE.MeshStandardMaterial({ color: 0x1b0810, metalness: 0.6, roughness: 0.3 }));
+      const floor = new THREE.Mesh(new THREE.CylinderGeometry(R + 5.4, R + 5.8, 0.4, 96), new THREE.MeshStandardMaterial({ color: 0xf6efe3, metalness: 0.15, roughness: 0.55 }));
       floor.position.y = -0.2;
       scene.add(floor);
-      const edge = new THREE.Mesh(new THREE.TorusGeometry(R + 5.6, 0.07, 8, 160), new THREE.MeshBasicMaterial({ color: 0xe9c987 }));
+      const edge = new THREE.Mesh(new THREE.TorusGeometry(R + 5.6, 0.07, 8, 160), new THREE.MeshBasicMaterial({ color: 0xb8893a }));
       edge.rotation.x = Math.PI / 2;
       scene.add(edge);
       [0.4, 0.7, 1.3, 1.5].forEach((f, i) => {
-        const ring = new THREE.Mesh(new THREE.RingGeometry(R * f - 0.02, R * f + 0.02, 128), new THREE.MeshBasicMaterial({ color: 0xe9c987, transparent: true, opacity: 0.12 + i * 0.03, side: THREE.DoubleSide }));
+        const ring = new THREE.Mesh(new THREE.RingGeometry(R * f - 0.02, R * f + 0.02, 128), new THREE.MeshBasicMaterial({ color: 0x6e1a2c, transparent: true, opacity: 0.07 + i * 0.02, side: THREE.DoubleSide }));
         ring.rotation.x = -Math.PI / 2;
         ring.position.y = 0.01;
         scene.add(ring);
@@ -86,9 +86,9 @@ export function StockSkyline({ items }: { items: StockItem[] }) {
       body.position.y = 1.9;
       const label = new THREE.Mesh(new THREE.CylinderGeometry(1.62, 1.62, 1.5, 48), new THREE.MeshStandardMaterial({ color: 0xfbf3e4, roughness: 0.5, emissive: 0x8a7a60, emissiveIntensity: 0.25 }));
       label.position.y = 1.95;
-      const lid = new THREE.Mesh(new THREE.CylinderGeometry(1.68, 1.68, 0.6, 48), new THREE.MeshStandardMaterial({ color: 0xe9c987, metalness: 0.9, roughness: 0.22, emissive: 0x6a4a18, emissiveIntensity: 0.35 }));
+      const lid = new THREE.Mesh(new THREE.CylinderGeometry(1.68, 1.68, 0.6, 48), new THREE.MeshStandardMaterial({ color: 0xd4a85a, metalness: 0.35, roughness: 0.3, emissive: 0x6a4a18, emissiveIntensity: 0.25 }));
       lid.position.y = 3.9;
-      const halo = glow(0xffc861, 9, 0.5);
+      const halo = glow(0xe9c987, 8, 0.45);
       halo.position.y = 2.2;
       jar.add(body, label, lid, halo);
 
@@ -108,7 +108,7 @@ export function StockSkyline({ items }: { items: StockItem[] }) {
         mesh.position.y = mesh.scale.y / 2;
         mesh.userData.i = i;
         g.add(mesh);
-        const cap = glow(COLOR[k], k === "ok" ? 1.6 : 3, k === "ok" ? 0.5 : 0.95);
+        const cap = glow(COLOR[k], k === "ok" ? 1.3 : 2.6, k === "ok" ? 0.35 : 0.75);
         cap.position.y = mesh.scale.y + 0.15;
         g.add(cap);
         let ring: THREE.Mesh | undefined;
@@ -131,7 +131,7 @@ export function StockSkyline({ items }: { items: StockItem[] }) {
       }
       const dustGeo = new THREE.BufferGeometry();
       dustGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ map: glowTex, color: 0xffd9a0, size: 0.35, transparent: true, opacity: 0.7, depthWrite: false, blending: THREE.AdditiveBlending }));
+      const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ map: glowTex, color: 0xb8893a, size: 0.22, transparent: true, opacity: 0.45, depthWrite: false }));
       scene.add(dust);
 
       // camera orbit, drag, hover, click

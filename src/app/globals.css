@@ -478,3 +478,12 @@
   .shine::after, .journey-fill, .journey-fill-y, .pulse-ring::before, .van-glide, .seal-pop, .confetti-dot { animation: none; }
   .seal-ring, .seal-tick { animation: none; stroke-dashoffset: 0; }
 }
+
+/* Admin: soft maroon, gold and teal glows behind the glass sidebar, top bar and cards */
+.admin-shell {
+  background-image:
+    radial-gradient(50% 45% at 0% 0%, rgba(110, 26, 44, 0.12), transparent 70%),
+    radial-gradient(45% 40% at 100% 8%, rgba(233, 201, 135, 0.38), transparent 70%),
+    radial-gradient(55% 45% at 65% 100%, rgba(46, 196, 182, 0.09), transparent 70%);
+}
+@media print { .admin-shell { background-image: none; } }

@@ -20,12 +20,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const nav = <AdminNav permissions={permissions} staffName={staff.user.name || staff.user.email} roleName={ROLE_LABELS[staff.role].name} />;
 
   return (
-    <div className="admin-shell flex h-dvh overflow-hidden bg-[#f6f3ee] text-foreground print:block print:h-auto print:overflow-visible print:bg-white">
+    <div className="admin-shell flex h-dvh overflow-hidden bg-[#f7f1e8] text-foreground print:block print:h-auto print:overflow-visible print:bg-white">
       {/* Desktop sidebar */}
       <aside className="hidden w-60 shrink-0 lg:block print:hidden">{nav}</aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-border/60 bg-white/90 px-4 backdrop-blur sm:px-6 print:hidden">
+        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-white/70 bg-white/55 px-4 shadow-[0_8px_24px_-18px_rgba(110,26,44,0.35)] backdrop-blur-xl sm:px-6 print:hidden">
           <Sheet>
             <SheetTrigger aria-label="Open menu" className="-ml-1 rounded-lg p-2 text-muted-foreground hover:bg-muted lg:hidden">
               <Menu className="h-5 w-5" />

@@ -79,7 +79,7 @@ function Ring({ pct, color }: { pct: number; color: string }) {
   const r = 22, c = 2 * Math.PI * r;
   return (
     <svg className="cc-ring" viewBox="0 0 54 54" aria-hidden="true">
-      <circle cx="27" cy="27" r={r} fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="6" />
+      <circle cx="27" cy="27" r={r} fill="none" stroke="rgba(110,26,44,.08)" strokeWidth="6" />
       <circle cx="27" cy="27" r={r} fill="none" stroke={color} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${(Math.max(0, Math.min(100, pct)) / 100) * c} ${c}`} transform="rotate(-90 27 27)" style={{ filter: `drop-shadow(0 0 5px ${color})` }} />
     </svg>
   );
@@ -120,21 +120,21 @@ function SalesArea({ data }: { data: DashboardData["daily"] }) {
     <div ref={box} className="cc-chart" onMouseLeave={() => setHover(null)}>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Daily sales">
         <defs>
-          <linearGradient id="ccArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#f4a62a" stopOpacity=".5" /><stop offset="1" stopColor="#6e1a2c" stopOpacity="0" /></linearGradient>
-          <linearGradient id="ccLine" x1="0" x2="1"><stop offset="0" stopColor="#b8893a" /><stop offset=".6" stopColor="#e9c987" /><stop offset="1" stopColor="#ffc861" /></linearGradient>
+          <linearGradient id="ccArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#b8893a" stopOpacity=".32" /><stop offset="1" stopColor="#6e1a2c" stopOpacity="0" /></linearGradient>
+          <linearGradient id="ccLine" x1="0" x2="1"><stop offset="0" stopColor="#6e1a2c" /><stop offset=".6" stopColor="#a8452f" /><stop offset="1" stopColor="#b8893a" /></linearGradient>
         </defs>
         {[1, 0.5, 0].map((f) => (
           <g key={f}>
-            <line x1={L} x2={W} y1={y(max * f)} y2={y(max * f)} stroke="rgba(255,255,255,.07)" strokeDasharray="4 4" />
+            <line x1={L} x2={W} y1={y(max * f)} y2={y(max * f)} stroke="rgba(110,26,44,.12)" strokeDasharray="4 4" />
             <text x={L - 8} y={y(max * f) + 4} textAnchor="end">{inr(max * f)}</text>
           </g>
         ))}
         {n > 1 && <path d={`${d} L${x(n - 1)} ${H - B} L${x(0)} ${H - B}Z`} fill="url(#ccArea)" />}
-        <path d={d} fill="none" stroke="url(#ccLine)" strokeWidth="3" vectorEffect="non-scaling-stroke" style={{ filter: "drop-shadow(0 0 8px rgba(244,166,42,.7))" }} />
+        <path d={d} fill="none" stroke="url(#ccLine)" strokeWidth="3" vectorEffect="non-scaling-stroke" style={{ filter: "drop-shadow(0 6px 8px rgba(110,26,44,.22))" }} />
         {a && hover !== null && (
           <>
-            <line x1={x(hover)} x2={x(hover)} y1={T} y2={H - B} stroke="rgba(233,201,135,.4)" />
-            <circle cx={x(hover)} cy={y(a.revenue)} r="6" fill="#ffc861" stroke="#2a0a10" strokeWidth="2" />
+            <line x1={x(hover)} x2={x(hover)} y1={T} y2={H - B} stroke="rgba(110,26,44,.25)" />
+            <circle cx={x(hover)} cy={y(a.revenue)} r="6" fill="#6e1a2c" stroke="#fff" strokeWidth="2.5" />
           </>
         )}
         {data.map((p, i) => (i % every === 0 || i === n - 1 ? <text key={p.date} x={x(i)} y={H - 6} textAnchor="middle">{day(p.date)}</text> : null))}
@@ -162,10 +162,10 @@ function SalesArea({ data }: { data: DashboardData["daily"] }) {
 }
 
 const ORB: Record<IconKey, [string, string]> = {
-  rupee: ["#ffe2a3", "#b8893a"], cart: ["#ffd38a", "#d9821a"], users: ["#9ff0e6", "#1d8a86"], alert: ["#ffb4a6", "#c2523a"],
-  pack: ["#ffe2a3", "#b8893a"], truck: ["#9ff0e6", "#1d8a86"], returns: ["#ffb4a6", "#c2523a"], star: ["#ffd38a", "#d9821a"],
+  rupee: ["#d4a85a", "#8a6420"], cart: ["#a8452f", "#6e1a2c"], users: ["#3fb3ad", "#1d6f6c"], alert: ["#e06a5a", "#a83232"],
+  pack: ["#a8452f", "#6e1a2c"], truck: ["#3fb3ad", "#1d6f6c"], returns: ["#e06a5a", "#a83232"], star: ["#d4a85a", "#8a6420"],
 };
-const SPARK_COLOR: Partial<Record<IconKey, string>> = { rupee: "#e9c987", cart: "#f4a62a" };
+const SPARK_COLOR: Partial<Record<IconKey, string>> = { rupee: "#b8893a", cart: "#6e1a2c" };
 
 export function DashboardView({ data }: { data: DashboardData }) {
   const root = useRef<HTMLDivElement>(null);
@@ -263,10 +263,10 @@ export function DashboardView({ data }: { data: DashboardData }) {
                   <div className={`cc-val${k.empty ? " zero" : ""}`}>{k.empty ? "—" : <CountUp to={k.value} as={k.money ? "inr" : k.percent ? "pct" : "int"} />}</div>
                   <div className="cc-lbl">{k.label}</div>
                 </div>
-                {k.ring !== undefined && <Ring pct={k.ring} color={k.icon === "alert" ? "#ff6b6b" : "#2ec4b6"} />}
+                {k.ring !== undefined && <Ring pct={k.ring} color={k.icon === "alert" ? "#d64545" : "#1d8a86"} />}
               </div>
               <div className="cc-hint">{k.hint}</div>
-              {k.spark && <Spark values={k.spark} color={SPARK_COLOR[k.icon] ?? "#e9c987"} />}
+              {k.spark && <Spark values={k.spark} color={SPARK_COLOR[k.icon] ?? "#b8893a"} />}
             </article>
           );
         })}
@@ -283,7 +283,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
           </div>
           <StockSkyline items={data.stock} />
           <div className="cc-stage-foot">
-            <div className="cc-legend"><span><i style={{ background: "#e9c987" }} />In stock</span><span><i style={{ background: "#f4a62a" }} />At or below alert level</span><span><i style={{ background: "#ff6b6b" }} />Out or below zero</span></div>
+            <div className="cc-legend"><span><i style={{ background: "#c99a4a" }} />In stock</span><span><i style={{ background: "#d9821a" }} />At or below alert level</span><span><i style={{ background: "#d64545" }} />Out or below zero</span></div>
             <div className="cc-big"><b>{inr(value)}</b><span>stock value at selling price</span></div>
           </div>
         </article>
@@ -328,22 +328,22 @@ export function DashboardView({ data }: { data: DashboardData }) {
             ) : (
               <div className="cc-donut">
                 <svg viewBox="0 0 120 120" aria-hidden="true">
-                  <circle cx="60" cy="60" r="44" fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="14" />
+                  <circle cx="60" cy="60" r="44" fill="none" stroke="rgba(110,26,44,.07)" strokeWidth="14" />
                   {(() => {
                     const C = 2 * Math.PI * 44, on = (online / 100) * C;
                     return (
                       <>
-                        {online > 0 && <circle cx="60" cy="60" r="44" fill="none" stroke="#e9c987" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${Math.max(0, on - 3)} ${C}`} transform="rotate(-90 60 60)" style={{ filter: "drop-shadow(0 0 6px #e9c987)" }} />}
-                        {data.codShare > 0 && <circle cx="60" cy="60" r="44" fill="none" stroke="#2ec4b6" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${Math.max(0, C - on - 3)} ${C}`} strokeDashoffset={-on} transform="rotate(-90 60 60)" style={{ filter: "drop-shadow(0 0 6px #2ec4b6)" }} />}
+                        {online > 0 && <circle cx="60" cy="60" r="44" fill="none" stroke="#6e1a2c" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${Math.max(0, on - 3)} ${C}`} transform="rotate(-90 60 60)" style={{ filter: "drop-shadow(0 4px 6px rgba(110,26,44,.3))" }} />}
+                        {data.codShare > 0 && <circle cx="60" cy="60" r="44" fill="none" stroke="#c99a4a" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${Math.max(0, C - on - 3)} ${C}`} strokeDashoffset={-on} transform="rotate(-90 60 60)" style={{ filter: "drop-shadow(0 4px 6px rgba(184,137,58,.35))" }} />}
                       </>
                     );
                   })()}
-                  <text x="60" y="58" textAnchor="middle" fontSize="26" fontWeight="800" fill="#fff">{data.orders}</text>
-                  <text x="60" y="76" textAnchor="middle" fontSize="10" fill="#bba9a0">orders</text>
+                  <text x="60" y="58" textAnchor="middle" fontSize="26" fontWeight="800" fill="#2a0f17">{data.orders}</text>
+                  <text x="60" y="76" textAnchor="middle" fontSize="10" fill="#7a6258">orders</text>
                 </svg>
                 <ul>
-                  <li><i style={{ background: "#e9c987" }} />Paid online<b>{online}%</b></li>
-                  <li><i style={{ background: "#2ec4b6" }} />Cash on delivery<b>{data.codShare}%</b></li>
+                  <li><i style={{ background: "#6e1a2c" }} />Paid online<b>{online}%</b></li>
+                  <li><i style={{ background: "#c99a4a" }} />Cash on delivery<b>{data.codShare}%</b></li>
                 </ul>
               </div>
             )}
