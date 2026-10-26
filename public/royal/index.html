@@ -1,0 +1,1419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="Royal dry fruits from Bidar: follow one jar from the pieces to your table, see when and how to eat each one, and order in a tap.">
+<meta name="theme-color" content="#1a0509">
+<link rel="icon" href="/icon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Spicy Nuts Royal Pantry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Manrope:wght@400;500;600;700;800&family=Tiro+Devanagari+Hindi&display=swap">
+<style>
+/* Layout: seven scroll scenes, each with its own royal Indian colour story (maroon + saffron, ivory, copper, per-jar tints, peacock teal + gold, pearl), gold-foil type, real cut-out photos. One committed look; the live site has no dark mode. */
+:root {
+  --ivory: #fbf3e4;
+  --pearl: #fffdf8;
+  --ink: #24140f;
+  --muted: #6b5a52;
+  --maroon: #6e1a2c;
+  --royal: #4a0f1d;
+  --night: #1a0509;
+  --saffron: #e8a33d;
+  --copper: #b4652b;
+  --teal: #0f5c5f;
+  --gold: #c9a45a;
+  --gold-hi: #f6e2a8;
+  --gold-deep: #7a571c;
+  --marigold: #f29a1d;
+  --kesar: #f4a62a;
+  --kesar-hi: #ffc861;
+  --kesar-deep: #d9821a;
+  --buy-ink: #3a0a12;
+  --buy: linear-gradient(180deg, var(--kesar-hi) 0%, var(--kesar) 55%, var(--kesar-deep) 100%);
+  --foil: linear-gradient(100deg, #8a6424 0%, #f7e3a8 18%, #c9a45a 34%, #fff6d6 50%, #b8862f 66%, #f3d58f 82%, #8a6424 100%);
+  --f-display: "Cormorant Garamond", Georgia, serif;
+  --f-royal: "Cinzel", Georgia, serif;
+  --f-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --nav-h: 64px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; overflow-x: clip; }
+body { background: var(--night); color: var(--ink); font: 16px/1.55 var(--f-body); }
+img { max-width: none; user-select: none; -webkit-user-drag: none; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+h1, h2, h3 { margin: 0; font-family: var(--f-display); font-weight: 600; line-height: .95; text-wrap: balance; }
+p { margin: 0; }
+.eyebrow { font-family: var(--f-royal); font-weight: 700; font-size: 12.5px; letter-spacing: .26em; text-transform: uppercase; color: var(--gold); }
+.foil { background: var(--foil); background-size: 300% 100%; background-position: var(--shine, 0%) 50%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+em.foil, .foil em { font-style: italic; }
+
+/* ---------- fixed chrome ---------- */
+.nav { position: fixed; z-index: 60; left: 0; right: 0; top: 0; padding: calc(env(safe-area-inset-top, 0px) + 10px) 14px 10px; display: flex; align-items: center; justify-content: space-between; pointer-events: none; }
+.nav > * { pointer-events: auto; }
+.plaque { display: flex; align-items: center; justify-content: center; width: 70px; height: 46px; border-radius: 10px; background: var(--pearl); border: 1.5px solid var(--gold); box-shadow: 0 10px 24px -12px rgba(0,0,0,.7); }
+.plaque img { width: 56px; height: auto; }
+.shop { display: inline-flex; align-items: center; height: 40px; padding-inline: 18px; border-radius: 999px; background: var(--buy); color: var(--buy-ink); border: 1px solid rgba(255,236,190,.75); font-weight: 800; font-size: 14px; text-decoration: none; box-shadow: 0 10px 24px -10px rgba(217,130,26,.75), inset 0 1px 0 rgba(255,255,255,.55); }
+.bar { position: fixed; z-index: 60; left: 0; bottom: 0; height: 3px; width: 100%; }
+.bar i { display: block; height: 100%; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: var(--foil); }
+#dust { position: fixed; inset: 0; z-index: 30; pointer-events: none; width: 100%; height: 100%; mix-blend-mode: screen; opacity: .8; }
+.grain { position: fixed; inset: 0; z-index: 40; pointer-events: none; opacity: .025; mix-blend-mode: overlay; }
+
+/* ---------- scenes ---------- */
+.scene { position: relative; width: 100%; height: 100vh; height: 100svh; overflow: hidden; }
+.piece { position: absolute; left: 0; top: 0; will-change: transform, opacity; }
+.jaali { position: absolute; inset: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Cpath d='M18 0 36 18 18 36 0 18Z' fill='none' stroke='%23C9A45A' stroke-opacity='.16'/%3E%3Ccircle cx='18' cy='18' r='4' fill='none' stroke='%23C9A45A' stroke-opacity='.16'/%3E%3C/svg%3E"); -webkit-mask-image: radial-gradient(closest-side, transparent 25%, #000); mask-image: radial-gradient(closest-side, transparent 25%, #000); }
+.vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(closest-side, transparent 55%, rgba(0,0,0,.5)); }
+
+/* jar: photographed PET jar with the print label wrapped on; lid and open neck are separate layers */
+.jar { position: relative; }
+.jar img { position: absolute; left: 0; width: 100%; pointer-events: none; }
+.jar .jbody { top: 0; height: 100%; }
+.jar .jneck { top: 0; height: 23.5%; }
+.jar .lid { position: absolute; left: 0; top: 0; width: 100%; height: 23.5%; z-index: 3; display: block; }
+.jar .lid img { top: 0; height: 100%; }
+.jar .ridges { position: absolute; left: 4%; right: 6%; top: 24%; height: 50%; background: repeating-linear-gradient(90deg, rgba(60,40,10,.2) 0 1.5px, transparent 1.5px 4px); opacity: .45; }
+
+/* ---------- S1 hero: maroon + saffron ---------- */
+#s1 { background: radial-gradient(90% 70% at 50% 62%, #a3313f 0%, #6e1a2c 30%, #3a0a15 62%, var(--night) 100%); color: #fff; display: flex; flex-direction: column; align-items: center; padding-top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 4svh); }
+#s1 .bgv { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .9; }
+#s1 .bgfade { position: absolute; inset: 0; background: radial-gradient(34% 30% at 50% 76%, rgba(244,166,42,.34) 0%, rgba(244,166,42,.12) 45%, rgba(244,166,42,0) 72%), linear-gradient(180deg, rgba(26,5,9,.55) 0%, rgba(26,5,9,.15) 38%, rgba(26,5,9,0) 60%, rgba(26,5,9,.45) 100%), radial-gradient(90% 70% at 50% 62%, rgba(163,49,63,.18) 0%, rgba(26,5,9,0) 55%, rgba(26,5,9,.55) 100%); }
+#s1 .aura { position: absolute; left: 50%; top: 62%; width: 150vmax; height: 150vmax; transform: translate(-50%, -50%); background: conic-gradient(from 0deg, rgba(232,163,61,.0), rgba(232,163,61,.22), rgba(242,154,29,.0) 25%, rgba(201,164,90,.18) 50%, rgba(232,163,61,0) 70%, rgba(255,214,140,.2) 85%, rgba(232,163,61,0)); -webkit-mask-image: radial-gradient(closest-side, transparent 0%, #000 14%, transparent 60%); mask-image: radial-gradient(closest-side, transparent 0%, #000 14%, transparent 60%); animation: spin 40s linear infinite; }
+@keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+#s1 .copy { position: relative; z-index: 6; display: grid; justify-items: center; gap: 10px; text-align: center; padding-inline: 18px; }
+#s1 h1 { font-size: clamp(44px, min(9vw, 13svh), 128px); font-weight: 700; letter-spacing: -.01em; perspective: 600px; }
+#s1 h1 .ch { display: inline-block; background: var(--foil); background-size: 400% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+#s1 .sub { max-width: 34rem; color: rgba(255,255,255,.92); font-size: clamp(15px, 1.5vw, 18px); text-shadow: 0 2px 12px rgba(26,5,9,.6); }
+#s1 .hero-cta { margin-top: 6px; }
+.btn.ghost-l { color: #fff; border: 1.5px solid rgba(246,226,168,.7); background: rgba(26,5,9,.35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.trust { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 20px; font-size: 13px; font-weight: 700; color: rgba(255,255,255,.88); }
+.trust li { display: flex; align-items: center; gap: 8px; }
+.trust li::before { content: ""; width: 6px; height: 6px; transform: rotate(45deg); background: var(--kesar); flex: none; }
+#s1 .stage { position: relative; z-index: 4; margin-top: auto; margin-bottom: 8svh; }
+#s1 .burst { position: absolute; left: 50%; top: 0; z-index: auto; width: 0; height: 0; }
+#s1 .cap { will-change: transform, opacity; position: absolute; left: 0; right: 0; top: 40%; text-align: center; z-index: 8; padding-inline: 18px; display: grid; gap: 10px; justify-items: center; }
+#s1 .cap::before { content: ""; position: absolute; left: 50%; top: 50%; width: min(900px, 120vw); height: 260%; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(26,5,9,.78), rgba(26,5,9,.4) 55%, transparent); z-index: -1; }
+#s1 .cap h2 { font-size: clamp(36px, 7vw, 92px); color: #fff; text-shadow: 0 10px 40px rgba(0,0,0,.5); }
+#s1 .wipe { position: absolute; left: 50%; top: 0; width: 24px; height: 24px; margin: -12px 0 0 -12px; border-radius: 50%; background: radial-gradient(circle, #fffaf0 0%, var(--ivory) 70%, #f3dfbd 100%); z-index: 20; transform: scale(0); }
+.hint { position: absolute; left: 50%; bottom: 2.4svh; transform: translateX(-50%); z-index: 8; display: grid; justify-items: center; gap: 6px; color: rgba(255,255,255,.75); font-size: 11.5px; letter-spacing: .24em; text-transform: uppercase; font-weight: 800; }
+.hint span { width: 1px; height: 30px; background: linear-gradient(var(--gold), transparent); animation: drip 1.8s ease-in-out infinite; transform-origin: top; }
+@keyframes drip { 0% { transform: scaleY(0) } 50% { transform: scaleY(1) } 100% { transform: scaleY(1); opacity: 0 } }
+
+/* ---------- S2 ivory + saffron ---------- */
+#s2 { background: radial-gradient(100% 70% at 50% 30%, #fffaf0 0%, var(--ivory) 50%, #f1dcb6 100%); display: flex; flex-direction: column; align-items: center; padding-top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 3svh); }
+#s2 .head { text-align: center; display: grid; gap: 10px; padding-inline: 18px; position: relative; z-index: 3; }
+#s2 .head .eyebrow { color: var(--gold-deep); }
+#s2 h2 { font-size: clamp(34px, 6.2vw, 86px); color: var(--maroon); }
+#s2 .grid { margin-block: auto; width: min(1080px, 94vw, calc((100svh - 260px) * 2.1)); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(8px, 1.6vw, 22px); }
+#s2 .tile { position: relative; aspect-ratio: 1 / .92; display: grid; align-content: end; justify-items: center; padding-bottom: 4%; }
+#s2 .dish { position: absolute; left: 5%; width: 90%; height: auto; aspect-ratio: 2.07; bottom: 23.8%; object-fit: fill; }
+#s2 .pile { position: absolute; inset: 0; }
+#s2 .name { position: relative; font-family: var(--f-display); font-weight: 700; font-size: clamp(15px, 1.9vw, 25px); color: var(--ink); line-height: 1.1; }
+/* ---------- A DAY: the sky turns from dawn to night; one jar for each moment ---------- */
+#day { background: #2b0f1c; color: #fff; }
+#day .sky { position: absolute; inset: 0; opacity: 0; will-change: opacity; }
+#day .stars { position: absolute; left: 0; right: 0; top: 0; height: 62%; opacity: 0; pointer-events: none;
+  background-image: radial-gradient(1.3px 1.3px at 8% 22%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 18% 8%, #fff 50%, transparent 52%), radial-gradient(1.6px 1.6px at 27% 34%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 36% 14%, #fff 50%, transparent 52%), radial-gradient(1.2px 1.2px at 46% 28%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 55% 6%, #fff 50%, transparent 52%), radial-gradient(1.5px 1.5px at 63% 38%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 71% 18%, #fff 50%, transparent 52%), radial-gradient(1.3px 1.3px at 92% 30%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 97% 10%, #fff 50%, transparent 52%), radial-gradient(1.2px 1.2px at 4% 44%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 40% 48%, #fff 50%, transparent 52%), radial-gradient(1.1px 1.1px at 86% 50%, #fff 50%, transparent 52%); }
+#day .arc { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#day .orb { position: absolute; left: 0; top: 0; width: var(--orb); height: var(--orb); margin: calc(var(--orb) / -2) 0 0 calc(var(--orb) / -2); border-radius: 50%; will-change: transform, opacity; --orb: clamp(60px, 7vw, 112px);
+  background: radial-gradient(circle, #fffbe8 0%, #ffe39a 36%, #f6b24a 60%, rgba(246,178,74,0) 71%); box-shadow: 0 0 90px 34px rgba(255,190,90,.32); }
+#day .moon { position: absolute; left: 82%; top: 20%; width: clamp(46px, 5vw, 80px); aspect-ratio: 1; border-radius: 50%; opacity: 0; will-change: opacity, transform;
+  background: radial-gradient(circle at 36% 34%, #fffdf3 0%, #f1ead2 46%, #cfc6a8 66%, rgba(207,198,168,0) 71%); box-shadow: 0 0 60px 18px rgba(220,225,255,.16); }
+#day .scrim { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(20,4,10,.66) 0%, rgba(20,4,10,.34) 38%, rgba(20,4,10,0) 62%); }
+#day .head { position: absolute; z-index: 6; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 3svh); left: 0; right: 0; text-align: center; display: grid; gap: 10px; justify-items: center; padding-inline: 18px; }
+#day .head h2 { font-size: clamp(34px, 6.2vw, 86px); color: #fff; }
+#day .head p { max-width: 34rem; color: rgba(255,255,255,.85); font-size: clamp(14px, 1.4vw, 17px); }
+#day .clock { position: absolute; z-index: 5; left: 6vw; right: 0; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 3svh); height: var(--ck); overflow: hidden; --ck: clamp(64px, 10vw, 140px); }
+#day .clock .t { position: absolute; left: 0; top: 0; display: flex; align-items: baseline; gap: .12em; white-space: nowrap; font-family: var(--f-display); font-weight: 600; font-size: var(--ck); line-height: 1; font-variant-numeric: tabular-nums; color: #fff; opacity: 0; }
+#day .clock .t small { font-family: var(--f-royal); font-weight: 700; font-size: .2em; letter-spacing: .22em; text-transform: uppercase; color: var(--gold-hi); }
+#day .moments { position: absolute; z-index: 5; left: 6vw; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 3svh + clamp(64px, 10vw, 140px) + 2.4svh); width: min(520px, 42vw); }
+#day .mo { position: absolute; left: 0; top: 0; width: 100%; display: grid; gap: 12px; opacity: 0; visibility: hidden; }
+#day .mo .when { color: var(--gold-hi); }
+#day .mo h3 { font-size: clamp(38px, 4.4vw, 64px); color: #fff; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+#day .mo h3 small { font-family: "Tiro Devanagari Hindi", serif; font-size: .5em; font-weight: 400; color: var(--gold-hi); }
+#day .mo .how { font-family: var(--f-display); font-style: italic; font-weight: 500; font-size: clamp(21px, 2vw, 28px); line-height: 1.22; color: #fff; text-wrap: pretty; }
+#day .mo .from { font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; font-weight: 800; color: rgba(255,255,255,.62); margin-top: -4px; }
+#day .chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 16px; margin-top: 4px; }
+#day .chip { display: flex; align-items: center; gap: 10px; min-width: 0; }
+#day .chip .ic { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--deep); box-shadow: 0 0 0 1.5px #fbf6ee, 0 0 0 3px var(--gold); }
+#day .chip svg { width: 18px; height: 18px; display: block; }
+#day .chip .tx { display: grid; min-width: 0; line-height: 1.2; }
+#day .chip b { font-size: 14px; font-weight: 800; color: #fff; }
+#day .chip i { font-style: normal; font-size: 12.5px; color: rgba(255,255,255,.84); }
+#day .serve { display: flex; align-items: flex-end; gap: 22px; border-top: 1px solid rgba(246,226,168,.38); padding-top: 12px; margin-top: 2px; }
+#day .serve b { display: block; font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 2.6vw, 38px); line-height: 1; color: var(--gold-hi); font-variant-numeric: tabular-nums; }
+#day .serve span { font-size: 12px; color: rgba(255,255,255,.84); }
+#day .serve p { margin-left: auto; font-size: 12px; color: rgba(255,255,255,.7); text-align: right; }
+#day .stagebox { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+#day .jarwrap { position: absolute; left: 0; top: 0; will-change: transform, opacity; }
+#day .dial { position: absolute; z-index: 5; left: 6vw; right: 6vw; bottom: 4svh; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+#day .dial::before { content: ""; position: absolute; left: 0; right: 0; top: 5px; height: 1px; background: rgba(246,226,168,.35); }
+#day .dial .fill { position: absolute; left: 0; right: 0; top: 4px; height: 3px; background: var(--foil); transform-origin: 0 50%; transform: scaleX(0); }
+#day .dial li { position: relative; display: grid; justify-items: start; gap: 8px; font-size: 12px; letter-spacing: .12em; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,.55); transition: color .3s; }
+#day .dial li::before { content: ""; width: 11px; height: 11px; border-radius: 50%; background: #1c0b1f; border: 1.5px solid rgba(246,226,168,.65); transition: background .3s, transform .3s; }
+#day .dial li.on { color: var(--gold-hi); }
+#day .dial li.on::before { background: var(--gold-hi); transform: scale(1.25); }
+#day .dial li em { font-style: normal; color: rgba(255,255,255,.75); letter-spacing: .04em; text-transform: none; font-weight: 600; }
+
+/* brass katori, shared by the day scene and the handful maker */
+.kat { position: absolute; }
+.kat img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+.kat .kb { z-index: 1; }
+.kat .kf { z-index: 5000; }
+
+/* ---------- MAKE YOUR HANDFUL ---------- */
+#mix { position: relative; overflow: hidden; background: radial-gradient(90% 70% at 50% 30%, #4a1020 0%, #2c0810 55%, #160408 100%); color: #fff; padding-block: calc(var(--nav-h) + 6svh) 9svh; }
+#mix .in { position: relative; z-index: 2; max-width: 1120px; margin: 0 auto; padding-inline: 18px; display: grid; gap: 26px; }
+#mix .head { text-align: center; display: grid; gap: 10px; justify-items: center; }
+#mix .head h2 { font-size: clamp(36px, 6vw, 84px); color: #fff; }
+#mix .head p { max-width: 36rem; color: rgba(255,255,255,.82); font-size: clamp(14px, 1.4vw, 17px); }
+#mix .play { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 28px; align-items: center; }
+#mix .bowlbox { position: relative; aspect-ratio: 1.45 / 1; }
+#mix .bowlbox .kat { left: 5%; width: 90%; aspect-ratio: 950 / 700; bottom: 1%; }
+#mix .pile { position: absolute; inset: 0; pointer-events: none; }
+#mix .pile img { position: absolute; left: 0; top: 0; filter: drop-shadow(0 6px 6px rgba(20,4,8,.4)); }
+#mix .side { display: grid; gap: 18px; justify-items: center; text-align: center; }
+#mix .meter { position: relative; width: min(230px, 56vw); aspect-ratio: 1; }
+#mix .meter svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+#mix .meter .trk { fill: none; stroke: rgba(246,226,168,.18); stroke-width: 9; }
+#mix .meter .val { fill: none; stroke: var(--gold-hi); stroke-width: 9; stroke-linecap: round; }
+#mix .meter .mid { position: absolute; inset: 0; display: grid; place-content: center; gap: 2px; }
+#mix .meter .mid b { font-family: var(--f-display); font-weight: 700; font-size: clamp(44px, 5vw, 64px); line-height: 1; font-variant-numeric: tabular-nums; }
+#mix .meter .mid span { font-size: 12px; color: rgba(255,255,255,.72); max-width: 9rem; }
+#mix .tot { display: flex; gap: 26px; justify-content: center; }
+#mix .tot b { display: block; font-family: var(--f-display); font-weight: 700; font-size: 32px; line-height: 1; color: var(--gold-hi); font-variant-numeric: tabular-nums; }
+#mix .tot span { font-size: 11.5px; color: rgba(255,255,255,.72); }
+#mix .msg { min-height: 3em; max-width: 26rem; font-size: 14.5px; color: rgba(255,255,255,.9); }
+#mix .btn.ghost { background: none; color: #fff; border: 1.5px solid rgba(246,226,168,.6); cursor: pointer; font: inherit; font-weight: 800; font-size: 15px; }
+#mix .picks { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 10px; }
+#mix .pick { position: relative; appearance: none; font: inherit; cursor: pointer; display: grid; justify-items: center; gap: 4px; padding: 10px 4px 9px; min-height: 44px; border-radius: 16px; background: rgba(255,255,255,.05); border: 1px solid rgba(201,164,90,.45); color: #fff; transition: background .2s, transform .15s; }
+#mix .pick:hover { background: rgba(246,226,168,.12); }
+#mix .pick:active { transform: scale(.96); }
+#mix .pick img { width: 64%; max-width: 70px; aspect-ratio: 1; object-fit: contain; filter: drop-shadow(0 6px 6px rgba(0,0,0,.4)); }
+#mix .pick b { font-size: 13px; font-weight: 800; line-height: 1.15; }
+#mix .pick small { font-size: 11.5px; color: rgba(255,255,255,.74); }
+#mix .pick .n { position: absolute; right: 6px; top: 6px; min-width: 22px; height: 22px; padding-inline: 6px; border-radius: 99px; background: var(--gold-hi); color: var(--ink); font-size: 12px; font-weight: 800; display: grid; place-items: center; font-style: normal; }
+#mix .pick .n[hidden] { display: none; }
+#mix .src { text-align: center; font-size: 12px; color: rgba(255,255,255,.62); }
+
+@media (max-width: 700px) {
+  #day .scrim { background: linear-gradient(180deg, rgba(14,4,8,0) 46%, rgba(14,4,8,.55) 64%, rgba(14,4,8,.78) 100%); }
+  #day .clock { left: 0; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + .5svh); --ck: 54px; }
+  #day .clock .t { left: 50%; }
+  #day .moments { left: 18px; right: 18px; width: auto; top: auto; bottom: calc(3svh + 34px); height: 40svh; }
+  #day .mo { top: auto; bottom: 0; gap: 7px; }
+  #day .mo h3 { font-size: 32px; }
+  #day .mo .how { font-size: 18px; }
+  #day .mo .from { font-size: 11px; }
+  #day .chips { gap: 7px 10px; }
+  #day .chip { gap: 7px; }
+  #day .chip .ic { width: 26px; height: 26px; }
+  #day .chip svg { width: 14px; height: 14px; }
+  #day .chip b { font-size: 12.5px; }
+  #day .chip i { font-size: 11px; }
+  #day .serve { gap: 14px; padding-top: 8px; }
+  #day .serve b { font-size: 24px; }
+  #day .serve span { font-size: 11px; }
+  #day .serve p { font-size: 11px; }
+  #day .dial { left: 18px; right: 18px; bottom: 2svh; }
+  #day .dial li { font-size: 11px; letter-spacing: .06em; gap: 6px; }
+  #day .dial li em { display: none; }
+  #day .moon { left: 74%; top: 17%; }
+  #mix .play { display: contents; }
+  #mix .head { order: 0; } #mix .bowlbox { order: 1; } #mix .picks { order: 2; } #mix .side { order: 3; } #mix .src { order: 4; }
+  #mix .picks { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  #mix .pick img { width: 46px; }
+  #mix .tot { gap: 18px; }
+  #mix .tot b { font-size: 26px; }
+  #mix .meter { width: min(180px, 48vw); }
+}
+
+
+/* ---------- dish buttons and detail card ---------- */
+#s2 button.tile { appearance: none; background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; border-radius: 18px; }
+#s2 button.tile:hover .dish { filter: brightness(1.04) drop-shadow(0 0 10px rgba(201,164,90,.55)); }
+#s2 .tapnote { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.detail { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 16px); }
+.detail[hidden] { display: none; }
+.detail .dback { position: absolute; inset: 0; background: rgba(20,4,8,.72); backdrop-filter: blur(4px); }
+.detail .dcard { position: relative; width: min(420px, 100%); max-height: 100%; overflow: auto; border-radius: 22px; background: linear-gradient(180deg, #2f0a12, #1c060b); border: 1px solid rgba(201,164,90,.5); box-shadow: 0 40px 80px -30px rgba(0,0,0,.9); color: #fff; }
+.detail .dcard img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.detail .dtx { padding: 14px 18px 18px; display: grid; gap: 10px; }
+.detail h3 { font-size: 34px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.detail h3 small { font-family: "Tiro Devanagari Hindi", serif; font-size: .55em; color: var(--gold-hi); font-weight: 400; }
+.detail .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.detail .facts div { border: 1px solid rgba(201,164,90,.35); border-radius: 10px; padding: 6px 4px; text-align: center; }
+.detail .facts b { display: block; font-family: var(--f-display); font-size: 24px; line-height: 1; color: var(--gold-hi); }
+.detail .facts span { font-size: 11.5px; color: rgba(255,255,255,.72); }
+.detail .good { display: flex; flex-wrap: wrap; gap: 6px; }
+.detail .good i { font-style: normal; font-size: 12px; font-weight: 800; color: var(--ink); background: var(--gold-hi); padding: 3px 10px; border-radius: 99px; }
+.detail .how { font-size: 14.5px; line-height: 1.5; color: rgba(255,255,255,.9); }
+.detail .how b { color: var(--gold-hi); }
+.detail .dx { position: absolute; z-index: 2; right: 10px; top: 10px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--gold); background: rgba(26,5,9,.75); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; }
+.detail .note { font-size: 12px; color: rgba(255,255,255,.62); }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+#s1 > #s2 { position: absolute; inset: 0; z-index: 21; height: auto; background: none; }
+#s2 .w { position: relative; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; font-weight: 800; color: var(--gold-deep); }
+
+/* ---------- marquee band: ivory to copper ---------- */
+#band { position: relative; height: 120svh; overflow: hidden; background: linear-gradient(180deg, #fbf3e4 0%, #f7e0ae 20%, #f4a62a 48%, #b8402f 72%, #6e1a2c 86%, #2b0f1c 100%); display: grid; align-content: center; gap: 2svh; }
+#band .row { display: flex; align-items: center; gap: 4vw; white-space: nowrap; font-family: var(--f-display); font-weight: 700; font-style: italic; font-size: clamp(64px, 14vw, 220px); line-height: 1; will-change: transform; }
+#band .row img { height: .8em; width: auto; flex: none; filter: drop-shadow(0 12px 16px rgba(0,0,0,.35)); }
+#band .r1 { color: var(--maroon); }
+#band .r2 { color: transparent; -webkit-text-stroke: 1.5px rgba(74,15,29,.85); font-family: var(--f-royal); font-style: normal; font-weight: 800; font-size: clamp(48px, 10vw, 160px); }
+#band .r3 { color: var(--gold-hi); }
+
+/* ---------- S3 copper macro ---------- */
+#s3 { background: radial-gradient(70% 60% at 50% 48%, #c47436 0%, #8a3f1a 30%, #3a1407 65%, #140603 100%); color: #fff; }
+#s3 .gauge { position: absolute; left: 50%; top: 48%; width: min(84vmin, 760px); aspect-ratio: 1; z-index: 1; }
+#s3 .gauge svg { width: 100%; height: 100%; overflow: visible; }
+#s3 .hero-almond { position: absolute; left: 50%; top: 46%; width: min(50vmin, 480px); z-index: 2; }
+#s3 .copy { position: absolute; z-index: 3; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 3svh); left: 0; right: 0; text-align: center; display: grid; gap: 10px; padding-inline: 18px; }
+#s3 h2 { font-size: clamp(34px, 6.4vw, 90px); color: #fff; }
+#s3 .stats { position: absolute; z-index: 3; left: 50%; bottom: 9svh; transform: translateX(-50%); width: min(1000px, 92vw); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+#s3 .stat { border-top: 1px solid rgba(246,226,168,.55); padding-top: 10px; }
+#s3 .stat b { display: block; font-family: var(--f-display); font-weight: 700; font-size: clamp(30px, 5vw, 70px); line-height: 1; font-variant-numeric: tabular-nums; }
+#s3 .stat b small { font-size: .4em; margin-left: 4px; font-family: var(--f-body); font-weight: 800; color: var(--gold-hi); -webkit-text-fill-color: var(--gold-hi); }
+#s3 .stat span { font-size: 12.5px; color: rgba(255,255,255,.78); font-weight: 600; }
+#s3 .src { position: absolute; z-index: 3; bottom: 3.6svh; left: 0; right: 0; text-align: center; font-size: 12px; color: rgba(255,255,255,.62); padding-inline: 18px; }
+
+/* ---------- S4 shelf: the colour follows the jar ---------- */
+#s4 { --glow: #c26a2a; background: radial-gradient(52% 58% at 50% 68%, var(--glow) 0%, rgba(36,6,14,0) 74%), radial-gradient(120% 90% at 50% 0%, #4a0f1d 0%, #24060e 62%, #14030a 100%); color: #fff; }
+#s4::before { content: ""; position: absolute; inset: 0; background: radial-gradient(80% 70% at 50% 45%, rgba(255,236,190,.28), rgba(0,0,0,.35) 75%); pointer-events: none; }
+#s4 .head { position: absolute; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 3svh); left: 0; right: 0; text-align: center; display: grid; gap: 10px; padding-inline: 18px; z-index: 3; }
+#s4 h2 { font-size: clamp(34px, 6.2vw, 86px); color: #fff; }
+#s4 .track { position: absolute; left: 0; bottom: 13svh; display: flex; align-items: flex-end; padding-inline: 50vw; will-change: transform; z-index: 2; }
+#s4 .item { position: relative; flex: none; display: grid; justify-items: center; gap: 12px; }
+#s4 .big { position: absolute; left: 50%; bottom: 34%; transform: translateX(-50%); white-space: nowrap; font-family: var(--f-royal); font-weight: 800; font-size: clamp(90px, 22vw, 330px); line-height: .8; color: transparent; -webkit-text-stroke: 1.2px rgba(255,240,205,.17); z-index: 0; pointer-events: none; }
+#s4 .jarbox { position: relative; z-index: 1; }
+#s4 .front { position: absolute; left: 50%; bottom: -3%; width: 0; height: 0; z-index: 4; }
+#s4 .name { position: relative; z-index: 1; display: grid; justify-items: center; gap: 2px; font-family: var(--f-display); font-weight: 700; font-size: clamp(19px, 2.4vw, 32px); line-height: 1.1; color: #fff; text-decoration: none; }
+#s4 .name small { font-family: var(--f-body); font-size: 12.5px; font-weight: 800; letter-spacing: .06em; color: var(--kesar-hi); }
+#s4 .name:hover small { text-decoration: underline; text-underline-offset: 3px; }
+#s4 .shelfline { position: absolute; left: 0; right: 0; height: 9px; z-index: 1; background: linear-gradient(180deg, #f7e3a8, #c9a45a 45%, #7a571c); box-shadow: 0 16px 24px -10px rgba(0,0,0,.6); }
+
+/* ---------- S5 peacock teal + gold ---------- */
+#s5 { background: radial-gradient(80% 70% at 50% 42%, #1d8a86 0%, #0f5c5f 34%, #062b2e 70%, #021416 100%); color: #fff; }
+#s5 .head { position: absolute; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 3svh); left: 0; right: 0; text-align: center; display: grid; gap: 10px; padding-inline: 18px; z-index: 3; }
+#s5 h2 { font-size: clamp(34px, 6.2vw, 86px); color: #fff; }
+#s5 .tray { position: absolute; left: 50%; top: 60%; width: min(900px, 94vw, calc(62svh * 1.392)); aspect-ratio: 905 / 650; z-index: 2; }
+#s5 .trayimg { position: absolute; inset: 0; width: 100%; height: 100%; }
+#s5 .well { position: absolute; }
+#s5 .well .tag { position: absolute; left: 50%; bottom: -15%; transform: translateX(-50%); white-space: nowrap; font-family: var(--f-royal); font-size: clamp(7px, 1vw, 11px); letter-spacing: .16em; color: var(--gold-hi); }
+#s5 .ribbon { position: absolute; left: 15.7%; width: 72.6%; top: 57%; height: 5.5%; background: linear-gradient(180deg, #fbe9b8, #c9a45a 50%, #8a6424); box-shadow: 0 6px 10px rgba(0,0,0,.35); transform-origin: 0 50%; z-index: 6; }
+#s5 .bow { position: absolute; left: 49.2%; top: 40.3%; width: 11%; aspect-ratio: 1; margin: -5.5% 0 0 -5.5%; border-radius: 50%; z-index: 7; background: radial-gradient(circle at 38% 32%, #fff6d6, #c9a45a 55%, #6e4f16); box-shadow: 0 10px 18px rgba(0,0,0,.45); display: grid; place-items: center; font-family: var(--f-royal); font-weight: 800; font-size: clamp(7px, 1.1vw, 12px); color: var(--royal); letter-spacing: .1em; text-align: center; line-height: 1.1; }
+#s5 .petals { position: absolute; inset: 0; z-index: 9; pointer-events: none; }
+.petal { position: absolute; left: 0; top: 0; width: 18px; height: 11px; border-radius: 60% 60% 60% 60% / 80% 80% 40% 40%; background: radial-gradient(ellipse at 30% 30%, #ffd36b, var(--marigold) 55%, #c4560c); box-shadow: inset -2px -2px 3px rgba(120,40,0,.35); }
+
+/* ---------- S6 pearl ---------- */
+#s6 { background: radial-gradient(70% 60% at 50% 38%, #fff3d2 0%, var(--ivory) 45%, #efd9b0 100%); display: grid; place-items: center; text-align: center; }
+#s6 .wrap { display: grid; justify-items: center; gap: 16px; padding-inline: 18px; position: relative; z-index: 2; padding-top: var(--nav-h); }
+#s6 .glow { position: absolute; left: 50%; top: 22%; width: 420px; max-width: 90vw; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(232,163,61,.45), transparent); }
+#s6 h2 { font-size: clamp(40px, 7.4vw, 104px); color: var(--maroon); max-width: 13ch; }
+#s6 .eyebrow { color: var(--gold-deep); }
+#s6 p.lede { max-width: 34rem; color: var(--muted); font-size: 16px; }
+#s6 .trust { color: var(--ink); }
+.ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.btn { display: inline-flex; align-items: center; height: 50px; padding-inline: 24px; border-radius: 12px; font-weight: 800; font-size: 15.5px; text-decoration: none; transition: transform .15s, box-shadow .2s, filter .2s; }
+.btn:hover { transform: translateY(-1px); }
+.btn.solid { background: var(--buy); color: var(--buy-ink); border: 1px solid rgba(255,236,190,.75); box-shadow: 0 14px 30px -12px rgba(217,130,26,.8), inset 0 1px 0 rgba(255,255,255,.55); }
+.btn.solid:hover { filter: brightness(1.05) saturate(1.05); box-shadow: 0 18px 36px -12px rgba(217,130,26,.95), inset 0 1px 0 rgba(255,255,255,.55); }
+.btn.line { border: 1.5px solid var(--maroon); color: var(--maroon); }
+
+/* ---------- notes ---------- */
+.notes { background: var(--ivory); color: var(--ink); padding-block: 60px 90px; }
+.notes .in { max-width: 1000px; margin: 0 auto; padding-inline: 18px; display: grid; gap: 24px; }
+.notes h2 { font-size: clamp(30px, 4.4vw, 48px); color: var(--maroon); }
+.notes .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 12px; }
+.notes .card { background: var(--pearl); border: 1px solid #e8ddcc; border-radius: 14px; padding: 16px 18px; display: grid; gap: 6px; align-content: start; }
+.notes .card h3 { font-family: var(--f-body); font-size: 16px; font-weight: 800; line-height: 1.3; }
+.notes .card p { font-size: 14.5px; color: var(--muted); }
+.notes .eyebrow { color: var(--gold-deep); }
+.notes .an-lede { max-width: 68ch; font-size: 16px; color: var(--muted); text-wrap: pretty; }
+.notes .an-h { font-family: var(--f-display); font-size: clamp(24px, 3vw, 34px); color: var(--maroon); margin-top: 18px; }
+.an-roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: 12px; }
+.role { display: grid; gap: 6px; align-content: start; background: var(--pearl); border: 1px solid #e8ddcc; border-radius: 14px; padding: 12px; }
+.role i { display: block; height: 64px; border-radius: 9px; }
+.role b { font-size: 15px; font-weight: 800; }
+.role span { font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+.an-scroll { overflow-x: auto; max-width: 100%; border: 1px solid #e8ddcc; border-radius: 14px; background: var(--pearl); }
+.an-t { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 14px; }
+.an-t th { text-align: left; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-deep); padding: 12px 14px; border-bottom: 1px solid #e8ddcc; }
+.an-t td { padding: 12px 14px; vertical-align: top; border-bottom: 1px solid #f0e6d6; color: var(--ink); line-height: 1.45; }
+.an-t tr:last-child td { border-bottom: 0; }
+.an-t td:first-child { font-weight: 800; white-space: nowrap; }
+.an-t td:last-child { color: var(--muted); }
+.an-t .sw { display: block; width: 100%; height: 26px; border-radius: 6px; margin-bottom: 6px; }
+.an-num { min-width: 420px; }
+.an-num td:nth-child(2) { font-variant-numeric: tabular-nums; font-weight: 800; white-space: nowrap; }
+.pair { display: inline-block; padding: 6px 14px; border-radius: 8px; font-weight: 800; }
+
+/* ---------- phones ---------- */
+@media (max-width: 700px) {
+  :root { --nav-h: 58px; }
+  .plaque { width: 58px; height: 40px; } .plaque img { width: 46px; }
+  .shop { height: 38px; padding-inline: 15px; font-size: 13.5px; }
+  #s1 .trust { display: none; }
+  #s1 .hero-cta .btn { height: 46px; padding-inline: 18px; font-size: 14.5px; }
+  #s1 .stage { margin-bottom: 15svh; }
+  #s4 .track { bottom: 21svh; }
+  #s2 .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(92vw, calc((100svh - 230px) * .62)); gap: 2px 12px; }
+  #s2 .tile { aspect-ratio: 1 / .66; }
+  #s2 .dish { left: 15%; width: 70%; aspect-ratio: 2.4; bottom: 39.5%; }
+  #s3 .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; bottom: 8svh; }
+  #s3 .stat b { font-size: 40px; }
+  #s3 .gauge { width: 96vmin; }
+  #s3 .hero-almond { width: 62vw; }
+  #s5 .tray { top: 58%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hint span, #s1 .aura { animation: none; }
+}
+
+/* ---------- buying: glass quantity sheet and basket ---------- */
+.navr { display: flex; align-items: center; gap: 8px; }
+.bag { position: relative; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding-inline: 14px 16px; border-radius: 999px; cursor: pointer; font: 800 14px/1 var(--f-body); color: #fff;
+  background: linear-gradient(160deg, rgba(110,26,44,.55), rgba(26,5,9,.65)); border: 1px solid rgba(246,226,168,.45); -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%); box-shadow: 0 10px 24px -12px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.12); }
+.bag svg { width: 18px; height: 18px; }
+.bag b { min-width: 22px; height: 22px; padding-inline: 6px; border-radius: 99px; display: grid; place-items: center; background: var(--buy); color: var(--buy-ink); font-size: 12px; }
+.bag.bump { animation: bump .45s cubic-bezier(.3,1.6,.5,1); }
+@keyframes bump { 40% { transform: scale(1.14); } }
+.glass { color: #fff; border-radius: 26px; background: linear-gradient(160deg, rgba(110,26,44,.78) 0%, rgba(42,8,16,.86) 55%, rgba(20,4,8,.92) 100%);
+  border: 1px solid rgba(246,226,168,.38); -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%);
+  box-shadow: 0 50px 100px -30px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 0 1px rgba(255,255,255,.03); }
+.overlay { position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; padding: calc(env(safe-area-inset-top, 0px) + 16px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) max(16px, env(safe-area-inset-left, 0px)); }
+.overlay[hidden] { display: none; }
+.overlay .scrimx { position: absolute; inset: 0; background: rgba(14,3,6,.62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.sheet { position: relative; width: min(720px, 100%); max-height: 100%; overflow: auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 26px; padding: 28px; }
+.sheet .jarstage { position: relative; display: grid; place-items: end center; min-height: 300px; border-radius: 20px; background: radial-gradient(70% 60% at 50% 62%, rgba(244,166,42,.38), rgba(110,26,44,.25) 55%, rgba(0,0,0,0) 80%); }
+.sheet .jarstage::after { content: ""; position: absolute; left: 14%; right: 14%; bottom: 14px; height: 18px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), transparent); }
+.sheet .jarstage .jar { margin-bottom: 22px; z-index: 1; filter: drop-shadow(0 24px 24px rgba(0,0,0,.5)); }
+.sheet .info { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.sheet h3 { font-size: clamp(34px, 4vw, 46px); color: #fff; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.sheet h3 small { font-family: "Tiro Devanagari Hindi", serif; font-size: .5em; font-weight: 400; color: var(--gold-hi); }
+.sheet .price { display: flex; align-items: baseline; gap: 10px; font-family: var(--f-display); }
+.sheet .price b { font-size: 44px; line-height: 1; color: var(--gold-hi); font-variant-numeric: tabular-nums; }
+.sheet .price span { font: 700 13px/1.3 var(--f-body); color: rgba(255,255,255,.75); }
+.stock { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: rgba(255,255,255,.88); }
+.stock::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #7fd18b; box-shadow: 0 0 0 4px rgba(127,209,139,.18); }
+.stock.out::before { background: #ff8a6b; box-shadow: 0 0 0 4px rgba(255,138,107,.18); }
+.qty { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(246,226,168,.3); width: max-content; }
+.qty button { width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer; font: 700 22px/1 var(--f-body); color: var(--ink); background: radial-gradient(circle at 35% 30%, #fff6d6, var(--gold-hi) 55%, var(--gold)); box-shadow: inset 0 -2px 0 rgba(122,87,28,.4); }
+.qty button:disabled { opacity: .35; cursor: default; }
+.qty output { min-width: 54px; text-align: center; font: 700 26px/1 var(--f-display); font-variant-numeric: tabular-nums; }
+.sheet .row2 { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+.sheet .sub { font-size: 14px; color: rgba(255,255,255,.8); }
+.sheet .sub b { color: #fff; font-size: 17px; font-variant-numeric: tabular-nums; }
+.sheet .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.sheet .acts .btn, .drawer .acts .btn { height: 52px; border-radius: 14px; }
+.btn.glassbtn { color: #fff; border: 1.5px solid rgba(246,226,168,.6); background: rgba(255,255,255,.06); }
+.btn.glassbtn:hover { background: rgba(246,226,168,.12); }
+button.btn { cursor: pointer; font-family: inherit; }
+button.btn:disabled { cursor: default; filter: grayscale(.6) brightness(.8); box-shadow: none; }
+.toast { max-width: calc(100vw - 32px); text-align: center; }
+.more { font-size: 14px; font-weight: 700; color: var(--gold-hi); text-decoration: none; }
+.more:hover { text-decoration: underline; text-underline-offset: 3px; }
+.fine { font-size: 12px; color: rgba(255,255,255,.62); }
+.x { position: absolute; right: 14px; top: 14px; z-index: 2; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(246,226,168,.5); background: rgba(26,5,9,.6); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; }
+.drawer { position: relative; width: min(520px, 100%); max-height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+.drawer header { padding: 24px 26px 12px; display: grid; gap: 4px; }
+.drawer h3 { font-size: 40px; color: #fff; }
+.lines { overflow: auto; padding: 4px 26px; display: grid; gap: 10px; align-content: start; }
+.line { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 10px; border-radius: 16px; background: rgba(255,255,255,.05); border: 1px solid rgba(246,226,168,.18); }
+.line .mini { width: 54px; height: 64px; position: relative; display: grid; place-items: end center; }
+.line b { display: block; font: 700 20px/1.1 var(--f-display); }
+.line span { font-size: 12.5px; color: rgba(255,255,255,.72); }
+.line .qty { transform: scale(.84); transform-origin: right center; }
+.empty { padding: 26px; text-align: center; color: rgba(255,255,255,.75); display: grid; gap: 10px; justify-items: center; }
+.drawer footer { padding: 16px 26px 24px; display: grid; gap: 12px; border-top: 1px solid rgba(246,226,168,.22); background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.2)); }
+.drawer .tot { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--f-display); font-size: 22px; }
+.drawer .tot b { font-size: 34px; color: var(--gold-hi); font-variant-numeric: tabular-nums; }
+.drawer .acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.drawer .acts .btn { justify-content: center; }
+.flyjar { position: fixed; z-index: 120; pointer-events: none; }
+.toast { position: fixed; z-index: 110; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 22px); transform: translateX(-50%); padding: 12px 18px; border-radius: 999px; font-weight: 800; font-size: 14px; color: var(--buy-ink); background: var(--buy); box-shadow: 0 16px 30px -12px rgba(0,0,0,.6); }
+.toast[hidden] { display: none; }
+#s4 button.name { appearance: none; background: none; border: 0; padding: 0; cursor: pointer; }
+#s4 .jarbox { cursor: pointer; }
+#day .mo-buy { justify-self: start; height: 46px; padding-inline: 20px; font-size: 15px; margin-top: 2px; pointer-events: auto; }
+.detail .dbuy { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.detail .dbuy .btn { height: 48px; }
+@media (max-width: 700px) {
+  .bag { height: 38px; padding-inline: 11px 12px; font-size: 13px; } .bag .lbl { display: none; }
+  .overlay { place-items: end center; padding-inline: 0; padding-bottom: 0; }
+  .sheet, .drawer { border-radius: 26px 26px 0 0; width: 100%; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); }
+  .sheet { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 20px 18px; }
+  .sheet .jarstage { min-height: 150px; }
+  .sheet .jarstage .jar { margin-bottom: 14px; }
+  .sheet .info { gap: 10px; }
+  .sheet h3 { font-size: 30px; }
+  .sheet .price b { font-size: 34px; }
+  .sheet .acts { display: grid; grid-template-columns: 1fr; }
+  .sheet .acts .btn { justify-content: center; }
+  .drawer { max-height: 88svh; }
+  .drawer .acts { grid-template-columns: 1fr; }
+  #day .mo-buy { height: 40px; font-size: 13.5px; padding-inline: 14px; }
+}
+</style>
+
+<canvas class="grain" id="grain" aria-hidden="true"></canvas>
+<canvas id="dust" aria-hidden="true"></canvas>
+<nav class="nav" aria-label="Spicy Nuts">
+  <a class="plaque" href="/" aria-label="Spicy Nuts home"><img id="logo" alt="Spicy Nuts"></a>
+  <span class="navr">
+    <button type="button" class="bag" id="bagBtn" aria-haspopup="dialog" aria-label="Basket, 0 jars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v3H7zM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1z"/><path d="M6 11h12"/></svg><span class="lbl">Basket</span><b id="bagN">0</b></button>
+    <a class="shop" href="/shop">Shop now</a>
+  </span>
+</nav>
+<div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+
+<section class="scene" id="s1" aria-label="The jar opens">
+  <video class="bgv" id="s1video" muted loop playsinline preload="auto" aria-hidden="true"></video>
+  <div class="bgfade"></div>
+  <div class="aura"></div>
+  <div class="jaali"></div>
+  <div class="copy">
+    <span class="eyebrow" id="s1eb">From Bidar, Karnataka</span>
+    <h1 id="s1title" aria-label="The Royal Pantry">The Royal Pantry</h1>
+    <p class="sub" id="s1sub">Almonds, cashews, walnuts, pistachios, dates, raisins and seeds, packed for gifting and for everyday.</p>
+    <div class="ctas hero-cta" id="s1cta">
+      <a class="btn solid" href="/shop">Shop the pantry</a>
+      <a class="btn ghost-l" href="/#gift">Build a gift tray</a>
+    </div>
+    <ul class="trust" id="s1trust"><li>FSSAI Reg. 21224035000151</li><li>Packed fresh in Bidar</li><li>Delivered across India</li></ul>
+  </div>
+  <div class="stage" id="s1stage"></div>
+  <div class="burst" id="burst"></div>
+  <div class="cap" id="s1cap"><span class="eyebrow">Before it ever reaches a jar</span><h2>Every piece, <em class="foil">sorted by hand</em></h2></div>
+  <div class="wipe" id="wipe"></div>
+  <div class="vig"></div>
+  <div class="scene" id="s2" role="region" aria-label="Eight favourites">
+    <div class="head">
+      <span class="eyebrow">The pantry</span>
+      <h2>Eight <em class="foil">favourites</em>, each in its place</h2>
+      <p class="tapnote">Tap a dish to see what it gives you</p>
+    </div>
+    <div class="grid" id="s2grid"></div>
+  </div>
+  <div class="hint" id="hint"><span></span>Scroll</div>
+</section>
+
+
+
+<section id="band" aria-label="What we pack">
+  <div class="row r1" id="r1"></div>
+  <div class="row r2" id="r2"></div>
+  <div class="row r3" id="r3"></div>
+</section>
+
+<section class="scene" id="day" aria-label="A day with dry fruits: when and how to enjoy each one">
+  <div id="skies"></div>
+  <div class="stars" aria-hidden="true"></div>
+  <svg class="arc" id="dayArc" aria-hidden="true"></svg>
+  <div class="orb" id="dayOrb" aria-hidden="true"></div>
+  <div class="moon" id="dayMoon" aria-hidden="true"></div>
+  <div class="stagebox" id="dayStage" aria-hidden="true"></div>
+  <div class="scrim"></div>
+  <div class="head">
+    <span class="eyebrow">From sunrise to bedtime</span>
+    <h2>A day, <em class="foil">one jar at a time</em></h2>
+    <p>When to reach for each one and how to enjoy it, in the words printed on its jar.</p>
+  </div>
+  <div class="clock" id="dayClock" aria-hidden="true"></div>
+  <div class="moments" id="dayMoments"></div>
+  <ol class="dial" id="dayDial" aria-hidden="true"><i class="fill"></i></ol>
+</section>
+
+
+<div class="detail" id="detail" role="dialog" aria-modal="true" aria-labelledby="dtName" hidden>
+  <div class="dback" data-close></div>
+  <article class="dcard">
+    <button type="button" class="dx" data-close aria-label="Close">×</button>
+    <img id="dtImg" alt="">
+    <div class="dtx">
+      <h3 id="dtName"></h3>
+      <div class="facts" id="dtFacts"></div>
+      <div class="good" id="dtGood"></div>
+      <p class="how" id="dtHow"></p>
+      <p class="note">Per 100 g, typical values as printed on Spicy Nuts labels.</p>
+      <div class="dbuy"><button type="button" class="btn solid" id="dtBuy">Choose quantity</button><a class="more" href="/shop">Browse the shop →</a></div>
+    </div>
+  </article>
+</div>
+
+
+
+<section class="scene" id="s3" aria-label="A closer look at an almond">
+  <div class="gauge" id="gauge"></div>
+  <img class="hero-almond" id="bigAlmond" alt="A California almond">
+  <div class="vig"></div>
+  <div class="copy">
+    <span class="eyebrow">Look closer</span>
+    <h2>One almond, <em class="foil">up close</em></h2>
+  </div>
+  <div class="stats" id="stats">
+    <div class="stat"><b class="foil"><span data-to="579" data-d="0">0</span><small>kcal</small></b><span>Energy per 100 g</span></div>
+    <div class="stat"><b class="foil"><span data-to="21.2" data-d="1">0</span><small>g</small></b><span>Protein</span></div>
+    <div class="stat"><b class="foil"><span data-to="12.5" data-d="1">0</span><small>g</small></b><span>Dietary fibre</span></div>
+    <div class="stat"><b class="foil"><span data-to="49.9" data-d="1">0</span><small>g</small></b><span>Mostly good fats</span></div>
+  </div>
+  <p class="src">California almonds, typical values per 100 g (USDA FoodData Central), as printed on the Spicy Nuts label</p>
+</section>
+
+<section id="mix" aria-labelledby="mixTitle">
+  <div class="jaali"></div>
+  <div class="in">
+    <div class="head">
+      <span class="eyebrow">Your turn</span>
+      <h2 id="mixTitle">Make your own <em class="foil">handful</em></h2>
+      <p>Tap a dry fruit to drop it into the katori. We add up what is in it, using the numbers printed on our labels.</p>
+    </div>
+    <div class="play">
+      <div class="bowlbox" id="mixBowl">
+        <div class="kat" id="mixKat" aria-hidden="true"><img class="kb" alt=""><img class="kf" alt=""></div>
+        <div class="pile" id="mixPile" aria-hidden="true"></div>
+      </div>
+      <div class="side">
+        <div class="meter">
+          <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="52"></circle><circle class="val" id="mixRing" cx="60" cy="60" r="52"></circle></svg>
+          <div class="mid"><b id="mixG">0</b><span>grams, of a 30 g serve</span></div>
+        </div>
+        <div class="tot">
+          <div><b id="mixK">0</b><span>kcal</span></div>
+          <div><b id="mixP">0.0</b><span>g protein</span></div>
+          <div><b id="mixF">0.0</b><span>g fibre</span></div>
+        </div>
+        <p class="msg" id="mixMsg" aria-live="polite">Start with a few almonds.</p>
+        <div class="ctas">
+          <button type="button" class="btn ghost" id="mixReset">Empty the katori</button>
+          <button type="button" class="btn solid" id="mixBuy">Add these jars to basket</button>
+        </div>
+      </div>
+    </div>
+    <div class="picks" id="mixPicks" role="group" aria-label="Add a dry fruit"></div>
+    <p class="src">Approximate: typical weight of one piece × the values per 100 g printed on Spicy Nuts labels.</p>
+  </div>
+</section>
+
+<section class="scene" id="s4" aria-label="The shelf">
+  <div class="head">
+    <span class="eyebrow">The shelf</span>
+    <h2>Nine jars, <em class="foil">one royal label</em></h2>
+  </div>
+  <div class="shelfline" id="shelfline"></div>
+  <div class="track" id="track"></div>
+</section>
+
+<section class="scene" id="s5" aria-label="A royal gift tray">
+  <div class="jaali"></div>
+  <div class="head">
+    <span class="eyebrow">For gifting</span>
+    <h2>A royal tray, <em class="foil">filled by hand</em></h2>
+  </div>
+  <div class="tray" id="tray"></div>
+  <div class="petals" id="petals"></div>
+  <div class="vig"></div>
+</section>
+
+<section class="scene" id="s6" aria-label="Shop">
+  <div class="glow"></div>
+  <div class="wrap">
+    <div id="s6jar"></div>
+    <span class="eyebrow">Freshly packed in Bidar</span>
+    <h2>Delivered <em class="foil">across India</em></h2>
+    <p class="lede">Order on the website or WhatsApp us at +91 85500 07073. Every jar carries its batch number, packing date and FSSAI registration.</p>
+    <div class="ctas">
+      <a class="btn solid" href="/shop">Shop the pantry</a>
+      <a class="btn line" href="/#gift">Build a gift tray</a>
+    </div>
+    <ul class="trust"><li>FSSAI Reg. 21224035000151</li><li>Batch no. and packing date on every jar</li><li>Delivered across India</li></ul>
+  </div>
+</section>
+
+<div class="overlay" id="buy" role="dialog" aria-modal="true" aria-labelledby="bName" hidden>
+  <div class="scrimx" data-close></div>
+  <article class="sheet glass">
+    <button type="button" class="x" data-close aria-label="Close">×</button>
+    <div class="jarstage" id="bJar"></div>
+    <div class="info">
+      <span class="eyebrow" id="bSize">250 g jar</span>
+      <h3 id="bName"></h3>
+      <div class="price"><b id="bPrice"></b><span>per jar<br>incl. of all taxes</span></div>
+      <span class="stock" id="bStock"></span>
+      <div class="row2">
+        <div class="qty" role="group" aria-label="Quantity"><button type="button" id="bMinus" aria-label="One less">−</button><output id="bQty" aria-live="polite">1</output><button type="button" id="bPlus" aria-label="One more">+</button></div>
+        <span class="sub">Subtotal <b id="bSub"></b></span>
+      </div>
+      <div class="acts">
+        <button type="button" class="btn solid" id="bAdd">Add to basket</button>
+        <a class="btn glassbtn" id="bNow" href="/shop">Buy now</a>
+      </div>
+      <a class="more" href="/shop">Want more? See all 33 jars in the shop →</a>
+      <p class="fine">Prices include all taxes. Delivery charges and offers are shown at checkout.</p>
+    </div>
+  </article>
+</div>
+<div class="overlay" id="basket" role="dialog" aria-modal="true" aria-labelledby="kTitle" hidden>
+  <div class="scrimx" data-close></div>
+  <article class="drawer glass">
+    <button type="button" class="x" data-close aria-label="Close">×</button>
+    <header><span class="eyebrow">Ready to send to checkout</span><h3 id="kTitle">Your basket</h3></header>
+    <div class="lines" id="kLines"></div>
+    <footer>
+      <div class="tot"><span id="kCount">0 jars</span><b id="kTotal">₹0</b></div>
+      <div class="acts">
+        <a class="btn solid" id="kGo" href="/shop">Checkout</a>
+        <a class="btn glassbtn" href="/shop">Add more from the shop</a>
+      </div>
+      <p class="fine">Checkout opens with these jars in your cart. Pay by UPI, card or cash on delivery there.</p>
+    </footer>
+  </article>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const P = {"almond0":"/royal/a/a998e154af3d.webp","almond1":"/royal/a/8a4cb332ee7d.webp","almond2":"/royal/a/3548b603a9f7.webp","kaju1":"/royal/a/58caf19e9ef8.webp","kaju2":"/royal/a/ad6472601cb2.webp","pis0":"/royal/a/094a7d1cf163.webp","pis1":"/royal/a/87b16e20cdb3.webp","walnut1":"/royal/a/b958cd16664e.webp","fig2":"/royal/a/cc73d3e7a60d.webp","apr1":"/royal/a/c6163530b10e.webp","raisin":"/royal/a/f2e7f25e0580.webp","makhana":"/royal/a/97588babf745.webp","chhuhara":"/royal/a/e4b0b3fe017f.webp","almondXL":"/royal/a/d272407713da.webp"};
+  const J = {"logo":"/royal/a/8b7a74496a08.webp"};
+  const AD = {"card_almond":"/royal/a/3cacb561a658.webp","card_cashew":"/royal/a/143cf6840ed3.webp","card_pistachio":"/royal/a/25d353ed9e17.webp","card_walnut":"/royal/a/1e6a5ee5b723.webp","card_anjir":"/royal/a/653ceae8b4da.webp","card_apricot":"/royal/a/bb94db373391.webp","card_chhuhara":"/royal/a/5e9d373a9c25.webp","card_makhana":"/royal/a/9704b9fcea7f.webp","card_raisins":"/royal/a/e5eb3cb99ef8.webp"};
+  const PR = {"katori":"/royal/a/0406ed603fd7.webp","katoriFront":"/royal/a/9b8e2c2f7de4.webp","plate":"/royal/a/148bb93fd051.webp","jarLid":"/royal/a/b225e9c17e40.webp","jarNeck":"/royal/a/66fd8526af5e.webp","tray":"/royal/a/253ab02bcbc9.webp","bokehPoster":"/royal/a/ea28dea906c3.jpg","bokeh":"/royal/a/e2d1258bc8e5.mp4"};
+  for (const k in PR) { if (!String(PR[k]).startsWith("data:")) continue; try { const [h, b64] = PR[k].split(","); const bin = atob(b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); PR[k] = URL.createObjectURL(new Blob([u], { type: h.slice(5, h.indexOf(";")) })); } catch (e) { /* keep the data URL */ } }
+  const JB = {"almond":"/royal/a/d929cb72cb2d.webp","cashew":"/royal/a/4deef609d6a7.webp","pistachios":"/royal/a/77af8162366f.webp","walnut":"/royal/a/e226f6e3d9c0.webp","anjir":"/royal/a/7ede28e68ac3.webp","makhana":"/royal/a/6a814136a783.webp","drydates":"/royal/a/b941434d00b1.webp","apricot":"/royal/a/137e4b6e0037.webp","goldenraisins":"/royal/a/152cac496e1a.webp"};
+  for (const k in JB) { if (!String(JB[k]).startsWith("data:")) continue; try { const [h, b64] = JB[k].split(","); const bin = atob(b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); JB[k] = URL.createObjectURL(new Blob([u], { type: "image/webp" })); } catch (e) { /* keep the data URL */ } }
+  // katori photo: height/width, foot line, centre of the opening and its half-height (fractions of the photo)
+  const KAT = { h: 700 / 950, foot: 608 / 700, cy: 240 / 700, ry: 208 / 700 };
+  const A = {};
+  for (const k in AD) { if (!String(AD[k]).startsWith("data:")) { A[k] = AD[k]; continue; } try { const [h, b64] = AD[k].split(","); const bin = atob(b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); A[k] = URL.createObjectURL(new Blob([u], { type: h.slice(5, h.indexOf(";")) })); } catch (e) { A[k] = AD[k]; } }
+  // One blob URL per photo instead of repeating the data URL on ~120 images.
+  for (const k in P) { if (!String(P[k]).startsWith("data:")) continue; try { const [h, b64] = P[k].split(","); const bin = atob(b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); P[k] = URL.createObjectURL(new Blob([u], { type: h.slice(5, h.indexOf(";")) })); } catch (e) { /* keep the data URL */ } }
+  document.getElementById("logo").src = J.logo;
+  gsap.registerPlugin(ScrollTrigger);
+  // phones: the address bar sliding in/out must not re-measure the page mid-scroll
+  ScrollTrigger.config({ ignoreMobileResize: true });
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // laptops: mouse wheels scroll in jumps, so glide instead; phones keep their own native touch scrolling
+  const lenis = !reduce && window.Lenis && matchMedia("(hover: hover) and (pointer: fine)").matches ? new Lenis({ lerp: .1, wheelMultiplier: .9 }) : null;
+  if (lenis) { lenis.on("scroll", ScrollTrigger.update); gsap.ticker.add((t) => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
+  // how far the animation trails the scroll; Lenis already smooths, so it can follow closely
+  const SCRUB = lenis ? .45 : .8;
+  const $ = (s) => document.querySelector(s);
+
+  // ---------- helpers
+  let seed = 7;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const R = (a, b) => a + (b - a) * rnd();
+  // decoded copies of every cut-out, ready before any scene is built
+  const DEC = {};
+  const decodeAll = () => Promise.all([...Object.values(P), ...Object.entries(PR).filter(([k]) => k !== "bokeh").map(([, u]) => u), ...Object.values(JB)].map((src) => { const i = new Image(); i.src = src; DEC[src] = i; return i.decode().catch(() => {}); }));
+  // the lens blur on far/near burst pieces is drawn once into a canvas; a CSS blur that changes every frame stutters
+  const canFilter = (() => { try { const c = document.createElement("canvas").getContext("2d"); c.filter = "blur(2px)"; return c.filter === "blur(2px)"; } catch (e) { return false; } })();
+  function softPiece(src, cssW, blur) {
+    const im = DEC[src];
+    if (!im || !im.naturalWidth || blur < .4) return null;
+    const k = Math.min(2, devicePixelRatio || 1), pad = Math.ceil(blur * 2.5), ih = cssW * im.naturalHeight / im.naturalWidth;
+    const w = cssW + pad * 2, h = ih + pad * 2;
+    const c = document.createElement("canvas"); c.width = Math.ceil(w * k); c.height = Math.ceil(h * k); c.className = "piece"; c.setAttribute("aria-hidden", "true");
+    const x = c.getContext("2d");
+    if (canFilter) { x.filter = `blur(${blur * k}px)`; x.drawImage(im, pad * k, pad * k, cssW * k, ih * k); }
+    else { // Safari: shrink and stretch back, which softens about the same
+      const f = 1 / (1 + blur * .9), t = document.createElement("canvas"); t.width = Math.max(1, Math.round(c.width * f)); t.height = Math.max(1, Math.round(c.height * f));
+      t.getContext("2d").drawImage(im, pad * k * f, pad * k * f, cssW * k * f, ih * k * f);
+      x.imageSmoothingQuality = "high"; x.drawImage(t, 0, 0, c.width, c.height);
+    }
+    c.style.width = w + "px";
+    return c;
+  }
+  const img = (src, cls = "piece") => { const i = new Image(); i.src = src; i.alt = ""; i.className = cls; i.decoding = "async"; return i; };
+  const PAL = {
+    almond: { band: "#5A2C14", band1: "#8A4B26", gold: "#E9C987", name: "California Almonds", tint: "#c26a2a", word: "BADAM" },
+    cashew: { band: "#6E4F14", band1: "#A07626", gold: "#F0D49A", name: "Cashew W180", tint: "#d9a13c", word: "KAJU" },
+    pistachios: { band: "#38501A", band1: "#64822C", gold: "#E6D49A", name: "Pistachios", tint: "#86a83a", word: "PISTA" },
+    walnut: { band: "#3E2614", band1: "#6B4428", gold: "#E9C987", name: "Walnut Kernels", tint: "#a8683a", word: "AKHROT" },
+    anjir: { band: "#45172A", band1: "#76323F", gold: "#EBCB8A", name: "Anjir", tint: "#b2425f", word: "ANJIR" },
+    makhana: { band: "#5A1E36", band1: "#8C3A5A", gold: "#EBCB8A", name: "Makhana", tint: "#c86a8a", word: "MAKHANA" },
+    drydates: { band: "#45180A", band1: "#7A3A1E", gold: "#E9C987", name: "Dry Dates", tint: "#b0502a", word: "CHHUHARA" },
+    apricot: { band: "#7A3A0C", band1: "#B8641E", gold: "#F0D49A", name: "Dried Apricots", tint: "#e8892a", word: "KHUBANI" },
+    goldenraisins: { band: "#6E4608", band1: "#A87420", gold: "#F0D49A", name: "Golden Raisins", tint: "#e0a83a", word: "KISHMISH" },
+  };
+  // photographed jar: body (label wrapped on), open neck under the lid, lid on top
+  const JAR_AR = 1038 / 725;
+  function jar(key, W) {
+    const p = PAL[key];
+    const el = document.createElement("div");
+    el.className = "jar";
+    el.style.width = W + "px"; el.style.height = W * JAR_AR + "px";
+    el.innerHTML = `<img class="jneck" src="${PR.jarNeck}" alt=""><img class="jbody" src="${JB[key]}" alt="${p.name} jar with its label">` +
+      `<span class="lid"><img src="${PR.jarLid}" alt=""><span class="ridges"></span></span>`;
+    return el;
+  }
+
+  // ---------- film grain
+  (() => {
+    const g = $("#grain"); g.width = 160; g.height = 160;
+    const x = g.getContext("2d"), d = x.createImageData(160, 160);
+    for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+    x.putImageData(d, 0, 0);
+    g.style.cssText += `;width:100%;height:100%;background:url(${g.toDataURL()})`;
+    x.clearRect(0, 0, 160, 160);
+  })();
+
+  // ---------- gold dust (canvas, reacts to scroll speed)
+  const dust = (() => {
+    const c = $("#dust"), x = c.getContext("2d");
+    let parts = [], vel = 0, w = 0, h = 0, raf = 0;
+    const sprite = document.createElement("canvas"); sprite.width = sprite.height = 32;
+    const sx = sprite.getContext("2d"), gr = sx.createRadialGradient(16, 16, 0, 16, 16, 16);
+    gr.addColorStop(0, "rgba(255,240,200,1)"); gr.addColorStop(.3, "rgba(240,200,120,.7)"); gr.addColorStop(1, "rgba(201,164,90,0)");
+    sx.fillStyle = gr; sx.fillRect(0, 0, 32, 32);
+    function size() {
+      const dpr = Math.min(2, devicePixelRatio || 1);
+      w = innerWidth; h = innerHeight; c.width = w * dpr; c.height = h * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = w < 700 ? 26 : 64;
+      parts = Array.from({ length: n }, () => ({ x: Math.random() * w, y: Math.random() * h, r: 2 + Math.random() * 7, s: .15 + Math.random() * .5, a: .25 + Math.random() * .6, ph: Math.random() * 6.28 }));
+    }
+    function tick(t) {
+      x.clearRect(0, 0, w, h);
+      vel *= .92;
+      for (const p of parts) {
+        p.y -= p.s + vel * p.s * .6;
+        p.x += Math.sin(t / 1600 + p.ph) * .25;
+        if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+        if (p.y > h + 10) { p.y = -10; p.x = Math.random() * w; }
+        x.globalAlpha = p.a * (.6 + .4 * Math.sin(t / 700 + p.ph));
+        x.drawImage(sprite, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    return { start() { if (reduce) return; size(); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); }, size, kick(v) { vel = Math.max(-30, Math.min(30, v / 120)); } };
+  })();
+
+  // ---------- velvet video behind the opening
+  (() => {
+    const v = $("#s1video"); v.poster = PR.bokehPoster;
+    if (reduce) return;
+    v.src = PR.bokeh;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause(); });
+    io.observe($("#s1"));
+  })();
+
+  // ---------- static pieces of DOM
+  const t = $("#s1title");
+  t.innerHTML = t.textContent.split("").map((c) => c === " " ? " " : `<span class="ch" aria-hidden="true">${c}</span>`).join("");
+  t.querySelectorAll(".ch").forEach((s, i) => { s.style.backgroundPosition = `${(i * 9) % 100}% 50%`; });
+  // benefits: nutrient facts per 100 g and the nutrients already printed on the labels, plus the labels' serving ideas
+  const FRUITS = [
+    { k: "almond", n: "Almonds", h: "बादाम", f: [579, 21.2, 12.5], good: ["Vitamin E", "Plant protein", "Magnesium"], how: "Soak 5–6 overnight, peel and enjoy in the morning, or add to milk and kheer." },
+    { k: "cashew", n: "Cashews", h: "काजू", f: [553, 18.2, 3.3], good: ["Good fats", "Copper & zinc", "Magnesium"], how: "Roast lightly in ghee with a pinch of salt, or blend into rich gravies." },
+    { k: "pistachio", n: "Pistachios", h: "पिस्ता", f: [560, 20.2, 10.6], good: ["Plant protein", "Vitamin B6", "Potassium"], how: "Shell and snack, or chop over kulfi and kheer." },
+    { k: "walnut", n: "Walnuts", h: "अखरोट", f: [654, 15.2, 6.7], good: ["Omega-3 ALA", "Plant protein", "Magnesium"], how: "Two halves in your morning oats, salad or curd." },
+    { k: "anjir", n: "Anjir", h: "अंजीर", f: [249, 3.3, 9.8], good: ["Dietary fibre", "Calcium", "Potassium"], how: "Soak two overnight and enjoy in the morning." },
+    { k: "apricot", n: "Apricots", h: "खुबानी", f: [241, 3.4, 7.3], good: ["Vitamin A", "Dietary fibre", "Potassium"], how: "Stew into qubani ka meetha, or snack straight from the jar." },
+    { k: "chhuhara", n: "Chhuhara", h: "छुहारे", f: [282, 2.5, 8.0], good: ["Natural energy", "Iron", "Potassium"], how: "Boil in milk, or chop into laddoos and panjiri." },
+    { k: "makhana", n: "Makhana", h: "मखाना", f: [347, 9.7, 14.5], good: ["Low in fat", "Plant protein", "Magnesium"], how: "Roast in ghee with salt and pepper for a light, crunchy snack." },
+    { k: "raisins", n: "Golden raisins", h: "सुनहरी किशमिश", f: [301, 3.3, 3.3], good: ["Quick energy", "Iron", "Potassium"], how: "Stir into sheera, kheer and biryani." },
+  ];
+  const facts = (f) => `<div><b>${f.f[0]}</b><span>kcal</span></div><div><b>${f.f[1]} g</b><span>protein</span></div><div><b>${f.f[2]} g</b><span>fibre</span></div>`;
+  // detail card for a tapped dish
+  const detail = document.getElementById("detail");
+  let lastFocus = null;
+  function openDetail(i) {
+    lenis && lenis.stop();
+    const f = FRUITS[i];
+    document.getElementById("dtImg").src = A["card_" + f.k]; document.getElementById("dtImg").alt = f.n + " in a brass bowl";
+    document.getElementById("dtName").innerHTML = `${f.n} <small lang="hi">${f.h}</small>`;
+    document.getElementById("dtFacts").innerHTML = facts(f);
+    document.getElementById("dtGood").innerHTML = f.good.map((g) => `<i>${g}</i>`).join("");
+    document.getElementById("dtHow").innerHTML = `<b>How to eat:</b> ${f.how}`;
+    detail.dataset.k = f.k;
+    lastFocus = document.activeElement; detail.hidden = false; detail.querySelector(".dx").focus();
+  }
+  function closeDetail() { lenis && lenis.start(); detail.hidden = true; if (lastFocus) lastFocus.focus(); }
+  detail.addEventListener("click", (e) => { if (e.target.closest("[data-close]")) closeDetail(); });
+  addEventListener("keydown", (e) => { if (e.key === "Escape" && !detail.hidden) closeDetail(); });
+  const WORDS = [["Almonds", "almond0"], ["Cashews", "kaju1"], ["Pistachios", "pis0"], ["Walnuts", "walnut1"], ["Anjir", "fig2"], ["Apricots", "apr1"], ["Chhuhara", "chhuhara"], ["Makhana", "makhana"]];
+  const fillRow = (el, words, withImg) => { const one = words.map(([w, k]) => `<span>${w}</span>${withImg ? `<img src="${P[k]}" alt="">` : "<span>&middot;</span>"}`).join(""); el.innerHTML = one + one; };
+  fillRow($("#r1"), WORDS.slice(0, 4), true);
+  fillRow($("#r2"), [["Handpicked"], ["Fresh"], ["Sealed"], ["Royal"]], false);
+  fillRow($("#r3"), WORDS.slice(4), true);
+  $("#bigAlmond").src = P.almondXL;
+  $("#gauge").innerHTML = (() => {
+    let ticks = "";
+    for (let i = 0; i < 120; i++) { const a = i * 3 * Math.PI / 180, long = i % 10 === 0, r1 = long ? 86 : 90, r2 = 95; ticks += `<line x1="${100 + Math.cos(a) * r1}" y1="${100 + Math.sin(a) * r1}" x2="${100 + Math.cos(a) * r2}" y2="${100 + Math.sin(a) * r2}" stroke="rgba(246,226,168,${long ? .7 : .35})" stroke-width="${long ? .6 : .3}"/>`; }
+    return `<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="97" fill="none" stroke="rgba(246,226,168,.45)" stroke-width=".4"/><circle cx="100" cy="100" r="72" fill="none" stroke="rgba(246,226,168,.22)" stroke-width=".3" stroke-dasharray="1 2"/><g id="ticks">${ticks}</g><text x="100" y="12" text-anchor="middle" font-family="Cinzel" font-size="4" fill="rgba(246,226,168,.8)" letter-spacing="1.2">PER 100 G · TYPICAL VALUES</text></svg>`;
+  })();
+
+  // ---------- A DAY: one jar per moment. "How to enjoy", the four benefits and the nutrition all come from that jar's print label.
+  const IC = {
+    drop: "M12 3c3.5 4.5 6 7.6 6 10.6A6 6 0 0 1 6 13.6C6 10.6 8.5 7.5 12 3ZM10.3 11h3.4M10.3 13.6h2.6M10.3 16.2h3.4M10.3 11v5.2",
+    dumbbell: "M3 9.5v5M6 7.5v9M18 7.5v9M21 9.5v5M6 12h12",
+    wheat: "M12 21V8M12 8c-2-1-3-3-3-5 2 0 3 1.5 3 3M12 8c2-1 3-3 3-5-2 0-3 1.5-3 3M12 13c-2.4-.6-4-2.4-4-4.6 2.4 0 4 1.5 4 3.4M12 13c2.4-.6 4-2.4 4-4.6-2.4 0-4 1.5-4 3.4M12 18c-2.4-.6-4-2.4-4-4.6 2.4 0 4 1.5 4 3.4M12 18c2.4-.6 4-2.4 4-4.6-2.4 0-4 1.5-4 3.4",
+    spark: "M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18M12 9.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z",
+    bolt: "M13 2.5 5 13.5h6l-1 8 8-11h-6l1-8Z",
+    hex: "M12 3 19.8 7.5v9L12 21l-7.8-4.5v-9ZM12 8.5v7M9 10.2l6 3.6M15 10.2l-6 3.6",
+    omega: "M5 19h4.2v-2.2a6.3 6.3 0 1 1 5.6 0V19H19",
+    leaf: "M5 19C5 11 10.5 5 19 5c0 8.5-6 14-14 14ZM5 19l8-8",
+    feather: "M19 5C11 5 6.5 9.5 6.5 18M6.5 18 4.5 20M6.5 18h7.5M9 13.5h7M12 9h6",
+  };
+  const DAY = [
+    { key: "almond", n: "Almonds", h: "बादाम", time: "6:30", ap: "am", tag: "Almonds", when: "Bhor · before your morning chai",
+      how: "Soak 5–6 overnight, peel and enjoy in the morning, or add to milk and kheer.",
+      ben: [["drop", "Vitamin E", "Naturally rich"], ["dumbbell", "Plant Protein", "Everyday energy"], ["wheat", "Dietary Fibre", "Natural source"], ["spark", "Magnesium", "Good fats & minerals"]],
+      nf: [579, 21.2, 12.5], piece: ["almond1", "almond0", "almond2"], pw: .3, deep: "#6A3416",
+      sky: "linear-gradient(180deg, #2b0f1c 0%, #7a2a40 30%, #d8665a 56%, #f5a35e 80%, #ffdca0 100%)" },
+    { key: "walnut", n: "Walnuts", h: "अखरोट", time: "8:30", ap: "am", tag: "Walnuts", when: "Nashta · breakfast",
+      how: "Two halves in your morning oats, salad or curd.",
+      ben: [["omega", "Omega-3 ALA", "Plant-based"], ["dumbbell", "Plant Protein", "Everyday energy"], ["wheat", "Dietary Fibre", "Natural source"], ["spark", "Magnesium", "Daily goodness"]],
+      nf: [654, 15.2, 6.7], piece: ["walnut1"], pw: .3, deep: "#4A2E1C",
+      sky: "linear-gradient(180deg, #4a1a0e 0%, #8a3a14 26%, #d0742a 54%, #f0a64a 78%, #fde2a8 100%)" },
+    { key: "apricot", n: "Dried Apricots", h: "खुबानी", time: "11:30", ap: "am", tag: "Apricots", when: "Mid-morning · at your desk",
+      how: "Stew into qubani ka meetha, or snack straight from the jar.",
+      ben: [["wheat", "Dietary Fibre", "Natural source"], ["leaf", "Vitamin A", "Natural source"], ["spark", "Potassium", "Essential mineral"], ["bolt", "Natural Energy", "Naturally sweet"]],
+      nf: [241, 3.4, 7.3], piece: ["apr1"], pw: .28, deep: "#9A4F14",
+      sky: "linear-gradient(180deg, #5a2410 0%, #9a4a16 32%, #d98a2e 62%, #f2c070 84%, #fff0cc 100%)" },
+    { key: "makhana", n: "Makhana", h: "मखाना", time: "4:30", ap: "pm", tag: "Makhana", when: "Chai time",
+      how: "Roast in ghee with salt and pepper for a light, crunchy snack.",
+      ben: [["feather", "Light Snack", "Low in fat"], ["dumbbell", "Plant Protein", "Everyday energy"], ["spark", "Magnesium", "Daily goodness"], ["wheat", "Dietary Fibre", "Natural source"]],
+      nf: [347, 9.7, 14.5], piece: ["makhana"], pw: .25, deep: "#7A2E48",
+      sky: "linear-gradient(180deg, #4a1c0e 0%, #8a3a12 32%, #cc6a22 62%, #f0a24a 86%, #f7c77a 100%)" },
+    { key: "pistachios", n: "Pistachios", h: "पिस्ता", time: "8:00", ap: "pm", tag: "Pistachios", when: "After dinner · something sweet",
+      how: "Shell and snack, or chop over kulfi and kheer.",
+      ben: [["dumbbell", "Plant Protein", "Everyday energy"], ["wheat", "Dietary Fibre", "Natural source"], ["leaf", "Vitamin B6", "Natural source"], ["hex", "Potassium", "Essential mineral"]],
+      nf: [560, 20.2, 10.6], piece: ["pis0", "pis1"], pw: .24, deep: "#3F5A1E",
+      sky: "linear-gradient(180deg, #1f0612 0%, #4a0f1d 34%, #8a2436 64%, #c2523a 90%, #e08a4a 100%)" },
+    { key: "drydates", n: "Chhuhara", h: "छुहारे", time: "10:00", ap: "pm", tag: "Chhuhara", when: "Raat · a warm cup of milk",
+      how: "Boil in milk, or chop into laddoos and panjiri.",
+      ben: [["bolt", "Natural Energy", "Naturally sweet"], ["wheat", "Dietary Fibre", "Natural source"], ["hex", "Iron", "Essential mineral"], ["spark", "Potassium", "Essential mineral"]],
+      nf: [282, 2.5, 8.0], piece: ["chhuhara"], pw: .3, deep: "#5E2A14",
+      sky: "linear-gradient(180deg, #0a0610 0%, #170b1f 44%, #2a1230 74%, #4a1c35 100%)" },
+  ];
+  const svgIcon = (k) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${IC[k]}" fill="none" stroke="#FFF3D6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const serve = (v, d) => (v * .3).toFixed(d);
+  $("#skies").innerHTML = DAY.map((d) => `<div class="sky" style="background:${d.sky}"></div>`).join("");
+  $("#dayClock").innerHTML = DAY.map((d) => `<span class="t">${d.time}<small>${d.ap}</small></span>`).join("");
+  $("#dayMoments").innerHTML = DAY.map((d) => `<article class="mo" style="--deep:${d.deep}">
+    <span class="eyebrow when">${d.time} ${d.ap} · ${d.when}</span>
+    <h3>${d.n} <small lang="hi">${d.h}</small></h3>
+    <p class="how">“${d.how}”</p>
+    <p class="from">How to enjoy · as printed on the jar</p>
+    <div class="chips">${d.ben.map(([i, t, s]) => `<div class="chip"><span class="ic">${svgIcon(i)}</span><span class="tx"><b>${t}</b><i>${s}</i></span></div>`).join("")}</div>
+    <div class="serve"><div><b data-to="${serve(d.nf[0], 0)}" data-d="0">0</b><span>kcal</span></div><div><b data-to="${serve(d.nf[1], 1)}" data-d="1">0</b><span>g protein</span></div><div><b data-to="${serve(d.nf[2], 1)}" data-d="1">0</b><span>g fibre</span></div><p>per 30 g serve,<br>from the label</p></div>
+    <button type="button" class="btn solid mo-buy" data-buy="${d.key}">Add ${d.n} to basket</button>
+  </article>`).join("");
+  $("#dayDial").insertAdjacentHTML("beforeend", DAY.map((d) => `<li>${d.time} ${d.ap} <em>${d.tag}</em></li>`).join(""));
+
+  // ---------- MAKE YOUR HANDFUL: tap to drop pieces into a katori; totals use typical piece weights × the label's values per 100 g
+  document.querySelector("#mixKat .kb").src = PR.katori; document.querySelector("#mixKat .kf").src = PR.katoriFront;
+  const MIX = [
+    { k: "almond", n: "Almond", piece: "almond1", g: 1.2, per: 1, nf: [579, 21.2, 12.5], s: .15 },
+    { k: "cashew", n: "Cashew", piece: "kaju1", g: 2.5, per: 1, nf: [553, 18.2, 3.3], s: .16 },
+    { k: "pistachio", n: "Pistachio", piece: "pis0", g: .7, per: 1, nf: [560, 20.2, 10.6], s: .11 },
+    { k: "walnut", n: "Walnut half", piece: "walnut1", g: 2, per: 1, nf: [654, 15.2, 6.7], s: .16 },
+    { k: "anjir", n: "Anjir", piece: "fig2", g: 8, per: 1, nf: [249, 3.3, 9.8], s: .19 },
+    { k: "apricot", n: "Apricot", piece: "apr1", g: 7, per: 1, nf: [241, 3.4, 7.3], s: .16 },
+    { k: "chhuhara", n: "Chhuhara", piece: "chhuhara", g: 5, per: 1, nf: [282, 2.5, 8.0], s: .18 },
+    { k: "makhana", n: "Makhana", piece: "makhana", g: .35, per: 5, nf: [347, 9.7, 14.5], s: .13 },
+    { k: "raisins", n: "Raisins", piece: "raisin", g: .5, per: 10, nf: [301, 3.3, 3.3], s: .07 },
+  ];
+  const fmtG = (g) => (g < 1 ? g.toFixed(2).replace(/0$/, "") : g % 1 ? g.toFixed(1) : String(g));
+  $("#mixPicks").innerHTML = MIX.map((m, i) => `<button type="button" class="pick" data-i="${i}" aria-label="Add ${m.per > 1 ? m.per + " " : "one "}${m.n.toLowerCase()}"><img src="${P[m.piece]}" alt=""><b>${m.n}</b><small>+${m.per} · ${fmtG(m.g * m.per)} g</small><i class="n" hidden>0</i></button>`).join("");
+  const mix = { list: [], count: MIX.map(() => 0), shown: { g: 0, k: 0, p: 0, f: 0 } };
+  const MAXV = 64;
+  // the same spot every time for the n-th piece, so a resize redraws the same pile
+  const spot = (n) => { let h = (n + 1) * 2654435761 % 4294967296; const r1 = (h % 1000) / 1000; h = h * 1103515245 % 2147483648; const r2 = (h % 1000) / 1000; h = h * 1103515245 % 2147483648; return [r1, r2, (h % 1000) / 1000]; };
+  function placePiece(el, n, m, animate) {
+    const box = $("#mixBowl"), w = box.clientWidth, h = box.clientHeight;
+    const k = $("#mixKat"), kw = k.offsetWidth, KH = k.offsetHeight, kh = KH * KAT.ry * 2, cx = k.offsetLeft + kw / 2, cy = k.offsetTop + KH * KAT.cy + kh * .14;
+    const [a, b, c] = spot(n), ang = a * Math.PI * 2, rr = Math.sqrt(b) * .92;
+    const pw = kw * m.s, lift = Math.min(n * kw * .0055, kh * .5);
+    const x = cx + Math.cos(ang) * kw * .37 * rr, y = cy + Math.sin(ang) * kh * .3 * rr - lift;
+    el.style.width = pw + "px"; el.style.zIndex = Math.round(y);
+    gsap.set(el, { xPercent: -50, yPercent: -62 });
+    if (animate && !reduce) gsap.fromTo(el, { x, y: y - kw * .6, rotation: c * 360 - 180, opacity: 0 }, { y, rotation: c * 80 - 40, opacity: 1, duration: .75, ease: "bounce.out", overwrite: true });
+    else gsap.set(el, { x, y, rotation: c * 80 - 40, opacity: 1 });
+  }
+  function drawPile() {
+    const pile = $("#mixPile"); pile.textContent = "";
+    mix.list.slice(0, MAXV).forEach((mi, n) => { const el = img(P[MIX[mi].piece], ""); pile.appendChild(el); placePiece(el, n, MIX[mi], false); });
+  }
+  function mixTotals() {
+    const t = { g: 0, k: 0, p: 0, f: 0 };
+    MIX.forEach((m, i) => { const g = mix.count[i] * m.per * m.g; t.g += g; t.k += g * m.nf[0] / 100; t.p += g * m.nf[1] / 100; t.f += g * m.nf[2] / 100; });
+    return t;
+  }
+  const RING = 2 * Math.PI * 52;
+  $("#mixRing").style.strokeDasharray = RING; $("#mixRing").style.strokeDashoffset = RING;
+  function mixRender() {
+    const s = mix.shown;
+    $("#mixG").textContent = s.g < 10 ? s.g.toFixed(1) : Math.round(s.g);
+    $("#mixK").textContent = Math.round(s.k); $("#mixP").textContent = s.p.toFixed(1); $("#mixF").textContent = s.f.toFixed(1);
+    $("#mixRing").style.strokeDashoffset = RING * (1 - Math.min(s.g / 30, 1));
+  }
+  function mixUpdate() {
+    const t = mixTotals();
+    gsap.to(mix.shown, { ...t, duration: reduce ? 0 : .5, ease: "power2.out", onUpdate: mixRender, overwrite: true });
+    document.querySelectorAll("#mixPicks .pick").forEach((b, i) => { const n = b.querySelector(".n"); n.hidden = !mix.count[i]; n.textContent = mix.count[i] * MIX[i].per; });
+    const g = t.g, msg = $("#mixMsg");
+    msg.textContent = g === 0 ? "Start with a few almonds."
+      : g < 27 ? `About ${Math.round(30 - g)} g more makes one 30 g serve, the serving size on our labels.`
+      : g <= 36 ? "That is one 30 g serve, the serving size printed on every Spicy Nuts label."
+      : `That is about ${(g / 30).toFixed(1)} serves of 30 g.`;
+  }
+  $("#mixPicks").addEventListener("click", (e) => {
+    const b = e.target.closest(".pick"); if (!b) return;
+    const i = +b.dataset.i, m = MIX[i];
+    mix.count[i]++;
+    const visuals = m.per >= 10 ? 3 : m.per >= 5 ? 2 : 1;
+    for (let v = 0; v < visuals; v++) {
+      mix.list.push(i);
+      const n = mix.list.length - 1;
+      if (n < MAXV) { const el = img(P[m.piece], ""); $("#mixPile").appendChild(el); placePiece(el, n, m, true); }
+    }
+    mixUpdate();
+  });
+  $("#mixReset").addEventListener("click", () => {
+    mix.list = []; mix.count = MIX.map(() => 0);
+    const els = [...document.querySelectorAll("#mixPile img")];
+    if (reduce || !els.length) { $("#mixPile").textContent = ""; }
+    else gsap.to(els, { y: "-=40", opacity: 0, duration: .3, stagger: .008, overwrite: true, onComplete: () => els.forEach((el) => el.remove()) });
+    mixUpdate();
+  });
+
+  // ---------- everything that depends on screen size is built here and rebuilt on resize
+  let ctx, lastW = innerWidth, lastH = innerHeight;
+  let jarMid = 0, ringR = [0, 0, 0], orbitPlace = null, orbitEndOf = null;   // the opening's camera orbit
+  function init() {
+    seed = 7;
+    const W = innerWidth, H = innerHeight, phone = W < 700, vmin = Math.min(W, H);
+    const shadow = phone ? "" : "drop-shadow(0 14px 14px rgba(20,4,8,.45)) ";
+
+    ctx = gsap.context(() => {
+      // ===== build S1
+      const stage = $("#s1stage"), burst = $("#burst");
+      stage.textContent = ""; burst.textContent = "";
+      const heroW = Math.round(phone ? Math.min(W * .5, H * .3) : Math.min(270, H * .28));
+      const hero = jar("almond", heroW);
+      stage.appendChild(hero);
+      const lid = hero.querySelector(".lid"), ridges = hero.querySelector(".ridges");
+      const N = phone ? 28 : 54, base = phone ? W * .16 : vmin * .125;
+      const KINDS = ["almond0", "almond1", "kaju1", "kaju2", "pis0", "pis1", "walnut1", "fig2", "apr1", "chhuhara", "raisin", "makhana", "almond2"];
+      const bits = [];
+      for (let i = 0; i < N; i++) {
+        const z = R(-1, 1), src = P[KINDS[i % KINDS.length]], cssW = base * R(.85, 1.15) * (z + 2.2) / 2.2;
+        const blur = 0; // every piece stays sharp; depth comes from size and fade
+        let el = softPiece(src, cssW, blur);
+        if (!el) { el = img(src); el.style.width = cssW + "px"; }
+        el.style.zIndex = z > .35 ? 9 : 2;
+        bits.push({ kind: KINDS[i % KINDS.length], el, z, tx: R(-.44, .44) * W, ty: R(-.46, .1) * H, r0: R(-90, 90), r1: R(-200, 200), drift: R(.6, 1.4) });
+        burst.appendChild(el);
+      }
+      const sr = stage.getBoundingClientRect(), s1r = $("#s1").getBoundingClientRect();
+      const mouthY = sr.top - s1r.top + lid.offsetHeight * .7;
+      gsap.set(burst, { top: mouthY });
+      gsap.set("#wipe", { top: mouthY + heroW * .4, scale: 0 });
+      bits.forEach((b) => gsap.set(b.el, { xPercent: -50, yPercent: -50 }));
+      jarMid = heroW * .48;                                   // jar centre, measured from the mouth
+      ringR = phone ? [W * .3, W * .42, W * .52] : [Math.min(W * .2, 300), Math.min(W * .29, 430), Math.min(W * .37, 540)];
+
+      // ===== build S2
+      const grid = $("#s2grid"); grid.textContent = "";
+      // one large piece on each dish
+      const S2 = [["Almonds", ["almond1"]], ["Cashews", ["kaju1"]], ["Pistachios", ["pis0"]], ["Walnuts", ["walnut1"]], ["Anjir", ["fig2"]], ["Apricots", ["apr1"]], ["Chhuhara", ["chhuhara"]], ["Makhana", ["makhana"]]];
+      const s2p = [];
+      S2.forEach(([name, kinds], ti) => {
+        const tile = document.createElement("button"); tile.type = "button"; tile.className = "tile"; tile.setAttribute("aria-label", name + ": see benefits and how to eat"); tile.addEventListener("click", () => openDetail(ti));
+        tile.innerHTML = `<img class="dish" src="${PR.plate}" alt=""><span class="pile"></span><span class="name">${name}</span><span class="w">250 g jar</span>`;
+        grid.appendChild(tile);
+        kinds.forEach((k) => { const el = img(P[k], "piece"); tile.querySelector(".pile").appendChild(el); s2p.push({ el, tile, j: s2p.filter((q) => q.tile === tile).length, n: kinds.length }); });
+      });
+      s2p.forEach(({ el, tile, j, n }) => {
+        const w = tile.clientWidth, h = tile.clientHeight;
+        gsap.set(el, { width: w * (phone ? .36 : .6), xPercent: -50, yPercent: -50, left: w * .5, top: h * (phone ? .3 : .44), rotation: -8, filter: shadow || "none" });
+      });
+
+      // ===== build S4
+      const track = $("#track"); track.textContent = "";
+      const shelfW = Math.round(phone ? Math.min(W * .42, H * .24) : Math.min(190, H * .22));
+      const fronts = { almond: ["almond0", "almond1", "almond0"], cashew: ["kaju1", "kaju2"], pistachios: ["pis0", "pis1"], walnut: ["walnut1"], anjir: ["fig2", "fig2"], makhana: ["makhana", "makhana"], drydates: ["chhuhara", "chhuhara"], apricot: ["apr1", "apr1"], goldenraisins: ["raisin", "raisin", "raisin"] };
+      track.style.gap = Math.round(phone ? W * .3 : Math.max(120, W * .12)) + "px";
+      const items = Object.keys(PAL).map((k) => {
+        const item = document.createElement("div"); item.className = "item";
+        item.innerHTML = `<span class="big" aria-hidden="true">${PAL[k].word}</span>`;
+        const box = document.createElement("div"); box.className = "jarbox"; box.dataset.buy = k; box.setAttribute("role", "button"); box.tabIndex = 0; box.setAttribute("aria-label", "Buy " + PAL[k].name);
+        box.appendChild(jar(k, shelfW));
+        const front = document.createElement("div"); front.className = "front";
+        fronts[k].forEach((f, j, a) => { const el = img(P[f], "piece"); front.appendChild(el); el._r = (j - 1) * 14; gsap.set(el, { width: shelfW * .5, xPercent: -50, yPercent: -100, x: (j - (a.length - 1) / 2) * shelfW * .34, rotation: el._r, filter: shadow || "none" }); });
+        box.appendChild(front);
+        item.appendChild(box);
+        item.insertAdjacentHTML("beforeend", `<button type="button" class="name" data-buy="${k}">${PAL[k].name}<small>250 g jar · Buy</small></button>`);
+        track.appendChild(item);
+        return { item, front, big: item.querySelector(".big"), key: k };
+      });
+      const shelfLineY = () => { const tr = track.getBoundingClientRect(), s4 = $("#s4").getBoundingClientRect(), nm = items[0].item.querySelector(".name"); return tr.bottom - s4.top - nm.offsetHeight - 12 - 4; };
+      gsap.set("#shelfline", { top: shelfLineY() });
+
+      // ===== build S5
+      const tray = $("#tray"); tray.innerHTML = `<img class="trayimg" src="${PR.tray}" alt="A maroon and gold gift tray with six compartments"><div class="ribbon" id="ribbon"></div><div class="bow" id="bow">SPICY<br>NUTS</div>`;
+      // the six compartments in the tray photo: centre x, centre y, width, height (% of the photo)
+      const WELLPOS = [[24.0, 43.1, 19.2, 16.9], [43.4, 32.0, 18.6, 16.3], [61.7, 21.5, 18.1, 15.4], [35.4, 60.3, 20.3, 18.5], [55.5, 48.5, 19.7, 17.5], [74.5, 36.9, 19.2, 16.9]];
+      const WELLS = [["almond0", "Almonds"], ["kaju1", "Cashews"], ["pis0", "Pistachios"], ["fig2", "Anjir"], ["apr1", "Apricots"], ["chhuhara", "Chhuhara"]];
+      const wellP = [];
+      WELLS.forEach(([k, name], w) => {
+        const well = document.createElement("div"); well.className = "well";
+        const [wx, wy, ww, wh] = WELLPOS[w]; Object.assign(well.style, { left: wx - ww / 2 + "%", top: wy - wh / 2 + "%", width: ww + "%", height: wh + "%" });
+        tray.insertBefore(well, $("#ribbon"));
+        for (let j = 0; j < 5; j++) { const el = img(P[k]); well.appendChild(el); wellP.push({ el, well, w, j }); }
+      });
+      gsap.set(tray, { xPercent: -50, yPercent: -50 });
+      gsap.set("#ribbon", { rotation: -22.8, transformOrigin: "0% 50%" });
+      wellP.forEach(({ el, well, j }) => {
+        const s = well.clientWidth, hh = well.clientHeight, a = j * 72 * Math.PI / 180, rr = j === 4 ? 0 : s * .2;
+        gsap.set(el, { width: s * .42, xPercent: -50, yPercent: -55, left: s / 2 + Math.cos(a) * rr, top: hh / 2 + Math.sin(a) * rr * (hh / s), rotation: j * 47, filter: shadow || "none" });
+      });
+      const petals = $("#petals"); petals.textContent = "";
+      const pets = Array.from({ length: phone ? 18 : 36 }, () => { const d = document.createElement("span"); d.className = "petal"; petals.appendChild(d); return d; });
+
+      // ===== build S6
+      const s6 = $("#s6jar"); s6.textContent = "";
+      const outro = jar("almond", Math.round(Math.min(140, W * .3, H * .17)));
+      s6.appendChild(outro);
+      const outroLid = outro.querySelector(".lid");
+
+      // ===== build DAY: a brass katori, one jar per moment, six pieces each
+      const dayStage = $("#dayStage"); dayStage.textContent = "";
+      const floor = phone ? H * .5 : H * .8;
+      const djw = Math.round(phone ? Math.min(W * .3, H * .15) : Math.min(230, H * .27, W * .17));
+      const jx = phone ? W * .3 : W * .64, kw = djw * (phone ? 1.25 : 1.3), kx = phone ? W * .71 : jx + djw * .5 + kw * .62;
+      const KW = kw * 1.06, KH = KW * KAT.h, kTop = floor - KH * KAT.foot;
+      const kat = document.createElement("div"); kat.className = "kat"; kat.innerHTML = `<img class="kb" src="${PR.katori}" alt=""><img class="kf" src="${PR.katoriFront}" alt="">`;
+      Object.assign(kat.style, { width: KW + "px", height: KH + "px", left: kx - KW / 2 + "px", top: kTop + "px" });
+      dayStage.appendChild(kat);
+      // kh = height of the bowl's opening; pieces settle on the floor inside it, the front ones partly behind the front wall
+      const kh = KH * KAT.ry * 2, rimY = kTop + KH * KAT.cy;
+      const dayJars = DAY.map((d) => { const w = document.createElement("div"); w.className = "jarwrap"; const j = jar(d.key, djw); w.appendChild(j); dayStage.appendChild(w); return { w, lid: j.querySelector(".lid") }; });
+      const djh = dayJars[0].w.offsetHeight;
+      dayJars.forEach(({ w }) => gsap.set(w, { x: jx - djw / 2, y: floor - djh, autoAlpha: 0 }));
+      const mouth = [jx, floor - djh + djw * .22];
+      // three in front, two behind, one on top
+      const SLOTS = [[-.22, .22, 4], [0, .27, 4], [.22, .22, 4], [-.12, .06, 3], [.12, .06, 3], [0, -.05, 2]];
+      const dayPieces = DAY.map((d) => SLOTS.map(([sx, sy, z], i) => {
+        const el = img(P[d.piece[i % d.piece.length]]); el.style.width = kw * d.pw + "px"; el.style.zIndex = z; dayStage.appendChild(el);
+        gsap.set(el, { xPercent: -50, yPercent: -62, x: mouth[0], y: mouth[1], opacity: 0, scale: .5, rotation: R(-60, 60) });
+        return { el, tx: kx + sx * kw + R(-.03, .03) * kw, ty: rimY + sy * kh, r: R(-35, 35) };
+      }));
+      // the sun's path
+      const acx = W / 2, acy = floor, arx = W * (phone ? .46 : .47), ary = phone ? H * .34 : H * .62;
+      $("#dayArc").setAttribute("viewBox", `0 0 ${W} ${H}`);
+      $("#dayArc").innerHTML = `<path d="M ${acx - arx} ${acy} A ${arx} ${ary} 0 0 1 ${acx + arx} ${acy}" fill="none" stroke="rgba(246,226,168,.3)" stroke-width="1" stroke-dasharray="2 7"/>`;
+
+      // ===== handful maker: redraw the pile for this size
+      drawPile();
+
+      gsap.set("#bigAlmond", { xPercent: -50, yPercent: -50 });
+      gsap.set("#gauge", { xPercent: -50, yPercent: -50 });
+
+      // ===== calm version: final state, no pins
+      if (reduce) {
+        bits.forEach((b) => gsap.set(b.el, { x: b.tx, y: b.ty, rotation: b.r1, opacity: b.z > 0 ? 1 : 0 }));
+        document.querySelectorAll("#stats [data-to]").forEach((n) => { n.textContent = (+n.dataset.to).toFixed(+n.dataset.d); });
+        gsap.set("#s1cap", { opacity: 0 });
+        Object.assign(track.style, { position: "relative", bottom: "auto", top: "38svh", overflowX: "auto", maxWidth: "100%", paddingInline: "6vw" });
+        gsap.set(pets, { opacity: 0 });
+        gsap.set($("#skies").children[0], { opacity: 1 }); gsap.set(["#dayClock .t", "#dayMoments .mo"], { autoAlpha: 0 });
+        gsap.set(["#dayClock .t:first-child", "#dayMoments .mo:first-child", dayJars[0].w], { autoAlpha: 1 });
+        dayPieces[0].forEach((p) => gsap.set(p.el, { x: p.tx, y: p.ty, opacity: 1, scale: 1, rotation: p.r }));
+        document.querySelectorAll("#dayMoments .mo:first-child [data-to]").forEach((n) => { n.textContent = n.dataset.to; });
+        gsap.set("#dayOrb", { x: acx - arx * Math.cos(.4), y: acy - ary * Math.sin(.4) });
+        return;
+      }
+
+      // progress + dust kick
+      ScrollTrigger.create({ start: 0, end: "max", onUpdate: (s) => { gsap.set("#barFill", { scaleX: s.progress }); dust.kick(s.getVelocity()); } });
+      // foil shimmer on every foil word, tied to scroll
+      gsap.utils.toArray(".foil").forEach((f) => gsap.fromTo(f, { "--shine": "0%" }, { "--shine": "100%", ease: "none", scrollTrigger: { trigger: f, start: "top bottom", end: "bottom top", scrub: true } }));
+
+      // ===== S1: lid unscrews, the fruit bursts out, an ivory circle opens into S2
+      const s1 = gsap.timeline({ defaults: { ease: "none" } });
+      s1.to("#hint", { opacity: 0, duration: .04 }, 0)
+        .to("#s1title .ch", { yPercent: -120, rotationX: 80, opacity: 0, stagger: .01, duration: .15, ease: "power2.in" }, .02)
+        .to("#s1title .ch", { backgroundPosition: "100% 50%", duration: .15 }, 0)
+        .to(["#s1eb", "#s1sub", "#s1cta", "#s1trust"], { autoAlpha: 0, y: -24, duration: .1 }, .02)
+        .to(ridges, { backgroundPositionX: "+=180", duration: .16 }, .05)
+        .to(lid, { y: -lid.offsetHeight * 1.3, rotation: -6, duration: .12, ease: "power1.out" }, .08)
+        .to(lid, { x: W * .42, y: -H * .9, rotation: 70, opacity: 0, duration: .2, ease: "power2.in" }, .2)
+        .to("#s1 .aura", { scale: 1.35, duration: .5 }, .2)
+        .to("#s1stage", { rotation: -5, duration: .1, ease: "sine.inOut" }, .2)
+        .to("#s1stage", { rotation: 3, y: phone ? -H * .06 : -H * .17, duration: .3, ease: "sine.inOut" }, .58)
+        .to("#s1stage", { scale: .85, opacity: 0, duration: .1, ease: "power2.in" }, .86);
+      // camera orbit: three rings around the jar; scrolling turns them while the camera rolls (−5° → 3°) and rises
+      // (the rings open up from a low, flat view). Positions are relative to the burst origin at the jar's mouth.
+      bits.forEach((b, i) => { b.ring = i % 3; b.a = i * 2.39996; b.h = (b.ring - 1) * heroW * .2 + R(-.06, .06) * heroW; b.sp = [1, .82, .68][b.ring]; b.spin = i % 2 ? 1 : -1; });
+      const orbitLift = phone ? -H * .06 : -H * .17;   // the camera rises with the rings, so the whole orbit stays on screen
+      const orbit = { th: 0, tilt: .16, roll: -5, zoom: .92, lift: 0 }, orbitEnd = { th: 2.2, tilt: .4, roll: 3, zoom: 1.06, lift: orbitLift };
+      orbitPlace = (b, o = orbit) => {
+        const a = b.a + o.th * b.sp, sn = Math.sin(a), r = ringR[b.ring] * o.zoom, rr = o.roll * Math.PI / 180;
+        const dx = Math.cos(a) * r, dy = sn * r * o.tilt + b.h;
+        return { x: dx * Math.cos(rr) - dy * Math.sin(rr), y: jarMid + (o.lift || 0) + dx * Math.sin(rr) + dy * Math.cos(rr), s: sn, scale: .62 + .38 * (sn + 1) / 2, rotation: b.r1 + a * 30 * b.spin };
+      };
+      orbitEndOf = (b) => orbitPlace(b, orbitEnd);
+      const orbitAll = () => bits.forEach((b) => { const p = orbitPlace(b); gsap.set(b.el, { x: p.x, y: p.y, scale: p.scale, rotation: p.rotation, zIndex: p.s > 0 ? 9 : 2 }); });
+      bits.forEach((b, i) => {
+        const p = orbitPlace(b, { th: 0, tilt: .16, roll: -5, zoom: .92 });
+        s1.fromTo(b.el, { x: 0, y: 0, scale: .15, rotation: b.r0, opacity: 0, zIndex: 9 },
+          { x: p.x, y: p.y, scale: p.scale, rotation: p.rotation, opacity: 1, zIndex: p.s > 0 ? 9 : 2, duration: .3, ease: "power3.out" }, .27 + i * .004);
+      });
+      s1.to(orbit, { th: orbitEnd.th, tilt: orbitEnd.tilt, roll: orbitEnd.roll, zoom: orbitEnd.zoom, lift: orbitEnd.lift, duration: .3, ease: "sine.inOut", onUpdate: orbitAll }, .58);
+      s1.fromTo("#s1cap", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: .1 }, .5)
+        .to("#s1cap", { opacity: 0, y: -30, duration: .08 }, .72)
+        .to("#wipe", { scale: Math.hypot(W, H) * 2.2 / 24, duration: .2, ease: "power2.in" }, .86)
+        .to(bits.map((b) => b.el), { opacity: 0, duration: .06 }, 1.0);
+
+      // ===== S2: pieces rain into their dishes
+      const s2 = gsap.timeline({ defaults: { ease: "power3.out" } });
+      s2.fromTo("#s2 .head > *", { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: .04, duration: .16 }, phone ? .42 : .28)
+        .fromTo("#s2 .dish", { scale: .3, opacity: 0 }, { scale: 1, opacity: 1, stagger: .025, duration: .2, ease: "back.out(1.7)" }, .06);
+      const s1rect = $("#s1").getBoundingClientRect();
+      const twins = [];
+      s2p.forEach(({ el, tile }, i) => {
+        // the sharpest floating piece of the same kind (no lens blur)
+        const kind = S2[i][1][0];
+        const cands = bits.filter((b) => b.kind === kind && !twins.includes(b)).sort((p, q) => Math.abs(p.z) - Math.abs(q.z));
+        const tw = cands[0];
+        const tr = tile.getBoundingClientRect();
+        const cx = tr.left - s1rect.left + parseFloat(el.style.left), cy = tr.top - s1rect.top + parseFloat(el.style.top);
+        let from = { x: R(-.5, .5) * W, y: R(-.8, -.3) * H, rotation: R(-260, 260), scale: 2, opacity: 0 };
+        if (tw) {
+          twins.push(tw);
+          const fp = orbitEndOf(tw), bx = W / 2 + fp.x, by = mouthY + fp.y;
+          from = { x: bx - cx, y: by - cy, rotation: fp.rotation, scale: fp.scale * parseFloat(tw.el.style.width) / parseFloat(el.style.width), opacity: 1 };
+        }
+        s2.fromTo(el, from, { x: 0, y: 0, rotation: gsap.getProperty(el, "rotation"), scale: 1, opacity: 1, duration: .5, ease: "power2.inOut" }, .12 + i * .03);
+      });
+      s2.fromTo("#s2 .name, #s2 .w", { y: 14, opacity: 0 }, { y: 0, opacity: 1, stagger: .015, duration: .16 }, .6)
+        .to({}, { duration: .12 });
+
+      // ===== one pinned shot: burst → ivory circle (the eight twins stay on top) → dishes
+      gsap.set("#s2", { autoAlpha: 0 });
+      const open = gsap.timeline({ scrollTrigger: { trigger: "#s1", start: "top top", end: "+=620%", pin: true, anticipatePin: 1, scrub: SCRUB } });
+      open.add(s1, 0)
+        .set("#s2", { autoAlpha: 1 }, .86)
+        .set(twins.map((b) => b.el), { autoAlpha: 0 }, .86)
+        .add(s2, 1.0);
+
+      // ===== band: three rows slide in opposite directions; scroll speed skews them
+      const rows = [["#r1", -32, 0], ["#r2", 0, -38], ["#r3", -40, -6]];
+      rows.forEach(([id, a, b]) => gsap.fromTo(id, { xPercent: a }, { xPercent: b, ease: "none", scrollTrigger: { trigger: "#band", start: "top bottom", end: "bottom top", scrub: .6 } }));
+      const skew = gsap.quickTo("#band .row", "skewX", { duration: .4, ease: "power3" });
+      ScrollTrigger.create({ trigger: "#band", start: "top bottom", end: "bottom top", onUpdate: (s) => skew(gsap.utils.clamp(-12, 12, s.getVelocity() / -260)) });
+
+      // ===== A DAY: dawn to night. Each moment brings its jar, pours a few pieces into the katori and reads out its label.
+      const skies = [...$("#skies").children], clocks = [...document.querySelectorAll("#dayClock .t")], moEls = [...document.querySelectorAll("#dayMoments .mo")], dots = [...document.querySelectorAll("#dayDial li")];
+      gsap.set(skies[0], { opacity: 1 });
+      gsap.set(clocks, { xPercent: phone ? -50 : 0, yPercent: 110 });
+      const sun = { u: .03 }, orb = $("#dayOrb");
+      const placeSun = () => { const a = Math.PI * sun.u; gsap.set(orb, { x: acx - arx * Math.cos(a), y: acy - ary * Math.sin(a) }); };
+      placeSun();
+      let dayOn = -2;
+      const T0 = .7, NM = DAY.length;
+      const day = gsap.timeline({ defaults: { ease: "none" },
+        onUpdate() { const m = Math.max(-1, Math.min(NM - 1, Math.floor(this.time() - T0 + .02))); if (m !== dayOn) { dayOn = m; dots.forEach((el, j) => el.classList.toggle("on", j <= m)); } },
+        scrollTrigger: { trigger: "#day", start: "top top", end: phone ? "+=760%" : "+=880%", pin: true, anticipatePin: 1, scrub: SCRUB } });
+      day.to("#day .head", { opacity: 0, y: -40, duration: .18, ease: "power2.in" }, T0 - .22)
+        .fromTo("#dayDial", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .2 }, T0 - .2)
+        .fromTo("#dayDial .fill", { scaleX: 0 }, { scaleX: 1, duration: NM - 1 }, T0)
+        .to(sun, { u: 1.02, duration: NM - .8, onUpdate: placeSun }, .2)
+        .to(orb, { opacity: 0, duration: .25 }, T0 + NM - 1.3)
+        .fromTo("#dayMoon", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .3 }, T0 + NM - 1.15)
+        .to("#day .stars", { opacity: 1, duration: .3 }, T0 + NM - 1.15);
+      DAY.forEach((d, m) => {
+        const T = T0 + m, J = dayJars[m], pcs = dayPieces[m], last = m === NM - 1;
+        if (m) day.to(skies[m], { opacity: 1, duration: .4 }, T - .15).to(clocks[m - 1], { yPercent: -110, opacity: 0, duration: .2, ease: "power2.in" }, T - .06);
+        day.to(clocks[m], { yPercent: 0, opacity: 1, duration: .22, ease: "power2.out" }, T + .02)
+          .fromTo(moEls[m], { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: .22, ease: "power2.out" }, T + .06)
+          .fromTo(moEls[m].querySelectorAll(".chip"), { opacity: 0, x: -14 }, { opacity: 1, x: 0, stagger: .04, duration: .12, ease: "power2.out" }, T + .2);
+        moEls[m].querySelectorAll("[data-to]").forEach((n) => { n.textContent = (+n.dataset.to).toFixed(+n.dataset.d); });
+        // the jar slides in, the lid comes off, six pieces arc into the katori, the lid goes back on
+        day.fromTo(J.w, { autoAlpha: 0, x: jx - djw / 2 + W * (phone ? .3 : .16), rotation: 7 }, { autoAlpha: 1, x: jx - djw / 2, rotation: 0, duration: .24, ease: "power2.out" }, T)
+          .to(J.lid, { y: -djw * .42, x: -djw * .08, rotation: -9, duration: .12, ease: "power2.out" }, T + .22);
+        pcs.forEach((p, i) => {
+          const peak = Math.min(mouth[1], p.ty) - djw * (.45 + .08 * (i % 3));
+          day.to(p.el, { keyframes: { x: [(mouth[0] + p.tx) / 2, p.tx], y: [peak, p.ty], opacity: [1, 1], scale: [.85, 1], rotation: [p.r - 120, p.r], easeEach: "sine.inOut" }, duration: .3 }, T + .28 + i * .035);
+        });
+        day.to(J.lid, { y: 0, x: 0, rotation: 0, duration: .1, ease: "power2.in" }, T + .64);
+        if (!last) {
+          day.to(J.w, { autoAlpha: 0, x: jx - djw / 2 - W * (phone ? .3 : .12), rotation: -6, duration: .2, ease: "power2.in" }, T + .8)
+            .to(pcs.map((p) => p.el), { opacity: 0, scale: .7, y: "+=" + kh * .12, duration: .12, stagger: .012 }, T + .8)
+            .to(moEls[m], { autoAlpha: 0, y: -30, duration: .14, ease: "power2.in" }, T + .82);
+        }
+      });
+      day.to({}, { duration: .5 });
+
+      // ===== S3: macro almond inside a measuring ring, numbers count up
+      const s3 = gsap.timeline({ defaults: { ease: "none" }, scrollTrigger: { trigger: "#s3", start: "top top", end: "+=240%", pin: true, anticipatePin: 1, scrub: SCRUB } });
+      s3.fromTo("#bigAlmond", { scale: .5, rotation: -30, filter: `drop-shadow(0 0 0 rgba(246,226,168,0)) brightness(1)` },
+          { scale: phone ? 1.5 : 1.8, rotation: 10, filter: `drop-shadow(0 0 30px rgba(244,166,42,.5)) brightness(.95)`, duration: .7, ease: "power2.inOut" }, 0)
+        .fromTo("#gauge", { scale: .7, rotation: -90, opacity: 0 }, { scale: 1.05, rotation: 60, opacity: 1, duration: .7, ease: "power2.out" }, 0)
+        .fromTo("#s3 .copy > *", { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: .04, duration: .14 }, .04)
+        .to("#s3 .copy", { opacity: 0, y: -40, duration: .1 }, .62);
+      document.querySelectorAll("#stats .stat").forEach((st, i) => {
+        const num = st.querySelector("[data-to]"), to = +num.dataset.to, d = +num.dataset.d, o = { v: 0 };
+        s3.fromTo(st, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: .1, ease: "power2.out" }, .3 + i * .07)
+          .to(o, { v: to, duration: .2, onUpdate: () => { num.textContent = o.v.toFixed(d); } }, .3 + i * .07);
+      });
+      s3.to({}, { duration: .1 });
+
+      // ===== handful maker: heading rises in
+      gsap.fromTo("#mix .head > *", { y: 40, opacity: 0 }, { y: 0, opacity: 1, stagger: .08, scrollTrigger: { trigger: "#mix", start: "top 85%", end: "top 40%", scrub: SCRUB } });
+
+      // ===== S4: shelf slides, background takes each jar's colour, giant words drift behind
+      const dist = () => track.scrollWidth - W;
+      let tintIdx = -1;
+      const slide = gsap.to(track, { x: () => -dist(), ease: "none", scrollTrigger: { trigger: "#s4", start: "top top", end: () => "+=" + dist() * 1.1, pin: true, scrub: SCRUB,
+        onUpdate: (s) => { const i = Math.round(s.progress * (items.length - 1)); if (i !== tintIdx) { tintIdx = i; gsap.to("#s4", { "--glow": PAL[items[i].key].tint, duration: .7, overwrite: true }); } } } });
+      gsap.fromTo("#s4 .head > *", { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: .1, scrollTrigger: { trigger: "#s4", start: "top 75%", end: "top 25%", scrub: SCRUB } });
+      items.forEach(({ item, front, big }) => {
+        gsap.fromTo(item.querySelector(".jarbox"), { scale: .8, y: 30 }, { scale: 1.08, y: 0, ease: "power2.out", scrollTrigger: { trigger: item, containerAnimation: slide, start: "left 95%", end: "center 52%", scrub: true } });
+        gsap.fromTo(big, { xPercent: -20, opacity: 0 }, { xPercent: -80, opacity: 1, ease: "none", scrollTrigger: { trigger: item, containerAnimation: slide, start: "left right", end: "right left", scrub: true } });
+        gsap.fromTo(front.children, { y: -H * .35, rotation: () => R(-140, 140), opacity: 0 }, { y: 0, rotation: (i, el) => el._r, opacity: 1, stagger: .12, ease: "bounce.out", scrollTrigger: { trigger: item, containerAnimation: slide, start: "left 78%", end: "center 52%", scrub: true } });
+      });
+
+      // ===== S5: fruit drops into the tray, ribbon and seal, marigold petals
+      const s5 = gsap.timeline({ defaults: { ease: "bounce.out" }, scrollTrigger: { trigger: "#s5", start: "top top", end: "+=240%", pin: true, anticipatePin: 1, scrub: SCRUB } });
+      s5.fromTo(tray, { y: 90, scale: .94 }, { y: 0, scale: 1, duration: .18, ease: "power2.out" }, .02);
+      wellP.forEach(({ el, w, j }) => {
+        s5.fromTo(el, { y: -H * .9, rotation: "+=" + R(-180, 180), scale: 1.4, opacity: 0 }, { y: 0, rotation: gsap.getProperty(el, "rotation"), scale: 1, opacity: 1, duration: .12 }, .16 + w * .06 + j * .012);
+      });
+      s5.fromTo("#ribbon", { scaleX: 0 }, { scaleX: 1, duration: .1, ease: "power2.inOut" }, .72)
+        .fromTo("#bow", { scale: 0, rotation: -140 }, { scale: 1, rotation: 0, duration: .08, ease: "back.out(2.2)" }, .8);
+      pets.forEach((p) => {
+        const x0 = R(.05, .95) * W;
+        s5.fromTo(p, { x: x0, y: -40, rotation: R(0, 360), scale: R(.6, 1.4), opacity: 0 }, { x: x0 + R(-.15, .15) * W, y: R(.35, 1) * H, rotation: "+=" + R(180, 540), opacity: 1, duration: .2, ease: "power1.in" }, .82 + R(0, .1));
+      });
+      s5.to({}, { duration: .05 });
+
+      // ===== S6: the lid screws back on
+      gsap.timeline({ scrollTrigger: { trigger: "#s6", start: "top 85%", end: "top 15%", scrub: SCRUB } })
+        .fromTo(outroLid, { y: -160, x: 60, rotation: 40, opacity: 0 }, { y: 0, x: 0, rotation: 0, opacity: 1, ease: "power2.out" })
+        .fromTo(outroLid.querySelector(".ridges"), { backgroundPositionX: -150 }, { backgroundPositionX: 0, ease: "none" }, "<+.3")
+        .fromTo("#s6 .wrap > *:not(#s6jar)", { y: 40, opacity: 0 }, { y: 0, opacity: 1, stagger: .08 }, "<");
+    });
+  }
+
+  async function start() {
+    await decodeAll();
+    init();
+    dust.start();
+    ScrollTrigger.refresh();
+    document.querySelectorAll("img").forEach((i) => { if (i.decode) i.decode().catch(() => {}); });
+  }
+  // Rebuild when the screen really changes size (phone view in Inspect, rotation, window resize),
+  // not when a phone's address bar slides in and out.
+  let timer;
+  addEventListener("resize", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      const dw = Math.abs(innerWidth - lastW), dh = Math.abs(innerHeight - lastH);
+      if (dw < 40 && dh < 160) { dust.size(); return; }
+      lastW = innerWidth; lastH = innerHeight;
+      const max = ScrollTrigger.maxScroll(window) || 1, ratio = scrollY / max;
+      ctx && ctx.revert();
+      init();
+      dust.size();
+      ScrollTrigger.refresh();
+      scrollTo(0, ratio * ScrollTrigger.maxScroll(window));
+    }, 250);
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
+  addEventListener("load", () => ScrollTrigger.refresh());
+  // ---------- buying: quantity sheet, basket, hand-off to spicynuts.in
+  const SHOP = {"almond":{"slug":"california-almond","name":"California Almond","price":500,"size":"250 g","stock":100,"hi":"कैलिफ़ोर्निया बादाम","jar":"almond"},"cashew":{"slug":"premium-cashew-w180","name":"Premium Cashew W180","price":500,"size":"250 g","stock":100,"hi":"काजू","jar":"cashew"},"pistachios":{"slug":"pistachios","name":"Pistachios","price":500,"size":"250 g","stock":100,"hi":"पिस्ता","jar":"pistachios"},"walnut":{"slug":"walnut","name":"Walnut","price":500,"size":"250 g","stock":100,"hi":"अखरोट","jar":"walnut"},"anjir":{"slug":"anjir-figs","name":"Anjir (Figs)","price":500,"size":"250 g","stock":148,"hi":"अंजीर","jar":"anjir"},"apricot":{"slug":"apricot","name":"Apricot","price":500,"size":"250 g","stock":-2,"hi":"खुबानी","jar":"apricot"},"drydates":{"slug":"dry-dates","name":"Dry Dates","price":500,"size":"250 g","stock":100,"hi":"छुहारे","jar":"drydates"},"makhana":{"slug":"makhana-fox-nuts","name":"Makhana (Fox Nuts)","price":500,"size":"250 g","stock":100,"hi":"मखाना","jar":"makhana"},"goldenraisins":{"slug":"golden-raisins","name":"Golden Raisins","price":500,"size":"250 g","stock":100,"hi":"सुनहरी किशमिश","jar":"goldenraisins"}};
+  const ALIAS = {"pistachio":"pistachios","chhuhara":"drydates","raisins":"goldenraisins"};
+  const SITE = "";
+  const rupees = (n) => "₹" + Math.round(n).toLocaleString("en-IN");
+  let basket = [];
+  try { basket = JSON.parse(localStorage.getItem("sn-basket") || "[]").filter((l) => SHOP[l.k] && l.q > 0); } catch (e) { basket = []; }
+  const save = () => { try { localStorage.setItem("sn-basket", JSON.stringify(basket)); } catch (e) {} };
+  const buyEl = $("#buy"), bagEl = $("#basket");
+  let cur = null, qty = 1, opener = null;
+  const openLayer = (el, focusSel) => { opener = document.activeElement; $("#toast").hidden = true; lenis && lenis.stop(); el.hidden = false; (el.querySelector(focusSel) || el.querySelector(".x")).focus(); if (!reduce) gsap.fromTo(el.querySelector(".glass"), { y: 40, opacity: 0, scale: .98 }, { y: 0, opacity: 1, scale: 1, duration: .45, ease: "power3.out" }); };
+  const closeLayer = (el) => { el.hidden = true; if (buyEl.hidden && bagEl.hidden && detail.hidden) lenis && lenis.start(); opener && opener.focus && opener.focus(); };
+  function paintSheet() {
+    const p = SHOP[cur], out = p.stock <= 0;
+    $("#bQty").textContent = qty; $("#bSub").textContent = rupees(p.price * qty);
+    $("#bMinus").disabled = qty <= 1 || out; $("#bPlus").disabled = qty >= 10 || out;
+    $("#bAdd").disabled = out; $("#bAdd").textContent = out ? "Out of stock right now" : "Add " + qty + " to basket";
+    $("#bNow").href = SITE + "/product/" + p.slug + (out ? "" : "?qty=" + qty);
+    $("#bNow").textContent = out ? "See it in the shop" : "Buy now";
+  }
+  function openBuy(k) {
+    k = ALIAS[k] || k; if (!SHOP[k]) return;
+    cur = k; qty = 1; const p = SHOP[k];
+    $("#bName").innerHTML = p.name + ' <small lang="hi">' + p.hi + "</small>";
+    $("#bSize").textContent = p.size + " jar";
+    $("#bPrice").textContent = rupees(p.price);
+    $("#bStock").textContent = p.stock > 0 ? "In stock · packed fresh in Bidar" : "Out of stock right now";
+    $("#bStock").classList.toggle("out", p.stock <= 0);
+    const stage = $("#bJar"); stage.textContent = ""; stage.appendChild(jar(p.jar, innerWidth < 700 ? 92 : 168));
+    paintSheet(); openLayer(buyEl, "#bPlus");
+  }
+  function paintBasket() {
+    const n = basket.reduce((a, l) => a + l.q, 0), tot = basket.reduce((a, l) => a + l.q * SHOP[l.k].price, 0);
+    $("#bagN").textContent = n; $("#bagBtn").setAttribute("aria-label", "Basket, " + n + (n === 1 ? " jar" : " jars"));
+    $("#kCount").textContent = n + (n === 1 ? " jar" : " jars"); $("#kTotal").textContent = rupees(tot);
+    $("#kGo").href = n ? SITE + "/cart/add?items=" + basket.map((l) => SHOP[l.k].slug + ":" + l.q).join(",") + "&from=landing" : SITE + "/shop";
+    $("#kGo").textContent = n ? "Checkout" : "Open the shop";
+    const box = $("#kLines"); box.textContent = "";
+    if (!n) { box.innerHTML = '<div class="empty"><b>Your basket is empty.</b><span>Tap any jar on this page to add it.</span></div>'; return; }
+    basket.forEach((l, i) => {
+      const p = SHOP[l.k], row = document.createElement("div"); row.className = "line";
+      row.innerHTML = '<span class="mini"></span><span><b>' + p.name + "</b><span>" + p.size + " · " + rupees(p.price) + " each · " + rupees(p.price * l.q) + '</span></span><span class="qty" role="group" aria-label="Quantity of ' + p.name + '"><button type="button" data-d="-1" aria-label="One less">−</button><output>' + l.q + '</output><button type="button" data-d="1" aria-label="One more">+</button></span>';
+      row.querySelector(".mini").appendChild(jar(p.jar, 44));
+      row.querySelectorAll("[data-d]").forEach((b) => b.addEventListener("click", () => { l.q = Math.max(0, Math.min(10, l.q + +b.dataset.d)); if (!l.q) basket.splice(i, 1); save(); paintBasket(); }));
+      box.appendChild(row);
+    });
+  }
+  function addToBasket(k, q, fromEl) {
+    const line = basket.find((l) => l.k === k); if (line) line.q = Math.min(10, line.q + q); else basket.push({ k, q });
+    save(); paintBasket();
+    const bag = $("#bagBtn"); bag.classList.remove("bump"); void bag.offsetWidth; bag.classList.add("bump");
+    if (fromEl && !reduce) {
+      const a = fromEl.getBoundingClientRect(), b = bag.getBoundingClientRect(), fly = jar(SHOP[k].jar, 40); fly.classList.add("flyjar");
+      Object.assign(fly.style, { left: a.left + a.width / 2 - 20 + "px", top: a.top + a.height / 2 - 28 + "px" }); document.body.appendChild(fly);
+      gsap.to(fly, { x: b.left + b.width / 2 - (a.left + a.width / 2), y: b.top + b.height / 2 - (a.top + a.height / 2), scale: .45, rotation: 18, duration: .7, ease: "power2.in", onComplete: () => fly.remove() });
+    }
+    const t = $("#toast"); t.textContent = q + " × " + SHOP[k].name + " added to your basket"; t.hidden = false; clearTimeout(addToBasket.tm); addToBasket.tm = setTimeout(() => { t.hidden = true; }, 2200);
+  }
+  $("#bMinus").addEventListener("click", () => { qty = Math.max(1, qty - 1); paintSheet(); });
+  $("#bPlus").addEventListener("click", () => { qty = Math.min(10, qty + 1); paintSheet(); });
+  $("#bAdd").addEventListener("click", () => { const k = cur, q = qty, from = $("#bJar"); closeLayer(buyEl); addToBasket(k, q, from); });
+  $("#bagBtn").addEventListener("click", () => { paintBasket(); openLayer(bagEl, "#kGo"); });
+  [buyEl, bagEl].forEach((el) => el.addEventListener("click", (e) => { if (e.target.closest("[data-close]")) closeLayer(el); }));
+  addEventListener("keydown", (e) => { if (e.key !== "Escape") return; if (!buyEl.hidden) closeLayer(buyEl); else if (!bagEl.hidden) closeLayer(bagEl); });
+  document.addEventListener("click", (e) => { const t = e.target.closest("[data-buy]"); if (t) { e.preventDefault(); openBuy(t.dataset.buy); } });
+  document.addEventListener("keydown", (e) => { const t = e.target.closest && e.target.closest(".jarbox[data-buy]"); if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openBuy(t.dataset.buy); } });
+  $("#dtBuy").addEventListener("click", () => { const k = detail.dataset.k; closeDetail(); openBuy(k); });
+  $("#mixBuy").addEventListener("click", () => {
+    const kinds = MIX.map((m, i) => (mix.count[i] ? ALIAS[m.k] || m.k : null)).filter((k) => k && SHOP[k] && SHOP[k].stock > 0);
+    if (!kinds.length) { $("#mixMsg").textContent = "Tap a few dry fruits first, then add their jars."; return; }
+    [...new Set(kinds)].forEach((k) => addToBasket(k, 1, $("#mixBowl")));
+    paintBasket(); openLayer(bagEl, "#kGo");
+  });
+  paintBasket();
+  start();
+})();
+</script>
+
+</body>
+</html>
