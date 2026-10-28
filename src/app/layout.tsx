@@ -126,7 +126,7 @@ export default async function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
         />
       </head>
       <body
@@ -139,7 +139,7 @@ export default async function RootLayout({
             forcedTheme="light"
             disableTransitionOnChange
           >
-            <StorefrontOnly><div className="print:hidden"><Navbar announcement={announcement} /></div></StorefrontOnly><main className="flex-1 pb-[var(--mobile-chrome-bottom,6rem)] md:pb-0 print:m-0 print:p-0">
+            <StorefrontOnly><div className="print:hidden"><Navbar announcement={announcement} /></div></StorefrontOnly><main className="flex-1 print:m-0 print:p-0">
               {children}
             </main>
             <StorefrontOnly><div className="print:hidden"><Footer contact={contact} /><MobileBottomNav /><NotOnDocuments><WhatsAppButton /><DeferredWidgets popup={popup} /></NotOnDocuments></div><ScrollReveal /></StorefrontOnly>

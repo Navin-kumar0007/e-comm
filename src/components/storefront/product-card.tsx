@@ -41,8 +41,7 @@ export function grams(label?: string | null): number | null {
   return m[2] === 'kg' ? Number(m[1]) * 1000 : Number(m[1]);
 }
 
-/** Royal shelf card: a 3D branded pack, name, price per 100 g and ADD / stepper. */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/** Royal shelf card: a 3D branded pack, name, price per 100 g and Add / stepper. */
 export function ProductCard({ product, className = '' }: { product: ProductCardProduct; className?: string; userDietaryTagIds?: string[] }) {
   const items = useCartStore((s) => s.items);
   const addItem = useCartStore((s) => s.addItem);
@@ -152,7 +151,7 @@ export function ProductCard({ product, className = '' }: { product: ProductCardP
             aria-label={`Add ${product.name} to cart`}
             className="h-10 w-full btn-buy rounded-[var(--radius-control)] text-[13px] font-extrabold tracking-[0.06em] transition-transform active:scale-[0.98] md:h-11 md:text-sm md:tracking-normal"
           >
-            <span className="md:hidden">ADD</span>
+            <span className="md:hidden">Add</span>
             <span className="hidden md:inline">Add to cart</span>
           </button>
         )}

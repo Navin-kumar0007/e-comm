@@ -199,7 +199,7 @@ export default async function ProductPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([jsonLd, breadcrumbLd, faqLd]),
+          __html: JSON.stringify([jsonLd, breadcrumbLd, faqLd]).replace(/</g, "\\u003c"),
         }}
       />
 

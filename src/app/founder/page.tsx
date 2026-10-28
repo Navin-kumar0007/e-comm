@@ -30,10 +30,10 @@ export default function FounderPage() {
           <div className="space-y-8">
             <div>
               <h2 className="text-2xl font-heading font-bold mb-3 text-primary">A Passion for Purity</h2>
-              <p className="text-zinc-600 leading-relaxed text-sm mb-3">
+              <p className="text-muted-foreground leading-relaxed text-sm mb-3">
                 "I started Spicy Nuts with a simple realization: the flavors of my childhood were slowly disappearing from modern kitchens, replaced by heavily processed, artificially flavored alternatives."
               </p>
-              <p className="text-zinc-600 leading-relaxed text-sm">
+              <p className="text-muted-foreground leading-relaxed text-sm">
                 Growing up in a household where every spice was ground fresh and every nut was hand-graded with care, I knew that authentic taste comes from pure ingredients. That's why every spice and dry fruit we sell is graded by hand and packed by us in Bidar.
               </p>
             </div>
@@ -45,24 +45,24 @@ export default function FounderPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-sm mb-1">Hand-graded in Bidar</h3>
-                  <p className="text-zinc-500">Every jar is graded by hand and carries its batch number, packing date and FSSAI registration.</p>
+                  <p className="text-muted-foreground">Every jar is graded by hand and carries its batch number, packing date and FSSAI registration.</p>
                 </div>
               </div>
               
               <div className="flex gap-4">
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center shrink-0">
                   <Award className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-sm mb-1">Authentic Traditional Recipes</h3>
-                  <p className="text-zinc-500">Our masalas and royal dry fruits are curated using generation-old recipes, stone-ground to perfection.</p>
+                  <p className="text-muted-foreground">Our masalas and royal dry fruits are curated using generation-old recipes, stone-ground to perfection.</p>
                 </div>
               </div>
             </div>
 
             <div className="pt-8">
               <p className="font-heading text-2xl font-bold mb-2">Mahesh</p>
-              <p className="text-zinc-500 italic">Proprietor, B.M.V. Spices & Dry Fruits</p>
+              <p className="text-muted-foreground italic">Proprietor, B.M.V. Spices & Dry Fruits</p>
             </div>
           </div>
         </div>

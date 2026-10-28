@@ -10,7 +10,6 @@ export function OfferBanners({ banners }: { banners: Banner[] }) {
           const img = (
             <picture>
               {b.mobileImage && <source media="(max-width: 767px)" srcSet={b.mobileImage} />}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={b.image} alt={b.alt} loading="lazy" decoding="async" className="block h-auto w-full rounded-2xl border border-brand-gold/40 object-cover shadow-sm" />
             </picture>
           );

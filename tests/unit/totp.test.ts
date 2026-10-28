@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import {
-  base32Encode, base32Decode, hotp, totpAt, verifyTotp, encryptSecret, decryptSecret, newBackupCodes, hashCode, useBackupCode, signTwoStep, checkTwoStep,
+  base32Encode, base32Decode, hotp, totpAt, verifyTotp, encryptSecret, decryptSecret, newBackupCodes, hashCode, consumeBackupCode, signTwoStep, checkTwoStep,
 } from "@/lib/totp";
 
 beforeAll(() => { process.env.AUTH_SECRET = process.env.AUTH_SECRET || "test-secret-for-unit-tests"; });
@@ -39,9 +39,9 @@ describe("storage and cookies", () => {
     const codes = newBackupCodes();
     expect(codes).toHaveLength(8);
     const json = JSON.stringify(codes.map(hashCode));
-    const left = useBackupCode(json, codes[2].toLowerCase());
+    const left = consumeBackupCode(json, codes[2].toLowerCase());
     expect(left).toHaveLength(7);
-    expect(useBackupCode(JSON.stringify(left), codes[2])).toBeNull();
+    expect(consumeBackupCode(JSON.stringify(left), codes[2])).toBeNull();
   });
   it("signs the verified-browser cookie for one user and expires it", () => {
     const now = 1_800_000_000_000;

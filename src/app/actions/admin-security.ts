@@ -8,7 +8,7 @@ import { getStaffContext } from '@/lib/auth-guard';
 import { isStaffRole, ROLE_LABELS, type StaffRole } from '@/lib/permissions';
 import { audit } from '@/lib/audit';
 import {
-  decryptSecret, encryptSecret, hashCode, newBackupCodes, newTotpSecret, otpauthUrl, signTwoStep, TWO_STEP_COOKIE, TWO_STEP_HOURS, useBackupCode, verifyTotp,
+  decryptSecret, encryptSecret, hashCode, newBackupCodes, newTotpSecret, otpauthUrl, signTwoStep, TWO_STEP_COOKIE, TWO_STEP_HOURS, consumeBackupCode, verifyTotp,
 } from '@/lib/totp';
 
 const MAX_FAILS = 5;
@@ -80,7 +80,7 @@ export async function disableTwoStepAction(code: string) {
   const ctx = await verifiedStaff();
   const u = await prisma.user.findUnique({ where: { id: ctx.user.id }, select: { totpSecret: true, totpBackupCodes: true } });
   if (!u?.totpSecret) return { success: true };
-  const ok = verifyTotp(decryptSecret(u.totpSecret), code) || useBackupCode(u.totpBackupCodes, code) !== null;
+  const ok = verifyTotp(decryptSecret(u.totpSecret), code) || consumeBackupCode(u.totpBackupCodes, code) !== null;
   if (!ok) return { error: "That code didn't match." };
   await prisma.user.update({ where: { id: ctx.user.id }, data: { totpSecret: null, totpEnabledAt: null, totpBackupCodes: null } });
   await audit({ action: 'security.2fa_off', entity: 'User', entityId: ctx.user.id, summary: 'Turned off two-step login' });
@@ -119,7 +119,7 @@ export async function verifyTwoStepAction(code: string) {
   }
   let usedBackup = false;
   if (!ok) {
-    const left = useBackupCode(u.totpBackupCodes, clean);
+    const left = consumeBackupCode(u.totpBackupCodes, clean);
     if (left) {
       await prisma.user.update({ where: { id: u.id }, data: { totpBackupCodes: JSON.stringify(left) } });
       ok = true;

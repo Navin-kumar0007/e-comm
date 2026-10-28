@@ -31,11 +31,9 @@ const nextConfig: any = {
   },
   allowedDevOrigins: ['.lhr.life', '192.0.0.2', 'localhost'],
   turbopack: {},
+  // Type errors stop the build, so a broken page never reaches the shop.
   typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
+    ignoreBuildErrors: false,
   },
   images: {
     remotePatterns: [

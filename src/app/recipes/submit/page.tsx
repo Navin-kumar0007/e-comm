@@ -47,7 +47,7 @@ export default function SubmitRecipe() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-2">Category</label>
-            <select name="category" className="w-full h-10 px-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent">
+            <select name="category" className="w-full h-10 px-3 rounded-md border border-input bg-transparent">
               <option value="Main Course">Main Course</option>
               <option value="Breakfast">Breakfast</option>
               <option value="Snacks">Snacks</option>
@@ -55,7 +55,7 @@ export default function SubmitRecipe() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Difficulty</label>
-            <select name="difficulty" className="w-full h-10 px-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent">
+            <select name="difficulty" className="w-full h-10 px-3 rounded-md border border-input bg-transparent">
               <option value="Easy">Easy</option>
               <option value="Medium">Medium</option>
               <option value="Hard">Hard</option>
@@ -85,7 +85,7 @@ export default function SubmitRecipe() {
 
         <div>
           <label className="block text-sm font-medium mb-2">Steps (one per line)</label>
-          <textarea name="steps" required className="w-full min-h-[100px] p-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent" placeholder="1. Wash rice\n2. Add spices..."></textarea>
+          <textarea name="steps" required className="w-full min-h-[100px] p-3 rounded-md border border-input bg-transparent" placeholder="1. Wash rice\n2. Add spices..."></textarea>
         </div>
 
         <div>
@@ -93,7 +93,7 @@ export default function SubmitRecipe() {
           <Input name="tags" required placeholder="spicy, vegan, quick" />
         </div>
 
-        <Button type="submit" className="w-full bg-[#4A5D23] hover:bg-[#3A4D13] text-white" disabled={loading}>
+        <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={loading}>
           {loading ? 'Submitting...' : 'Submit Recipe for Review'}
         </Button>
       </form>

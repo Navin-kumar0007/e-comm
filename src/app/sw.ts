@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-// @ts-ignore
+// @ts-expect-error -- the service worker global is declared by the webworker lib
 declare const self: ServiceWorkerGlobalScope;
 
 const serwist = new Serwist({

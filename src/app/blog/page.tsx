@@ -16,20 +16,20 @@ export default async function BlogPage() {
       <div className="grid gap-8 md:grid-cols-2">
         {posts.length > 0 ? posts.map((post) => (
           <div key={post.id} className="group cursor-pointer">
-            <div className="aspect-[4/3] bg-zinc-100 dark:bg-zinc-900 rounded-2xl mb-4 overflow-hidden relative">
+            <div className="aspect-[4/3] bg-muted rounded-2xl mb-4 overflow-hidden relative">
               {post.image ? (
                 <Image width={800} height={800} unoptimized={false} src={post.image} alt={post.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10" />
               )}
             </div>
-            <div className="flex items-center gap-4 text-sm text-zinc-500 mb-2">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
               <span className="text-primary font-medium">{post.category}</span>
               <span>&bull;</span>
               <span>{new Date(post.createdAt).toLocaleDateString()}</span>
             </div>
             <h2 className="text-2xl font-heading font-bold mb-2 group-hover:text-primary transition-colors">{post.title}</h2>
-            <p className="text-zinc-600 dark:text-zinc-400">{post.excerpt}</p>
+            <p className="text-muted-foreground">{post.excerpt}</p>
           </div>
         )) : (
           <div className="col-span-2 text-center text-muted-foreground py-12">

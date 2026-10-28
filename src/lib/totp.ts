@@ -101,7 +101,7 @@ export function newBackupCodes(n = 8) {
 }
 
 /** Returns the remaining hashes when `code` matches one, else null. */
-export function useBackupCode(hashesJson: string | null, code: string): string[] | null {
+export function consumeBackupCode(hashesJson: string | null, code: string): string[] | null {
   const hashes: string[] = hashesJson ? JSON.parse(hashesJson) : [];
   const h = hashCode(code);
   const i = hashes.indexOf(h);

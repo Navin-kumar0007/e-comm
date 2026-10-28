@@ -6,9 +6,11 @@ import { BRAND_PHONE_DISPLAY, BRAND_PHONE_TEL } from "@/lib/contact";
 const footerLinks = {
   shop: [
     { label: "All Products", href: "/shop" },
-    { label: "Authentic Masalas", href: "/category/masalas" },
-    { label: "Royal Dry Fruits", href: "/category/dry-fruits" },
-    { label: "Gift Hampers", href: "/shop?category=gifts" },
+    { label: "Almonds", href: "/shop?collection=almonds" },
+    { label: "Cashews", href: "/shop?collection=cashews" },
+    { label: "Dates", href: "/shop?collection=dates" },
+    { label: "Gift Trays", href: "/home#gift" },
+    { label: "Custom Spice Blend", href: "/blend-creator" },
   ],
   company: [
     { label: "Our Story", href: "/about" },

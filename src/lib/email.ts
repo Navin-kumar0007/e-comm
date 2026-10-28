@@ -52,8 +52,8 @@ const baseStyles = `
   font-family: 'Georgia', serif;
   max-width: 560px;
   margin: 0 auto;
-  color: #052c1e;
-  background: #f4f3ea;
+  color: #4a0f1d;
+  background: #fbf3e4;
   padding: 32px;
   border-radius: 12px;
 `;
@@ -66,9 +66,9 @@ function esc(value: string) {
 }
 
 const headerHtml = `
-  <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #c59b27;">
-    <h2 style="margin: 0; color: #052c1e; font-size: 24px;">✦ Spicy Nuts ✦</h2>
-    <p style="margin: 4px 0 0; color: #8a6d1f; font-size: 12px; letter-spacing: 2px;">FROM BIDAR, KARNATAKA</p>
+  <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #c9a45a;">
+    <h2 style="margin: 0; color: #4a0f1d; font-size: 24px;">✦ Spicy Nuts ✦</h2>
+    <p style="margin: 4px 0 0; color: #7a571c; font-size: 12px; letter-spacing: 2px;">FROM BIDAR, KARNATAKA</p>
   </div>
 `;
 
@@ -77,14 +77,14 @@ export async function sendOrderConfirmation(email: string, orderId: string, tota
   return sendEmail(email, `Order Confirmed — #${orderNum}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">Order Confirmed 🎉</h1>
+      <h1 style="color: #4a0f1d; font-size: 20px;">Order Confirmed 🎉</h1>
       <p>Thank you for your purchase from Spicy Nuts!</p>
-      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
+      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e8ddcc;">
         <p style="margin: 4px 0;"><strong>Order ID:</strong> #${orderNum}</p>
         <p style="margin: 4px 0;"><strong>Total:</strong> ₹${total.toFixed(2)}</p>
       </div>
       <p>We're preparing your order with care. You'll receive updates as we ship it.</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
+      <p style="color: #7a571c; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -92,20 +92,20 @@ export async function sendOrderConfirmation(email: string, orderId: string, tota
 export async function sendOrderShipped(email: string, orderId: string, trackingNumber?: string, trackingUrl?: string) {
   const orderNum = orderId.slice(-8).toUpperCase();
   const trackingHtml = trackingNumber ? `
-    <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
+    <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e8ddcc;">
       <p style="margin: 4px 0;"><strong>Tracking Number:</strong> ${trackingNumber}</p>
-      ${trackingUrl ? `<p style="margin: 4px 0;"><a href="${trackingUrl}" style="color: #c59b27;">Track Your Package →</a></p>` : ''}
+      ${trackingUrl ? `<p style="margin: 4px 0;"><a href="${trackingUrl}" style="color: #c9a45a;">Track Your Package →</a></p>` : ''}
     </div>
   ` : '';
   
   return sendEmail(email, `Order Shipped — #${orderNum}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">Your Order Has Shipped 📦</h1>
+      <h1 style="color: #4a0f1d; font-size: 20px;">Your Order Has Shipped 📦</h1>
       <p>Great news! Your order <strong>#${orderNum}</strong> is on its way.</p>
       ${trackingHtml}
       <p>Your package will arrive within 3-7 business days.</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
+      <p style="color: #7a571c; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -115,16 +115,16 @@ export async function sendOrderDelivered(email: string, orderId: string) {
   return sendEmail(email, `Order Delivered — #${orderNum}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">Order Delivered ✅</h1>
+      <h1 style="color: #4a0f1d; font-size: 20px;">Order Delivered ✅</h1>
       <p>Your order <strong>#${orderNum}</strong> has been delivered successfully!</p>
       <p>We hope you enjoy your Spicy Nuts products. If you love them, we'd appreciate a review!</p>
       <div style="text-align: center; margin: 24px 0;">
         <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicynuts.in'}/account/orders" 
-           style="display: inline-block; background: #052c1e; color: #fcfbf7; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+           style="display: inline-block; background: #4a0f1d; color: #fffdf8; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
           Leave a Review
         </a>
       </div>
-      <p style="color: #8a6d1f; font-size: 13px;">— Team Spicy Nuts</p>
+      <p style="color: #7a571c; font-size: 13px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -134,11 +134,11 @@ export async function sendOrderCancelled(email: string, orderId: string, wasPrep
   return sendEmail(email, `Order Cancelled — #${orderNum}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">Order Cancelled</h1>
+      <h1 style="color: #4a0f1d; font-size: 20px;">Order Cancelled</h1>
       <p>Your order <strong>#${orderNum}</strong> has been cancelled.</p>
       ${wasPrepaid ? '<p>Your refund has been initiated and will reach your original payment method within 5-7 business days.</p>' : ''}
       <p>If this was a mistake or you'd like to reorder, visit our store anytime.</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
+      <p style="color: #7a571c; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -151,14 +151,14 @@ export async function notifyAdminNewOrder(orderId: string, total: number, custom
   return sendEmail(adminEmail, `🛒 New Order #${orderNum} — ₹${total.toFixed(2)}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">New Order Received! 🛒</h1>
-      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
+      <h1 style="color: #4a0f1d; font-size: 20px;">New Order Received! 🛒</h1>
+      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e8ddcc;">
         <p style="margin: 4px 0;"><strong>Order:</strong> #${orderNum}</p>
         <p style="margin: 4px 0;"><strong>Customer:</strong> ${esc(customerName)}</p>
         <p style="margin: 4px 0;"><strong>Amount:</strong> ₹${total.toFixed(2)}</p>
         <p style="margin: 4px 0;"><strong>Payment:</strong> ${payLabel}</p>
       </div>
-      <p><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicynuts.in'}/admin/orders" style="color: #c59b27; font-weight: bold;">View in Admin Panel →</a></p>
+      <p><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicynuts.in'}/admin/orders" style="color: #c9a45a; font-weight: bold;">View in Admin Panel →</a></p>
     </div>
   `);
 }
@@ -170,14 +170,14 @@ export async function notifyAdminShippingIssue(orderId: string, customerName: st
   return sendEmail(adminEmail, `⚠️ Book shipment manually — Order #${orderNum}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">Automatic courier booking failed</h1>
-      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
+      <h1 style="color: #4a0f1d; font-size: 20px;">Automatic courier booking failed</h1>
+      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e8ddcc;">
         <p style="margin: 4px 0;"><strong>Order:</strong> #${orderNum}</p>
         <p style="margin: 4px 0;"><strong>Customer:</strong> ${esc(customerName)}</p>
         <p style="margin: 4px 0;"><strong>Reason:</strong> ${esc(problem)}</p>
       </div>
       <p>The order is safe. Open it and click <strong>Book shipment</strong> after fixing the reason (e.g. recharge the courier wallet).</p>
-      <p><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicynuts.in'}/admin/orders/${orderId}" style="color: #c59b27; font-weight: bold;">Open order →</a></p>
+      <p><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://spicynuts.in'}/admin/orders/${orderId}" style="color: #c9a45a; font-weight: bold;">Open order →</a></p>
     </div>
   `);
 }
@@ -188,11 +188,11 @@ export async function notifyAdminContact(name: string, email: string, message: s
   return sendEmail(adminEmail, `📬 New Contact Message from ${name}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">New Message Received 📬</h1>
-      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
+      <h1 style="color: #4a0f1d; font-size: 20px;">New Message Received 📬</h1>
+      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e8ddcc;">
         <p style="margin: 4px 0;"><strong>Name:</strong> ${esc(name)}</p>
         <p style="margin: 4px 0;"><strong>Email:</strong> ${esc(email)}</p>
-        <hr style="border: 0; border-top: 1px solid #e3dec9; margin: 12px 0;" />
+        <hr style="border: 0; border-top: 1px solid #e8ddcc; margin: 12px 0;" />
         <p style="margin: 4px 0; white-space: pre-wrap;">${esc(message)}</p>
       </div>
       <p>Reply directly to the customer at ${esc(email)}.</p>
@@ -205,12 +205,12 @@ export async function sendRefundInitiated(email: string, orderId: string, amount
   return sendEmail(email, `Refund Initiated — #${orderNum}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">Refund Initiated</h1>
+      <h1 style="color: #4a0f1d; font-size: 20px;">Refund Initiated</h1>
       <p>We have initiated a refund of <strong>₹${amount.toFixed(2)}</strong> for order <strong>#${orderNum}</strong>.</p>
       <p>${method === 'RAZORPAY'
         ? 'It will reach your original payment method within 5-7 business days.'
         : 'As this was a Cash on Delivery order, our team will contact you for your UPI / bank details and transfer it within 7-10 business days.'}</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
+      <p style="color: #7a571c; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -226,10 +226,10 @@ export async function sendReturnUpdate(email: string, orderId: string, status: '
   return sendEmail(email, `Return Request ${status === 'REQUESTED' ? 'Received' : status.charAt(0) + status.slice(1).toLowerCase()} — #${orderNum}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">Return Request Update</h1>
+      <h1 style="color: #4a0f1d; font-size: 20px;">Return Request Update</h1>
       <p>Order <strong>#${orderNum}</strong>: ${lines[status]}</p>
-      ${note ? `<p style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #e3dec9;">${esc(note)}</p>` : ''}
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
+      ${note ? `<p style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #e8ddcc;">${esc(note)}</p>` : ''}
+      <p style="color: #7a571c; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -238,15 +238,15 @@ export async function sendPasswordReset(email: string, resetUrl: string) {
   return sendEmail(email, 'Reset your Spicy Nuts password', `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px; text-align: center;">Reset Your Password</h1>
+      <h1 style="color: #4a0f1d; font-size: 20px; text-align: center;">Reset Your Password</h1>
       <p>We received a request to reset your password. This link is valid for <strong>1 hour</strong>.</p>
       <div style="text-align: center; margin: 24px 0;">
-        <a href="${resetUrl}" style="display: inline-block; background: #052c1e; color: #fcfbf7; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+        <a href="${resetUrl}" style="display: inline-block; background: #4a0f1d; color: #fffdf8; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
           Reset Password
         </a>
       </div>
       <p style="color: #666; font-size: 13px;">If you didn't request this, you can ignore this email — your password won't change.</p>
-      <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
+      <p style="color: #7a571c; font-size: 13px; margin-top: 24px;">— Team Spicy Nuts</p>
     </div>
   `);
 }
@@ -257,14 +257,14 @@ export async function notifyAdminReturnRequest(orderId: string, customerName: st
   return sendEmail(adminEmail, `↩️ Return request — #${orderNum}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">New Return Request</h1>
-      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">
+      <h1 style="color: #4a0f1d; font-size: 20px;">New Return Request</h1>
+      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e8ddcc;">
         <p style="margin: 4px 0;"><strong>Order:</strong> #${orderNum}</p>
         <p style="margin: 4px 0;"><strong>Customer:</strong> ${esc(customerName)}</p>
         <p style="margin: 4px 0;"><strong>Reason:</strong> ${esc(reason)}</p>
         <p style="margin: 4px 0; white-space: pre-wrap;">${esc(details)}</p>
       </div>
-      <p><a href="${SITE_URL}/admin/returns" style="color: #c59b27; font-weight: bold;">Review in Admin →</a></p>
+      <p><a href="${SITE_URL}/admin/returns" style="color: #c9a45a; font-weight: bold;">Review in Admin →</a></p>
     </div>
   `);
 }
@@ -277,9 +277,9 @@ export async function notifyAdminLowStock(items: Array<{ name: string; stock: nu
   return sendEmail(adminEmail, `⚠️ Low stock: ${items.map((i) => i.name).join(', ').slice(0, 80)}`, `
     <div style="${baseStyles}">
       ${headerHtml}
-      <h1 style="color: #052c1e; font-size: 20px;">Low Stock Alert</h1>
-      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e3dec9;">${rows}</div>
-      <p><a href="${SITE_URL}/admin/inventory" style="color: #c59b27; font-weight: bold;">Restock in Admin →</a></p>
+      <h1 style="color: #4a0f1d; font-size: 20px;">Low Stock Alert</h1>
+      <div style="background: white; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #e8ddcc;">${rows}</div>
+      <p><a href="${SITE_URL}/admin/inventory" style="color: #c9a45a; font-weight: bold;">Restock in Admin →</a></p>
     </div>
   `);
 }

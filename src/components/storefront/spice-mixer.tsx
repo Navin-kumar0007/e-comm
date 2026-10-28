@@ -258,11 +258,11 @@ export function SpiceMixer() {
           <rect x="40" y="80" width="10" height="240" rx="5" fill="#ffffff" opacity="0.25" />
 
           {/* Lid & Neck */}
-          <rect x="60" y="50" width="100" height="20" rx="5" fill="#e5e5e0" stroke="#c59b27" strokeWidth="1" opacity="0.7" />
-          <rect x="50" y="25" width="120" height="25" rx="8" fill="#052c1e" />
+          <rect x="60" y="50" width="100" height="20" rx="5" fill="#e5e5e0" stroke="#c9a45a" strokeWidth="1" opacity="0.7" />
+          <rect x="50" y="25" width="120" height="25" rx="8" fill="#4a0f1d" />
 
           {/* Paper Label */}
-          <rect x="50" y="160" width="120" height="70" rx="10" fill="#fcfbf7" stroke="#decbb0" strokeWidth="1.5" />
+          <rect x="50" y="160" width="120" height="70" rx="10" fill="#fffdf8" stroke="#decbb0" strokeWidth="1.5" />
           <text 
             x="110" 
             y="195" 
@@ -270,7 +270,7 @@ export function SpiceMixer() {
             fontFamily="var(--font-playfair)" 
             fontSize="11" 
             fontWeight="bold" 
-            fill="#052c1e"
+            fill="#4a0f1d"
           >
             {blendName ? (blendName.length > 15 ? blendName.substring(0, 13) + '..' : blendName) : 'Signature'}
           </text>
@@ -280,7 +280,7 @@ export function SpiceMixer() {
             textAnchor="middle" 
             fontFamily="sans-serif" 
             fontSize="8" 
-            fill="#55675e"
+            fill="#6e1a2c"
           >
             Custom Spice Mix
           </text>
@@ -498,7 +498,7 @@ export function SpiceMixer() {
                     dominantBaseline="middle"
                     fontSize="8"
                     fontWeight="bold"
-                    fill="#55675e"
+                    fill="#6e1a2c"
                   >
                     {label + ' (' + valMap[i] + '%)'}
                   </text>
@@ -532,7 +532,7 @@ export function SpiceMixer() {
                       cx={p.x - 5}
                       cy={p.y - 5}
                       r="4.5"
-                      fill="#c59b27"
+                      fill="#c9a45a"
                       stroke="#ffffff"
                       strokeWidth="1.5"
                       className="transition-all duration-200 hover:scale-150 hover:fill-primary"

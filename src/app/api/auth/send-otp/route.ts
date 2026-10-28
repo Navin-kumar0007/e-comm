@@ -28,18 +28,18 @@ async function sendOTPEmail(email: string, otp: string) {
           to: email,
           subject: "Your Spicy Nuts Verification Code",
           html: `
-            <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #052c1e; background: #f4f3ea; padding: 32px; border-radius: 12px;">
-              <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #c59b27;">
-                <h2 style="margin: 0; color: #052c1e; font-size: 24px;">✦ Spicy Nuts ✦</h2>
-                <p style="margin: 4px 0 0; color: #8a6d1f; font-size: 12px; letter-spacing: 2px;">FROM BIDAR, KARNATAKA</p>
+            <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #4a0f1d; background: #fbf3e4; padding: 32px; border-radius: 12px;">
+              <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #c9a45a;">
+                <h2 style="margin: 0; color: #4a0f1d; font-size: 24px;">✦ Spicy Nuts ✦</h2>
+                <p style="margin: 4px 0 0; color: #7a571c; font-size: 12px; letter-spacing: 2px;">FROM BIDAR, KARNATAKA</p>
               </div>
-              <h1 style="color: #052c1e; font-size: 20px; text-align: center;">Your Verification Code</h1>
-              <div style="background: white; padding: 24px; border-radius: 12px; margin: 20px 0; border: 1px solid #e3dec9; text-align: center;">
-                <p style="font-size: 36px; font-weight: bold; letter-spacing: 8px; margin: 0; color: #052c1e;">${otp}</p>
+              <h1 style="color: #4a0f1d; font-size: 20px; text-align: center;">Your Verification Code</h1>
+              <div style="background: white; padding: 24px; border-radius: 12px; margin: 20px 0; border: 1px solid #e8ddcc; text-align: center;">
+                <p style="font-size: 36px; font-weight: bold; letter-spacing: 8px; margin: 0; color: #4a0f1d;">${otp}</p>
               </div>
               <p style="text-align: center; color: #666; font-size: 14px;">This code expires in <strong>10 minutes</strong>.</p>
               <p style="text-align: center; color: #999; font-size: 12px; margin-top: 16px;">If you didn't request this code, please ignore this email.</p>
-              <p style="color: #8a6d1f; font-size: 13px; margin-top: 24px; text-align: center;">— Team Spicy Nuts</p>
+              <p style="color: #7a571c; font-size: 13px; margin-top: 24px; text-align: center;">— Team Spicy Nuts</p>
             </div>
           `,
         }),

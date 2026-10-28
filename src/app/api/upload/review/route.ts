@@ -65,8 +65,12 @@ export async function POST(req: Request) {
         ).end(buffer);
       });
       return NextResponse.json({ url: (result as any).secure_url });
+    } else if (process.env.VERCEL) {
+      // Vercel's disk is read-only: without Cloudinary there is nowhere to keep the photo.
+      console.error("Review upload: CLOUDINARY_* env vars are not set on this deployment.");
+      return NextResponse.json({ error: "Photo uploads are not available right now. You can still post your review without a photo." }, { status: 503 });
     } else {
-      // Save locally to public/uploads/reviews/
+      // Save locally to public/uploads/reviews/ (local development)
       const ext = EXT_BY_TYPE[file.type] || "jpg";
       const filename = "review-" + Date.now() + "-" + crypto.randomUUID().slice(0, 8) + "." + ext;
       const uploadDir = path.join(process.cwd(), "public/uploads/reviews");

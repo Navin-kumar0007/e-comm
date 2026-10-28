@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 
 export default function NotFound() {
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 text-center bg-[url('/pattern.png')] bg-repeat bg-blend-soft-light bg-muted/10">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 text-center">
       <div className="mb-8 relative">
         <div className="text-9xl font-heading font-black text-primary/20 select-none">404</div>
         <div className="absolute inset-0 flex items-center justify-center">

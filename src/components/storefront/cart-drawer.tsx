@@ -20,7 +20,7 @@ const subscribeWide = (cb: () => void) => {
 };
 
 /**
- * Cart button. `variant="pill"` is the glass "Basket" pill in the header, as on the home page (the word
+ * Cart button. `variant="pill"` is the glass "Cart" pill in the header, styled like the home page basket (the word
  * shows from tablet width up, the saffron count always); `variant="icon"` is a plain bag icon. Both open the one cart sheet.
  */
 export function CartDrawer({ variant = 'icon', tone = 'light' }: { variant?: 'icon' | 'pill'; tone?: 'light' | 'dark' }) {
@@ -34,7 +34,7 @@ export function CartDrawer({ variant = 'icon', tone = 'light' }: { variant?: 'ic
   return variant === 'pill' ? (
     <button type="button" onClick={() => setOpen(true)} aria-label={`Cart, ${itemCount} items`} className="nav-pill">
       <ShoppingBag />
-      <span className="hidden md:inline">Basket</span>
+      <span className="hidden md:inline">Cart</span>
       <b key={itemCount} className="nav-count tnum badge-bump">{itemCount}</b>
     </button>
   ) : (

@@ -53,8 +53,11 @@ export async function POST(req: Request) {
         }).end(buffer);
       });
       return NextResponse.json({ url: (result as any).secure_url });
+    } else if (process.env.VERCEL) {
+      // Vercel's disk is read-only: without Cloudinary there is nowhere to keep the image.
+      return NextResponse.json({ error: "Image uploads need Cloudinary. Add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET in Vercel, then redeploy." }, { status: 503 });
     } else {
-      // Fallback: Save to local public/uploads with a safe, generated filename.
+      // Fallback (local development): save to public/uploads with a safe, generated filename.
       const ext = EXT_BY_TYPE[file.type] || 'bin';
       const filename = `${Date.now()}-${crypto.randomUUID()}.${ext}`;
       const uploadDir = path.join(process.cwd(), 'public/uploads');

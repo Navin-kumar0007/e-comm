@@ -9,7 +9,7 @@ export function WishlistButton({ productId, variant = 'icon' }: { productId: str
   const [mounted, setMounted] = useState(false);
   const { items, toggleItem, isInWishlist } = useWishlistStore();
   
-  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   if (!mounted) return <Button variant={variant === 'icon' ? "ghost" : "outline"} size={variant === 'icon' ? "icon" : "default"} disabled><Heart className="w-4 h-4" /></Button>;
