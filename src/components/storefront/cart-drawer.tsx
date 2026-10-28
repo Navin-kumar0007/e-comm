@@ -20,23 +20,22 @@ const subscribeWide = (cb: () => void) => {
 };
 
 /**
- * Cart button. `variant="pill"` is the "2 · ₹1,000" button in the desktop header;
- * `variant="icon"` is the bag icon in the phone header. Both open the one cart sheet.
+ * Cart button. `variant="pill"` is the glass "Basket" pill in the header, as on the home page (the word
+ * shows from tablet width up, the saffron count always); `variant="icon"` is a plain bag icon. Both open the one cart sheet.
  */
 export function CartDrawer({ variant = 'icon', tone = 'light' }: { variant?: 'icon' | 'pill'; tone?: 'light' | 'dark' }) {
-  const getTotal = useCartStore((s) => s.getTotal);
   const getItemCount = useCartStore((s) => s.getItemCount);
   useCartStore((s) => s.items);
   const setOpen = useCartSheet((s) => s.setOpen);
   // Zustand's persisted cart only exists after hydration
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const itemCount = mounted ? getItemCount() : 0;
-  const total = mounted ? getTotal() : 0;
 
   return variant === 'pill' ? (
-    <button type="button" onClick={() => setOpen(true)} aria-label={`Cart, ${itemCount} items`} className="flex h-10 items-center gap-2 rounded-full border border-brand-gold/60 bg-white/10 px-4 text-[13px] font-extrabold text-white hover:bg-white/15">
-      <ShoppingBag className="h-5 w-5 text-brand-gold" />
-      <span className="tnum">{itemCount} · {inr(total)}</span>
+    <button type="button" onClick={() => setOpen(true)} aria-label={`Cart, ${itemCount} items`} className="nav-pill">
+      <ShoppingBag />
+      <span className="hidden md:inline">Basket</span>
+      <b key={itemCount} className="nav-count tnum badge-bump">{itemCount}</b>
     </button>
   ) : (
     <button type="button" onClick={() => setOpen(true)} aria-label={`Cart, ${itemCount} items`} className={`relative flex h-11 w-11 items-center justify-center rounded-full ${tone === 'dark' ? 'text-white' : 'text-current'}`}>

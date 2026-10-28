@@ -45,6 +45,8 @@
   --color-brand-gold-deep: var(--brand-gold-deep);
   --color-brand-green: var(--primary);
   --color-royal-deep: var(--royal-deep);
+  --color-night: var(--night);
+  --color-night-deep: var(--night-deep);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-buy: var(--buy);
@@ -73,7 +75,7 @@
 @layer base {
   /* Rajwada Royal: palace maroon, temple gold, ivory. One palette for the whole site. */
   :root {
-    --background: #fbf6ee;
+    --background: #fbf3e4; /* the home page's ivory */
     --foreground: #24140f;
 
     --card: #fffdf8; /* Pearl: lifts cards off the ivory page */
@@ -102,6 +104,9 @@
     --ring: #7a571c;
 
     --royal-deep: #4a0f1d;
+    /* The home page's stage: near-black with a maroon cast, and the deeper tone of its footer */
+    --night: #1a0509;
+    --night-deep: #12030a;
     --success: #1e6b45;
     --warning: #7a4a00;
 
@@ -123,9 +128,9 @@
     border-color: var(--border);
     -webkit-tap-highlight-color: transparent;
   }
-  /* Pulling past the top on a phone shows maroon (matching the header), not white. */
+  /* Pulling past the top on a phone shows the night header colour, not white. */
   html {
-    background-color: var(--royal-deep);
+    background-color: var(--night);
   }
   body {
     background-color: var(--background);
@@ -241,10 +246,66 @@
 
 /* --- RAJWADA ROYAL MOTIFS --- */
 
-/* Jaali lattice for deep maroon sections */
+/* Night scene, matching the home page: near-black stage, a copper glow from the top right,
+   maroon from the bottom left and a few specks of gold dust. Used for title bands, the sign-in
+   and tracking pages, dark cards and loading bands. (The class name is kept from the old lattice.) */
 .jaali {
-  background-color: var(--royal-deep);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Cpath d='M18 0 36 18 18 36 0 18Z' fill='none' stroke='%23C9A45A' stroke-opacity='.15'/%3E%3Ccircle cx='18' cy='18' r='4' fill='none' stroke='%23C9A45A' stroke-opacity='.15'/%3E%3C/svg%3E");
+  background-color: var(--night);
+  background-image:
+    radial-gradient(1.5px 1.5px at 14% 24%, rgb(246 226 168 / 0.55), transparent 70%),
+    radial-gradient(1px 1px at 31% 68%, rgb(246 226 168 / 0.45), transparent 70%),
+    radial-gradient(1.5px 1.5px at 52% 18%, rgb(246 226 168 / 0.4), transparent 70%),
+    radial-gradient(1px 1px at 67% 82%, rgb(246 226 168 / 0.5), transparent 70%),
+    radial-gradient(1.5px 1.5px at 83% 36%, rgb(246 226 168 / 0.45), transparent 70%),
+    radial-gradient(1px 1px at 92% 74%, rgb(246 226 168 / 0.35), transparent 70%),
+    radial-gradient(60% 90% at 88% 0%, rgb(194 106 42 / 0.36), transparent 70%),
+    radial-gradient(55% 85% at 0% 100%, rgb(110 26 44 / 0.55), transparent 72%);
+}
+
+/* Header and tab bar: night glass over whatever scrolls beneath */
+.night-glass {
+  background: rgb(26 5 9 / 0.86);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid rgb(201 164 90 / 0.22);
+}
+
+/* Header buttons, as on the home page: glass pills with a gold hairline */
+.nav-pill {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 40px; padding-inline: 13px 15px; border-radius: 999px;
+  font-weight: 800; font-size: 13.5px; line-height: 1; color: #fff; white-space: nowrap;
+  background: linear-gradient(160deg, rgb(110 26 44 / 0.55), rgb(26 5 9 / 0.65));
+  border: 1px solid rgb(246 226 168 / 0.45);
+  box-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.7);
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.nav-pill:hover { border-color: rgb(246 226 168 / 0.85); }
+.nav-pill svg { width: 18px; height: 18px; flex: none; }
+.nav-pill.round { width: 40px; padding: 0; }
+.nav-count {
+  min-width: 22px; height: 22px; padding-inline: 6px; border-radius: 99px;
+  display: grid; place-items: center; font-size: 12px; font-weight: 800;
+  background: var(--buy); color: var(--buy-ink);
+}
+.nav-shop {
+  display: inline-flex; align-items: center; height: 40px; padding-inline: 18px; border-radius: 999px;
+  font-weight: 800; font-size: 14px; white-space: nowrap; color: var(--buy-ink); background: var(--buy);
+  background-image: linear-gradient(180deg, var(--buy-hi) 0%, var(--buy) 55%, var(--buy-deep) 100%);
+  border: 1px solid rgb(255 236 190 / 0.75);
+  box-shadow: 0 10px 24px -10px rgb(217 130 26 / 0.75), inset 0 1px 0 rgb(255 255 255 / 0.55);
+}
+@media (max-width: 767px) {
+  .nav-pill, .nav-shop { height: 38px; font-size: 13px; }
+  .nav-pill { padding-inline: 11px 12px; }
+  .nav-pill.round { width: 38px; padding: 0; }
+  .nav-shop { padding-inline: 14px; }
+}
+
+/* Footer: the home page's deeper night with a gold hairline on top */
+.site-foot {
+  background-color: var(--night-deep);
+  border-top: 1px solid rgb(201 164 90 / 0.35);
 }
 
 /* Jharokha arch frame for photos */

@@ -58,8 +58,8 @@ export function CartHandoff({ lines }: { lines: HandoffLine[] }) {
         )}
         {skipped.length > 0 && <p className="rounded-xl bg-white/[0.06] p-3 text-sm text-white/80">{skipped.map((l) => l.name).join(", ")} {skipped.length === 1 ? "is" : "are"} out of stock right now, so {skipped.length === 1 ? "it was" : "they were"} left out.</p>}
         <div className="flex flex-col gap-2.5 sm:flex-row">
-          {ok.length > 0 && <Link href="/checkout" className="btn-buy shine flex h-12 flex-1 items-center justify-center rounded-2xl font-extrabold">Go to checkout</Link>}
-          <Link href="/shop" className="flex h-12 flex-1 items-center justify-center rounded-2xl border border-brand-gold/60 font-bold text-brand-gold hover:bg-white/10 hover:text-white">Add more from the shop</Link>
+          {ok.length > 0 && <Link href="/checkout" className="btn-buy shine flex h-12 items-center sm:flex-1 justify-center rounded-2xl font-extrabold">Go to checkout</Link>}
+          <Link href="/shop" className="flex h-12 items-center justify-center rounded-2xl border border-brand-gold/60 sm:flex-1 font-bold text-brand-gold hover:bg-white/10 hover:text-white">Add more from the shop</Link>
         </div>
       </div>
     </div>

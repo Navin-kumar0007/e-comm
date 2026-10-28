@@ -20,7 +20,7 @@ export function PageHero({
   compact?: boolean;
 }) {
   return (
-    <section className={`jaali pt-header text-white ${compact ? "pb-6" : "pb-8 md:pb-11"}`}>
+    <section className={`jaali pt-header border-b border-brand-gold/25 text-white ${compact ? "pb-6" : "pb-8 md:pb-11"}`}>
       <div className="container mx-auto max-w-7xl px-4 pt-5 sm:px-6 md:pt-8 lg:px-8">
         {crumbs && (
           <nav aria-label="Breadcrumb" className="mb-2 flex flex-wrap items-center gap-1.5 text-xs text-white/70">

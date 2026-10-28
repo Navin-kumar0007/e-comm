@@ -48,7 +48,7 @@ export function Footer({ contact }: { contact?: FooterContact }) {
   const tel = (contact?.phone || BRAND_PHONE_DISPLAY).replace(/[^\d+]/g, "");
   const socials = [["Instagram", contact?.instagram], ["YouTube", contact?.youtube], ["Facebook", contact?.facebook]].filter(([, url]) => !!url) as Array<[string, string]>;
   return (
-    <footer className="jaali pb-44 text-white md:pb-10">
+    <footer className="site-foot pb-44 text-white md:pb-10">
       <div className="container mx-auto max-w-7xl px-4 py-10 sm:py-14">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12">
           {/* Brand */}

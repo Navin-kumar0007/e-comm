@@ -10,7 +10,7 @@ import { useState } from "react";
 import { CartDrawer, CartSheet } from "./cart-drawer";
 import { usePathname } from "next/navigation";
 import { NotificationsDropdown } from "./notifications";
-import { Menu, Search, BookOpen, Award, Sparkles, Phone } from "lucide-react";
+import { Menu, Search, BookOpen, Award, Sparkles, Phone, Gift, Truck, HelpCircle, User } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -31,100 +31,103 @@ const DESKTOP_LINKS = [
   { href: "/about", label: "Our Story" },
 ];
 
-/** Logo on an ivory plaque so the green-and-gold wordmark stays legible on maroon. */
+const MENU_LINKS = [
+  { href: "/home#gift", label: "Gift trays", icon: Gift },
+  { href: "/blend-creator", label: "Spice Atelier: custom blend", icon: Sparkles },
+  { href: "/recipes", label: "Recipes", icon: BookOpen },
+  { href: "/about", label: "Our story", icon: Award },
+  { href: "/track", label: "Track an order", icon: Truck },
+  { href: "/help", label: "Help", icon: HelpCircle },
+  { href: "/account", label: "My account", icon: User },
+];
+
+/** Logo on a pearl tile with a gold edge, the same plaque as the home page. */
 function LogoPlaque() {
   return (
-    <span className="inline-flex items-center rounded-xl border border-brand-gold bg-background px-2 py-0.5">
-      <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" width={64} height={51} priority className="h-[34px] w-auto md:h-[46px]" />
+    <span className="flex h-10 w-[58px] items-center justify-center rounded-[10px] border-[1.5px] border-brand-gold bg-card shadow-[0_10px_24px_-12px_rgba(0,0,0,0.7)] md:h-[46px] md:w-[70px]">
+      <Image src="/spicy-nuts-logo.png" alt="Spicy Nuts" width={64} height={51} priority className="h-auto w-[46px] md:w-[56px]" />
     </span>
   );
 }
 
+/** Header in the home page's style: logo tile on the left; Search, Menu, Basket and Shop now on the right. */
 export function Navbar({ announcement }: { announcement?: { enabled: boolean; messages: import("@/lib/site-content-shared").AnnouncementMsg[] } }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const close = () => setDrawerOpen(false);
-  // On phones the cart lives in the bottom tab bar; product pages hide that bar, so they keep a header bag.
-  const headerCart = (usePathname() || "").startsWith("/product/");
+  const pathname = usePathname() || "";
+  // "Shop now" is pointless where the customer is already shopping or paying.
+  const showShopNow = !/^\/(shop|category|search|checkout)/.test(pathname);
 
   return (
-    <header className="jaali fixed left-0 right-0 top-0 z-50 w-full text-white shadow-[0_6px_20px_rgba(42,10,18,0.25)]">
+    <header className="night-glass fixed left-0 right-0 top-0 z-50 w-full text-white">
       <PromoBanner {...(announcement ?? {})} />
-      <div className="container mx-auto flex h-14 items-center justify-between gap-3 px-2 md:h-[70px] md:px-6">
-        {/* Left: menu (mobile) + logo */}
-        <div className="flex flex-1 items-center gap-1 lg:flex-none">
-          <div className="lg:hidden">
-            <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-              <SheetTrigger aria-label="Open menu" className="inline-flex h-11 w-11 items-center justify-center rounded-xl hover:bg-white/10">
-                <Menu className="h-[22px] w-[22px]" />
-              </SheetTrigger>
-              <SheetContent side="left" className="flex w-[300px] flex-col gap-0 border-r border-border bg-background p-0 sm:w-[340px]">
-                <div className="jaali px-5 pb-5 pt-6">
-                  <SheetTitle className="sr-only">Menu</SheetTitle>
-                  <LogoPlaque />
-                  <p className="eyebrow mt-3 text-brand-gold">Shop by collection</p>
-                </div>
-                <nav aria-label="Collections" className="flex-1 overflow-y-auto p-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    <Link href="/shop" onClick={close} className="col-span-2 flex h-11 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
-                      Shop all
-                    </Link>
-                    {COLLECTIONS.map((c) => (
-                      <Link key={c.slug} href={`/shop?collection=${c.slug}`} onClick={close} className="flex min-h-11 items-center gap-2 rounded-xl border border-border bg-card p-1.5 pr-2 text-[13px] font-semibold hover:border-brand-gold">
-                        <Image src={c.image} alt="" width={64} height={64} className="arch h-9 w-8 shrink-0 object-cover ring-1 ring-brand-gold" />
-                        <span className="leading-tight">{c.name}</span>
-                      </Link>
-                    ))}
-                  </div>
-                  <p className="eyebrow px-1 pb-2 pt-6 text-brand-gold-deep">Spicy Nuts</p>
-                  {[
-                    { href: "/blend-creator", label: "Spice Atelier: custom blend", icon: Sparkles },
-                    { href: "/recipes", label: "Recipes", icon: BookOpen },
-                    { href: "/about", label: "Our story", icon: Award },
-                  ].map(({ href, label, icon: Icon }) => (
-                    <Link key={href} href={href} onClick={close} className="flex h-11 items-center gap-3 rounded-xl px-2 text-sm font-semibold hover:bg-muted">
-                      <Icon className="h-4 w-4 text-primary" />
-                      {label}
-                    </Link>
-                  ))}
-                </nav>
-                <div className="border-t border-border p-4 text-xs text-muted-foreground">
-                  <p className="flex items-center gap-2 font-semibold text-foreground">
-                    <Phone className="h-3.5 w-3.5 text-primary" /> Contact us via email
-                  </p>
-                  <p className="mt-1">spicynuts1973@gmail.com</p>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-          <Link href="/" aria-label="Spicy Nuts home" className="mx-auto lg:mx-0">
-            <LogoPlaque />
-          </Link>
-        </div>
+      <div className="container mx-auto flex h-14 items-center gap-3 px-3 md:h-[70px] md:px-6">
+        <Link href="/" aria-label="Spicy Nuts home" className="shrink-0">
+          <LogoPlaque />
+        </Link>
 
         {/* Desktop navigation */}
         <nav aria-label="Main" className="hidden flex-1 items-center justify-center gap-4 lg:flex 2xl:gap-6">
           {DESKTOP_LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className={`whitespace-nowrap text-[13px] font-bold tracking-wide transition-colors hover:text-brand-gold ${l.gold ? "text-brand-gold" : "text-white"} ${"wide" in l && l.wide ? "hidden 2xl:inline" : ""}`}>
+            <Link key={l.href} href={l.href} className={`whitespace-nowrap text-[13px] font-bold tracking-wide transition-colors hover:text-brand-gold ${l.gold ? "text-brand-gold" : "text-white/90"} ${"wide" in l && l.wide ? "hidden 2xl:inline" : ""}`}>
               {l.label}
             </Link>
           ))}
         </nav>
 
         {/* Actions */}
-        <div className="flex flex-1 items-center justify-end gap-0.5 md:gap-1.5 lg:flex-none">
-          <button
-            onClick={() => setSearchOpen(true)}
-            aria-label="Search"
-            className="inline-flex h-10 items-center gap-2 rounded-full px-2.5 text-sm font-semibold hover:bg-white/10 2xl:w-52 2xl:border 2xl:border-brand-gold/45 2xl:bg-white/10 2xl:px-4 2xl:text-white/80"
-          >
-            <Search className="h-[19px] w-[19px]" />
-            <span className="hidden 2xl:inline">Search the pantry</span>
+        <div className="ml-auto flex items-center gap-1.5 md:gap-2 lg:ml-0">
+          <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search" className="nav-pill round">
+            <Search />
           </button>
           <span className="hidden md:inline-flex"><NotificationsDropdown /></span>
           <span className="hidden md:inline-flex"><UserMenu /></span>
-          {headerCart && <span className="md:hidden"><CartDrawer tone="dark" /></span>}
-          <span className="hidden md:inline-flex"><CartDrawer variant="pill" /></span>
+          <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+            <SheetTrigger aria-label="Menu" className="nav-pill max-sm:w-[38px] max-sm:px-0">
+              <Menu />
+              <span className="hidden sm:inline">Menu</span>
+            </SheetTrigger>
+            <SheetContent side="right" className="jaali flex w-[310px] flex-col gap-0 border-l border-brand-gold/30 p-0 text-white sm:w-[360px]">
+              <div className="px-5 pb-4 pt-6">
+                <SheetTitle className="sr-only">Menu</SheetTitle>
+                <LogoPlaque />
+                <p className="eyebrow mt-4 text-brand-gold">Shop by collection</p>
+              </div>
+              <nav aria-label="Collections" className="flex-1 overflow-y-auto px-4 pb-4">
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/shop" onClick={close} className="nav-shop col-span-2 justify-center">
+                    Shop all jars
+                  </Link>
+                  {COLLECTIONS.map((c) => (
+                    <Link key={c.slug} href={`/shop?collection=${c.slug}`} onClick={close} className="flex min-h-11 items-center gap-2 rounded-xl border border-brand-gold/30 bg-white/5 p-1.5 pr-2 text-[13px] font-semibold hover:border-brand-gold/70">
+                      <Image src={c.image} alt="" width={64} height={64} className="arch h-9 w-8 shrink-0 object-cover ring-1 ring-brand-gold" />
+                      <span className="leading-tight">{c.name}</span>
+                    </Link>
+                  ))}
+                </div>
+                <p className="eyebrow px-1 pb-2 pt-6 text-brand-gold">Spicy Nuts</p>
+                {MENU_LINKS.map(({ href, label, icon: Icon }) => (
+                  <Link key={href} href={href} onClick={close} className="flex h-11 items-center gap-3 rounded-xl px-2 text-sm font-semibold text-white/90 hover:bg-white/10">
+                    <Icon className="h-4 w-4 text-brand-gold" />
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+              <div className="border-t border-brand-gold/25 p-4 text-xs text-white/70">
+                <p className="flex items-center gap-2 font-semibold text-white">
+                  <Phone className="h-3.5 w-3.5 text-brand-gold" /> Contact us via email
+                </p>
+                <p className="mt-1">spicynuts1973@gmail.com</p>
+              </div>
+            </SheetContent>
+          </Sheet>
+          <CartDrawer variant="pill" />
+          {showShopNow && (
+            <Link href="/shop" className="nav-shop">
+              Shop now
+            </Link>
+          )}
         </div>
       </div>
       <CommandPalette open={searchOpen} setOpen={setSearchOpen} />

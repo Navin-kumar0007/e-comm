@@ -12,7 +12,7 @@ const noopSubscribe = () => () => {};
 
 const tabClass =
   "relative flex min-h-12 flex-col items-center justify-center gap-0.5 text-tab tap";
-const tone = (active: boolean) => (active ? "text-primary font-extrabold" : "text-muted-foreground font-semibold");
+const tone = (active: boolean) => (active ? "text-[#f6e2a8] font-extrabold" : "text-white/70 font-semibold");
 
 /** Gold bar above the active tab. */
 function Indicator({ on }: { on: boolean }) {
@@ -41,7 +41,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-2.5 bottom-2.5 z-40 rounded-[var(--radius-card)] border border-brand-gold/35 bg-card/90 shadow-[var(--shadow-float)] backdrop-blur-xl backdrop-saturate-150 md:hidden"
+      className="fixed inset-x-2.5 bottom-2.5 z-40 rounded-[var(--radius-card)] border border-brand-gold/40 bg-night/90 shadow-[0_18px_40px_-16px_rgba(0,0,0,0.7)] backdrop-blur-xl backdrop-saturate-150 md:hidden"
       style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
       <div className="grid h-[64px] grid-cols-5 items-center">
@@ -71,7 +71,7 @@ export function MobileBottomNav() {
           {shown > 0 && (
             <span
               key={shown}
-              className="badge-bump absolute left-[calc(50%+3px)] top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-card bg-primary px-1 text-[10.5px] font-extrabold leading-none text-primary-foreground"
+              className="badge-bump absolute left-[calc(50%+3px)] top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-night bg-buy px-1 text-[10.5px] font-extrabold leading-none text-buy-ink"
             >
               {shown}
             </span>

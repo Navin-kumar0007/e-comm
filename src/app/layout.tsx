@@ -40,7 +40,7 @@ const siteUrl = SITE_URL;
 // Paint the phone's browser bar maroon and let the page reach under the iPhone home bar,
 // so the tab bar's safe-area padding works in the installed app.
 export const viewport: Viewport = {
-  themeColor: "#4a0f1d",
+  themeColor: "#1a0509",
   viewportFit: "cover",
 };
 
