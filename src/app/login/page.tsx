@@ -51,6 +51,13 @@ export default function LoginPage() {
       redirect: false,
     });
 
+    if (result?.code === "too_many_attempts") {
+      toast.error("Too many wrong passwords", {
+        description: "Please wait 15 minutes, reset your password, or continue with Google.",
+      });
+      setIsLoading(false);
+      return;
+    }
     if (result?.error) {
       toast.error("Invalid email or password", {
         description: "Please check your credentials and try again.",
@@ -153,6 +160,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

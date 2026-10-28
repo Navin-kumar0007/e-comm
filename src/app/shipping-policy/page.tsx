@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
-  title: "Shipping Policy | Spicy Nuts",
+  title: "Shipping Policy",
   description: "Shipping policy for Spicy Nuts (B.M.V. Spices & Dry Fruits). Free shipping on orders above ₹999. Delivery across India in 3-7 business days.",
 };
 

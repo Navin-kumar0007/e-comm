@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import SubscriptionActions from './subscription-actions';
 
 export const metadata = {
-  title: 'My Subscriptions | Spicy Nuts',
+  title: 'My Subscriptions',
 };
 
 export default async function SubscriptionsPage() {

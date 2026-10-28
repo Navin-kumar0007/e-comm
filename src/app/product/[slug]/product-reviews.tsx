@@ -188,7 +188,9 @@ export function ProductReviews({ productId }: { productId: string }) {
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
                     onClick={() => setRating(star)}
-                    className="p-1 hover:scale-110 transition-transform focus:outline-hidden"
+                    aria-label={`Rate ${star} ${star === 1 ? "star" : "stars"}`}
+                    aria-pressed={star === rating}
+                    className="rounded-md p-1 transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-brand-gold"
                   >
                     <Star
                       className={`w-7 h-7 ${

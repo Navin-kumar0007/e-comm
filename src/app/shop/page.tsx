@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProductCard, type ProductCardProduct } from '@/components/storefront/product-card';
+import { unstable_cache } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
 import { ShopSidebar } from './shop-sidebar';
 import { SortSelect } from './sort-select';
@@ -9,12 +10,25 @@ import { PageHero } from '@/components/storefront/royal/page-hero';
 
 export const metadata = {
   alternates: { canonical: '/shop' },
-  title: 'Buy Premium Dry Fruits, Nuts & Seeds Online — Spicy Nuts Shop',
+  title: 'Buy Premium Dry Fruits, Nuts & Seeds Online',
   description: 'Shop almonds, cashews, walnuts, pistachios, dates, raisins, figs, makhana and seeds. Free shipping above ₹999.',
   keywords: ['buy dry fruits online', 'almonds online', 'cashew nuts online', 'walnuts online', 'dates and raisins'],
 };
 
 type Params = { [key: string]: string | string[] | undefined };
+
+// The product list for one set of filters, kept for 2 minutes (and cleared when a product is saved,
+// which calls revalidatePath('/shop')). Stock is checked again at checkout, so a short delay is safe.
+const shopProducts = unstable_cache(
+  (where: Record<string, unknown>, orderBy: Record<string, 'asc' | 'desc'>) =>
+    prisma.product.findMany({
+      where,
+      orderBy,
+      include: { variants: { where: { isActive: true }, orderBy: [{ sortOrder: 'asc' }, { price: 'asc' }] } },
+    }),
+  ['shop-products'],
+  { revalidate: 120, tags: ['products'] },
+);
 
 export default async function ShopPage({ searchParams }: { searchParams: Promise<Params> }) {
   const params = await searchParams;
@@ -51,11 +65,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   if (sortFilter === 'price-desc') orderBy = { price: 'desc' };
   if (sortFilter === 'featured') orderBy = { isFeatured: 'desc' };
 
-  const rawProducts = await prisma.product.findMany({
-    where,
-    orderBy,
-    include: { variants: { where: { isActive: true }, orderBy: [{ sortOrder: 'asc' }, { price: 'asc' }] } },
-  });
+  const rawProducts = await shopProducts(where, orderBy);
 
   const products: ProductCardProduct[] = rawProducts.map((p) => ({
     id: p.id,

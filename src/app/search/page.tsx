@@ -4,7 +4,7 @@ import { Search } from 'lucide-react';
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata = {
-  title: 'Search Results | Spicy Nuts',
+  title: 'Search Results',
   description: 'Search results for your query.',
 };
 

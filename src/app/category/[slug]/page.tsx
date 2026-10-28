@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!category) return { title: 'Not Found' };
   return {
     alternates: { canonical: `/category/${resolvedParams.slug}` },
-    title: `${category.name} | Spicy Nuts`,
+    title: category.name,
     description: category.description,
   };
 }

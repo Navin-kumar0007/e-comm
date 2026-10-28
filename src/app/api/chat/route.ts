@@ -22,8 +22,13 @@ export async function POST(req: Request) {
       });
     }
 
+    const last = Array.isArray(messages) ? messages[messages.length - 1] : null;
+    if (typeof last?.content !== 'string' || !last.content.trim()) {
+      return NextResponse.json({ role: 'model', content: 'Please type a question.' }, { status: 400 });
+    }
+    // One short question per call keeps the AI bill predictable.
+    const userMessage = last.content.trim().slice(0, 500);
     const ai = new GoogleGenAI({ apiKey });
-    const userMessage = messages[messages.length - 1].content;
 
     const response = await ai.models.generateContent({
       model: 'gemini-3.6-flash',

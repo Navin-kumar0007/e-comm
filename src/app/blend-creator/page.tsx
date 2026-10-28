@@ -4,7 +4,7 @@ import { SpiceMixer } from '@/components/storefront/spice-mixer';
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
-  title: 'Custom Spice Blend Creator | Spicy Nuts',
+  title: 'Custom Spice Blend Creator',
   description: 'Mix your own custom spice blend.',
 };
 

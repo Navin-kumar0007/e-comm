@@ -6,11 +6,15 @@ import { prisma } from "@/lib/db/prisma";
 import { isStaffRole, roleCan, type Permission, type StaffRole } from "@/lib/permissions";
 import { checkTwoStep, TWO_STEP_COOKIE } from "@/lib/totp";
 
+/** Roles that see money and customer data, so they must use two-step login. */
+const TWO_STEP_REQUIRED: readonly StaffRole[] = ["ADMIN", "MANAGER"];
+
 /**
  * The signed-in staff member, with their role read fresh from the database
  * (the role in the login token can be stale after a demotion). Cached per request.
  * Staff who turned on two-step login get no permissions until this browser has
- * passed the code check (`twoStepOk`).
+ * passed the code check (`twoStepOk`). Owners and managers who have not turned two-step on yet get
+ * no permissions either (`twoStepSetupNeeded`); only the Security page, where they turn it on, stays open.
  */
 export const getStaffContext = cache(async () => {
   const session = await auth();
@@ -26,13 +30,15 @@ export const getStaffContext = cache(async () => {
       twoStepOk = false;
     }
   }
+  const twoStepSetupNeeded = !user.totpEnabledAt && TWO_STEP_REQUIRED.includes(user.role as StaffRole);
   return {
     session,
     user: { id: user.id, email: user.email, name: user.name, role: user.role } as { id: string; email: string; name: string; role: StaffRole },
     role: user.role as StaffRole,
     twoStepEnabled: !!user.totpEnabledAt,
     twoStepOk,
-    can: (permission: Permission) => twoStepOk && roleCan(user.role, permission),
+    twoStepSetupNeeded,
+    can: (permission: Permission) => twoStepOk && !twoStepSetupNeeded && roleCan(user.role, permission),
   };
 });
 
@@ -53,6 +59,7 @@ export async function requirePagePermission(permission: Permission) {
   const ctx = await getStaffContext();
   if (!ctx) redirect("/login");
   if (!ctx.twoStepOk) redirect("/admin-verify");
+  if (ctx.twoStepSetupNeeded) redirect("/admin/security?setup=required");
   if (!ctx.can(permission)) redirect("/admin?denied=1");
   return ctx;
 }

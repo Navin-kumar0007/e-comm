@@ -45,7 +45,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </header>
 
         <main className="flex-1 overflow-y-auto print:overflow-visible">
-          <div className="mx-auto w-full max-w-[1400px] p-4 sm:p-6 lg:p-8 print:max-w-none print:p-0">{children}</div>
+          <div className="mx-auto w-full max-w-[1400px] p-4 sm:p-6 lg:p-8 print:max-w-none print:p-0">
+            {staff.twoStepSetupNeeded && (
+              <div role="alert" className="mb-5 rounded-xl border border-brand-gold/60 bg-[#fff8e8] p-4 text-sm">
+                <p className="font-bold text-primary">Turn on two-step login to open the rest of the admin</p>
+                <p className="mt-1 text-muted-foreground">Owner and manager accounts can see orders, money and customer details, so they need a code from an authenticator app (Google Authenticator, Microsoft Authenticator) as well as the password. It takes about two minutes, below.</p>
+              </div>
+            )}
+            {children}
+          </div>
         </main>
       </div>
     </div>

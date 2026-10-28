@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Crown, Sparkles, TrendingUp, ShoppingBag } from 'lucide-react';
 
 export const metadata = {
-  title: 'Spice Points | Spicy Nuts',
+  title: 'Spice Points',
 };
 
 export default async function RewardsPage() {

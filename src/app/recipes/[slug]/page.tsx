@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!recipe) return { title: "Recipe Not Found" };
   return {
     alternates: { canonical: `/recipes/${slug}` },
-    title: `${recipe.title} | Spicy Nuts Recipes`,
+    title: `${recipe.title} | Recipes`,
     description: recipe.description,
   };
 }

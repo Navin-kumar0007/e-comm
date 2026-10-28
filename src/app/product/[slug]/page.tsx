@@ -47,7 +47,7 @@ export async function generateMetadata({
 
   return {
     alternates: { canonical: `/product/${resolvedParams.slug}` },
-    title: `${product.name} — Buy Online at Spicy Nuts`,
+    title: `${product.name} — Buy Online`,
     description:
       product.description?.slice(0, 160) ||
       `Buy ${product.name} online. Premium quality, 100% natural. Free shipping above ₹999.`,

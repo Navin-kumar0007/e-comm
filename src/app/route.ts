@@ -1,4 +1,5 @@
 import { getSiteContent } from "@/lib/site-content";
+import { prisma } from "@/lib/db/prisma";
 import { SITE_URL } from "@/lib/site";
 import { storeJsonLd } from "@/lib/store-jsonld";
 import { LANDING_BODY } from "./_royal/landing-body";
@@ -11,8 +12,42 @@ export const revalidate = 600;
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+type ShopEntry = { slug: string; price: number; stock: number };
+const SHOP_RE = /const SHOP = (\{[^\n]*?\});/;
+
+/**
+ * The landing page was generated with each jar's price and stock typed in. Swap that table for
+ * today's values from the catalogue (first active pack size, sale price if any; hidden or missing
+ * products show as sold out), so admin changes reach the homepage. Falls back to the built page.
+ */
+async function landingWithLivePrices() {
+  const m = LANDING_BODY.match(SHOP_RE);
+  if (!m) return LANDING_BODY;
+  try {
+    const shop = JSON.parse(m[1]) as Record<string, ShopEntry>;
+    const products = await prisma.product.findMany({
+      where: { slug: { in: Object.values(shop).map((p) => p.slug) } },
+      select: {
+        slug: true, price: true, salePrice: true, stock: true, status: true,
+        variants: { where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { price: "asc" }], take: 1, select: { price: true, salePrice: true, stock: true } },
+      },
+    });
+    const bySlug = new Map(products.map((p) => [p.slug, p]));
+    for (const entry of Object.values(shop)) {
+      const p = bySlug.get(entry.slug);
+      const v = p?.variants[0];
+      entry.price = Number(v ? (v.salePrice ?? v.price) : (p?.salePrice ?? p?.price ?? entry.price));
+      entry.stock = p && p.status === "ACTIVE" ? Math.max(0, v ? v.stock : p.stock) : 0;
+    }
+    return LANDING_BODY.replace(m[0], `const SHOP = ${JSON.stringify(shop).replace(/</g, "\\u003c")};`);
+  } catch (e) {
+    console.error("[HOME] Live prices failed, serving the built page:", e);
+    return LANDING_BODY;
+  }
+}
+
 export async function GET() {
-  const seo = await getSiteContent("seo");
+  const [seo, body] = await Promise.all([getSiteContent("seo"), landingWithLivePrices()]);
   const title = esc(seo.homeTitle), description = esc(seo.homeDescription);
   const ga = process.env.NEXT_PUBLIC_GA_ID;
   // Google Analytics only after the visitor says yes, with the same choice and banner as the rest of the shop.
@@ -44,7 +79,7 @@ if(c==="granted")load();else if(c!=="denied"){var b=document.getElementById("cc"
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-${LANDING_BODY}
+${body}
 ${consent}
 </body>
 </html>

@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
-  title: "Our Story | Spicy Nuts",
+  title: "Our Story",
   description: "The story behind Spicy Nuts — our mission to bring pure, honest Indian food to every home.",
 };
 

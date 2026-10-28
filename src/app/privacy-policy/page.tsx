@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Spicy Nuts",
+  title: "Privacy Policy",
 };
 
 function BuiltInPage() {

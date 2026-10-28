@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
-  title: "Returns & Refunds | Spicy Nuts",
+  title: "Returns & Refunds",
   description: "Returns and refund policy for Spicy Nuts. We offer replacements or refunds for damaged or incorrect items within 48 hours of delivery.",
 };
 

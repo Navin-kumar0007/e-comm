@@ -1,8 +1,14 @@
-import NextAuth from "next-auth"
+import NextAuth, { CredentialsSignin } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import { prisma } from "@/lib/db/prisma"
 import * as bcrypt from "bcryptjs"
+import { requestIp, signInBlocked, recordFailedSignIn } from "@/lib/login-guard"
+
+/** Shown as "too many attempts" on the login page (the code travels to the browser, so it says nothing more). */
+class TooManySignInAttempts extends CredentialsSignin {
+  code = "too_many_attempts"
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
@@ -19,19 +25,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: { label: "Email", type: "email", placeholder: "admin@example.com" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) return null;
-        
-        const sanitizedEmail = (credentials.email as string).toLowerCase().trim();
+
+        const sanitizedEmail = (credentials.email as string).toLowerCase().trim().slice(0, 120);
+        const ip = requestIp(request);
+        if (await signInBlocked(sanitizedEmail, ip)) throw new TooManySignInAttempts();
+
         const user = await prisma.user.findUnique({
           where: { email: sanitizedEmail }
         });
 
-        if (!user || !user.password) return null;
+        const isPasswordValid = !!user?.password && await bcrypt.compare(credentials.password as string, user.password);
 
-        const isPasswordValid = await bcrypt.compare(credentials.password as string, user.password);
-
-        if (!isPasswordValid) return null;
+        if (!user || !isPasswordValid) {
+          await recordFailedSignIn(sanitizedEmail, ip);
+          return null;
+        }
 
         return {
           id: user.id,

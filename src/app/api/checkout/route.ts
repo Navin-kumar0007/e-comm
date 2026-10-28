@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
@@ -13,6 +13,7 @@ import {
   creditOrderRewards,
   sendOrderConfirmedNotifications,
   releaseOrderReservation,
+  releaseStaleOrders,
 } from "@/lib/orders";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -47,6 +48,8 @@ export async function POST(req: Request) {
   if (!allowed) {
     return NextResponse.json({ error: "Too many attempts. Please wait a minute and try again." }, { status: 429 });
   }
+  // After replying, return stock held by online orders left unpaid for 30 minutes (no timer runs this on the Hobby plan).
+  after(() => releaseStaleOrders(10).then(() => undefined, (e) => console.error("[Checkout] Stale order sweep failed:", e)));
 
   let reservedOrderId: string | null = null;
   try {

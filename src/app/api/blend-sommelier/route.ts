@@ -12,7 +12,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const { prompt } = await req.json();
+    const body = await req.json();
+    const prompt = typeof body?.prompt === 'string' ? body.prompt.trim().slice(0, 500) : '';
+    if (!prompt) {
+      return NextResponse.json({ success: false, error: 'Please describe the blend you want.' }, { status: 400 });
+    }
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {

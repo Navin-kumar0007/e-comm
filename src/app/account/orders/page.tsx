@@ -8,7 +8,7 @@ import { CUSTOMER_CANCELLABLE, ORDER_STATUS_LABELS, type OrderStatus } from '@/l
 import { SHIPMENT_STATUS_LABELS, type ShipmentStatus } from '@/lib/shipping/status';
 
 export const metadata = {
-  title: 'My Orders - Spicy Nuts',
+  title: 'My Orders',
 };
 
 function OrderTimeline({ status }: { status: string }) {

@@ -1,198 +1,115 @@
 "use client";
 
 import { useState } from 'react';
-import { Search, MapPin, Shield, Leaf, Sun, Package, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { Search, Package, CalendarCheck, CalendarClock, MapPin, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
-interface TimelineItem {
-  date: string;
-  title: string;
-  description: string;
-  icon: string;
-}
-
-interface TraceResult {
+interface BatchResult {
+  lotNumber: string;
   productName: string;
-  farmOrigin: string;
-  certifications: string[];
-  timeline: TimelineItem[];
+  productSlug: string;
+  pack: string | null;
+  packedOn: string;
+  bestBefore: string | null;
 }
 
+const day = (iso: string) => new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' });
+
+/** Batch lookup: the code printed on a jar shows what is in it, when it was packed and its best-before date. */
 export default function TraceabilityPage() {
   const [batchNo, setBatchNo] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<TraceResult | null>(null);
+  const [result, setResult] = useState<BatchResult | null>(null);
   const [notFound, setNotFound] = useState(false);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!batchNo.trim()) return;
+    const code = batchNo.trim();
+    if (!code) return;
     setLoading(true);
-    
     try {
-      const res = await fetch('/api/traceability/' + batchNo);
+      const res = await fetch('/api/traceability/' + encodeURIComponent(code));
       if (!res.ok) { setResult(null); setNotFound(true); return; }
       setNotFound(false);
       setResult(await res.json());
     } catch (e) {
       console.error(e);
+      setResult(null);
+      setNotFound(true);
     } finally {
       setLoading(false);
     }
   };
 
-  const getIcon = (type: string) => {
-    switch (type) {
-      case 'leaf': return <Leaf className="w-5 h-5 text-success" />;
-      case 'shield': return <Shield className="w-5 h-5 text-blue-500" />;
-      case 'sun': return <Sun className="w-5 h-5 text-yellow-500" />;
-      case 'package': return <Package className="w-5 h-5 text-brand-gold-deep" />;
-      default: return <MapPin className="w-5 h-5 text-primary" />;
-    }
-  };
+  const rows = result
+    ? [
+        { icon: Package, label: 'In this jar', value: result.pack ? `${result.productName}, ${result.pack}` : result.productName },
+        { icon: CalendarCheck, label: 'Packed on', value: day(result.packedOn) },
+        ...(result.bestBefore ? [{ icon: CalendarClock, label: 'Best before', value: day(result.bestBefore) }] : []),
+        { icon: MapPin, label: 'Graded and packed by', value: 'B.M.V. Spices & Dry Fruits, Chitguppa, Bidar, Karnataka · FSSAI Reg. No. 21224035000151' },
+      ]
+    : [];
 
   return (
-    <div className="min-h-screen pb-20 bg-background relative overflow-hidden">
-      <PageHero eyebrow={"Secure Food Ledger"} title={"Trace Your Food's Journey"} subtitle={"Enter the batch number found on your product packaging to view the farm source, quality checks, and real-time processing map."} crumbs={[{ label: "Home", href: "/" }, { label: "Farm journey" }]} />
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -z-10 animate-pulse" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-3xl -z-10 animate-pulse delay-1000" />
-      
-      <div className="container mx-auto px-4 max-w-6xl">
-        
+    <div className="min-h-screen bg-background pb-20">
+      <PageHero
+        eyebrow="Batch lookup"
+        title="Check your jar's batch"
+        subtitle="Type the batch number printed on your jar's label to see what is inside, when it was packed and its best-before date."
+        crumbs={[{ label: "Home", href: "/" }, { label: "Batch lookup" }]}
+      />
 
-        <form onSubmit={handleSearch} className="max-w-xl mx-auto mb-16 relative">
-          <Input 
+      <div className="container mx-auto max-w-2xl px-4 pt-8 md:pt-10">
+        <form onSubmit={handleSearch} className="relative">
+          <label htmlFor="batch-number" className="sr-only">Batch number</label>
+          <Input
+            id="batch-number"
             value={batchNo}
-            onChange={e => setBatchNo(e.target.value)}
-            placeholder="e.g. BATCH-2026-X7"
-            className="w-full h-14 pl-6 pr-32 text-lg rounded-full shadow-lg border-border focus-visible:ring-primary/20 bg-background/50 backdrop-blur-md"
+            onChange={(e) => setBatchNo(e.target.value)}
+            placeholder="Batch number, e.g. B2610-001"
+            autoCapitalize="characters"
+            className="h-14 w-full rounded-full bg-card pl-6 pr-20 text-base shadow-[var(--shadow-card)]"
           />
-          <Button 
-            type="submit" 
-            disabled={loading}
-            className="absolute right-1.5 top-1.5 bottom-1.5 rounded-full px-6 bg-primary hover:bg-primary/90"
-          >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+          <Button type="submit" disabled={loading} aria-label="Look up batch" className="absolute bottom-1.5 right-1.5 top-1.5 rounded-full px-5">
+            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
           </Button>
         </form>
+
         {notFound && (
-          <p className="max-w-xl mx-auto -mt-10 mb-12 text-center text-sm text-muted-foreground">
-            We couldn&apos;t find that batch number yet. Check the code printed on your jar, or WhatsApp us at +91 85500 07073 and we&apos;ll tell you when and where it was packed.
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            We couldn&apos;t find that batch number. Check the code printed on your jar, or WhatsApp us at +91 85500 07073 and we&apos;ll tell you when it was packed.
           </p>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Timeline and Search Result Column */}
-          <div className="lg:col-span-7">
-            <>
-              {result ? (
-                <div className="rise-in bg-card border border-border/40 rounded-3xl p-6 md:p-8 shadow-xl"
-                >
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-border/40 pb-6 mb-8 gap-4">
-                    <div>
-                      <h2 className="text-2xl font-heading font-bold">{result.productName}</h2>
-                      <p className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
-                        <MapPin className="w-4 h-4 text-primary" /> Origin: {result.farmOrigin}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {result.certifications.map((c) => (
-                        <Badge key={c} variant="outline" className="bg-background text-xs">{c}</Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="relative">
-                    <div className="absolute left-6 top-6 bottom-6 w-0.5 bg-border/40" />
-                    
-                    <div className="space-y-8">
-                      {result.timeline.map((item, i) => (
-                        <div 
-                          key={i}
-                          style={{ animationDelay: `${i * 0.1}s` }}
-                          className="rise-in relative pl-14"
-                        >
-                          <div className="absolute left-2.5 top-1 -translate-x-1/2 w-8 h-8 rounded-full bg-background border-2 border-primary flex items-center justify-center shadow-md">
-                            {getIcon(item.icon)}
-                          </div>
-                          <div>
-                            <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">{item.date}</span>
-                            <h3 className="text-lg font-bold mt-2">{item.title}</h3>
-                            <p className="text-muted-foreground text-sm mt-1 leading-relaxed">{item.description}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+        {result ? (
+          <section className="lux-card rise-in mt-8 p-6 md:p-8" aria-live="polite">
+            <span className="eyebrow text-brand-gold-deep">Batch {result.lotNumber}</span>
+            <h2 className="mt-1 font-heading text-3xl font-bold leading-tight text-primary">{result.productName}</h2>
+            <dl className="mt-5 grid gap-4">
+              {rows.map(({ icon: Icon, label, value }) => (
+                <div key={label} className="flex items-start gap-3">
+                  <span className="medallion"><Icon className="h-4 w-4" /></span>
+                  <div className="min-w-0">
+                    <dt className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{label}</dt>
+                    <dd className="mt-0.5 text-[15px] font-semibold">{value}</dd>
                   </div>
                 </div>
-              ) : (
-                <div className="bg-card/50 border border-dashed border-border/60 rounded-3xl p-12 text-center text-muted-foreground">
-                  Trace details will appear here. Try searching for "BATCH-2026-X7" to test the system.
-                </div>
-              )}
-            </>
-          </div>
-
-          {/* High performance Flat Route Map Graphic (5 cols) */}
-          <div className="lg:col-span-5 bg-card border border-border/40 rounded-3xl p-6 shadow-xl h-[450px] flex flex-col justify-between">
-            <div>
-              <h3 className="font-heading font-bold text-lg">Route Ledger Map</h3>
-              <p className="text-xs text-muted-foreground mt-1">Ethical transit verification mapping farm source to shipping hub.</p>
-            </div>
-            
-            <div className="flex-1 w-full flex items-center justify-center p-4">
-              <svg width="240" height="240" viewBox="0 0 200 200" className="drop-shadow-md">
-                <defs>
-                  <linearGradient id="route-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#eab308" />
-                    <stop offset="100%" stopColor="#16a34a" />
-                  </linearGradient>
-                </defs>
-
-                {/* Grid Dot Earth representation */}
-                <circle cx="100" cy="100" r="80" fill="none" stroke="#22c55e" strokeWidth="1" strokeDasharray="4 6" opacity="0.25" />
-                <circle cx="100" cy="100" r="50" fill="none" stroke="#22c55e" strokeWidth="1" strokeDasharray="2 4" opacity="0.15" />
-
-                {/* Route Path Arc */}
-                <path 
-                  d="M 50 140 Q 100 40 150 70" 
-                  fill="none" 
-                  stroke="url(#route-grad)" 
-                  strokeWidth="3" 
-                  strokeLinecap="round" 
-                  strokeDasharray="6 4"
-                  className={result ? "animate-[dash_2s_linear_infinite]" : ""}
-                  style={{
-                    strokeDasharray: '6, 4',
-                    animation: result ? 'dash 1.5s linear infinite' : 'none'
-                  }}
-                />
-
-                {/* Location Node 1: Kerala Farm */}
-                <circle cx="50" cy="140" r="6" fill="#eab308" />
-                <circle cx="50" cy="140" r="12" fill="none" stroke="#eab308" strokeWidth="1.5" className="animate-ping" style={{ animationDuration: '3s' }} />
-                <text x="50" y="160" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#78716c">Kerala Farm</text>
-
-                {/* Location Node 2: Bangalore Hub */}
-                <circle cx="150" cy="70" r="6" fill="#16a34a" />
-                <circle cx="150" cy="70" r="12" fill="none" stroke="#16a34a" strokeWidth="1.5" className="animate-ping" style={{ animationDuration: '3s', animationDelay: '1s' }} />
-                <text x="150" y="55" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#78716c">Spicy Nuts Hub</text>
-              </svg>
-            </div>
-            
-            <style jsx>{`
-              @keyframes dash {
-                to {
-                  stroke-dashoffset: -20;
-                }
-              }
-            `}</style>
-          </div>
-        </div>
-
+              ))}
+            </dl>
+            <Link href={`/product/${result.productSlug}`} className="btn-buy mt-6 inline-flex h-11 items-center rounded-full px-5 text-sm font-extrabold">
+              Buy this jar again
+            </Link>
+          </section>
+        ) : (
+          !notFound && (
+            <p className="mt-8 rounded-[var(--radius-card)] border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+              The batch number is printed next to the packing date on every Spicy Nuts label.
+            </p>
+          )
+        )}
       </div>
     </div>
   );

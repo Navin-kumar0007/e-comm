@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | Spicy Nuts",
+  title: "Terms & Conditions",
 };
 
 function BuiltInPage() {

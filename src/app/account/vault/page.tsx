@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ShieldCheck, Info, RefreshCw, AlertTriangle, Sparkles, HelpCircle } from 'lucide-react';
 
 export const metadata = {
-  title: 'My Freshness Vault - Spicy Nuts',
+  title: 'My Freshness Vault',
 };
 
 interface VaultItem {
