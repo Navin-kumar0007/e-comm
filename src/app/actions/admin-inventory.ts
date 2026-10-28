@@ -1,4 +1,5 @@
 'use server';
+import type { Prisma } from "@prisma/client";
 
 import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
@@ -35,7 +36,7 @@ export async function adjustInventoryAction(input: { productId: string; variantI
   if (input.reason === 'RESTOCK' && delta < 0) return { error: 'Restock must add stock.' };
   if (input.reason === 'DAMAGE' && delta > 0) return { error: 'Damage must remove stock.' };
   try {
-    const res = await prisma.$transaction((tx: any) =>
+    const res = await prisma.$transaction((tx: Prisma.TransactionClient) =>
       adjustStock(tx, { productId: input.productId, variantId: input.variantId, delta, reason: input.reason, note: input.note, actor: who })
     );
     revalidatePath('/admin/inventory');
@@ -58,5 +59,5 @@ export async function updateLowStockThresholdAction(productId: string, threshold
 export async function getStockHistoryAction(productId: string) {
   await requirePermission('inventory.manage');
   const rows = await getStockHistory(productId, 50);
-  return rows.map((r: any) => ({ ...r, createdAt: r.createdAt.toISOString(), size: r.variant?.label ?? null }));
+  return rows.map((r) => ({ ...r, createdAt: r.createdAt.toISOString(), size: r.variant?.label ?? null }));
 }

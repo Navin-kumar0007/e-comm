@@ -1,4 +1,5 @@
 'use server';
+import type { Prisma } from "@prisma/client";
 
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
@@ -99,9 +100,9 @@ export async function createCounterSaleAction(input: CounterSaleInput) {
   const pct = Math.max(0, Math.min(60, buyer?.wholesaleDiscount ?? 0));
   const priced: Array<{ productId: string; variantId: string | null; name: string; weight: string; qty: number; price: number; hsnCode: string | null; gstRate: number }> = [];
   for (const l of lines) {
-    const p: any = products.find((x: any) => x.id === l.productId);
+    const p = products.find((x) => x.id === l.productId);
     if (!p) return { error: 'An item is no longer for sale. Remove it and scan again.' };
-    const v = l.variantId ? p.variants.find((x: any) => x.id === l.variantId && x.isActive) : null;
+    const v = l.variantId ? p.variants.find((x) => x.id === l.variantId && x.isActive) : null;
     if (l.variantId && !v) return { error: `${p.name}: that pack size is no longer sold.` };
     const retail = v ? v.salePrice ?? v.price : p.salePrice ?? p.price;
     priced.push({
@@ -120,7 +121,7 @@ export async function createCounterSaleAction(input: CounterSaleInput) {
   const lowAlerts: Array<StockResult | null> = [];
   let order: any;
   try {
-    order = await prisma.$transaction(async (tx: any) => {
+    order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const created = await tx.order.create({
         data: {
           channel: 'SHOP',
@@ -207,11 +208,11 @@ export async function getCounterDay(dateIso?: string) {
     orderBy: { createdAt: 'desc' },
     select: { id: true, invoiceNumber: true, createdAt: true, customerName: true, customerPhone: true, total: true, paymentMethod: true, status: true, paymentRef: true, items: { select: { quantity: true } } },
   });
-  const kept = orders.filter((o: any) => o.status === 'DELIVERED');
-  const by = (m: string) => r2(kept.filter((o: any) => o.paymentMethod === m).reduce((s: number, o: any) => s + o.total, 0));
+  const kept = orders.filter((o) => o.status === 'DELIVERED');
+  const by = (m: string) => r2(kept.filter((o) => o.paymentMethod === m).reduce((s: number, o) => s + o.total, 0));
   return JSON.parse(JSON.stringify({
     date: new Date(start.getTime() + IST).toISOString().slice(0, 10),
     orders,
-    totals: { cash: by('CASH'), upi: by('UPI'), card: by('CARD'), all: r2(kept.reduce((s: number, o: any) => s + o.total, 0)), bills: kept.length, units: kept.reduce((s: number, o: any) => s + o.items.reduce((a: number, i: any) => a + i.quantity, 0), 0) },
+    totals: { cash: by('CASH'), upi: by('UPI'), card: by('CARD'), all: r2(kept.reduce((s: number, o) => s + o.total, 0)), bills: kept.length, units: kept.reduce((s: number, o) => s + o.items.reduce((a: number, i) => a + i.quantity, 0), 0) },
   }));
 }

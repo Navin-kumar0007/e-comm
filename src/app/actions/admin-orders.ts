@@ -1,4 +1,5 @@
 'use server'
+import type { Prisma } from "@prisma/client";
 
 import { audit } from '@/lib/audit';
 import { prisma } from '@/lib/db/prisma';
@@ -88,7 +89,7 @@ export async function getAdminOrders(opts: { page?: number; q?: string; status?:
     counts.all += g._count._all;
   }
 
-  const orders = dbOrders.map((o: any) => ({
+  const orders = dbOrders.map((o) => ({
     id: o.id,
     customer: o.customerName,
     email: o.customerEmail,
@@ -103,7 +104,7 @@ export async function getAdminOrders(opts: { page?: number; q?: string; status?:
     codPending: o.codStatus === 'PENDING',
     discount: o.discount || 0,
     couponCode: o.couponCode || null,
-    items: o.items.map((item: any) => ({
+    items: o.items.map((item) => ({
       name: item.product?.name || item.productName || "Deleted Product",
       quantity: item.quantity,
       price: item.price,
@@ -169,11 +170,11 @@ export async function createOrderAction(data: {
   // Resolve product names for the audit trail
   const productIds = data.items.map(i => i.productId);
   const products = await prisma.product.findMany({ where: { id: { in: productIds } }, include: { variants: { where: { isActive: true }, orderBy: { sortOrder: 'asc' } } } });
-  const nameById = new Map(products.map((p: any) => [p.id, p.name]));
-  const productById = new Map<string, any>(products.map((p: any) => [p.id, p]));
+  const nameById = new Map(products.map((p) => [p.id, p.name]));
+  const productById = new Map<string, any>(products.map((p) => [p.id, p]));
   // Products with sizes: use the size matching the weight label, else the default size.
   const variantFor = (productId: string, weight: string) => {
-    const variants: any[] = products.find((p: any) => p.id === productId)?.variants ?? [];
+    const variants: any[] = products.find((p) => p.id === productId)?.variants ?? [];
     return (variants.find((v) => v.label === weight) ?? variants[0])?.id ?? null;
   };
 
@@ -191,7 +192,7 @@ export async function createOrderAction(data: {
   }).taxTotal;
 
   try {
-    const order = await prisma.$transaction(async (tx: any) => {
+    const order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const created = await tx.order.create({
         data: {
           subtotal,
@@ -371,9 +372,9 @@ export async function editOrderItemsAction(orderId: string, lines: Array<{ produ
 
   const newItems: Array<{ productId: string; variantId: string | null; quantity: number; price: number; weight: string; hsnCode: string | null; gstRate: number; productName: string }> = [];
   for (const l of want) {
-    const p: any = products.find((x: any) => x.id === l.productId);
+    const p = products.find((x) => x.id === l.productId);
     if (!p) return { error: 'A product was not found.' };
-    const v = l.variantId ? p.variants.find((x: any) => x.id === l.variantId) : null;
+    const v = l.variantId ? p.variants.find((x) => x.id === l.variantId) : null;
     if (l.variantId && !v) return { error: `${p.name}: pack size not found.` };
     // Keep the price the customer was quoted for items already on the order.
     const existing = (order.items as any[]).find((i) => i.productId === p.id && (i.variantId ?? null) === (v?.id ?? null));
@@ -388,7 +389,7 @@ export async function editOrderItemsAction(orderId: string, lines: Array<{ produ
   const taxAmount = splitGst({ lines: newItems.map((i) => ({ amount: i.price * i.quantity, gstRate: i.gstRate })), discount, shipping: shippingFee, defaultRate: settings.gstRate }).taxTotal;
 
   try {
-    await prisma.$transaction(async (tx: any) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const newQty = new Map<string, number>();
       for (const i of newItems) newQty.set(keyOf(i.productId, i.variantId), (newQty.get(keyOf(i.productId, i.variantId)) ?? 0) + i.quantity);
       for (const k of new Set([...oldQty.keys(), ...newQty.keys()])) {
@@ -407,7 +408,7 @@ export async function editOrderItemsAction(orderId: string, lines: Array<{ produ
   }
   const summary = newItems.map((i) => `${i.productName} ${i.weight}×${i.quantity}`).join(', ');
   await logOrderEvent(null, { orderId, type: 'NOTE', message: `Items changed: ${summary}. New total ₹${total.toFixed(2)} (was ₹${order.total.toFixed(2)}).`, actor });
-  await audit({ action: 'order.edit_items', entity: 'Order', entityId: orderId, summary: `Items changed on #${orderId.slice(-8).toUpperCase()}: ₹${order.total} → ₹${total}`, data: { before: order.items.map((i: any) => ({ name: i.productName, qty: i.quantity, price: i.price })), after: newItems.map((i) => ({ name: i.productName, qty: i.quantity, price: i.price })) }, actor });
+  await audit({ action: 'order.edit_items', entity: 'Order', entityId: orderId, summary: `Items changed on #${orderId.slice(-8).toUpperCase()}: ₹${order.total} → ₹${total}`, data: { before: order.items.map((i) => ({ name: i.productName, qty: i.quantity, price: i.price })), after: newItems.map((i) => ({ name: i.productName, qty: i.quantity, price: i.price })) }, actor });
   revalidateOrder(orderId);
   return { success: true, total };
 }
@@ -419,7 +420,7 @@ export async function getOrderEditCatalog() {
     where: { status: 'ACTIVE' }, orderBy: { name: 'asc' },
     select: { id: true, name: true, weight: true, price: true, salePrice: true, stock: true, variants: { where: { isActive: true }, select: { id: true, label: true, price: true, salePrice: true, stock: true } } },
   });
-  return products.flatMap((p: any) => (p.variants.length
+  return products.flatMap((p) => (p.variants.length
     ? p.variants.map((v: any) => ({ productId: p.id, variantId: v.id, label: `${p.name} · ${v.label}`, price: v.salePrice ?? v.price, stock: v.stock }))
     : [{ productId: p.id, variantId: null, label: `${p.name}${p.weight ? ` · ${p.weight}` : ''}`, price: p.salePrice ?? p.price, stock: p.stock }]));
 }

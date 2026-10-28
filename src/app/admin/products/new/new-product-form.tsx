@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save, Loader2, Plus, X } from "lucide-react";
+import { ArrowLeft, Save, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,14 +13,14 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { createProductAction } from "@/app/actions/admin-products";
 
-export default function NewProductForm({ categories, dietaryTags }: { categories: {id: string, name: string}[], dietaryTags: {id: string, name: string}[] }) {
+export default function NewProductForm({ categories }: { categories: {id: string, name: string}[], dietaryTags: {id: string, name: string}[] }) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const [isOrganic, setIsOrganic] = useState(true);
+  const [isOrganic, setIsOrganic] = useState(false); // tick only for certified organic stock
   const [isFeatured, setIsFeatured] = useState(false);
   const [onSale, setOnSale] = useState(false);
   const [status, setStatus] = useState<"ACTIVE" | "DRAFT">("ACTIVE");
@@ -46,7 +46,7 @@ export default function NewProductForm({ categories, dietaryTags }: { categories
       const data = await res.json();
       if (data.url) setImageUrl(data.url);
       else toast.error("Upload failed");
-    } catch(err) {
+    } catch {
       toast.error("Upload failed");
     } finally {
       setIsUploading(false);
@@ -83,7 +83,7 @@ export default function NewProductForm({ categories, dietaryTags }: { categories
       });
       toast.success("Product created successfully!");
       router.push("/admin/products");
-    } catch(err) {
+    } catch {
       toast.error("Failed to create product.");
       setIsSaving(false);
     }
@@ -170,7 +170,7 @@ export default function NewProductForm({ categories, dietaryTags }: { categories
               </div>
               <div className="space-y-2">
                 <Label htmlFor="ingredients">Ingredients</Label>
-                <Textarea id="ingredients" name="ingredients"  placeholder="e.g. Organic turmeric, black pepper..." rows={2} className="rounded-xl" />
+                <Textarea id="ingredients" name="ingredients"  placeholder="e.g. Almonds (100%)" rows={2} className="rounded-xl" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="nutritionalInfo">Nutritional Information</Label>

@@ -27,7 +27,7 @@ export default function AwardPointsDialog({
       await awardPointsAction(userId, points);
       toast.success(`Successfully ${points > 0 ? 'awarded' : 'deducted'} ${Math.abs(points)} points`);
       setIsOpen(false);
-    } catch (err) {
+    } catch {
       toast.error("Failed to update points");
     } finally {
       setIsProcessing(false);

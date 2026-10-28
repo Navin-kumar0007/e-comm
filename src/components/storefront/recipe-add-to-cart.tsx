@@ -14,7 +14,7 @@ export function RecipeAddToCart({ products }: { products: any[] }) {
   const handleAddAll = async () => {
     setIsLoading(true);
     try {
-      products.forEach((p: any) => {
+      products.forEach((p) => {
         addItem({
           productId: p.id,
           name: p.name,
@@ -25,7 +25,7 @@ export function RecipeAddToCart({ products }: { products: any[] }) {
         });
       });
       toast.success(`Added ${products.length} ingredients to your cart!`);
-    } catch (e) {
+    } catch {
       toast.error('Failed to add ingredients.');
     } finally {
       setIsLoading(false);

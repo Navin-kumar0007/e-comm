@@ -31,25 +31,25 @@ export async function getInsights(days: number) {
   ]);
 
   // ── Profit per product and pack size ──
-  const kept = orders.filter((o: any) => KEPT.includes(o.status));
+  const kept = orders.filter((o) => KEPT.includes(o.status));
   const allocations = await prisma.lotAllocation.findMany({
-    where: { orderId: { in: kept.map((o: any) => o.id) }, qty: { gt: 0 } },
+    where: { orderId: { in: kept.map((o) => o.id) }, qty: { gt: 0 } },
     select: { orderId: true, qty: true, unitCost: true, lot: { select: { productId: true, variantId: true } } },
   });
-  const pById = new Map(products.map((p: any) => [p.id, p]));
+  const pById = new Map(products.map((p) => [p.id, p]));
   const rows = new Map<string, { key: string; productId: string | null; name: string; pack: string; units: number; revenue: number; cogs: number; costKnown: boolean; stock: number | null }>();
   for (const o of kept as any[]) {
     const inv = computeInvoice(o, settings);
     o.items.forEach((it: any, i: number) => {
       const key = `${it.productId ?? it.productName}|${it.variantId ?? it.weight}`;
-      const p: any = it.productId ? pById.get(it.productId) : null;
-      const v = p && it.variantId ? p.variants.find((x: any) => x.id === it.variantId) : null;
+      const p = it.productId ? pById.get(it.productId) : null;
+      const v = p && it.variantId ? p.variants.find((x) => x.id === it.variantId) : null;
       const row = rows.get(key) ?? { key, productId: it.productId, name: p?.name ?? it.productName, pack: v?.label ?? it.weight, units: 0, revenue: 0, cogs: 0, costKnown: true, stock: v ? v.stock : p && !p.variants.length ? p.stock : null };
       row.units += it.quantity;
       row.revenue += inv.lines[i]?.taxable ?? 0;
-      const mine = allocations.filter((a: any) => a.orderId === o.id && a.lot.productId === it.productId && (a.lot.variantId ?? null) === (it.variantId ?? null));
-      const fromLots = mine.reduce((s: number, a: any) => s + a.qty, 0);
-      row.cogs += mine.reduce((s: number, a: any) => s + a.qty * a.unitCost, 0);
+      const mine = allocations.filter((a) => a.orderId === o.id && a.lot.productId === it.productId && (a.lot.variantId ?? null) === (it.variantId ?? null));
+      const fromLots = mine.reduce((s: number, a) => s + a.qty, 0);
+      row.cogs += mine.reduce((s: number, a) => s + a.qty * a.unitCost, 0);
       const rest = Math.max(0, it.quantity - fromLots);
       const unitCost = v?.costPrice ?? p?.costPrice ?? null;
       if (rest) {

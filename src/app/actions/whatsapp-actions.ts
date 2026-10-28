@@ -8,7 +8,6 @@ import {
   formatWhatsAppNumber,
   buildOfferWhatsAppMessage,
   buildNewReleaseWhatsAppMessage,
-  buildPriceDropWhatsAppMessage,
 } from "@/lib/whatsapp";
 
 /**
@@ -62,7 +61,7 @@ Use code *ROYAL10* at checkout for *10% OFF* on your next purchase!
     });
 
     return { success: true, subscriber };
-  } catch (err: any) {
+  } catch (err) {
     console.error("Subscription error:", err);
     return { error: "Failed to subscribe. Please try again." };
   }
@@ -117,7 +116,7 @@ View harvest: https://spicynuts.in/product/${product.slug}`,
     });
 
     return { success: true };
-  } catch (err: any) {
+  } catch (err) {
     console.error("Price alert subscription error:", err);
     return { error: "Failed to register alert." };
   }

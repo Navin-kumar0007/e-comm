@@ -37,7 +37,7 @@ export async function getSecurityStatus() {
     : [];
   return JSON.parse(JSON.stringify({
     me: { id: ctx.user.id, email: ctx.user.email, enabledAt: me?.totpEnabledAt ?? null, backupLeft: me?.totpBackupCodes ? JSON.parse(me.totpBackupCodes).length : 0 },
-    staff: staff.map((s: any) => ({ ...s, roleName: isStaffRole(s.role) ? ROLE_LABELS[s.role as StaffRole].name : s.role })),
+    staff: staff.map((s) => ({ ...s, roleName: isStaffRole(s.role) ? ROLE_LABELS[s.role as StaffRole].name : s.role })),
     canManage: ctx.can('staff.manage'),
   }));
 }

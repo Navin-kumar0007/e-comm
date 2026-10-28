@@ -16,11 +16,11 @@ export async function getAdminReviews(status: 'PENDING' | 'APPROVED' | 'REJECTED
     prisma.review.groupBy({ by: ['status'], _count: { _all: true } }),
   ]);
   return {
-    reviews: rows.map((r: any) => ({
+    reviews: rows.map((r) => ({
       ...r,
       images: (() => { try { return JSON.parse(r.images || '[]'); } catch { return []; } })(),
     })),
-    counts: Object.fromEntries(counts.map((c: any) => [c.status, c._count._all])) as Record<string, number>,
+    counts: Object.fromEntries(counts.map((c) => [c.status, c._count._all])) as Record<string, number>,
   };
 }
 

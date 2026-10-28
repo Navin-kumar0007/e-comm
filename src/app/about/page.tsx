@@ -36,13 +36,13 @@ export default function AboutPage() {
               />
             </div>
             <div>
-              <h2 className="text-2xl font-heading font-bold mb-3">From Grandmother's Kitchen to Yours</h2>
+              <h2 className="text-2xl font-heading font-bold mb-3">From Grandmother&apos;s Kitchen to Yours</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed text-sm">
                 <p>
                   Growing up, our founders watched their families carefully select each raw spice, each batch of nuts, selecting the finest high-oil nuts and roasting wholesome traditional snacks — always choosing what was pure and natural. There were no shortcuts. No artificial colours. No preservatives. Just real food, prepared with love.
                 </p>
                 <p>
-                  Years later, when our team couldn't find that same purity in the supermarket aisles, she decided to source it herself — directly from growers and traders across India. What began as personal sourcing for family and friends soon became Spicy Nuts.
+                  Years later, when our team couldn&apos;t find that same purity in the supermarket aisles, she decided to source it herself — directly from growers and traders across India. What began as personal sourcing for family and friends soon became Spicy Nuts.
                 </p>
                 <p>
                   Today, we work with over 50 farming families across 8 states, bringing you ingredients that are as pure as what grandmother used to choose — with the convenience of modern delivery.

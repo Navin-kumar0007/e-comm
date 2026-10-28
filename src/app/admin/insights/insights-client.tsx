@@ -60,7 +60,7 @@ export function InsightsClient({ data, canSeeCustomers }: { data: any; canSeeCus
                 <th className={thCls}>Product</th>{th("units", "Units")}{th("revenue", "Revenue")}<th className={`${thCls} text-right`}>Cost</th>{th("profit", "Profit")}{th("margin", "Margin")}{th("daysOfStock", "Stock lasts")}
               </tr></thead>
               <tbody className="divide-y divide-border/60">
-                {products.map((r: any) => (
+                {products.map((r) => (
                   <tr key={r.key} className="hover:bg-muted/20">
                     <td className={tdCls}>{r.name}<span className="text-muted-foreground"> · {r.pack}</span></td>
                     <td className={`${tdCls} text-right tabular-nums`}>{r.units}</td>

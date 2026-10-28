@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Clock, Users } from "lucide-react";
+import { Clock, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/db/prisma";
 import { PageHero } from "@/components/storefront/royal/page-hero";

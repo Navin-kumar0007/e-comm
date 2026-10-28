@@ -58,7 +58,7 @@ export async function createShipmentForOrder(orderId: string, opts: BookShipment
   if (!["PROCESSING", "CONFIRMED"].includes(order.status)) {
     throw new ShippingError("Only paid / COD orders that haven't shipped yet can be booked.");
   }
-  if (order.shipments.some((s: any) => s.type === "FORWARD" && s.status !== "CANCELLED")) {
+  if (order.shipments.some((s) => s.type === "FORWARD" && s.status !== "CANCELLED")) {
     throw new ShippingError("This order already has an active shipment. Cancel it first.");
   }
 
@@ -78,7 +78,7 @@ export async function createShipmentForOrder(orderId: string, opts: BookShipment
     codAmount: isCod ? order.total : 0,
     consignee: { name: order.customerName, phone: order.customerPhone, email: order.customerEmail || undefined, ...addr },
     pickup: pickupFrom(settings),
-    items: order.items.map((i: any) => ({
+    items: order.items.map((i) => ({
       name: i.productName || i.product?.name || "Item",
       sku: (i.productId || i.id).slice(-12),
       quantity: i.quantity,
@@ -139,7 +139,7 @@ export async function autoBookShipment(orderId: string) {
     const order = await prisma.order.findUnique({ where: { id: orderId }, include: { shipments: true } });
     if (!order || !["PROCESSING", "CONFIRMED"].includes(order.status)) return;
     if (order.codStatus === "PENDING") return; // waits for the customer's WhatsApp confirmation
-    if (order.shipments.some((s: any) => s.type === "FORWARD" && s.status !== "CANCELLED")) return;
+    if (order.shipments.some((s) => s.type === "FORWARD" && s.status !== "CANCELLED")) return;
     await createShipmentForOrder(orderId, {}, "auto-booking");
   } catch (e) {
     const reason = e instanceof ShippingError ? e.message : "Unexpected error while booking";

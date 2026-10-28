@@ -1,5 +1,4 @@
 import { Search, HelpCircle, FileText, Mail, Phone } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { BRAND_PHONE_DISPLAY, BRAND_PHONE_TEL } from "@/lib/contact";

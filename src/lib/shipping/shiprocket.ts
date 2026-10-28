@@ -33,7 +33,7 @@ async function login(): Promise<string> {
     body: JSON.stringify({ email: process.env.SHIPROCKET_EMAIL, password: process.env.SHIPROCKET_PASSWORD }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
-  const json: any = await res.json().catch(() => null);
+  const json = await res.json().catch(() => null);
   if (!res.ok || !json?.token) {
     throw new ShippingError(`Shiprocket login failed (${res.status}). Check SHIPROCKET_EMAIL / SHIPROCKET_PASSWORD (use the API user).`);
   }
@@ -54,7 +54,7 @@ async function call(path: string, init: { method: "GET" | "POST"; body?: unknown
     cachedToken = null;
     return call(path, init, false);
   }
-  const json: any = await res.json().catch(() => null);
+  const json = await res.json().catch(() => null);
   if (!res.ok) {
     const errs = json?.errors ? Object.values(json.errors).flat().join(" ") : "";
     const msg = json?.message || errs || `HTTP ${res.status}`;

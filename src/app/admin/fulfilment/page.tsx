@@ -21,7 +21,7 @@ export default async function FulfilmentPage() {
   ]);
   const provider = getActiveProvider(settings.shippingProvider);
 
-  const queue: QueueOrder[] = orders.map((o: any) => ({
+  const queue: QueueOrder[] = orders.map((o) => ({
     id: o.id,
     ref: orderRef(o.id),
     createdAt: o.createdAt.toISOString(),
@@ -30,8 +30,8 @@ export default async function FulfilmentPage() {
     pincode: o.shippingAddress.match(/(\d{6})\s*$/)?.[1] || "",
     paymentMethod: o.paymentMethod,
     total: o.total,
-    units: o.items.reduce((s: number, i: any) => s + i.quantity, 0),
-    summary: o.items.map((i: any) => `${i.productName} ${i.weight}×${i.quantity}`).join(", "),
+    units: o.items.reduce((s: number, i) => s + i.quantity, 0),
+    summary: o.items.map((i) => `${i.productName} ${i.weight}×${i.quantity}`).join(", "),
     awb: o.shipments[0]?.awb ?? null,
     courierName: o.shipments[0]?.courierName ?? null,
     labelUrl: o.shipments[0]?.labelUrl ?? null,

@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/storefront/Navbar";
 import { MobileBottomNav } from "@/components/storefront/mobile-bottom-nav";
-import { PromoBanner } from "@/components/storefront/promo-banner";
 import { Footer } from "@/components/storefront/Footer";
 import { NotOnDocuments, StorefrontOnly } from "@/components/storefront/storefront-only";
 import { Toaster } from "@/components/ui/sonner";

@@ -6,7 +6,7 @@ interface ProductDescriptionRendererProps {
   productName: string;
 }
 
-export function ProductDescriptionRenderer({ description, productName }: ProductDescriptionRendererProps) {
+export function ProductDescriptionRenderer({ description }: ProductDescriptionRendererProps) {
   if (!description) {
     return (
       <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
@@ -19,14 +19,12 @@ export function ProductDescriptionRenderer({ description, productName }: Product
   const lines = description.split("\n");
   const tableRows: { nutrient: string; amount: string }[] = [];
   const textParagraphs: string[] = [];
-  let isInsideTable = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
 
     if (line.startsWith("|")) {
-      isInsideTable = true;
       const cells = line
         .split("|")
         .map((c) => c.trim())
@@ -37,7 +35,6 @@ export function ProductDescriptionRenderer({ description, productName }: Product
       }
       continue;
     } else {
-      isInsideTable = false;
     }
 
     // Normal text line / header

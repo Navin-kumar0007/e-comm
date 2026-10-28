@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
-import { writeFile } from 'fs/promises';
+import { mkdir, writeFile } from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';
 import { requirePermission } from '@/lib/auth-guard';
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       const ext = EXT_BY_TYPE[file.type] || 'bin';
       const filename = `${Date.now()}-${crypto.randomUUID()}.${ext}`;
       const uploadDir = path.join(process.cwd(), 'public/uploads');
-      await require('fs').promises.mkdir(uploadDir, { recursive: true });
+      await mkdir(uploadDir, { recursive: true });
       const filepath = path.join(uploadDir, filename);
       await writeFile(filepath, buffer);
       return NextResponse.json({ url: `/uploads/${filename}` });

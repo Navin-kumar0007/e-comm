@@ -22,7 +22,7 @@ export function MaterialsClient({ materials, products }: { materials: any[]; pro
 
   const value = materials.reduce((s, m) => s + Math.max(0, m.stockQty) * m.avgCost, 0);
   const low = materials.filter((m) => m.isActive && m.reorderLevel > 0 && m.stockQty <= m.reorderLevel);
-  const expiring = materials.flatMap((m) => m.lots).filter((l: any) => ["EXPIRED", "SOON"].includes(expiryStatus(l.expiryDate)));
+  const expiring = materials.flatMap((m) => m.lots).filter((l) => ["EXPIRED", "SOON"].includes(expiryStatus(l.expiryDate)));
 
   const toggle = async (id: string) => {
     setOpen((o) => (o === id ? null : id));
@@ -43,7 +43,7 @@ export function MaterialsClient({ materials, products }: { materials: any[]; pro
 
   const adjust = () =>
     start(async () => {
-      const { name, unit, ...input } = adj!;
+      const { name, unit: _unit, ...input } = adj!; // eslint-disable-line @typescript-eslint/no-unused-vars -- drop display-only fields before sending
       const res = await adjustMaterialAction(input);
       if ("error" in res && res.error) { toast.error(res.error); return; }
       toast.success(`${name} updated`);
@@ -72,7 +72,7 @@ export function MaterialsClient({ materials, products }: { materials: any[]; pro
       <Panel title="Bulk items">
         {materials.length === 0 ? (
           <Empty icon={<Wheat className="h-8 w-8" />} title="No bulk items yet">
-            Add each thing you buy loose, like "Almonds California (bulk)". Then record opening stock, buy more with a purchase order, and pack it into jars.
+            Add each thing you buy loose, like &quot;Almonds California (bulk)&quot;. Then record opening stock, buy more with a purchase order, and pack it into jars.
           </Empty>
         ) : (
           <div className="overflow-x-auto">
@@ -115,7 +115,7 @@ export function MaterialsClient({ materials, products }: { materials: any[]; pro
                           {!history[m.id] ? <p className="text-xs text-muted-foreground">Loading…</p> : history[m.id].length === 0 ? <p className="text-xs text-muted-foreground">No movements yet.</p> : (
                             <table className="w-full text-xs">
                               <tbody className="divide-y divide-border/50">
-                                {history[m.id].map((h: any) => (
+                                {history[m.id].map((h) => (
                                   <tr key={h.id}>
                                     <td className="py-1.5 pr-3 text-muted-foreground">{new Date(h.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</td>
                                     <td className="py-1.5 pr-3">{REASON[h.reason] ?? h.reason}</td>

@@ -25,7 +25,7 @@ export async function getConversations() {
     prisma.order.findMany({ where: { OR: phones.map((p) => ({ customerPhone: { endsWith: p } })) }, orderBy: { createdAt: 'desc' }, select: { customerPhone: true, customerName: true } }),
     prisma.user.findMany({ where: { OR: phones.map((p) => ({ phone: { endsWith: p } })) }, select: { phone: true, name: true } }),
   ]);
-  const nameOf = (p: string) => users.find((u: any) => u.phone && last10(u.phone) === p)?.name ?? orders.find((o: any) => last10(o.customerPhone) === p)?.customerName ?? null;
+  const nameOf = (p: string) => users.find((u) => u.phone && last10(u.phone) === p)?.name ?? orders.find((o) => last10(o.customerPhone) === p)?.customerName ?? null;
   return JSON.parse(JSON.stringify([...byPhone.values()].map((c) => ({ ...c, name: nameOf(c.phone), canReply: Date.now() - new Date(c.at).getTime() < WINDOW_MS }))));
 }
 
@@ -40,7 +40,7 @@ export async function getThread(phone: string) {
     prisma.order.findMany({ where: { customerPhone: { endsWith: p }, status: { not: 'DELETED' } }, orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, status: true, total: true, createdAt: true, codStatus: true } }),
   ]);
   await prisma.whatsAppLog.updateMany({ where: { phone: { in: variants }, type: 'INBOUND', readAt: null }, data: { readAt: new Date() } });
-  const lastIn = [...messages].reverse().find((m: any) => m.type === 'INBOUND');
+  const lastIn = [...messages].reverse().find((m) => m.type === 'INBOUND');
   return JSON.parse(JSON.stringify({ messages, orders, canReply: !!lastIn && Date.now() - lastIn.createdAt.getTime() < WINDOW_MS }));
 }
 

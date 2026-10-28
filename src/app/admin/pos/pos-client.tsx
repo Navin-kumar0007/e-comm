@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import QRCode from "react-qr-code";
 import { toast } from "sonner";
 import {
-  ScanBarcode, Camera, CameraOff, Search, Minus, Plus, Trash2, Banknote, Smartphone, CreditCard, CheckCircle2, MessageCircle, Mail, Printer, FileText, RotateCcw, Store,
+  ScanBarcode, Camera, CameraOff, Minus, Plus, Trash2, Banknote, Smartphone, CreditCard, CheckCircle2, MessageCircle, Mail, Printer, FileText, RotateCcw, Store,
 } from "lucide-react";
 import { createCounterSaleAction, getCounterDay, sendBillAction, type PosItem } from "@/app/actions/admin-pos";
 import { PageHeader, Panel, Stat, Field, inputCls, btnPrimary, btnSecondary, btnGhost, thCls, tdCls, inr } from "@/components/admin/ui";

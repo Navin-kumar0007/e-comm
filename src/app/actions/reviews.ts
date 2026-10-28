@@ -115,7 +115,7 @@ export async function addReview(input: AddReviewInput) {
         reviewerName: newReview.user?.name || newReview.userName || "Customer",
       },
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Review creation error:", error);
     return { error: "Failed to submit review. Please try again." };
   }
@@ -170,7 +170,7 @@ export async function getReviews(productId: string) {
     });
 
     // Only public fields — never send reviewer emails to the browser.
-    return reviews.map((r: any) => {
+    return reviews.map((r) => {
       let parsedImages: string[] = [];
       if (r.images) {
         try {

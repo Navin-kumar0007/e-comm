@@ -15,7 +15,7 @@ export function CameraScanner({ onCode }: { onCode: (code: string) => void }) {
   const [engine, setEngine] = useState<string>("");
   const last = useRef<{ code: string; at: number }>({ code: "", at: 0 });
   const cb = useRef(onCode);
-  cb.current = onCode;
+  useEffect(() => { cb.current = onCode; }, [onCode]);
 
   useEffect(() => {
     let stream: MediaStream | null = null;

@@ -1,4 +1,5 @@
 'use server';
+import type { Prisma } from "@prisma/client";
 
 import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
@@ -103,7 +104,7 @@ export async function adjustMaterialAction(input: MaterialAdjustInput) {
   const qty = round3(Number(input.qty));
   if (!(qty > 0)) return { error: 'Enter a quantity.' };
   try {
-    await prisma.$transaction(async (tx: any) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const m = await tx.material.findUnique({ where: { id: input.materialId } });
       if (!m) throw new UserError('Bulk item not found.');
       const note = clean(input.note, 300);
@@ -144,7 +145,7 @@ export async function getRepackData() {
     prisma.repackRun.findMany({ orderBy: { createdAt: 'desc' }, take: 50, include: { material: { select: { name: true } } } }),
   ]);
   const variantGrams = await prisma.productVariant.findMany({ where: { isActive: true }, select: { id: true, weightGrams: true } });
-  const gramsBy = new Map(variantGrams.map((v: any) => [v.id, v.weightGrams]));
+  const gramsBy = new Map(variantGrams.map((v) => [v.id, v.weightGrams]));
   return json({
     materials,
     units: units.map((u) => ({ key: u.key, productId: u.productId, variantId: u.variantId, name: u.name, pack: u.pack, grams: (u.variantId ? gramsBy.get(u.variantId) : null) || parseGrams(u.pack), stock: u.stock })),
@@ -175,9 +176,9 @@ export async function createRepackAction(input: RepackInput) {
   const products = await prisma.product.findMany({ where: { id: { in: productIds } }, select: { id: true, name: true, weight: true, variants: { select: { id: true, label: true, weightGrams: true } } } });
   const lines: Array<{ productId: string; variantId: string | null; name: string; label: string; grams: number; packs: number }> = [];
   for (const o of outputs) {
-    const p: any = products.find((x: any) => x.id === o.productId);
+    const p = products.find((x) => x.id === o.productId);
     if (!p) return { error: 'Product not found.' };
-    const v = o.variantId ? p.variants.find((x: any) => x.id === o.variantId) : null;
+    const v = o.variantId ? p.variants.find((x) => x.id === o.variantId) : null;
     const label = v?.label ?? p.weight ?? '';
     const grams = v?.weightGrams || parseGrams(label);
     if (!grams) return { error: `Can't tell the weight of ${p.name} ${label}. Name the size like "250g".` };
@@ -186,7 +187,7 @@ export async function createRepackAction(input: RepackInput) {
 
   let result: { number: string; lots: string[]; wastageKg: number } | null = null;
   try {
-    await prisma.$transaction(async (tx: any) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const m = await tx.material.findUnique({ where: { id: input.materialId } });
       if (!m) throw new UserError('Bulk item not found.');
       const number = await nextDocNumber(tx, 'RP');
@@ -265,17 +266,17 @@ export async function traceLotAction(lotId: string) {
     include: { allocations: { where: { qty: { gt: 0 } }, orderBy: { createdAt: 'desc' } }, product: { select: { name: true } }, variant: { select: { label: true } }, supplier: { select: { name: true } } },
   });
   if (!lot) return { error: 'Batch not found.' };
-  const orderIds = [...new Set(lot.allocations.map((a: any) => a.orderId).filter(Boolean))] as string[];
+  const orderIds = [...new Set(lot.allocations.map((a) => a.orderId).filter(Boolean))] as string[];
   const orders = await prisma.order.findMany({
     where: { id: { in: orderIds } },
     select: { id: true, customerName: true, customerPhone: true, shippingAddress: true, status: true, createdAt: true },
   });
-  const byId = new Map(orders.map((o: any) => [o.id, o]));
-  const rows = lot.allocations.map((a: any) => {
-    const o: any = a.orderId ? byId.get(a.orderId) : null;
+  const byId = new Map(orders.map((o) => [o.id, o]));
+  const rows = lot.allocations.map((a) => {
+    const o = a.orderId ? byId.get(a.orderId) : null;
     return { qty: a.qty, at: a.createdAt, orderId: a.orderId, ref: a.orderId ? orderRef(a.orderId) : null, customer: o?.customerName ?? null, phone: o?.customerPhone ?? null, status: o?.status ?? null };
   });
-  return json({ lot, rows, units: rows.reduce((s: number, r: any) => s + r.qty, 0), customers: orderIds.length });
+  return json({ lot, rows, units: rows.reduce((s: number, r) => s + r.qty, 0), customers: orderIds.length });
 }
 
 export interface OpeningLotInput {
@@ -294,7 +295,7 @@ export async function createOpeningLotAction(input: OpeningLotInput) {
   const qty = Number(input.qty);
   if (!(qty > 0) || !Number.isInteger(qty)) return { error: 'Enter a whole number of packs.' };
   try {
-    await prisma.$transaction(async (tx: any) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const stock = input.variantId
         ? (await tx.productVariant.findUnique({ where: { id: input.variantId }, select: { stock: true, costPrice: true } }))
         : (await tx.product.findUnique({ where: { id: input.productId }, select: { stock: true, costPrice: true } }));
@@ -351,11 +352,11 @@ export async function writeOffLotAction(input: { lotId: string; qty?: number; no
 export async function getStockCounts() {
   await requirePermission('inventory.manage');
   const counts = await prisma.stockCount.findMany({ orderBy: { createdAt: 'desc' }, take: 100, include: { lines: { select: { expected: true, counted: true, unitCost: true } } } });
-  return json(counts.map((c: any) => ({
+  return json(counts.map((c) => ({
     id: c.id, number: c.number, status: c.status, notes: c.notes, createdBy: c.createdBy, createdAt: c.createdAt, postedAt: c.postedAt,
     lines: c.lines.length,
-    counted: c.lines.filter((l: any) => l.counted !== null).length,
-    varianceValue: round2(c.lines.reduce((s: number, l: any) => s + (l.counted === null ? 0 : (l.counted - l.expected) * l.unitCost), 0)),
+    counted: c.lines.filter((l) => l.counted !== null).length,
+    varianceValue: round2(c.lines.reduce((s: number, l) => s + (l.counted === null ? 0 : (l.counted - l.expected) * l.unitCost), 0)),
   })));
 }
 
@@ -370,7 +371,7 @@ export async function createStockCountAction(input: { scope: 'ALL' | 'PACKS' | '
     ...(materials as any[]).map((m) => ({ kind: 'MATERIAL', productId: null, variantId: null, materialId: m.id, name: `${m.name} (bulk)`, unit: m.unit, expected: m.stockQty, unitCost: m.avgCost })),
   ];
   if (!lines.length) return { error: 'Nothing to count.' };
-  const count = await prisma.$transaction(async (tx: any) => {
+  const count = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const number = await nextDocNumber(tx, 'SC');
     return tx.stockCount.create({ data: { number, notes: clean(input.notes, 300), createdBy: actor, lines: { create: lines } } });
   });
@@ -412,7 +413,7 @@ export async function postStockCountAction(countId: string) {
   for (const l of c.lines as any[]) {
     if (l.counted === null) continue;
     try {
-      const did = await prisma.$transaction(async (tx: any) => {
+      const did = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         if (l.kind === 'PACK') {
           const cur = l.variantId
             ? (await tx.productVariant.findUnique({ where: { id: l.variantId }, select: { stock: true } }))?.stock
@@ -485,7 +486,7 @@ export async function createBulkOpeningLotsAction(input: BulkOpeningInput) {
   for (const it of items) {
     const qty = Math.floor(Number(it.qty));
     try {
-      const lot = await prisma.$transaction(async (tx: any) => {
+      const lot = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         const stock = it.variantId
           ? await tx.productVariant.findUnique({ where: { id: it.variantId }, select: { stock: true, costPrice: true } })
           : await tx.product.findUnique({ where: { id: it.productId }, select: { stock: true, costPrice: true } });

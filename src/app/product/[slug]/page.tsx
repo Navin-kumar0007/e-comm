@@ -62,6 +62,11 @@ export async function generateMetadata({
   };
 }
 
+
+/** Structured-data offer date: 30 days from the time the page is built. */
+function priceValidUntil() {
+  return new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+}
 export default async function ProductPage({
   params,
 }: {
@@ -121,9 +126,7 @@ export default async function ProductPage({
         "@type": "Organization",
         name: "B.M.V. Spices & Dry Fruits",
       },
-      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0],
+      priceValidUntil: priceValidUntil(),
     },
     ...(reviewCount > 0 && {
       aggregateRating: {

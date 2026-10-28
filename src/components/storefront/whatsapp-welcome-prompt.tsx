@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Sparkles, Loader2, CheckCircle2, Gift } from "lucide-react";
+import { X, Loader2, CheckCircle2, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { subscribeWhatsAppAction } from "@/app/actions/whatsapp-actions";

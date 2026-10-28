@@ -1,4 +1,5 @@
 'use server';
+import type { Prisma } from "@prisma/client";
 
 import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
@@ -138,13 +139,13 @@ export async function getPayables() {
     prisma.supplierPayment.findMany({ orderBy: { date: 'desc' }, take: 50, include: { supplier: { select: { name: true } }, po: { select: { number: true } } } }),
   ]);
   const rows = suppliers
-    .map((s: any) => {
-      const pos = s.purchases.map((p: any) => ({ id: p.id, number: p.number, date: p.supplierInvoiceDate ?? p.orderDate, billNo: p.supplierInvoiceNo, owed: receivedValue(p), paid: p.paidAmount }))
-        .map((p: any) => ({ ...p, due: r2(Math.max(0, p.owed - p.paid)) }));
-      return { id: s.id, name: s.name, phone: s.phone, pos: pos.filter((p: any) => p.due > 0), due: r2(pos.reduce((a: number, p: any) => a + p.due, 0)) };
+    .map((s) => {
+      const pos = s.purchases.map((p) => ({ id: p.id, number: p.number, date: p.supplierInvoiceDate ?? p.orderDate, billNo: p.supplierInvoiceNo, owed: receivedValue(p), paid: p.paidAmount }))
+        .map((p) => ({ ...p, due: r2(Math.max(0, p.owed - p.paid)) }));
+      return { id: s.id, name: s.name, phone: s.phone, pos: pos.filter((p) => p.due > 0), due: r2(pos.reduce((a: number, p) => a + p.due, 0)) };
     })
-    .filter((s: any) => s.due > 0);
-  const suppliersAll = suppliers.map((s: any) => ({ id: s.id, name: s.name }));
+    .filter((s) => s.due > 0);
+  const suppliersAll = suppliers.map((s) => ({ id: s.id, name: s.name }));
   return json({ rows, payments, suppliers: suppliersAll });
 }
 
@@ -160,7 +161,7 @@ export async function recordSupplierPaymentAction(input: SupplierPaymentInput) {
   const supplier = await prisma.supplier.findUnique({ where: { id: input.supplierId } });
   if (!supplier) return { error: 'Supplier not found.' };
 
-  await prisma.$transaction(async (tx: any) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const pos = await tx.purchaseOrder.findMany({
       where: { supplierId: supplier.id, status: { in: ['PARTIAL', 'RECEIVED', 'ORDERED'] }, ...(input.poId ? { id: input.poId } : {}) },
       orderBy: { orderDate: 'asc' },
@@ -203,7 +204,7 @@ export async function getCodOutstanding() {
     prisma.codRemittance.findMany({ orderBy: { date: 'desc' }, take: 30, include: { _count: { select: { orders: true } } } }),
   ]);
   return json({
-    orders: orders.map((o: any) => ({
+    orders: orders.map((o) => ({
       id: o.id, ref: orderRef(o.id), customerName: o.customerName, total: o.total, deliveredAt: o.deliveredAt,
       awb: o.shipments[0]?.awb ?? null, courier: o.shipments[0]?.courierName ?? (o.shipments[0]?.provider && o.shipments[0].provider !== 'MANUAL' ? o.shipments[0].provider : 'Self / manual'),
     })),
@@ -218,12 +219,12 @@ export async function recordCodRemittanceAction(input: { courier: string; date: 
   if (!input.orderIds?.length) return { error: 'Tick the orders this payment covers.' };
   const orders = await prisma.order.findMany({ where: { id: { in: input.orderIds }, paymentMethod: 'COD', codRemittanceId: null }, select: { id: true, total: true } });
   if (orders.length !== input.orderIds.length) return { error: 'Some orders were already marked as paid by the courier. Refresh and try again.' };
-  const expected = r2(orders.reduce((s: number, o: any) => s + o.total, 0));
+  const expected = r2(orders.reduce((s: number, o) => s + o.total, 0));
   await prisma.codRemittance.create({
     data: {
       courier: clean(input.courier, 60) ?? 'Courier', date: asDate(input.date) ?? new Date(), expected, amount,
       reference: clean(input.reference, 60), note: clean(input.note, 300), createdBy: actor,
-      orders: { connect: orders.map((o: any) => ({ id: o.id })) },
+      orders: { connect: orders.map((o) => ({ id: o.id })) },
     },
   });
   touch();
@@ -239,7 +240,7 @@ export async function recordCodRemittanceAction(input: { courier: string; date: 
  */
 export async function syncRazorpayAction() {
   await manager();
-  const rzp: any = getRazorpay();
+  const rzp = getRazorpay();
   if (!rzp) return { error: 'Razorpay keys are not set on this server.' };
 
   let fees = 0;
@@ -322,7 +323,7 @@ export async function getRazorpayStatus() {
   }
   return json({
     configured: !!getRazorpay(),
-    unsettled: unsettled.map((o: any) => ({ ...o, ref: orderRef(o.id) })),
+    unsettled: unsettled.map((o) => ({ ...o, ref: orderRef(o.id) })),
     settlements: [...batches.values()].slice(0, 20),
   });
 }

@@ -18,6 +18,8 @@ export function VerifyForm({ email }: { email: string }) {
     start(async () => {
       const res = await verifyTwoStepAction(code);
       if ("error" in res && res.error) { setError(res.error); setCode(""); return; }
+      // Full page load so the admin layout reads the new two-step cookie on the server.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.href = "/admin";
     });
   };

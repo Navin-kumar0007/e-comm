@@ -31,7 +31,7 @@ export default function SettingsForm({ initialSettings, providers }: { initialSe
       await updateAdminSettingsAction(data);
       setSettings({ ...settings, ...data });
       toast.success("General settings saved!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to save settings");
     } finally {
       setIsSaving(false);
@@ -69,7 +69,7 @@ export default function SettingsForm({ initialSettings, providers }: { initialSe
       }
       setSettings({ ...settings, ...data });
       toast.success("Shipping settings saved!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to save shipping settings");
     } finally {
       setIsSaving(false);
@@ -100,7 +100,7 @@ export default function SettingsForm({ initialSettings, providers }: { initialSe
       }
       setSettings({ ...settings, ...data });
       toast.success("Tax settings saved!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to save tax settings");
     } finally {
       setIsSaving(false);

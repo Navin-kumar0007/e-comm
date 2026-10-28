@@ -1,7 +1,5 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { Leaf, Package, User, Star, Settings } from 'lucide-react';
 import { AccountNav } from '@/components/storefront/account-nav';
 import { PageHero } from "@/components/storefront/royal/page-hero";
 

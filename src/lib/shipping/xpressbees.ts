@@ -30,7 +30,7 @@ async function login(): Promise<string> {
     body: JSON.stringify({ email: process.env.XPRESSBEES_EMAIL, password: process.env.XPRESSBEES_PASSWORD }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
-  const json: any = await res.json().catch(() => null);
+  const json = await res.json().catch(() => null);
   const token = typeof json?.data === "string" ? json.data : json?.data?.token ?? json?.token;
   if (!res.ok || !token) {
     throw new ShippingError(`Xpressbees login failed (${res.status}). Check XPRESSBEES_EMAIL / XPRESSBEES_PASSWORD.`);
@@ -51,7 +51,7 @@ async function call(path: string, init: { method: "GET" | "POST"; body?: unknown
     cachedToken = null;
     return call(path, init, false);
   }
-  const json: any = await res.json().catch(() => null);
+  const json = await res.json().catch(() => null);
   if (!res.ok || json?.status === false) {
     const msg = json?.message || json?.error || `HTTP ${res.status}`;
     throw new ShippingError(`Xpressbees: ${typeof msg === "string" ? msg : JSON.stringify(msg)}`);

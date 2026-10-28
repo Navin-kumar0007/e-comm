@@ -9,18 +9,14 @@ import {
   Tag, 
   Sparkles, 
   TrendingDown, 
-  CheckCircle2, 
-  AlertCircle, 
   RefreshCw, 
   Phone,
   HelpCircle,
-  ExternalLink,
   Clock,
   Radio
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { 
@@ -66,6 +62,7 @@ export default function WhatsAppMarketingPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load the dashboard data once on open
     loadData();
   }, []);
 
@@ -270,7 +267,7 @@ export default function WhatsAppMarketingPage() {
                 <div className="font-bold text-amber-700 dark:text-amber-400">✨ SPICY NUTS — ROYAL HARVEST OFFER ✨</div>
                 <div>{offerTitle}</div>
                 <div>
-                  Enjoy an exclusive <strong className="font-bold">{offerDiscount}% OFF</strong> on our imperial single-estate dry fruits &amp; organic spices!
+                  Enjoy an exclusive <strong className="font-bold">{offerDiscount}% OFF</strong> on our premium dry fruits &amp; whole spices!
                 </div>
                 <div className="p-2.5 bg-amber-50 dark:bg-zinc-800 rounded-xl border border-amber-500/20 font-mono text-[11px]">
                   🎁 Use Coupon Code: <strong>{offerCode || "ROYAL15"}</strong>

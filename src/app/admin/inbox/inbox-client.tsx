@@ -15,6 +15,7 @@ export function InboxClient({ initial, initialPhone }: { initial: any[]; initial
   // Computers open the newest chat; phones start on the chat list unless a chat was asked for.
   const [phone, setPhone] = useState<string | null>(initialPhone ?? initial[0]?.phone ?? null);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- phones open on the conversation list; screen width is only known in the browser
     if (!initialPhone && window.matchMedia("(max-width: 1023px)").matches) setPhone(null);
   }, [initialPhone]);
   const [thread, setThread] = useState<any | null>(null);
@@ -29,6 +30,7 @@ export function InboxClient({ initial, initialPhone }: { initial: any[]; initial
     setTimeout(() => bottom.current?.scrollIntoView({ block: "end" }), 50);
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch the selected conversation's messages
   useEffect(() => { if (phone) load(phone); }, [phone, load]);
   // New messages arrive through the webhook; check every 20 s while the page is open.
   useEffect(() => {
@@ -110,7 +112,7 @@ export function InboxClient({ initial, initialPhone }: { initial: any[]; initial
                     <textarea className={`${inputCls} h-12 py-2`} value={text} onChange={(e) => setText(e.target.value)} placeholder="Type a reply…" onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && text.trim()) { e.preventDefault(); send(); } }} />
                     <button className={`${btnPrimary} h-12`} disabled={pending || !text.trim()} onClick={send}><Send className="h-4 w-4" /> Send</button>
                   </>) : (
-                    <p className="flex items-center gap-2 text-xs text-muted-foreground"><Clock className="h-4 w-4" /> More than 24 hours since their last message, so WhatsApp doesn't allow a free reply. Call them, or they can message again.</p>
+                    <p className="flex items-center gap-2 text-xs text-muted-foreground"><Clock className="h-4 w-4" /> More than 24 hours since their last message, so WhatsApp doesn&apos;t allow a free reply. Call them, or they can message again.</p>
                   )}
                 </div>
               </div>

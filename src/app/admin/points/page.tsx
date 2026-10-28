@@ -1,6 +1,6 @@
 import { requirePagePermission } from "@/lib/auth-guard";
 import { prisma } from "@/lib/db/prisma";
-import { Crown, Sparkles, TrendingUp, Medal } from "lucide-react";
+import { Crown, Sparkles, Medal } from "lucide-react";
 import AwardPointsDialog from "./award-points-dialog";
 
 export default async function AdminPointsPage() {

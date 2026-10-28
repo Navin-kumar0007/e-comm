@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from 'next/link';
 import { getBlogPosts } from '@/app/actions/blog';
 import { PageHero } from "@/components/storefront/royal/page-hero";
 

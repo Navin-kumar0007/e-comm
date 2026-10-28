@@ -1,9 +1,8 @@
 import { requirePagePermission } from "@/lib/auth-guard";
 import { prisma } from "@/lib/db/prisma";
 import Link from "next/link";
-import { Plus, Ticket, Printer } from "lucide-react";
+import { Plus, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { revalidatePath } from "next/cache";
 import CouponDeleteButton from "./coupon-delete-button";
 import { CouponToggle } from "./coupon-toggle";
 

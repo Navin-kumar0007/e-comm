@@ -154,6 +154,7 @@ export function WebsiteEditor({ data, initialTab }: { data: any; initialTab?: st
                       {(["image", "mobileImage"] as const).map((f) => (
                         <div key={f} className="space-y-1.5">
                           <span className="text-[12px] font-semibold text-foreground/80">{f === "image" ? "Image (computer)" : "Image for phones (optional)"}</span>
+                          {/* eslint-disable-next-line @next/next/no-img-element -- preview of any pasted URL, including hosts next/image is not set up for */}
                           {b[f] ? <img src={b[f]} alt="" className="h-28 w-full rounded-lg border border-border object-cover" /> : <div className="flex h-28 items-center justify-center rounded-lg border border-dashed border-border text-xs text-muted-foreground">No image</div>}
                           <label className={`${btnSecondary} cursor-pointer`}><Upload className="h-4 w-4" /> {uploading === `${i}-${f}` ? "Uploading…" : b[f] ? "Replace" : "Upload"}
                             <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], f, i)} />

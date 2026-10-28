@@ -49,7 +49,7 @@ export function WhatsAppPriceAlertModal({
         setSuccess(true);
         toast.success("Price drop alert activated on WhatsApp!");
       }
-    } catch (err) {
+    } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);

@@ -16,7 +16,7 @@ export default function CouponDeleteButton({ id }: { id: string }) {
     try {
       await deleteCouponAction(id);
       toast.success("Coupon deleted");
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete coupon");
       setIsDeleting(false);
     }

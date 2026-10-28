@@ -25,7 +25,7 @@ export function PurchasesClient({ orders }: { orders: Row[] }) {
     return orders.filter((o) => t.match(o.status) && (!s || `${o.number} ${o.supplier} ${o.supplierInvoiceNo ?? ""}`.toLowerCase().includes(s)));
   }, [orders, tab, q]);
 
-  const now = Date.now();
+  const [now] = useState(() => Date.now()); // read once, so renders stay pure
   const open = orders.filter((o) => ["ORDERED", "PARTIAL"].includes(o.status));
   const late = open.filter((o) => o.expectedDate && new Date(o.expectedDate).getTime() < now);
   const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0);

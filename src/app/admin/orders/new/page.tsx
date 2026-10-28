@@ -13,7 +13,7 @@ export default async function NewOrderPage({ searchParams }: { searchParams: Pro
     searchParams,
   ]);
 
-  const formattedProducts = products.map((p: any) => ({
+  const formattedProducts = products.map((p) => ({
     id: p.id,
     name: p.name,
     price: Number(p.price),

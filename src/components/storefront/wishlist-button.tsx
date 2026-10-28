@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 
 export function WishlistButton({ productId, variant = 'icon' }: { productId: string, variant?: 'icon' | 'outline' }) {
   const [mounted, setMounted] = useState(false);
-  const { items, toggleItem, isInWishlist } = useWishlistStore();
+  const { toggleItem, isInWishlist } = useWishlistStore();
   
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);

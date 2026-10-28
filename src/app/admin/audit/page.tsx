@@ -26,7 +26,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
       page={p}
       pageSize={PAGE}
       filters={{ q, area, who }}
-      actors={actors.map((a: any) => a.actor)}
+      actors={actors.map((a) => a.actor)}
     />
   );
 }

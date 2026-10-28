@@ -45,7 +45,7 @@ export async function confirmCodOrder(orderId: string, actor: string, how: strin
       template: { key: "order_confirmed", params: [order.customerName, order.id.slice(-8).toUpperCase(), order.total.toFixed(0), "Cash on Delivery", `${SITE}/track/${order.id}`] },
       message: buildOrderConfirmationWhatsAppMessage({
         orderId: order.id, customerName: order.customerName, total: order.total, paymentMethod: "Cash on Delivery",
-        items: order.items.map((i: any) => ({ name: i.productName, quantity: i.quantity, weight: i.weight })), trackingUrl: `${SITE}/track/${order.id}`,
+        items: order.items.map((i) => ({ name: i.productName, quantity: i.quantity, weight: i.weight })), trackingUrl: `${SITE}/track/${order.id}`,
       }),
     }).catch((e) => console.error("[COD] confirmation message failed", e));
   }

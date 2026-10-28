@@ -91,7 +91,7 @@ export default async function PurchasePrintPage({ params }: { params: Promise<{ 
               <p className="font-semibold text-black">Terms</p>
               <p>1. Please quote this PO number on your invoice and delivery challan.</p>
               <p>2. Goods must be fresh, clean and of the agreed grade; best-before date to be marked on each bag.</p>
-              <p>3. Goods not matching the order may be returned at the supplier's cost.</p>
+              <p>3. Goods not matching the order may be returned at the supplier&apos;s cost.</p>
             </div>
           </div>
           <table className="w-64 self-start">

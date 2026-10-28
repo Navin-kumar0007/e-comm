@@ -49,7 +49,7 @@ export async function issueRefund(params: { orderId: string; amount?: number; re
         await prisma.refund.update({ where: { id: refund.id }, data: { status: "PROCESSED", razorpayRefundId: `rfnd_mock_${refund.id}` } });
       } else {
         if (!razorpay) throw new Error("Razorpay is not configured");
-        const rzpRefund: any = await razorpay.payments.refund(order.paymentId!, {
+        const rzpRefund = await razorpay.payments.refund(order.paymentId!, {
           amount: toPaise(amount),
           notes: { orderId: order.id, refundId: refund.id },
         });

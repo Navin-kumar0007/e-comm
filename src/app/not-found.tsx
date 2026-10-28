@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Leaf, Search } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function NotFound() {
@@ -14,7 +14,7 @@ export default function NotFound() {
       
       <h1 className="text-4xl font-heading font-bold mb-4">Page Not Found</h1>
       <p className="text-muted-foreground max-w-md mb-8 text-lg">
-        We couldn't find the page you're looking for. It might have been moved, or the link might be broken.
+        We couldn&apos;t find the page you&apos;re looking for. It might have been moved, or the link might be broken.
       </p>
       
       <div className="flex flex-col sm:flex-row gap-4">

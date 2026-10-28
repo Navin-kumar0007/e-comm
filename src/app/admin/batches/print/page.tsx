@@ -24,7 +24,7 @@ export default async function BatchStickerPage({ searchParams }: { searchParams:
     }),
     getStoreSettings(),
   ]);
-  const one: BatchSticker[] = lots.map((l: any) => ({
+  const one: BatchSticker[] = lots.map((l) => ({
     name: l.product?.name ?? "",
     pack: l.variant?.label ?? l.product?.weight ?? "",
     mrp: l.variant ? l.variant.mrp ?? l.variant.salePrice ?? l.variant.price : l.product?.mrp ?? l.product?.salePrice ?? l.product?.price ?? null,

@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import {
   planFefo, weightedAvgCost, round2, round3, reorderSuggestion, expiryStatus, istParts, formatLotNumber, formatDocNumber,
@@ -6,7 +7,7 @@ import {
 // Every function taking `tx` runs inside the caller's transaction.
 
 /** PO-2026-0001, RP-2026-0001, SC-2026-0001: one running number per prefix per year. */
-export async function nextDocNumber(tx: any, prefix: "PO" | "RP" | "SC", now = new Date()) {
+export async function nextDocNumber(tx: Prisma.TransactionClient, prefix: "PO" | "RP" | "SC", now = new Date()) {
   const { year } = istParts(now);
   const id = `${prefix}_${year}`;
   const c = await tx.invoiceCounter.upsert({ where: { id }, create: { id, seq: 1 }, update: { seq: { increment: 1 } } });
@@ -14,7 +15,7 @@ export async function nextDocNumber(tx: any, prefix: "PO" | "RP" | "SC", now = n
 }
 
 /** Batch code for a new lot, e.g. B2610-007 (year-month + running number). */
-export async function nextLotNumber(tx: any, now = new Date()) {
+export async function nextLotNumber(tx: Prisma.TransactionClient, now = new Date()) {
   const { year, month } = istParts(now);
   const id = `LOT_${year}${String(month).padStart(2, "0")}`;
   const c = await tx.invoiceCounter.upsert({ where: { id }, create: { id, seq: 1 }, update: { seq: { increment: 1 } } });
@@ -23,15 +24,15 @@ export async function nextLotNumber(tx: any, now = new Date()) {
 
 /** Takes sold / removed packs out of batches, earliest expiry first, and records which batch they came from. */
 export async function allocatePackLots(
-  tx: any,
+  tx: Prisma.TransactionClient,
   p: { productId: string; variantId: string | null; qty: number; orderId?: string | null; movementId?: string | null; lotId?: string | null }
 ) {
   const where = { kind: "PACK", productId: p.productId, variantId: p.variantId, qtyLeft: { gt: 0 } };
   let lots = await tx.stockLot.findMany({ where, select: { id: true, qtyLeft: true, expiryDate: true, receivedAt: true, unitCost: true } });
   if (p.lotId) {
     // A chosen batch first (e.g. writing off an expired batch), then the usual order.
-    const chosen = lots.filter((l: any) => l.id === p.lotId);
-    lots = chosen.length ? [{ ...chosen[0], expiryDate: new Date(0) }, ...lots.filter((l: any) => l.id !== p.lotId)] : lots;
+    const chosen = lots.filter((l) => l.id === p.lotId);
+    lots = chosen.length ? [{ ...chosen[0], expiryDate: new Date(0) }, ...lots.filter((l) => l.id !== p.lotId)] : lots;
   }
   const { takes } = planFefo(lots, p.qty);
   for (const { lot, take } of takes) {
@@ -44,7 +45,7 @@ export async function allocatePackLots(
 }
 
 /** Puts units from a cancelled / returned order back into the batches they were taken from. */
-export async function returnPackLots(tx: any, p: { productId: string; variantId: string | null; qty: number; orderId: string }) {
+export async function returnPackLots(tx: Prisma.TransactionClient, p: { productId: string; variantId: string | null; qty: number; orderId: string }) {
   const allocations = await tx.lotAllocation.findMany({
     where: { orderId: p.orderId, qty: { gt: 0 }, lot: { productId: p.productId, variantId: p.variantId } },
     orderBy: { createdAt: "desc" },
@@ -61,7 +62,7 @@ export async function returnPackLots(tx: any, p: { productId: string; variantId:
 
 /** Adds bulk material: moves stock, re-averages cost, records a movement and (optionally) a batch. */
 export async function receiveMaterial(
-  tx: any,
+  tx: Prisma.TransactionClient,
   p: {
     materialId: string; qty: number; unitCost: number; reason: "PURCHASE" | "OPENING" | "CORRECTION"; actor: string;
     refId?: string | null; note?: string | null; supplierId?: string | null; poId?: string | null;
@@ -90,7 +91,7 @@ export async function receiveMaterial(
  * Returns the batches used and the earliest expiry among them.
  */
 export async function consumeMaterial(
-  tx: any,
+  tx: Prisma.TransactionClient,
   p: { materialId: string; qty: number; reason: "REPACK" | "WASTAGE" | "CORRECTION"; actor: string; refId?: string | null; note?: string | null; allowShort?: boolean }
 ) {
   const m = await tx.material.findUnique({ where: { id: p.materialId } });
@@ -118,7 +119,7 @@ export class MaterialShortError extends Error {}
 
 /** Creates a batch of finished packs (from a purchase, repacking or opening stock). Does not move the stock count. */
 export async function createPackLot(
-  tx: any,
+  tx: Prisma.TransactionClient,
   p: {
     productId: string; variantId: string | null; qty: number; unitCost: number; source: "PURCHASE" | "REPACK" | "OPENING"; actor: string;
     supplierId?: string | null; poId?: string | null; repackRunId?: string | null; mfgDate?: Date | null; expiryDate?: Date | null; note?: string | null;
@@ -136,7 +137,7 @@ export async function createPackLot(
 }
 
 /** Re-averages the purchase cost of a product / pack size after new stock arrives. */
-export async function updatePackCost(tx: any, p: { productId: string; variantId: string | null; addQty: number; addCost: number; stockBefore: number }) {
+export async function updatePackCost(tx: Prisma.TransactionClient, p: { productId: string; variantId: string | null; addQty: number; addCost: number; stockBefore: number }) {
   if (p.variantId) {
     const v = await tx.productVariant.findUnique({ where: { id: p.variantId }, select: { costPrice: true } });
     const cost = weightedAvgCost(p.stockBefore, v?.costPrice ?? p.addCost, p.addQty, p.addCost);
@@ -200,7 +201,7 @@ export async function getWarehouseOverview(now = new Date()) {
 
   const soldBy = new Map<string, number>();
   for (const s of sales as any[]) soldBy.set(s.variantId ? `${s.productId}:${s.variantId}` : s.productId, -(s._sum.delta ?? 0));
-  const leadDays = suppliers.length ? Math.round(suppliers.reduce((a: number, s: any) => a + s.leadDays, 0) / suppliers.length) : 7;
+  const leadDays = suppliers.length ? Math.round(suppliers.reduce((a: number, s) => a + s.leadDays, 0) / suppliers.length) : 7;
 
   // Value: batches at their own cost, stock not yet in a batch at the item's average cost.
   const lotQtyBy = new Map<string, { qty: number; value: number }>();
@@ -230,8 +231,8 @@ export async function getWarehouseOverview(now = new Date()) {
   }
   reorder.sort((a, b) => (a.daysLeft ?? -1) - (b.daysLeft ?? -1));
 
-  const materialValue = materials.reduce((s: number, m: any) => s + Math.max(0, m.stockQty) * m.avgCost, 0);
-  const lowMaterials = materials.filter((m: any) => m.reorderLevel > 0 && m.stockQty <= m.reorderLevel);
+  const materialValue = materials.reduce((s: number, m) => s + Math.max(0, m.stockQty) * m.avgCost, 0);
+  const lowMaterials = materials.filter((m) => m.reorderLevel > 0 && m.stockQty <= m.reorderLevel);
 
   const expiring = [
     ...(packLots as any[]).map((l) => ({ id: l.id, lotNumber: l.lotNumber, name: l.product?.name ?? "—", pack: l.variant?.label ?? "", qtyLeft: l.qtyLeft, unit: "packs", expiryDate: l.expiryDate, value: l.qtyLeft * l.unitCost })),
@@ -245,7 +246,7 @@ export async function getWarehouseOverview(now = new Date()) {
     packUnits,
     unassigned,
     noCost,
-    materialKg: round3(materials.reduce((s: number, m: any) => s + Math.max(0, m.stockQty), 0)),
+    materialKg: round3(materials.reduce((s: number, m) => s + Math.max(0, m.stockQty), 0)),
     reorder,
     lowMaterials,
     expiring,

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Printer, Ticket, Leaf, Sparkles } from "lucide-react";
+import { ArrowLeft, Printer, Leaf, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import QRCode from "react-qr-code";
 import Barcode from "@/components/ui/barcode";

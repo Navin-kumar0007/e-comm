@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Leaf, CheckCircle2, Package, Sparkles } from 'lucide-react';
+import { CheckCircle2, Package, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { PageHero } from "@/components/storefront/royal/page-hero";

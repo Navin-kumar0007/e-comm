@@ -112,7 +112,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, message: "OTP sent to your email" });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Send OTP error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

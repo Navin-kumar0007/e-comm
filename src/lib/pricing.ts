@@ -75,14 +75,14 @@ export async function priceCart(input: {
 
   const settings = input.settings ?? (await getStoreSettings());
 
-  const catalogueIds = items.filter((i: any) => !i.productId.startsWith("custom-")).map((i: any) => i.productId);
+  const catalogueIds = items.filter((i) => !i.productId.startsWith("custom-")).map((i) => i.productId);
   const products = catalogueIds.length
     ? await prisma.product.findMany({
         where: { id: { in: catalogueIds } },
         include: { variants: { where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { price: "asc" }] } },
       })
     : [];
-  const productById = new Map<string, any>(products.map((p: any) => [p.id, p]));
+  const productById = new Map<string, any>(products.map((p) => [p.id, p]));
 
   const lines: PricedLine[] = [];
   const qtyByProduct = new Map<string, number>();

@@ -60,7 +60,7 @@ export function PrivacyCard({ initial }: { initial: { whatsappOffers: boolean; e
           <Download className="h-4 w-4" /> Download my data
         </button>
         {asked ? (
-          <p className="text-sm text-muted-foreground">Account deletion requested. We'll complete it and email you.</p>
+          <p className="text-sm text-muted-foreground">Account deletion requested. We&apos;ll complete it and email you.</p>
         ) : !confirming ? (
           <button type="button" onClick={() => setConfirming(true)} className="inline-flex h-10 items-center gap-2 rounded-full border border-red-200 px-4 text-sm font-semibold text-red-700 hover:bg-red-50">
             <Trash2 className="h-4 w-4" /> Delete my account
@@ -68,7 +68,7 @@ export function PrivacyCard({ initial }: { initial: { whatsappOffers: boolean; e
         ) : (
           <div className="w-full space-y-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm">
             <p className="font-semibold text-red-800">Delete your account?</p>
-            <p className="text-red-900/80">We'll remove your account, saved address, points and marketing choices. Invoices for past orders are kept for 6 years because GST law requires it, and are never used for marketing.</p>
+            <p className="text-red-900/80">We&apos;ll remove your account, saved address, points and marketing choices. Invoices for past orders are kept for 6 years because GST law requires it, and are never used for marketing.</p>
             <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason (optional)" className="h-10 w-full rounded-lg border border-red-200 bg-white px-3" />
             <div className="flex gap-2">
               <button type="button" onClick={requestDelete} disabled={pending} className="h-10 rounded-full bg-red-700 px-4 font-semibold text-white">Yes, delete my account</button>

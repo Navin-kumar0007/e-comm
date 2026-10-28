@@ -33,7 +33,6 @@ function OrderTimeline({ status }: { status: string }) {
       <div className="relative flex justify-between">
         {steps.map((step, index) => {
           const isActive = index <= currentIndex;
-          const isCurrent = index === currentIndex;
           const Icon = step.icon;
           
           return (

@@ -39,6 +39,7 @@ export default function OrderConfirmationPage() {
     const stored = sessionStorage.getItem('lastOrder');
     if (stored) {
       try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- the order is kept in sessionStorage, which only exists in the browser
         setOrder(JSON.parse(stored));
       } catch (e) {
         console.error("Failed to parse lastOrder", e);

@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { after } from "next/server";
 import Razorpay from "razorpay";
 import { prisma } from "@/lib/db/prisma";
@@ -8,7 +9,7 @@ import { logOrderEvent } from "@/lib/order-events";
 import { adjustStock } from "@/lib/inventory";
 
 /** Gives a coupon use back when an order never completes (inside a tx). */
-export async function releaseCouponUse(tx: any, couponCode: string | null) {
+export async function releaseCouponUse(tx: Prisma.TransactionClient, couponCode: string | null) {
   if (!couponCode) return;
   await tx.coupon.updateMany({ where: { code: couponCode, usedCount: { gt: 0 } }, data: { usedCount: { decrement: 1 } } });
 }
@@ -41,7 +42,7 @@ function financialYear(date = new Date()) {
 }
 
 /** Allocates the next sequential GST invoice number inside a transaction. */
-export async function allocateInvoiceNumber(tx: any) {
+export async function allocateInvoiceNumber(tx: Prisma.TransactionClient) {
   const fy = financialYear();
   const counter = await tx.invoiceCounter.upsert({
     where: { id: fy },
@@ -89,7 +90,7 @@ export async function sendOrderConfirmedNotifications(orderId: string) {
         customerName: order.customerName,
         total: order.total,
         paymentMethod: paymentLabel,
-        items: order.items.map((i: any) => ({ name: i.productName, quantity: i.quantity, weight: i.weight })),
+        items: order.items.map((i) => ({ name: i.productName, quantity: i.quantity, weight: i.weight })),
         trackingUrl: `${siteUrl}/track/${order.id}`,
       });
       await sendWhatsAppMessage({
@@ -129,7 +130,7 @@ export async function sendOrderConfirmedNotifications(orderId: string) {
  * credited here — it's credited on delivery (see lib/order-status.ts), so
  * cancelled / refused COD orders never earn points.
  */
-export async function creditOrderRewards(tx: any, order: { id: string; userId: string | null; total: number; paymentMethod: string }) {
+export async function creditOrderRewards(tx: Prisma.TransactionClient, order: { id: string; userId: string | null; total: number; paymentMethod: string }) {
   await logOrderEvent(tx, {
     orderId: order.id,
     type: "PAYMENT",
@@ -162,7 +163,7 @@ export type MarkPaidResult =
  * verified the payment (signature + amount + Razorpay order id).
  */
 export async function markOrderPaid(params: { orderId: string; razorpayOrderId: string; paymentId: string }): Promise<MarkPaidResult> {
-  const result: MarkPaidResult = await prisma.$transaction(async (tx: any) => {
+  const result: MarkPaidResult = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const order = await tx.order.findUnique({ where: { id: params.orderId }, include: { items: true } });
     if (!order) return { ok: false, reason: "NOT_FOUND" } as const;
 
@@ -285,7 +286,7 @@ export async function releaseStaleOrders(limit = 25) {
   for (const order of stale) {
     try {
       if (razorpay && order.razorpayOrderId) {
-        const payments: any = await razorpay.orders.fetchPayments(order.razorpayOrderId);
+        const payments = await razorpay.orders.fetchPayments(order.razorpayOrderId);
         const items: any[] = payments?.items ?? [];
         const captured = items.find((p) => p.status === "captured" && p.amount === toPaise(order.total));
         if (captured) {

@@ -85,7 +85,7 @@ export async function updateAdminSettingsAction(data: {
       id,
       storeName: data.storeName || "Spicy Nuts",
       contactEmail: data.contactEmail || 'spicynuts1973@gmail.com',
-      storeDescription: data.storeDescription || 'Pure, Natural, Organic Indian Groceries',
+      storeDescription: data.storeDescription || 'Premium Dry Fruits & Spices from Bidar',
       freeShippingThreshold: data.freeShippingThreshold ?? 999,
       flatShippingRate: data.flatShippingRate ?? 50,
       gstRate: data.gstRate ?? 5,

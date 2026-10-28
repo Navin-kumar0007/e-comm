@@ -39,7 +39,7 @@ export default async function PrintPage({ params, searchParams }: { params: Prom
     ? `@page { size: A4; margin: 8mm; }`
     : `@page { size: 4in 6in; margin: 0; } .sheet-4x6 { page-break-after: always; break-after: page; }`;
 
-  const data: PrintOrder[] = orders.map((o: any) => {
+  const data: PrintOrder[] = orders.map((o) => {
     const ship = o.shipments[0];
     return {
       id: o.id,
@@ -56,8 +56,8 @@ export default async function PrintPage({ params, searchParams }: { params: Prom
       awb: ship?.awb ?? null,
       courierName: ship?.courierName ?? null,
       courierLabelUrl: ship?.labelUrl ?? null,
-      items: o.items.map((i: any) => {
-        const variant = i.variantId ? i.product?.variants?.find((v: any) => v.id === i.variantId) : null;
+      items: o.items.map((i) => {
+        const variant = i.variantId ? i.product?.variants?.find((v) => v.id === i.variantId) : null;
         return {
           name: i.productName || i.product?.name || "Item",
           pack: i.weight,
@@ -90,7 +90,7 @@ export default async function PrintPage({ params, searchParams }: { params: Prom
       {data.length === 0 && <p className="text-sm text-muted-foreground">No orders selected.</p>}
 
       {kind === "invoices" &&
-        orders.map((o: any) => (
+        orders.map((o) => (
           <div key={o.id} className="mb-8 flex justify-center print:mb-0 print:block" style={{ breakAfter: "page" }}>
             <InvoiceDocument order={o} settings={settings} notes={o.invoiceNotes || undefined} />
           </div>

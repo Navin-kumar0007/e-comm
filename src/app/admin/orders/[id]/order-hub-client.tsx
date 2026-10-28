@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Save, Loader2, Printer, MapPin, Phone, Mail, Box, IndianRupee } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Printer, MapPin, Phone, Mail, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -34,7 +34,7 @@ export default function OrderHubClient({
     try {
       await updateInvoiceNotesAction(order.id, invoiceNotes);
       toast.success("Invoice notes saved!");
-    } catch (error) {
+    } catch {
       toast.error("Failed to save notes");
     } finally {
       setIsSaving(false);
@@ -279,7 +279,7 @@ export default function OrderHubClient({
                         <div className="w-6 h-6 border-2 border-gray-400 rounded-sm mx-auto"></div>
                       </td>
                       <td className="py-6 px-4">
-                        <p className="font-bold text-lg">{item.product?.name || "Single Estate Gourmet Item"}</p>
+                        <p className="font-bold text-lg">{item.product?.name || "Item"}</p>
                         <p className="text-sm text-gray-500">SKU: {item.productId.slice(0,8).toUpperCase()}</p>
                       </td>
                       <td className="py-6 px-4 border-l border-black font-medium text-gray-700">

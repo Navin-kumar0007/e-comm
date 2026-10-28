@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Clock, ChefHat, Users, ShoppingCart } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Clock, ChefHat, Users } from "lucide-react";
 import { RecipeAddToCart } from "@/components/storefront/recipe-add-to-cart";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/db/prisma";

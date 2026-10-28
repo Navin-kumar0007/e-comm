@@ -164,7 +164,7 @@ export function buildOfferWhatsAppMessage({
 
 ${title}
 
-Enjoy an exclusive *${discount}% OFF* on our imperial single-estate dry fruits, Kashmiri walnuts & roasted spice blends!
+Enjoy an exclusive *${discount}% OFF* on our premium dry fruits, walnuts & spice blends!
 
 🎁 *Use Coupon Code:* *${couponCode.toUpperCase()}*
 🛍️ *Order Now:* ${shopUrl}
@@ -216,7 +216,7 @@ Exciting news! The price of *${productName}* has just dropped:
 ❌ Previous: ~₹${oldPrice}~
 ✅ *New Price: ₹${newPrice}* (Save ₹${savings})
 
-Limited single-estate stock available at this updated price!
+Limited stock available at this updated price!
 👉 *Claim Yours Now:* ${productUrl}`;
 }
 

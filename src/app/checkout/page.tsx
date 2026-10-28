@@ -36,6 +36,16 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
   const [showMobileSummary, setShowMobileSummary] = useState(false);
 
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+  });
+
   useEffect(() => {
     if (session) {
       getUserPoints().then(setUserPoints);
@@ -55,15 +65,6 @@ export default function CheckoutPage() {
     }
   }, [session]);
   
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
-  });
 
   // Only ask the server about complete, valid pincodes.
   const validPincode = /^[1-9]\d{5}$/.test(formData.pincode.trim()) ? formData.pincode.trim() : "";
@@ -95,6 +96,7 @@ export default function CheckoutPage() {
 
   // Switch away from COD when it isn't available for this pincode / order value.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- switch away from COD once the server says this pincode or total cannot use it
     if (codBlocked && paymentMethod === 'cod') setPaymentMethod('razorpay');
   }, [codBlocked, paymentMethod]);
 

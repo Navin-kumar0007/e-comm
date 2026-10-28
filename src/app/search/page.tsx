@@ -32,7 +32,7 @@ export default async function SearchPage({
         orderBy: { createdAt: 'desc' }
       });
 
-      results = dbProducts.map((p: any) => ({
+      results = dbProducts.map((p) => ({
         ...p, 
         weight: p.weight || undefined, 
         images: JSON.parse(p.images), 
@@ -50,7 +50,7 @@ export default async function SearchPage({
       <div className="mb-8">
         {q ? (
           <p className="text-muted-foreground text-sm">
-            Showing results for <span className="font-semibold text-foreground">"{q}"</span> ({results.length} found)
+            Showing results for <span className="font-semibold text-foreground">&quot;{q}&quot;</span> ({results.length} found)
           </p>
         ) : (
           <p className="text-muted-foreground text-sm">Please enter a search term.</p>
@@ -59,7 +59,7 @@ export default async function SearchPage({
 
       {q && results.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-          {results.map((product: any) => (
+          {results.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
@@ -70,7 +70,7 @@ export default async function SearchPage({
           </div>
           <h2 className="text-xl font-bold mb-2 text-foreground">No matching products found</h2>
           <p className="text-muted-foreground text-sm max-w-md">
-            We couldn't find anything matching "{q}". Check the spelling or browse our gourmet collections.
+            We couldn&apos;t find anything matching &quot;{q}&quot;. Check the spelling or browse our gourmet collections.
           </p>
         </div>
       ) : null}

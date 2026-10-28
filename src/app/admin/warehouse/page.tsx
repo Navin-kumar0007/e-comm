@@ -12,7 +12,7 @@ export default async function WarehousePage() {
   const staff = await requirePagePermission("inventory.manage");
   const o = await getWarehouseOverview();
   const canBuy = staff.can("purchases.manage");
-  const lateCount = o.openPOs.filter((p: any) => p.expectedDate && new Date(p.expectedDate) < new Date()).length;
+  const lateCount = o.openPOs.filter((p) => p.expectedDate && new Date(p.expectedDate) < new Date()).length;
 
   return (
     <div className="space-y-6">
@@ -49,7 +49,7 @@ export default async function WarehousePage() {
                   <th className={`${thCls} text-right`}>Days left</th><th className={`${thCls} text-right`}>Suggest</th><th className={thCls}></th>
                 </tr></thead>
                 <tbody className="divide-y divide-border/60">
-                  {o.reorder.slice(0, 25).map((r: any) => (
+                  {o.reorder.slice(0, 25).map((r) => (
                     <tr key={r.key}>
                       <td className={tdCls}>{r.name}<span className="text-muted-foreground"> · {r.pack}</span></td>
                       <td className={`${tdCls} text-right tabular-nums`}>{r.stock}</td>
@@ -66,7 +66,7 @@ export default async function WarehousePage() {
           {o.lowMaterials.length > 0 && (
             <div className="border-t border-border/60 px-4 py-3 text-sm">
               <p className="mb-1 flex items-center gap-1.5 font-semibold"><Wheat className="h-4 w-4 text-brand-gold" /> Bulk below reorder level</p>
-              {o.lowMaterials.map((m: any) => <p key={m.id} className="text-muted-foreground">{m.name}: <b className="text-amber-700">{qtyFmt(m.stockQty, m.unit)}</b> (reorder at {m.reorderLevel} {m.unit})</p>)}
+              {o.lowMaterials.map((m) => <p key={m.id} className="text-muted-foreground">{m.name}: <b className="text-amber-700">{qtyFmt(m.stockQty, m.unit)}</b> (reorder at {m.reorderLevel} {m.unit})</p>)}
             </div>
           )}
         </Panel>
@@ -74,7 +74,7 @@ export default async function WarehousePage() {
         <Panel title="Expiring or expired" className="xl:col-span-2" action={<Link href="/admin/batches" className="text-xs font-semibold text-primary hover:underline">All batches</Link>}>
           {o.expiring.length === 0 ? <p className="p-4 text-sm text-muted-foreground">No batch expires in the next 45 days.</p> : (
             <ul className="divide-y divide-border/60">
-              {o.expiring.slice(0, 12).map((l: any) => {
+              {o.expiring.slice(0, 12).map((l) => {
                 const st = expiryStatus(l.expiryDate);
                 return (
                   <li key={l.id} className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
@@ -98,7 +98,7 @@ export default async function WarehousePage() {
         <Panel title={`Purchase orders on the way${lateCount ? ` · ${lateCount} late` : ""}`} action={canBuy ? <Link href="/admin/purchases" className="text-xs font-semibold text-primary hover:underline">All POs</Link> : undefined}>
           {o.openPOs.length === 0 ? <p className="p-4 text-sm text-muted-foreground">Nothing on order.</p> : (
             <ul className="divide-y divide-border/60">
-              {o.openPOs.slice(0, 8).map((p: any) => {
+              {o.openPOs.slice(0, 8).map((p) => {
                 const late = p.expectedDate && new Date(p.expectedDate) < new Date();
                 return (
                   <li key={p.id} className="flex items-center justify-between px-4 py-2.5 text-sm">
@@ -113,7 +113,7 @@ export default async function WarehousePage() {
         <Panel title="Recent packing" action={<Link href="/admin/repack" className="text-xs font-semibold text-primary hover:underline">Pack from bulk</Link>}>
           {o.recentRepacks.length === 0 ? <p className="p-4 text-sm text-muted-foreground">No packing runs yet.</p> : (
             <ul className="divide-y divide-border/60">
-              {o.recentRepacks.map((r: any) => {
+              {o.recentRepacks.map((r) => {
                 const pct = r.inputQty ? (r.wastageQty / r.inputQty) * 100 : 0;
                 return (
                   <li key={r.id} className="flex items-center justify-between px-4 py-2.5 text-sm">

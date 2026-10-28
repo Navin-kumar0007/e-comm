@@ -14,7 +14,7 @@ function BuiltInPage() {
       <div className="container mx-auto max-w-4xl px-4 py-8 md:py-10">
       <div className="prose prose-sm sm:prose-base prose-amber dark:prose-invert">
         <p><strong>Last Updated: {new Date().toLocaleDateString()}</strong></p>
-        <p>This Privacy Policy applies to the services offered by B.M.V. SPICES & DRY FRUITS ("Spicy Nuts"). We comply with the Digital Personal Data Protection (DPDP) Act, 2023.</p>
+        <p>This Privacy Policy applies to the services offered by B.M.V. SPICES & DRY FRUITS (&quot;Spicy Nuts&quot;). We comply with the Digital Personal Data Protection (DPDP) Act, 2023.</p>
         
         <h3>1. Data Collection & Consent</h3>
         <p>We collect personal data (Name, Email, Phone, Address) strictly for the purpose of fulfilling your orders and improving your experience. By registering or checking out, you explicitly consent to this data processing.</p>

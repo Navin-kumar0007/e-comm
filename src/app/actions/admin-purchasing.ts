@@ -1,4 +1,5 @@
 'use server';
+import type { Prisma } from "@prisma/client";
 
 import { audit } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
@@ -84,13 +85,13 @@ export async function getPurchaseOrders() {
     take: 300,
     include: { supplier: { select: { name: true } }, lines: { select: { qty: true, receivedQty: true } } },
   });
-  return pos.map((p: any) => ({
+  return pos.map((p) => ({
     id: p.id, number: p.number, status: p.status, supplier: p.supplier.name,
     orderDate: p.orderDate.toISOString(), expectedDate: p.expectedDate?.toISOString() ?? null,
     total: p.total, paidAmount: p.paidAmount, lines: p.lines.length,
     receivedPct: (() => {
-      const q = p.lines.reduce((s: number, l: any) => s + l.qty, 0);
-      return q ? Math.round((p.lines.reduce((s: number, l: any) => s + Math.min(l.qty, l.receivedQty), 0) / q) * 100) : 0;
+      const q = p.lines.reduce((s: number, l) => s + l.qty, 0);
+      return q ? Math.round((p.lines.reduce((s: number, l) => s + Math.min(l.qty, l.receivedQty), 0) / q) * 100) : 0;
     })(),
     supplierInvoiceNo: p.supplierInvoiceNo,
   }));
@@ -161,13 +162,13 @@ export async function savePurchaseOrderAction(input: PurchaseInput) {
     if (!(rate >= 0)) return { error: 'Rates must be zero or more.' };
     if (gstRate < 0 || gstRate > 40) return { error: 'GST must be between 0 and 40%.' };
     if (l.kind === 'MATERIAL') {
-      const m = materials.find((x: any) => x.id === l.materialId);
+      const m = materials.find((x) => x.id === l.materialId);
       if (!m) return { error: 'Choose the bulk item for every line.' };
       rows.push({ materialId: m.id, productId: null, variantId: null, description: m.name, unit: m.unit, qty: round3(qty), rate, gstRate });
     } else {
-      const p: any = products.find((x: any) => x.id === l.productId);
+      const p = products.find((x) => x.id === l.productId);
       if (!p) return { error: 'Choose the product for every line.' };
-      const v = l.variantId ? p.variants.find((x: any) => x.id === l.variantId) : null;
+      const v = l.variantId ? p.variants.find((x) => x.id === l.variantId) : null;
       if (l.variantId && !v) return { error: `Pack size not found for ${p.name}.` };
       if (!Number.isInteger(qty)) return { error: `Packs of ${p.name} must be a whole number.` };
       rows.push({ materialId: null, productId: p.id, variantId: v?.id ?? null, description: `${p.name} ${v?.label ?? p.weight ?? ''}`.trim(), unit: 'pcs', qty, rate, gstRate });
@@ -186,11 +187,11 @@ export async function savePurchaseOrderAction(input: PurchaseInput) {
     status: input.status,
   };
 
-  const po = await prisma.$transaction(async (tx: any) => {
+  const po = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     if (input.id) {
       const existing = await tx.purchaseOrder.findUnique({ where: { id: input.id }, include: { lines: true } });
       if (!existing) throw new Error('Purchase order not found');
-      if (!['DRAFT', 'ORDERED'].includes(existing.status) || existing.lines.some((l: any) => l.receivedQty > 0)) {
+      if (!['DRAFT', 'ORDERED'].includes(existing.status) || existing.lines.some((l) => l.receivedQty > 0)) {
         return { error: 'Goods have already been received on this order, so it can no longer be edited.' };
       }
       await tx.purchaseLine.deleteMany({ where: { poId: existing.id } });
@@ -210,7 +211,7 @@ export async function setPurchaseStatusAction(id: string, status: 'ORDERED' | 'C
   await who();
   const po = await prisma.purchaseOrder.findUnique({ where: { id }, include: { lines: true } });
   if (!po) return { error: 'Purchase order not found.' };
-  if (status === 'CANCELLED' && po.lines.some((l: any) => l.receivedQty > 0)) return { error: 'Some goods were already received. Receive the rest or leave it part-received.' };
+  if (status === 'CANCELLED' && po.lines.some((l) => l.receivedQty > 0)) return { error: 'Some goods were already received. Receive the rest or leave it part-received.' };
   if (status === 'ORDERED' && po.status !== 'DRAFT') return { error: 'Only a draft can be marked as ordered.' };
   await prisma.purchaseOrder.update({ where: { id }, data: { status } });
   revalidatePath('/admin/purchases');
@@ -243,8 +244,8 @@ export async function receivePurchaseAction(input: ReceiveInput) {
   for (const r of input.lines) {
     const qty = Number(r.qty);
     if (!(qty > 0)) continue;
-    const idx = po.lines.findIndex((l: any) => l.id === r.lineId);
-    const line: any = po.lines[idx];
+    const idx = po.lines.findIndex((l) => l.id === r.lineId);
+    const line = po.lines[idx];
     if (!line) return { error: 'Line not found.' };
     const remaining = round3(line.qty - line.receivedQty);
     if (qty > remaining + 1e-6) return { error: `${line.description}: only ${remaining} ${line.unit} left to receive.` };
@@ -264,7 +265,7 @@ export async function receivePurchaseAction(input: ReceiveInput) {
   const lots: string[] = [];
   for (const { line, qty, unitCost, expiryDate, mfgDate, lotNumber } of todo) {
     try {
-      const lotNo = await prisma.$transaction(async (tx: any) => {
+      const lotNo = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         const fresh = await tx.purchaseLine.findUnique({ where: { id: line.id } });
         if (!fresh || qty > fresh.qty - fresh.receivedQty + 1e-6) throw new UserError(`${line.description} was already received.`);
         let lot;
@@ -307,8 +308,8 @@ export async function receivePurchaseAction(input: ReceiveInput) {
 async function refreshPoStatus(poId: string, input: ReceiveInput) {
   const po = await prisma.purchaseOrder.findUnique({ where: { id: poId }, include: { lines: true } });
   if (!po) return;
-  const complete = po.lines.every((l: any) => l.receivedQty + 1e-6 >= l.qty);
-  const any = po.lines.some((l: any) => l.receivedQty > 0);
+  const complete = po.lines.every((l) => l.receivedQty + 1e-6 >= l.qty);
+  const any = po.lines.some((l) => l.receivedQty > 0);
   await prisma.purchaseOrder.update({
     where: { id: poId },
     data: {

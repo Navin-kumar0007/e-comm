@@ -1,4 +1,5 @@
 'use server';
+import type { Prisma } from "@prisma/client";
 
 import { audit } from '@/lib/audit';
 import { sendWhatsAppMessage, buildPriceDropWhatsAppMessage } from "@/lib/whatsapp";
@@ -35,7 +36,7 @@ export async function deleteProductAction(id: string) {
     });
   } else {
     // No past orders: safe hard delete
-    await prisma.$transaction(async (tx: any) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       await tx.review.deleteMany({ where: { productId: id } });
       await tx.priceAlert.deleteMany({ where: { productId: id } });
       await tx.product.delete({ where: { id } });
@@ -60,7 +61,7 @@ export async function bulkDeleteProductsAction(ids: string[]) {
         data: { status: 'ARCHIVED', stock: 0 }
       });
     } else {
-      await prisma.$transaction(async (tx: any) => {
+      await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         await tx.review.deleteMany({ where: { productId: id } });
         await tx.priceAlert.deleteMany({ where: { productId: id } });
         await tx.product.delete({ where: { id } });
@@ -103,7 +104,7 @@ export async function createProductAction(data: any) {
   const actor = await adminActor('catalog.manage');
   const { dietaryTagIds, labelSettings, stock: openingStock, ...restData } = data;
 
-  const product = await prisma.$transaction(async (tx: any) => {
+  const product = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
    const created = await tx.product.create({
     data: {
       ...restData,
@@ -168,7 +169,7 @@ export async function updateProductAction(id: string, data: any) {
     }
   });
 
-  await prisma.$transaction(async (tx: any) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     if (hasSizes) {
       // Price & stock of products with sizes are managed per size.
       await syncProductFromVariants(tx, id);
@@ -225,7 +226,7 @@ export async function updateProductQuickAction(id: string, data: { stock: number
   const actor = await adminActor('catalog.manage');
   const sizes = await prisma.productVariant.count({ where: { productId: id, isActive: true } });
   if (sizes > 0) return { error: 'This product has sizes — edit stock and price per size on the product page.' };
-  await prisma.$transaction(async (tx: any) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.product.update({ where: { id }, data: { salePrice: data.salePrice } });
     await setStockLevel(tx, { productId: id, newStock: data.stock, reason: 'CORRECTION', actor, note: 'Quick edit' });
   });
@@ -268,7 +269,7 @@ export async function saveProductVariantsAction(
   if (clean.some((r) => r.salePrice !== null && r.salePrice >= r.price)) return { error: 'Sale price must be lower than the regular price.' };
   if (new Set(clean.map((r) => r.label.toLowerCase())).size !== clean.length) return { error: 'Size labels must be unique.' };
 
-  await prisma.$transaction(async (tx: any) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const existing = await tx.productVariant.findMany({ where: { productId, isActive: true } });
     const keep = new Set(clean.filter((r) => r.id).map((r) => r.id));
 
@@ -287,7 +288,7 @@ export async function saveProductVariantsAction(
     }
     for (const r of clean) {
       const fields = { label: r.label, price: r.price, salePrice: r.salePrice, mrp: r.mrp, costPrice: r.costPrice, sku: r.sku, sortOrder: r.sortOrder };
-      if (r.id && existing.some((v: any) => v.id === r.id)) {
+      if (r.id && existing.some((v) => v.id === r.id)) {
         await tx.productVariant.update({ where: { id: r.id }, data: fields });
         await setStockLevel(tx, { productId, variantId: r.id, newStock: r.stock, reason: 'CORRECTION', actor, note: 'Edited sizes' });
       } else {

@@ -18,6 +18,7 @@ export function CookieConsent({ gaId }: { gaId?: string }) {
   useEffect(() => {
     let saved: string | null = null;
     try { saved = localStorage.getItem(KEY); } catch { /* private mode */ }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the saved choice is in localStorage, which only exists in the browser
     setChoice(saved === "granted" || saved === "denied" ? saved : null);
     const reopen = () => setChoice(null);
     window.addEventListener(OPEN_COOKIE_SETTINGS, reopen);

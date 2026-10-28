@@ -195,7 +195,7 @@ export function InventoryClient({ products, initialQuery = "" }: { products: Pro
                           <p className="text-xs text-muted-foreground">No recorded changes yet — history starts from now.</p>
                         ) : (
                           <ul className="space-y-1 max-h-64 overflow-y-auto text-xs">
-                            {history[r.product.id].map((m: any) => (
+                            {history[r.product.id].map((m) => (
                               <li key={m.id} className="flex flex-wrap gap-x-3">
                                 <span className="text-muted-foreground w-32">{new Date(m.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
                                 <span className={`w-12 text-right font-semibold tabular-nums ${m.delta > 0 ? "text-emerald-600" : "text-red-600"}`}>{m.delta > 0 ? `+${m.delta}` : m.delta}</span>

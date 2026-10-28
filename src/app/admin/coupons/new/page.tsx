@@ -36,7 +36,7 @@ export default function NewCouponPage() {
       }
       toast.success("Coupon created successfully!");
       router.push("/admin/coupons");
-    } catch (err) {
+    } catch {
       toast.error("Failed to create coupon");
     } finally {
       setLoading(false);

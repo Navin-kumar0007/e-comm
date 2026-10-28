@@ -22,9 +22,9 @@ export async function getAdminCustomers() {
     _max: { createdAt: true },
     where: { userId: { not: null }, status: { in: BOOKED } },
   });
-  const spendByUser = new Map(spendData.map((s: any) => [s.userId, s]));
+  const spendByUser = new Map(spendData.map((s) => [s.userId, s]));
 
-  return users.map((u: any) => ({
+  return users.map((u) => ({
     id: u.id,
     name: u.name,
     email: u.email,

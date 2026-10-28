@@ -61,7 +61,7 @@ export default async function SubscriptionsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6">
-          {subscriptions.map((sub: any) => (
+          {subscriptions.map((sub) => (
             <div key={sub.id} className="bg-card border border-border rounded-3xl p-6 shadow-sm flex flex-col md:flex-row gap-6 relative overflow-hidden">
               {sub.status === 'ACTIVE' && (
                 <div className="absolute top-0 right-0 w-2 h-full bg-success"></div>

@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       }
 
       // Confirm with Razorpay that this payment really is for our order and amount.
-      let payment: any = await razorpay.payments.fetch(razorpay_payment_id);
+      let payment = await razorpay.payments.fetch(razorpay_payment_id);
       if (payment.order_id !== order.razorpayOrderId || Number(payment.amount) !== toPaise(order.total)) {
         console.error(`[VERIFY] Payment ${razorpay_payment_id} mismatch for order ${order.id}`);
         return NextResponse.json({ error: "Payment does not match this order" }, { status: 400 });

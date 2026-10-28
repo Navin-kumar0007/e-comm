@@ -55,21 +55,21 @@ export async function getDashboard(range: RangeKey) {
   const prevOrders = prev._count._all;
   const prevNet = round(prevGross - (prevRefunds._sum.amount ?? 0));
 
-  const gross = round(orders.reduce((s: number, o: any) => s + o.total, 0));
+  const gross = round(orders.reduce((s: number, o) => s + o.total, 0));
   const refunded = round(refunds._sum.amount ?? 0);
   const count = orders.length;
 
   // RTO rate among orders from this period that have finished their journey.
-  const finished = orders.filter((o: any) => ["DELIVERED", "RETURNED", "RTO"].includes(o.status));
-  const rto = finished.filter((o: any) => o.status === "RTO").length;
+  const finished = orders.filter((o) => ["DELIVERED", "RETURNED", "RTO"].includes(o.status));
+  const rto = finished.filter((o) => o.status === "RTO").length;
 
   // Repeat customers: customers in this period with 2+ booked orders ever.
-  const emails: string[] = [...new Set<string>(orders.map((o: any) => String(o.customerEmail).toLowerCase()))];
+  const emails: string[] = [...new Set<string>(orders.map((o) => String(o.customerEmail).toLowerCase()))];
   let repeat = 0;
   if (emails.length) {
     const lifetime = await prisma.order.groupBy({
       by: ["customerEmail"],
-      where: { customerEmail: { in: orders.map((o: any) => o.customerEmail) }, status: { in: BOOKED_STATUSES } },
+      where: { customerEmail: { in: orders.map((o) => o.customerEmail) }, status: { in: BOOKED_STATUSES } },
       _count: { _all: true },
     });
     const byEmail = new Map<string, number>();
@@ -81,7 +81,7 @@ export async function getDashboard(range: RangeKey) {
   }
 
   // Top products by revenue, with margin where cost price is known.
-  const productIds = [...new Set(orders.flatMap((o: any) => o.items.map((i: any) => i.productId)).filter(Boolean))] as string[];
+  const productIds = [...new Set(orders.flatMap((o) => o.items.map((i) => i.productId)).filter(Boolean))] as string[];
   const costs = productIds.length
     ? await prisma.product.findMany({ where: { id: { in: productIds } }, select: { id: true, costPrice: true, variants: { select: { id: true, costPrice: true } } } })
     : [];
@@ -134,7 +134,7 @@ export async function getDashboard(range: RangeKey) {
     customers: emails.length,
     repeatRate: emails.length ? Math.round((repeat / emails.length) * 100) : 0,
     rtoRate: finished.length ? Math.round((rto / finished.length) * 100) : null,
-    codShare: count ? Math.round((orders.filter((o: any) => o.paymentMethod === "COD").length / count) * 100) : 0,
+    codShare: count ? Math.round((orders.filter((o) => o.paymentMethod === "COD").length / count) * 100) : 0,
     toShip: liveCount(["PROCESSING", "CONFIRMED"]),
     inTransit: liveCount(["SHIPPED"]),
     codToCollect,

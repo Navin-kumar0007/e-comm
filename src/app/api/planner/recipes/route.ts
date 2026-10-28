@@ -8,7 +8,7 @@ export async function GET() {
       take: 20
     });
     return NextResponse.json(recipes);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

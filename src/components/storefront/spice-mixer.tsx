@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ShoppingCart, Leaf, Flame, Sparkles, Scale, Info, Wand2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -59,7 +59,6 @@ export function SpiceMixer() {
   const [activeTab, setActiveTab] = useState<'manual' | 'sommelier'>('manual');
   const [sommelierPrompt, setSommelierPrompt] = useState('');
   const [isFormulating, setIsFormulating] = useState(false);
-  const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const addItem = useCartStore(s => s.addItem);
 
@@ -555,7 +554,7 @@ export function SpiceMixer() {
           {blendDescription && (
             <div className="text-xs text-muted-foreground italic bg-secondary/5 p-3 rounded-xl border border-secondary/10">
               <span className="font-bold text-primary not-italic block mb-0.5">Blend Profile:</span>
-              "{blendDescription}"
+              &quot;{blendDescription}&quot;
             </div>
           )}
 

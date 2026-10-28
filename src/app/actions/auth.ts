@@ -118,7 +118,7 @@ Use coupon code *ROYAL10* at checkout for *10% OFF* on your first order!
     }
 
     return { success: true, user: { id: user.id, name: user.name, email: user.email } };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Registration error:", error);
     return { error: "Something went wrong during registration" };
   }

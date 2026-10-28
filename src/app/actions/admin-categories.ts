@@ -15,7 +15,7 @@ export async function getAdminCategories() {
     orderBy: { name: 'asc' }
   });
 
-  return categories.map((c: any) => ({
+  return categories.map((c) => ({
     id: c.id,
     name: c.name,
     slug: c.slug,

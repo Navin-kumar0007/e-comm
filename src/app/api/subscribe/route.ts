@@ -63,7 +63,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, subscription, bonusPoints: everSubscribed ? 0 : WELCOME_BONUS_POINTS });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Subscribe Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

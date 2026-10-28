@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useWishlistStore } from "@/lib/store/wishlist-store";
 import { getProductsByIds } from "@/app/actions/products";
 import { ProductCard } from "@/components/storefront/product-card";
@@ -7,13 +7,15 @@ import { Heart, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+const noopSubscribe = () => () => {};
+
 export default function WishlistDashboardPage() {
   const { items } = useWishlistStore();
-  const [mounted, setMounted] = useState(false);
+  // The saved wishlist only exists in the browser, so render after hydration.
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const [wishlistProducts, setWishlistProducts] = useState<any[]>([]);
 
   useEffect(() => {
-    setMounted(true);
     getProductsByIds(items).then(setWishlistProducts);
   }, [items]);
 
@@ -25,7 +27,7 @@ export default function WishlistDashboardPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-[30px] font-heading font-bold leading-none text-primary">My Wishlist</h1>
-        <p className="text-muted-foreground">Products you've saved for later.</p>
+        <p className="text-muted-foreground">Products you&apos;ve saved for later.</p>
       </div>
 
       {wishlistProducts.length > 0 ? (
@@ -40,7 +42,7 @@ export default function WishlistDashboardPage() {
             <Heart className="w-8 h-8" />
           </div>
           <h2 className="text-xl font-bold mb-2">Your wishlist is empty</h2>
-          <p className="text-muted-foreground mb-6">Save your favourite items here so you don't lose track of them.</p>
+          <p className="text-muted-foreground mb-6">Save your favourite items here so you don&apos;t lose track of them.</p>
           <Link href="/shop">
             <Button className="rounded-full px-8 shadow-sm">
               <ShoppingBag className="w-4 h-4 mr-2" /> Start Exploring

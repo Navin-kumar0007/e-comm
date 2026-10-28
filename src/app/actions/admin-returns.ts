@@ -27,7 +27,7 @@ export async function getReturnRequests() {
     take: 200,
     include: { order: { select: { id: true, customerName: true, customerEmail: true, customerPhone: true, total: true, refundedAmount: true, paymentMethod: true, paymentId: true, paidAt: true, status: true } } },
   });
-  return rows.map((r: any) => ({
+  return rows.map((r) => ({
     ...r,
     images: (() => { try { return JSON.parse(r.images) as string[]; } catch { return []; } })(),
     refundable: Math.max(0, Math.round((amountPaid(r.order) - r.order.refundedAmount) * 100) / 100),

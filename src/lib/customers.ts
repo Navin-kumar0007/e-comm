@@ -136,17 +136,17 @@ export async function getCustomerProfile(key: string) {
     prisma.returnRequest.count({ where: { order: orderWhere } }).catch(() => 0),
   ]);
   if (!user && !orders.length) return null;
-  const booked = orders.filter((o: any) => BOOKED_STATUSES.includes(o.status));
-  const spend = booked.reduce((s: number, o: any) => s + o.total, 0);
-  const addresses = [...new Set(orders.map((o: any) => o.shippingAddress).filter((a: string) => a && !a.startsWith("Counter sale")))].slice(0, 6);
+  const booked = orders.filter((o) => BOOKED_STATUSES.includes(o.status));
+  const spend = booked.reduce((s: number, o) => s + o.total, 0);
+  const addresses = [...new Set(orders.map((o) => o.shippingAddress).filter((a: string) => a && !a.startsWith("Counter sale")))].slice(0, 6);
   const name = user?.name ?? orders[0]?.customerName ?? "Customer";
   return JSON.parse(JSON.stringify({
-    key, name, user, phone: isPhone ? key : user?.phone ? phoneKey(user.phone) : phoneKey(orders[0]?.customerPhone), email: user?.email ?? orders.find((o: any) => !isPlaceholderEmail(o.customerEmail))?.customerEmail ?? null,
+    key, name, user, phone: isPhone ? key : user?.phone ? phoneKey(user.phone) : phoneKey(orders[0]?.customerPhone), email: user?.email ?? orders.find((o) => !isPlaceholderEmail(o.customerEmail))?.customerEmail ?? null,
     stats: {
       orders: booked.length, spend: Math.round(spend * 100) / 100, aov: booked.length ? Math.round((spend / booked.length) * 100) / 100 : 0,
       first: booked.length ? booked[booked.length - 1].createdAt : null, last: booked[0]?.createdAt ?? null,
-      rto: orders.filter((o: any) => o.status === "RTO").length, cancelled: orders.filter((o: any) => o.status === "CANCELLED").length, returns,
-      cod: booked.filter((o: any) => o.paymentMethod === "COD").length,
+      rto: orders.filter((o) => o.status === "RTO").length, cancelled: orders.filter((o) => o.status === "CANCELLED").length, returns,
+      cod: booked.filter((o) => o.paymentMethod === "COD").length,
     },
     orders, addresses, notes, consents, requests, chats,
   }));

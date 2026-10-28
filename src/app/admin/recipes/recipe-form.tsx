@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createRecipe, updateRecipe } from '@/app/actions/admin-recipes';
 import { Button } from '@/components/ui/button';
@@ -74,7 +74,7 @@ export function RecipeForm({ initialData = null, products = [] }: { initialData?
         toast.success('Recipe created!');
       }
       router.push('/admin/recipes');
-    } catch (error) {
+    } catch {
       toast.error('Failed to save recipe.');
     } finally {
       setIsSubmitting(false);
@@ -148,7 +148,7 @@ export function RecipeForm({ initialData = null, products = [] }: { initialData?
         <h3 className="font-semibold text-lg border-b pb-2">Linked Store Products (Shoppable)</h3>
         <p className="text-sm text-muted-foreground">Select products from your store that this recipe uses. Customers can add them to their cart directly from the recipe page.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-64 overflow-y-auto p-4 border rounded-xl bg-background">
-          {products.map((p: any) => (
+          {products.map((p) => (
             <label key={p.id} className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer">
               <input type="checkbox" checked={formData.productIds.includes(p.id)} onChange={() => toggleProduct(p.id)} className="w-4 h-4 rounded text-primary" />
               <div className="text-sm font-medium">{p.name}</div>

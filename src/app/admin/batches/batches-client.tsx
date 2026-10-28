@@ -68,7 +68,7 @@ export function BatchesClient({ lots, unassigned, canTrace, initialQuery }: { lo
 
   const doAssign = () =>
     start(async () => {
-      const { label, max, ...input } = assign!;
+      const { label, max: _max, ...input } = assign!; // eslint-disable-line @typescript-eslint/no-unused-vars -- drop the UI-only cap before sending
       const res = await createOpeningLotAction(input);
       if ("error" in res && res.error) { toast.error(res.error); return; }
       toast.success(`Batch created for ${label}`);
@@ -116,7 +116,7 @@ export function BatchesClient({ lots, unassigned, canTrace, initialQuery }: { lo
       {unassignedUnits > 0 && (
         <Panel title={<span className="flex items-center gap-2"><Tags className="h-4 w-4 text-brand-gold" /> Packs without a batch ({unassignedUnits})</span>}
           action={<button className={btnPrimary} onClick={openBulk}><Layers className="h-4 w-4" /> Give all a batch</button>}>
-          <p className="border-b border-border/60 px-4 py-2 text-xs text-muted-foreground">This stock was added before batches were tracked. Give it a batch with its best-before date so expiry alerts and recalls cover it. Stock numbers don't change.</p>
+          <p className="border-b border-border/60 px-4 py-2 text-xs text-muted-foreground">This stock was added before batches were tracked. Give it a batch with its best-before date so expiry alerts and recalls cover it. Stock numbers don&apos;t change.</p>
           <div className="flex flex-wrap gap-2 p-4">
             {unassigned.slice(0, 60).map((u) => (
               <button key={u.key} onClick={() => setAssign({ productId: u.productId, variantId: u.variantId, qty: u.unassigned, label: `${u.name} · ${u.pack}`, max: u.unassigned, unitCost: u.costPrice ?? undefined })}

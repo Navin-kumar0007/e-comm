@@ -20,13 +20,13 @@ export async function getEditorData() {
   ]);
   const values: Record<string, unknown> = {};
   for (const k of CONTENT_KEYS) {
-    const row = rows.find((r: any) => r.key === k);
+    const row = rows.find((r) => r.key === k);
     const def = CONTENT_DEFAULTS[k];
-    let saved: any = null;
+    let saved = null;
     try { saved = row ? JSON.parse(row.value) : null; } catch { saved = null; }
     values[k] = saved === null ? def : Array.isArray(def) ? saved : { ...(def as object), ...saved };
   }
-  return JSON.parse(JSON.stringify({ values, versions, updated: rows.map((r: any) => ({ key: r.key, by: r.updatedBy, at: r.updatedAt })) }));
+  return JSON.parse(JSON.stringify({ values, versions, updated: rows.map((r) => ({ key: r.key, by: r.updatedBy, at: r.updatedAt })) }));
 }
 
 const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
@@ -43,10 +43,10 @@ function sanitize(key: ContentKey, v: any): any {
     case 'hero':
       return { eyebrow: str(v.eyebrow, 60), title: str(v.title, 60), subtitle: str(v.subtitle, 240), primaryText: str(v.primaryText, 30), primaryLink: link(v.primaryLink) || '/shop', secondaryText: str(v.secondaryText, 30), secondaryLink: link(v.secondaryLink) || '#gift' };
     case 'banners':
-      return (Array.isArray(v) ? v : []).slice(0, 8).map((b: any, i: number) => ({
+      return (Array.isArray(v) ? v : []).slice(0, 8).map((b, i: number) => ({
         id: str(b.id, 40) || `b${Date.now()}${i}`, image: link(b.image), mobileImage: link(b.mobileImage) || undefined, link: link(b.link) || undefined, alt: str(b.alt, 120) || 'Offer',
         startsAt: str(b.startsAt, 30) || undefined, endsAt: str(b.endsAt, 30) || undefined, enabled: !!b.enabled,
-      })).filter((b: any) => b.image);
+      })).filter((b) => b.image);
     case 'sections': {
       const all = CONTENT_DEFAULTS.sections.order as string[];
       const order = (Array.isArray(v.order) ? v.order : []).filter((k: string) => all.includes(k));

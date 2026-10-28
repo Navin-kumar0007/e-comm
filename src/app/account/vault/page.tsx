@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { ShieldCheck, Info, RefreshCw, AlertTriangle, Sparkles, HelpCircle } from 'lucide-react';
+import { RefreshCw, Sparkles } from 'lucide-react';
 
 export const metadata = {
   title: 'My Freshness Vault',
@@ -22,6 +22,11 @@ interface VaultItem {
   baseVal: number;
   heatVal: number;
   aromaticVal: number;
+}
+
+/** Whole days since a purchase (read at request time). */
+function daysSince(date: Date) {
+  return Math.max(0, Math.floor((Date.now() - date.getTime()) / (24 * 60 * 60 * 1000)));
 }
 
 export default async function VaultPage() {
@@ -104,63 +109,13 @@ export default async function VaultPage() {
     }
   }
   
-  // 2. Populate fallback high-fidelity premium items if they don't have custom blends yet
-  const fallbackBlends: VaultItem[] = [
-    {
-      id: 'mock-1',
-      name: 'Signature Garam Masala',
-      type: 'ground',
-      purchaseDate: new Date(Date.now() - 42 * 24 * 60 * 60 * 1000), // 42 days ago
-      ageDays: 42,
-      potency: 77,
-      status: 'PEAK',
-      base: 'cumin',
-      heat: 'pepper',
-      aromatic: 'cinnamon',
-      baseVal: 40,
-      heatVal: 30,
-      aromaticVal: 30
-    },
-    {
-      id: 'mock-2',
-      name: 'Fiery Garlic Spice Rub',
-      type: 'ground',
-      purchaseDate: new Date(Date.now() - 110 * 24 * 60 * 60 * 1000), // 110 days ago
-      ageDays: 110,
-      potency: 39,
-      status: 'MELLOW',
-      base: 'mustard',
-      heat: 'ghost',
-      aromatic: 'clove',
-      baseVal: 30,
-      heatVal: 50,
-      aromaticVal: 20
-    },
-    {
-      id: 'mock-3',
-      name: 'Golden Glow Healing Turmeric',
-      type: 'whole',
-      purchaseDate: new Date(Date.now() - 280 * 24 * 60 * 60 * 1000), // 280 days ago
-      ageDays: 280,
-      potency: 22,
-      status: 'EXPIRED',
-      base: 'turmeric',
-      heat: 'mild',
-      aromatic: 'cardamom',
-      baseVal: 60,
-      heatVal: 20,
-      aromaticVal: 20
-    }
-  ];
-
-  // Combine real blends with fallbacks (prioritize real purchases)
-  const vaultItems = [...realBlends, ...fallbackBlends];
+  // Only blends this customer really ordered.
+  const vaultItems = realBlends;
 
   // Calculate live dynamic potency values
   const processedItems = vaultItems.map(item => {
     const shelfLife = item.type === 'ground' ? 180 : 360; // 6 months vs 12 months
-    const ageMs = Date.now() - item.purchaseDate.getTime();
-    const ageDays = Math.max(0, Math.floor(ageMs / (24 * 60 * 60 * 1000)));
+    const ageDays = daysSince(item.purchaseDate);
     
     // Potency decays linearly
     const potency = Math.max(0, Math.round(((shelfLife - ageDays) / shelfLife) * 100));
@@ -189,12 +144,16 @@ export default async function VaultPage() {
             Tracking the dynamic sensory potency and essential oil decay of your custom artisanal selections.
           </p>
         </div>
-        <div className="flex items-center gap-2 bg-secondary/10 border border-secondary/20 px-3.5 py-1.5 rounded-full text-xs font-bold text-brand-gold-deep">
-          <ShieldCheck className="w-4 h-4" /> 100% Aroma-Lock Guarantee
-        </div>
       </div>
 
       {/* Main Grid: Vault Items */}
+      {processedItems.length === 0 && (
+        <div className="mb-12 rounded-[var(--radius-card)] border border-dashed border-border bg-card p-8 text-center">
+          <p className="font-heading text-2xl font-bold text-primary">Your vault is empty</p>
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">Custom blends you order from the Spice Atelier appear here, with how many days they have been open and how fresh they still are.</p>
+          <Link href="/blend-creator" className="mt-5 inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-extrabold text-primary-foreground">Create a blend</Link>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {processedItems.map(item => {
           let statusText = 'Peak Potency';
@@ -256,7 +215,7 @@ export default async function VaultPage() {
                 </div>
 
                 <p className="text-xs text-muted-foreground italic min-h-[40px] leading-relaxed">
-                  "{tip}"
+                  &quot;{tip}&quot;
                 </p>
 
                 {/* 1-Click Reblend Action */}

@@ -40,7 +40,7 @@ export function ProductReviews({ productId }: { productId: string }) {
   const [activeLightboxImage, setActiveLightboxImage] = useState<string | null>(null);
 
   useEffect(() => {
-    getReviews(productId).then((data: any) => {
+    getReviews(productId).then((data) => {
       setReviews(data);
       setLoading(false);
     });
@@ -134,7 +134,7 @@ export function ProductReviews({ productId }: { productId: string }) {
     setRating(5);
 
     // Refresh reviews immediately
-    getReviews(productId).then((data: any) => setReviews(data));
+    getReviews(productId).then((data) => setReviews(data));
   };
 
   const avgRating =
@@ -171,7 +171,7 @@ export function ProductReviews({ productId }: { productId: string }) {
             Share Your Experience
           </h3>
           <p className="text-xs text-muted-foreground mb-5">
-            Help other connoisseurs discover authentic single-estate harvests.
+            Help other customers choose with your honest review.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">

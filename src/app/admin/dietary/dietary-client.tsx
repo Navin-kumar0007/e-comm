@@ -27,7 +27,7 @@ export function DietaryClient({ initialTags }: { initialTags: any[] }) {
       setSlug('');
       setDescription('');
       toast.success('Dietary Profile Created!');
-    } catch (error) {
+    } catch {
       toast.error('Failed to create tag. Slug might be taken.');
     } finally {
       setIsSubmitting(false);

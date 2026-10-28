@@ -70,7 +70,7 @@ export function CountSheet({ count }: { count: any }) {
         <Stat label="Short" value={diffs.filter((r: any) => r.diff < 0).length} tone={diffs.some((r: any) => r.diff < 0) ? "bad" : undefined} />
         <Stat label="Difference at cost" value={`${value > 0 ? "+" : ""}${inr(value)}`} tone={value < 0 ? "bad" : value > 0 ? "good" : undefined} />
       </div>
-      {open && <p className="rounded-lg border border-brand-gold/40 bg-background px-4 py-2.5 text-sm text-[#5a4a32] print:hidden">Leave a box empty to skip that item. "Update stock" sets each counted item to the number you typed.</p>}
+      {open && <p className="rounded-lg border border-brand-gold/40 bg-background px-4 py-2.5 text-sm text-[#5a4a32] print:hidden">Leave a box empty to skip that item. &quot;Update stock&quot; sets each counted item to the number you typed.</p>}
 
       <Panel
         title={<span className="hidden print:inline">{count.number}</span>}

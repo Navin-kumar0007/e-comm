@@ -21,7 +21,7 @@ export default function SubmitRecipe() {
       await submitRecipe(data);
       toast.success("Recipe submitted successfully! Waiting for admin approval.");
       router.push('/recipes');
-    } catch (err) {
+    } catch {
       toast.error("Failed to submit recipe.");
     } finally {
       setLoading(false);

@@ -70,15 +70,17 @@ export function AddressMapSelector({ onSelectAddress, triggerButtonText = "Locat
       }
       setMapLoaded(false);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run when the sheet opens, not on every render of the helpers
   }, [isOpen]);
 
   // IP Geolocation Fallback on modal open
   useEffect(() => {
     if (!isOpen || !mapLoaded) return;
     geolocateViaIP();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run when the sheet opens, not on every render of the helpers
   }, [isOpen, mapLoaded]);
 
-  const geolocateViaIP = async () => {
+  async function geolocateViaIP() {
     try {
       const res = await fetch("https://ipapi.co/json/");
       const data = await res.json();
@@ -99,9 +101,9 @@ export function AddressMapSelector({ onSelectAddress, triggerButtonText = "Locat
       console.warn("IP geolocation fallback failed:", e);
     }
     return false;
-  };
+  }
 
-  const initMap = () => {
+  function initMap() {
     const L = (window as any).L;
     if (!L || !mapContainerRef.current) return;
 
@@ -139,7 +141,7 @@ export function AddressMapSelector({ onSelectAddress, triggerButtonText = "Locat
     });
 
     reverseGeocode(coordinates.lat, coordinates.lng);
-  };
+  }
 
   // Reverse Geocoding via OSM Nominatim API
   const reverseGeocode = async (lat: number, lng: number) => {

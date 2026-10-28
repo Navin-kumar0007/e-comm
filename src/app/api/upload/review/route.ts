@@ -80,7 +80,7 @@ export async function POST(req: Request) {
 
       return NextResponse.json({ url: "/uploads/reviews/" + filename });
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Review upload failed:", error);
     return NextResponse.json({ error: "Upload failed. Please try again." }, { status: 500 });
   }

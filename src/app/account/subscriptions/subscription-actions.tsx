@@ -23,7 +23,7 @@ export default function SubscriptionActions({
     try {
       await toggleUserSubscriptionAction(id, newStatus);
       toast.success(newStatus === 'ACTIVE' ? "Subscription reactivated successfully!" : "Subscription cancelled.");
-    } catch (err) {
+    } catch {
       toast.error("Failed to update subscription");
     } finally {
       setIsProcessing(false);

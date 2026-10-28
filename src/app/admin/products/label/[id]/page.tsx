@@ -2,8 +2,14 @@ import { requirePagePermission } from "@/lib/auth-guard";
 import { prisma } from "@/lib/db/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Printer, Leaf, ShieldCheck, QrCode } from "lucide-react";
+import { ArrowLeft, Printer, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Barcode from "@/components/ui/barcode";
+import { getStoreSettings } from "@/lib/store-settings";
+
+/** FSSAI registration shown on the home page and at checkout, used when Settings has none. */
+const FSSAI_ON_SITE = "21224035000151";
+const monthYear = (d: Date) => d.toLocaleDateString("en-IN", { month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
 
 export const metadata = {
   title: "Packaging Label - Spicy Nuts Admin",
@@ -21,9 +27,22 @@ export default async function ProductLabelPage({ params }: { params: Promise<{ i
     notFound();
   }
 
-  const batchNumber = `SN-LOT-${product.id.slice(-6).toUpperCase()}`;
-  const packedDate = new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
-  const bestBefore = new Date(Date.now() + 270 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+  // Batch, packing date and best-before come from the latest packed lot (Admin → Batches / Pack from bulk).
+  // With no lot yet they print blank, to be filled in, rather than invented.
+  const [settings, lot] = await Promise.all([
+    getStoreSettings(),
+    prisma.stockLot.findFirst({
+      where: { productId: product.id, kind: "PACK" },
+      orderBy: { receivedAt: "desc" },
+      select: { lotNumber: true, mfgDate: true, expiryDate: true, receivedAt: true },
+    }),
+  ]);
+  const blank = "__________";
+  const batchNumber = lot?.lotNumber ?? null;
+  const packedDate = lot ? monthYear(lot.mfgDate ?? lot.receivedAt) : blank;
+  const bestBefore = lot?.expiryDate ? monthYear(lot.expiryDate) : blank;
+  const fssai = settings.fssaiLicense || FSSAI_ON_SITE;
+  const packer = settings.legalName || "B.M.V. Spices & Dry Fruits";
 
   return (
     <div className="min-h-screen bg-muted/20 py-8 px-4 print:bg-white print:p-0">
@@ -43,6 +62,11 @@ export default async function ProductLabelPage({ params }: { params: Promise<{ i
             <LabelPrintButton />
           </div>
         </div>
+        {!lot && (
+          <p className="print:hidden rounded-xl border border-brand-gold/50 bg-[#fff8e8] p-3 text-sm">
+            No packed batch is recorded for this product yet, so batch, packing date and best-before print blank. Record the packing under Pack from bulk, or print batch stickers from Batches.
+          </p>
+        )}
 
         {/* Printable Label Sheet */}
         <div className="flex justify-center print:block">
@@ -53,12 +77,6 @@ export default async function ProductLabelPage({ params }: { params: Promise<{ i
               <div className="flex items-center justify-center gap-1.5 font-heading font-black text-lg uppercase tracking-wider text-black">
                 <Leaf className="w-5 h-5 text-green-800" />
                 <span>SPICY NUTS</span>
-              </div>
-              <p className="text-[10px] uppercase font-bold tracking-widest text-gray-700">
-                Pure • Natural • Single-Estate Harvest
-              </p>
-              <div className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full border border-black/40">
-                <ShieldCheck className="w-3 h-3 text-green-700" /> Grade A1 Connoisseur Reserve
               </div>
             </div>
 
@@ -79,21 +97,19 @@ export default async function ProductLabelPage({ params }: { params: Promise<{ i
 
             {/* Ingredients & Origin */}
             <div className="border-t border-dashed border-gray-400 py-2.5 space-y-1 text-[10px]">
-              <p><strong>Ingredients:</strong> {product.ingredients || "100% Pure Natural Kernels (Zero Additives)"}</p>
-              <p><strong>Terroir Origin:</strong> Single-Estate Certified Partner Groves</p>
+              <p><strong>Ingredients:</strong> {product.ingredients || product.name}</p>
               <p><strong>Storage:</strong> Store in a cool, dry place. Seal tightly after opening.</p>
             </div>
 
             {/* Pricing, Batch & Dates Grid */}
             <div className="border-t-2 border-b-2 border-black py-2 grid grid-cols-2 gap-2 text-[10px]">
               <div>
-                <p><strong>Batch / Lot:</strong> {batchNumber}</p>
+                <p><strong>Batch / Lot:</strong> {batchNumber ?? blank}</p>
                 <p><strong>Packed:</strong> {packedDate}</p>
                 <p><strong>Best Before:</strong> {bestBefore}</p>
               </div>
               <div className="text-right">
-                <p className="text-gray-500 line-through">MRP: ₹{product.mrp || (Number(product.price) * 1.25).toFixed(0)}</p>
-                <p className="font-black text-sm text-black">OFFER: ₹{product.salePrice || product.price}</p>
+                <p className="font-black text-sm text-black">MRP: ₹{product.mrp ?? product.price}</p>
                 <p className="text-[9px] text-gray-600">(Incl. of all taxes)</p>
               </div>
             </div>
@@ -101,25 +117,17 @@ export default async function ProductLabelPage({ params }: { params: Promise<{ i
             {/* Barcode & FSSAI Footer */}
             <div className="pt-3 flex items-end justify-between">
               <div>
-                <p className="font-bold text-[9px] uppercase tracking-wider">FSSAI Lic No: 10020021000456</p>
+                <p className="font-bold text-[9px] uppercase tracking-wider">FSSAI Reg. No: {fssai}</p>
                 <p className="text-[8px] text-gray-600 leading-tight mt-0.5">
-                  Mkd & Pkd by: Spicy Nuts Gourmet Pvt Ltd<br />
+                  Mkd &amp; Pkd by: {packer}, Shop No 1/206/1, Bhaskar Nagar, Chitguppa, Bidar, Karnataka 585412<br />
                   Customer Care: spicynuts1973@gmail.com
                 </p>
               </div>
 
-              {/* Simulated Barcode */}
+              {/* Real product barcode when one is set in the catalogue */}
               <div className="text-right flex flex-col items-end">
-                <div className="flex gap-[2px] items-end h-7 w-28 bg-white">
-                  {[3,1,2,1,3,2,1,3,1,2,1,3,2,1,1,3,2,1,3,1,2,3].map((w, i) => (
-                    <div 
-                      key={i} 
-                      className="bg-black h-full" 
-                      style={{ width: `${w * 1.5}px` }} 
-                    />
-                  ))}
-                </div>
-                <span className="font-mono text-[9px] tracking-widest mt-0.5">{batchNumber}</span>
+                {product.barcode && <Barcode value={product.barcode} height={28} width={1.2} fontSize={9} margin={0} displayValue background="#ffffff" />}
+                {batchNumber && <span className="font-mono text-[9px] tracking-widest mt-0.5">{batchNumber}</span>}
               </div>
             </div>
 

@@ -77,7 +77,7 @@ export default function OrdersClient({
       await updateOrderTrackingAction(id, trackingNumber, trackingUrl);
       setOrders(orders.map(o => o.id === id ? { ...o, trackingNumber, trackingUrl } : o));
       toast.success("Tracking details saved");
-    } catch (err) {
+    } catch {
       toast.error("Failed to save tracking details");
     } finally {
       setIsSavingTracking(false);
@@ -94,7 +94,7 @@ export default function OrdersClient({
       }
       toast.success(`Order #${id.slice(-8).toUpperCase()} → ${ORDER_STATUS_LABELS[newStatus as OrderStatus] ?? newStatus}`);
       router.refresh();
-    } catch (err) {
+    } catch {
       toast.error("Failed to update status");
     } finally {
       setIsPending(false);
@@ -113,7 +113,7 @@ export default function OrdersClient({
         setOrders(orders.filter(o => o.id !== id));
         setSelectedIds(prev => prev.filter(sid => sid !== id));
         toast.success(`Order ${id} deleted`);
-      } catch (err) {
+      } catch {
         toast.error("Failed to delete order");
       } finally {
         setIsPending(false);
@@ -130,7 +130,7 @@ export default function OrdersClient({
       if (res.failed.length > 0) toast.error(`${res.failed.length} skipped — ${res.failed.slice(0, 3).join('; ')}`);
       setSelectedIds([]);
       router.refresh();
-    } catch (err) {
+    } catch {
       toast.error("Failed to update orders");
     } finally {
       setIsPending(false);

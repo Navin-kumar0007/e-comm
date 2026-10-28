@@ -65,7 +65,7 @@ export function Footer({ contact }: { contact?: FooterContact }) {
               </div>
             </Link>
             <p className="mb-4 text-[13.5px] leading-relaxed text-white/80">
-              {contact?.tagline || "Purveyors of Imperial Dry Fruits, Royal Nuts, and Rare Whole Spices sourced directly from single-estate farms."}
+              {contact?.tagline || "Premium dry fruits, nuts and whole spices, graded by hand and packed in Bidar, Karnataka."}
             </p>
             <div className="space-y-0.5 text-xs leading-relaxed text-white/80">
               <p className="font-semibold text-white">B.M.V. SPICES & DRY FRUITS</p>

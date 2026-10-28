@@ -33,7 +33,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
         date: order.createdAt,
         customer: order.customerName,
         customerGstin: order.customerGstin,
-        items: order.items.map((i: any) => ({ name: i.productName, pack: i.weight, qty: i.quantity, price: i.price, hsn: i.hsnCode })),
+        items: order.items.map((i) => ({ name: i.productName, pack: i.weight, qty: i.quantity, price: i.price, hsn: i.hsnCode })),
         subtotal: order.subtotal ?? inv.subtotal,
         discount: order.discount,
         total: order.total,

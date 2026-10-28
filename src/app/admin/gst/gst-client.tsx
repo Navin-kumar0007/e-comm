@@ -60,7 +60,7 @@ export function GstClient({ data }: { data: any }) {
         <div className="space-y-1 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-900 print:hidden">
           {!data.gstin && <p className="flex items-center gap-2"><AlertTriangle className="h-4 w-4" /> No GSTIN in Settings.</p>}
           {data.uninvoiced.count > 0 && <p className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 shrink-0" /> {data.uninvoiced.count} confirmed order{data.uninvoiced.count === 1 ? "" : "s"} this month ({inr(data.uninvoiced.value)}) have no invoice number, so they are not in these figures. They were placed before invoice numbering started; ask your CA how to report them.</p>}
-          {data.missingHsn > 0 && <p className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 shrink-0" /> {data.missingHsn} item line{data.missingHsn === 1 ? " was" : "s were"} sold without an HSN code (shown as "—"). Add HSN codes on each product; new orders will carry them.</p>}
+          {data.missingHsn > 0 && <p className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 shrink-0" /> {data.missingHsn} item line{data.missingHsn === 1 ? " was" : "s were"} sold without an HSN code (shown as &quot;—&quot;). Add HSN codes on each product; new orders will carry them.</p>}
         </div>
       )}
 

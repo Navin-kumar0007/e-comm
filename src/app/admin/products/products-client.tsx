@@ -115,7 +115,7 @@ export default function AdminProductsClient({ initialProducts }: { initialProduc
       setProducts(prev => prev.map(p => p.id === id ? { ...p, stock: editForm.stock, salePrice: editForm.salePrice } : p));
       toast.success("Product updated");
       setEditingId(null);
-    } catch (e) {
+    } catch {
       toast.error("Failed to update");
     } finally {
       setIsPending(false);

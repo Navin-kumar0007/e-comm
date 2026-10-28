@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { NextResponse, after } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
@@ -86,7 +87,7 @@ export async function POST(req: Request) {
     }
 
     const stockResults: Array<StockResult | null> = [];
-    const order = await prisma.$transaction(async (tx: any) => {
+    const order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Points: only deduct if the balance still covers it (guards concurrent checkouts).
       if (user && quote.pointsToDeduct > 0) {
         const res = await tx.user.updateMany({
@@ -238,7 +239,7 @@ export async function POST(req: Request) {
       amount: rzpOrder.amount,
       ...breakdown,
     });
-  } catch (error: any) {
+  } catch (error) {
     if (reservedOrderId) {
       await releaseOrderReservation(reservedOrderId, "CANCELLED").catch((e) =>
         console.error("[Checkout] Failed to release reservation:", e)

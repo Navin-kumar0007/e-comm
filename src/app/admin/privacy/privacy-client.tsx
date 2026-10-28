@@ -15,8 +15,9 @@ export function PrivacyClient({ rows }: { rows: any[] }) {
   const [pending, start] = useTransition();
   const [form, setForm] = useState<{ email: string; phone: string; type: "ACCESS" | "CORRECTION" | "ERASURE" | "WITHDRAW"; details: string } | null>(null);
   const [confirmErase, setConfirmErase] = useState<string | null>(null);
+  const [now] = useState(() => Date.now()); // read once, so renders stay pure
   const open = rows.filter((r) => r.status === "OPEN");
-  const overdue = open.filter((r) => new Date(r.dueAt).getTime() < Date.now());
+  const overdue = open.filter((r) => new Date(r.dueAt).getTime() < now);
   const run = (fn: () => Promise<any>, ok: string) => start(async () => {
     const res = await fn();
     if (res && "error" in res && res.error) { toast.error(res.error); return; }
@@ -40,7 +41,7 @@ export function PrivacyClient({ rows }: { rows: any[] }) {
             <thead className="bg-muted/30"><tr><th className={thCls}>Received</th><th className={thCls}>Customer</th><th className={thCls}>Request</th><th className={thCls}>Answer by</th><th className={thCls}>Status</th><th className={thCls}></th></tr></thead>
             <tbody className="divide-y divide-border/60">
               {rows.map((r) => {
-                const late = r.status === "OPEN" && new Date(r.dueAt).getTime() < Date.now();
+                const late = r.status === "OPEN" && new Date(r.dueAt).getTime() < now;
                 const key = (r.phone || "").replace(/\D/g, "").slice(-10) || r.email;
                 return (
                   <tr key={r.id}>

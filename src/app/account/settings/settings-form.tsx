@@ -40,7 +40,7 @@ export function SettingsForm({ user, availableTags }: { user: any, availableTags
         dietaryTagIds: selectedTags 
       });
       toast.success("Settings saved successfully!");
-    } catch (error) {
+    } catch {
       toast.error("Failed to save settings.");
     } finally {
       setIsSaving(false);

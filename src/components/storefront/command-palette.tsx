@@ -26,6 +26,7 @@ export function CommandPalette({ open, setOpen }: { open: boolean, setOpen: (ope
 
   useEffect(() => {
     if (!query) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clear old results when the search box is emptied
       setResults({ products: [], recipes: [] });
       return;
     }
@@ -67,7 +68,7 @@ export function CommandPalette({ open, setOpen }: { open: boolean, setOpen: (ope
           {loading && <div className="p-8 text-center text-muted-foreground text-sm animate-pulse">Searching...</div>}
           
           {query && !loading && results.products.length === 0 && results.recipes.length === 0 && (
-            <div className="p-8 text-center text-muted-foreground text-sm">No results found for "{query}"</div>
+            <div className="p-8 text-center text-muted-foreground text-sm">No results found for &quot;{query}&quot;</div>
           )}
 
           {results.products.length > 0 && (

@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save, Loader2, X, Printer, Maximize2, SplitSquareHorizontal } from "lucide-react";
+import { ArrowLeft, Save, Loader2, X, Printer, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,8 +15,7 @@ import Barcode from "@/components/ui/barcode";
 import QRCode from "react-qr-code";
 import { SITE_URL } from "@/lib/site";
 
-export default function EditProductForm({ product, categories, dietaryTags }: { product: any, categories: {id: string, name: string}[], dietaryTags: {id: string, name: string}[] }) {
-  const router = useRouter();
+export default function EditProductForm({ product, categories }: { product: any, categories: {id: string, name: string}[], dietaryTags: {id: string, name: string}[] }) {
   const [activeTab, setActiveTab] = useState<"DETAILS" | "LABEL">("DETAILS");
   
   // General State
@@ -37,7 +35,7 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
     if (product.labelSettings) {
       defaultLabelSettings = JSON.parse(product.labelSettings);
     }
-  } catch(e) {}
+  } catch {}
 
   // Label Editor State
   const [slogan, setSlogan] = useState(product.slogan || "");
@@ -76,7 +74,7 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
       const data = await res.json();
       if (data.url) setImageUrl(data.url);
       else toast.error("Upload failed");
-    } catch(err) {
+    } catch {
       toast.error("Upload failed");
     } finally {
       setIsUploading(false);
@@ -124,7 +122,7 @@ export default function EditProductForm({ product, categories, dietaryTags }: { 
       });
       toast.success("Product updated successfully!");
       setIsSaving(false);
-    } catch(err) {
+    } catch {
       toast.error("Failed to update product.");
       setIsSaving(false);
     }

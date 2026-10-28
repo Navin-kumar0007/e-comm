@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { allocatePackLots, returnPackLots } from "@/lib/wms";
 
@@ -95,7 +96,7 @@ export async function adjustStock(tx: any, change: StockChange): Promise<StockRe
 
 /** Sets an absolute stock level (admin edits), recording the difference. */
 export async function setStockLevel(
-  tx: any,
+  tx: Prisma.TransactionClient,
   params: { productId: string; variantId?: string | null; newStock: number; reason: StockReason; actor: string; note?: string }
 ) {
   const target = Math.max(0, Math.round(params.newStock));
@@ -107,7 +108,7 @@ export async function setStockLevel(
 }
 
 /** Keeps Product.price/salePrice/mrp/weight/stock in line with its default size. */
-export async function syncProductFromVariants(tx: any, productId: string) {
+export async function syncProductFromVariants(tx: Prisma.TransactionClient, productId: string) {
   const variants = await tx.productVariant.findMany({
     where: { productId, isActive: true },
     orderBy: [{ sortOrder: "asc" }, { price: "asc" }],
@@ -121,7 +122,7 @@ export async function syncProductFromVariants(tx: any, productId: string) {
       salePrice: d.salePrice,
       mrp: d.mrp,
       weight: d.label,
-      stock: variants.reduce((sum: number, v: any) => sum + v.stock, 0),
+      stock: variants.reduce((sum: number, v) => sum + v.stock, 0),
     },
   });
 }

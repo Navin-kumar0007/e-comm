@@ -26,7 +26,7 @@ export async function cancelMyOrderAction(orderId: string, reason: string) {
   if (!CUSTOMER_CANCELLABLE.includes(order.status as OrderStatus)) {
     return { error: 'This order has already been shipped and can no longer be cancelled.' };
   }
-  const pickedUp = order.shipments.some((s: any) => s.type === 'FORWARD' && !['CREATED', 'PICKUP_SCHEDULED', 'CANCELLED'].includes(s.status));
+  const pickedUp = order.shipments.some((s) => s.type === 'FORWARD' && !['CREATED', 'PICKUP_SCHEDULED', 'CANCELLED'].includes(s.status));
   if (pickedUp) return { error: 'This order has already been handed to the courier and can no longer be cancelled.' };
 
   const result = await transitionOrder(orderId, 'CANCELLED', {
@@ -60,7 +60,7 @@ export async function requestReturnAction(input: { orderId: string; reason: stri
   if (Date.now() - new Date(deliveredAt).getTime() > returnWindowHours * 60 * 60 * 1000) {
     return { error: `Return requests must be raised within ${returnWindowHours} hours of delivery. Please contact support.` };
   }
-  if (order.returnRequests.some((r: any) => ['REQUESTED', 'APPROVED'].includes(r.status))) {
+  if (order.returnRequests.some((r) => ['REQUESTED', 'APPROVED'].includes(r.status))) {
     return { error: 'You already have an open return request for this order.' };
   }
 

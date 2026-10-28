@@ -46,7 +46,7 @@ export const CONTENT_DEFAULTS = {
     phone: BRAND_PHONE_DISPLAY,
     email: BRAND_EMAIL,
     address: "Shop No 1/206/1, Bhaskar Nagar Chitguppa, Chitguppa Sub Post Office, Chitgoppa, Bidar, Karnataka – 585412",
-    tagline: "Purveyors of Imperial Dry Fruits, Royal Nuts, and Rare Whole Spices sourced directly from single-estate farms.",
+    tagline: "Premium dry fruits, nuts and whole spices, graded by hand and packed in Bidar, Karnataka.",
     instagram: "",
     youtube: "",
     facebook: "",

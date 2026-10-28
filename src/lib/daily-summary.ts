@@ -37,14 +37,14 @@ export async function buildDailySummary(now = new Date()) {
     prisma.privacyRequest.count({ where: { status: "OPEN", dueAt: { lt: new Date(now.getTime() + 14 * 864e5) } } }),
   ]);
 
-  const sales = orders.reduce((s: number, o: any) => s + o.total, 0);
-  const cod = orders.filter((o: any) => o.paymentMethod === "COD").length;
-  const expiringWeek = overview.expiring.filter((l: any) => expiryStatus(l.expiryDate, now, 7) !== "OK");
+  const sales = orders.reduce((s: number, o) => s + o.total, 0);
+  const cod = orders.filter((o) => o.paymentMethod === "COD").length;
+  const expiringWeek = overview.expiring.filter((l) => expiryStatus(l.expiryDate, now, 7) !== "OK");
   const dayLabel = start.toLocaleDateString("en-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" });
 
   const alerts: string[] = [];
   if (toPack) alerts.push(`${toPack} order${toPack === 1 ? "" : "s"} waiting to be packed and booked`);
-  if (overview.reorder.length) alerts.push(`${overview.reorder.length} item${overview.reorder.length === 1 ? "" : "s"} to reorder (${overview.reorder.slice(0, 3).map((r: any) => `${r.name} ${r.pack}`).join(", ")}${overview.reorder.length > 3 ? "…" : ""})`);
+  if (overview.reorder.length) alerts.push(`${overview.reorder.length} item${overview.reorder.length === 1 ? "" : "s"} to reorder (${overview.reorder.slice(0, 3).map((r) => `${r.name} ${r.pack}`).join(", ")}${overview.reorder.length > 3 ? "…" : ""})`);
   if (lowStock) alerts.push(`${lowStock} product${lowStock === 1 ? "" : "s"} with 5 or fewer packs left`);
   if (expiringWeek.length) alerts.push(`${expiringWeek.length} batch${expiringWeek.length === 1 ? "" : "es"} expired or expiring within 7 days`);
   if (returns) alerts.push(`${returns} return request${returns === 1 ? "" : "s"} to handle`);

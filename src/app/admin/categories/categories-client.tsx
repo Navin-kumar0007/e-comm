@@ -12,8 +12,7 @@ import {
   ExternalLink, 
   Search, 
   X, 
-  Layers,
-  Image as ImageIcon
+  Layers
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,7 +96,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
           description,
           image: image || undefined
         });
-        setCategories(prev => prev.map(c => c.id === editingCategory.id ? { ...c, name, slug, description, image: image || null } : c));
+        setCategories(prev => prev.map(c => c.id === editingCategory.id ? { ...c, name: updated.name, slug: updated.slug, description: updated.description, image: updated.image } : c));
         toast.success("Category updated successfully!");
       } else {
         const created = await createCategoryAction({
@@ -191,7 +190,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
               {filteredCategories.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
-                    No categories found. Click "Add Category" to create your first one.
+                    No categories found. Click &quot;Add Category&quot; to create your first one.
                   </td>
                 </tr>
               ) : (

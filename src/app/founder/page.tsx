@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Leaf, Award, Heart } from 'lucide-react';
+import { Leaf, Award } from 'lucide-react';
 import { PageHero } from "@/components/storefront/royal/page-hero";
 
 export const metadata = {
@@ -31,10 +30,10 @@ export default function FounderPage() {
             <div>
               <h2 className="text-2xl font-heading font-bold mb-3 text-primary">A Passion for Purity</h2>
               <p className="text-muted-foreground leading-relaxed text-sm mb-3">
-                "I started Spicy Nuts with a simple realization: the flavors of my childhood were slowly disappearing from modern kitchens, replaced by heavily processed, artificially flavored alternatives."
+                &quot;I started Spicy Nuts with a simple realization: the flavors of my childhood were slowly disappearing from modern kitchens, replaced by heavily processed, artificially flavored alternatives.&quot;
               </p>
               <p className="text-muted-foreground leading-relaxed text-sm">
-                Growing up in a household where every spice was ground fresh and every nut was hand-graded with care, I knew that authentic taste comes from pure ingredients. That's why every spice and dry fruit we sell is graded by hand and packed by us in Bidar.
+                Growing up in a household where every spice was ground fresh and every nut was hand-graded with care, I knew that authentic taste comes from pure ingredients. That&apos;s why every spice and dry fruit we sell is graded by hand and packed by us in Bidar.
               </p>
             </div>
 

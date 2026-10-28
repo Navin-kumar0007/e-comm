@@ -16,7 +16,7 @@ export default function MarkDeliveredButton({ id }: { id: string }) {
     try {
       await markSubscriptionDeliveredAction(id);
       toast.success("Box marked as delivered! Next delivery date updated.");
-    } catch (err) {
+    } catch {
       toast.error("Failed to update subscription");
     } finally {
       setIsProcessing(false);

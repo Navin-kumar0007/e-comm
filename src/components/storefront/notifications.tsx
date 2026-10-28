@@ -2,14 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { Bell, Package, Tag, Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 
 export function NotificationsDropdown() {
   const { data: session } = useSession();
@@ -71,7 +69,7 @@ export function NotificationsDropdown() {
           {notifications.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground flex flex-col items-center">
               <Bell className="w-8 h-8 mb-2 opacity-20" />
-              <p className="text-sm">You're all caught up!</p>
+              <p className="text-sm">You&apos;re all caught up!</p>
             </div>
           ) : (
             notifications.map((notif) => (

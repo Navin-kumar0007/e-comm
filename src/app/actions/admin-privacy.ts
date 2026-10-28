@@ -1,4 +1,5 @@
 'use server';
+import type { Prisma } from "@prisma/client";
 
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db/prisma';
@@ -49,7 +50,7 @@ export async function eraseCustomerAction(requestId: string) {
   const phone = last10(user?.phone ?? req.phone);
   const phoneVariants = phone ? [phone, `91${phone}`] : [];
 
-  await prisma.$transaction(async (tx: any) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     if (user) {
       await tx.notification.deleteMany({ where: { userId: user.id } });
       await tx.user.update({

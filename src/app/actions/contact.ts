@@ -45,7 +45,7 @@ export async function submitContact(data: { name: string, email: string, message
     });
     try { await notifyAdminContact(data.name, data.email, data.message); } catch(e) { console.error('Admin notification failed', e); }
     return { success: true };
-  } catch (error: any) {
+  } catch {
     return { error: 'Failed to send message' };
   }
 }

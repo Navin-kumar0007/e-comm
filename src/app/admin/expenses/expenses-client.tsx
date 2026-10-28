@@ -101,7 +101,7 @@ export function ExpensesClient({ ym, rows, unpaid }: { ym: string; rows: any[]; 
 
         <Panel title={cat === "ALL" ? "All bills" : expenseLabel(cat)} className="lg:col-span-3">
           {list.length === 0 ? (
-            <Empty icon={<Receipt className="h-8 w-8" />} title={`No expenses in ${monthLabel(ym, true)}`}>Add jars and labels, salaries, rent, ads and other costs. Keep the bill number; with the vendor's GSTIN the GST is claimed back in your GST return.</Empty>
+            <Empty icon={<Receipt className="h-8 w-8" />} title={`No expenses in ${monthLabel(ym, true)}`}>Add jars and labels, salaries, rent, ads and other costs. Keep the bill number; with the vendor&apos;s GSTIN the GST is claimed back in your GST return.</Empty>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">

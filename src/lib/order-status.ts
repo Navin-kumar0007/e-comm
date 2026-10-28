@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { canTransition, ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/order-status-rules";
 import { logOrderEvent } from "@/lib/order-events";
@@ -30,7 +31,7 @@ export async function transitionOrder(
   to: OrderStatus,
   opts: { actor: string; reason?: string; refund?: boolean }
 ): Promise<TransitionResult> {
-  const result = await prisma.$transaction(async (tx: any) => {
+  const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const order = await tx.order.findUnique({ where: { id: orderId }, include: { items: true } });
     if (!order) return { ok: false, error: "Order not found" } as const;
     const from = order.status;
@@ -122,7 +123,7 @@ export async function transitionOrder(
     include: { shipments: { orderBy: { createdAt: "desc" } } },
   });
   if (!order) return { ok: true, from: result.from, to };
-  const activeShipment = order.shipments.find((s: any) => s.type === "FORWARD" && s.status !== "CANCELLED");
+  const activeShipment = order.shipments.find((s) => s.type === "FORWARD" && s.status !== "CANCELLED");
 
   if (to === "CANCELLED" && activeShipment) {
     await cancelCourierBooking(activeShipment, opts.actor);

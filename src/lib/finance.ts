@@ -67,17 +67,17 @@ export async function getProfitAndLoss(ym: string): Promise<PnL> {
   const taxOf = (o: any) => (o?.items?.length ? computeInvoice(o, settings).taxTotal : 0);
 
   // Costs per product / size for anything not taken from a batch.
-  const ids = [...new Set([...orders.flatMap((o: any) => o.items.map((i: any) => i.productId)), ...damage.map((d: any) => d.productId)].filter(Boolean))] as string[];
+  const ids = [...new Set([...orders.flatMap((o) => o.items.map((i) => i.productId)), ...damage.map((d) => d.productId)].filter(Boolean))] as string[];
   const products = await prisma.product.findMany({ where: { id: { in: ids } }, select: { id: true, costPrice: true, variants: { select: { id: true, costPrice: true } } } });
   const costOf = (productId: string | null, variantId: string | null) => {
-    const p: any = products.find((x: any) => x.id === productId);
+    const p = products.find((x) => x.id === productId);
     if (!p) return null;
-    const v = variantId ? p.variants.find((x: any) => x.id === variantId) : null;
+    const v = variantId ? p.variants.find((x) => x.id === variantId) : null;
     return v?.costPrice ?? p.costPrice ?? null;
   };
 
-  const orderIds = orders.map((o: any) => o.id);
-  const movementIds = damage.map((d: any) => d.id);
+  const orderIds = orders.map((o) => o.id);
+  const movementIds = damage.map((d) => d.id);
   const allocations = await prisma.lotAllocation.findMany({
     where: { OR: [{ orderId: { in: orderIds } }, { movementId: { in: movementIds } }], qty: { gt: 0 } },
     select: { orderId: true, movementId: true, qty: true, unitCost: true, lot: { select: { productId: true, variantId: true } } },
@@ -88,11 +88,11 @@ export async function getProfitAndLoss(ym: string): Promise<PnL> {
   let estimated = 0;
   let missing = 0;
   for (const o of orders as any[]) {
-    const allocs = allocations.filter((a: any) => a.orderId === o.id);
+    const allocs = allocations.filter((a) => a.orderId === o.id);
     for (const it of o.items) {
-      const mine = allocs.filter((a: any) => a.lot.productId === it.productId && (a.lot.variantId ?? null) === (it.variantId ?? null));
-      const fromLots = mine.reduce((s: number, a: any) => s + a.qty, 0);
-      cogs += mine.reduce((s: number, a: any) => s + a.qty * a.unitCost, 0);
+      const mine = allocs.filter((a) => a.lot.productId === it.productId && (a.lot.variantId ?? null) === (it.variantId ?? null));
+      const fromLots = mine.reduce((s: number, a) => s + a.qty, 0);
+      cogs += mine.reduce((s: number, a) => s + a.qty * a.unitCost, 0);
       const rest = Math.max(0, it.quantity - fromLots);
       if (!rest) continue;
       const c = costOf(it.productId, it.variantId);
@@ -104,19 +104,19 @@ export async function getProfitAndLoss(ym: string): Promise<PnL> {
   // Stock written off or lost in counts (a count gain reduces the loss).
   let stockLosses = 0;
   for (const d of damage as any[]) {
-    const allocs = allocations.filter((a: any) => a.movementId === d.id);
-    const fromLots = allocs.reduce((s: number, a: any) => s + a.qty, 0);
+    const allocs = allocations.filter((a) => a.movementId === d.id);
+    const fromLots = allocs.reduce((s: number, a) => s + a.qty, 0);
     const unit = costOf(d.productId, d.variantId) ?? 0;
-    if (d.delta < 0) stockLosses += allocs.reduce((s: number, a: any) => s + a.qty * a.unitCost, 0) + Math.max(0, -d.delta - fromLots) * unit;
+    if (d.delta < 0) stockLosses += allocs.reduce((s: number, a) => s + a.qty * a.unitCost, 0) + Math.max(0, -d.delta - fromLots) * unit;
     else stockLosses -= d.delta * unit;
   }
   for (const m of matLoss as any[]) stockLosses -= m.delta * (m.material?.avgCost ?? 0);
 
-  const sales = r2(orders.reduce((s: number, o: any) => s + o.total, 0));
-  const gstCollected = r2(orders.reduce((s: number, o: any) => s + taxOf(o), 0));
-  const refundNet = r2(refunds.reduce((s: number, r: any) => s + r.amount * (r.order?.total ? 1 - taxOf(r.order) / r.order.total : 1), 0));
+  const sales = r2(orders.reduce((s: number, o) => s + o.total, 0));
+  const gstCollected = r2(orders.reduce((s: number, o) => s + taxOf(o), 0));
+  const refundNet = r2(refunds.reduce((s: number, r) => s + r.amount * (r.order?.total ? 1 - taxOf(r.order) / r.order.total : 1), 0));
   const netRevenue = r2(sales - gstCollected - refundNet);
-  const shipping = r2(orders.reduce((s: number, o: any) => s + o.shipments.reduce((a: number, sh: any) => a + (sh.charge ?? 0), 0), 0));
+  const shipping = r2(orders.reduce((s: number, o) => s + o.shipments.reduce((a: number, sh) => a + (sh.charge ?? 0), 0), 0));
 
   let gatewayFees = 0;
   let gatewayEstimated = 0;
@@ -166,8 +166,8 @@ export async function getCashMonth(ym: string): Promise<CashMonth> {
     prisma.expense.aggregate({ where: { paidAt: { gte: start, lt: end }, paidVia: { not: "UNPAID" } }, _sum: { total: true } }),
     prisma.order.aggregate({ where: { channel: "SHOP", paidAt: { gte: start, lt: end }, paymentMethod: { in: ["CASH", "UPI", "CARD"] } }, _sum: { total: true } }),
   ]);
-  const onlineIn = r2(online.reduce((s: number, o: any) => s + o.total, 0));
-  const feesOut = r2(online.reduce((s: number, o: any) => s + (o.paymentFee ?? o.total * ESTIMATED_GATEWAY_RATE * 1.18), 0));
+  const onlineIn = r2(online.reduce((s: number, o) => s + o.total, 0));
+  const feesOut = r2(online.reduce((s: number, o) => s + (o.paymentFee ?? o.total * ESTIMATED_GATEWAY_RATE * 1.18), 0));
   const m = {
     ym, onlineIn, shopIn: r2(shop._sum.total ?? 0), codIn: r2(cod._sum.amount ?? 0), feesOut,
     refundsOut: r2(refunds._sum.amount ?? 0), suppliersOut: r2(supplier._sum.amount ?? 0), expensesOut: r2(expenses._sum.total ?? 0),
@@ -187,13 +187,13 @@ export async function getPositions() {
     prisma.expense.aggregate({ where: { paidVia: "UNPAID" }, _sum: { total: true }, _count: { _all: true } }),
   ]);
   const anySettled = await prisma.order.count({ where: { settledAt: { not: null } } });
-  const supplierDue = pos.reduce((s: number, p: any) => s + Math.max(0, receivedValue(p) - p.paidAmount), 0);
-  const oldestCod = codDue.reduce<Date | null>((min, o: any) => (!o.deliveredAt ? min : !min || o.deliveredAt < min ? o.deliveredAt : min), null);
+  const supplierDue = pos.reduce((s: number, p) => s + Math.max(0, receivedValue(p) - p.paidAmount), 0);
+  const oldestCod = codDue.reduce<Date | null>((min, o) => (!o.deliveredAt ? min : !min || o.deliveredAt < min ? o.deliveredAt : min), null);
   return {
-    razorpayUnsettled: r2(unsettled.reduce((s: number, o: any) => s + o.total - (o.paymentFee ?? 0) - (o.refundedAmount ?? 0), 0)),
+    razorpayUnsettled: r2(unsettled.reduce((s: number, o) => s + o.total - (o.paymentFee ?? 0) - (o.refundedAmount ?? 0), 0)),
     razorpayUnsettledOrders: unsettled.length,
     razorpaySynced: anySettled > 0,
-    codDue: r2(codDue.reduce((s: number, o: any) => s + o.total, 0)),
+    codDue: r2(codDue.reduce((s: number, o) => s + o.total, 0)),
     codDueOrders: codDue.length,
     codOldest: oldestCod,
     supplierDue: r2(supplierDue),
@@ -227,7 +227,7 @@ export async function getGstReturn(ym: string) {
     prisma.order.aggregate({ where: { paidAt: { gte: start, lt: end }, paymentFeeTax: { not: null } }, _sum: { paymentFeeTax: true } }),
   ]);
 
-  const invoices: InvoiceForReturn[] = orders.map((o: any) => {
+  const invoices: InvoiceForReturn[] = orders.map((o) => {
     const inv = computeInvoice(o, settings);
     return {
       invoiceNumber: inv.invoiceNumber, date: o.createdAt, customerName: o.customerName, customerGstin: o.customerGstin ?? null,
@@ -238,23 +238,23 @@ export async function getGstReturn(ym: string) {
   });
   const gstr1 = buildGstr1(invoices, settings.businessState);
 
-  const creditNotes = refunds.map((r: any) => {
+  const creditNotes = refunds.map((r) => {
     const tax = r.order.total ? r2((r.amount * (r.order.taxAmount || 0)) / r.order.total) : 0;
     const state = r.order.shippingState ?? null;
     return { date: r.createdAt, invoice: r.order.invoiceNumber, customer: r.order.customerName, amount: r.amount, taxable: r2(r.amount - tax), tax, sameState: sameStateAs(settings.businessState, state), reason: r.reason };
   });
-  const cnTotals = refundTax(refunds.map((r: any) => ({ amount: r.amount, orderTotal: r.order.total, orderTax: r.order.taxAmount || 0, sameState: sameStateAs(settings.businessState, r.order.shippingState) })));
+  const cnTotals = refundTax(refunds.map((r) => ({ amount: r.amount, orderTotal: r.order.total, orderTax: r.order.taxAmount || 0, sameState: sameStateAs(settings.businessState, r.order.shippingState) })));
 
   const itcRows = [
-    ...pos.map((p: any) => {
+    ...pos.map((p) => {
       const share = (() => {
-        const ordered = p.lines.reduce((s: number, l: any) => s + l.qty * l.rate, 0);
-        const got = p.lines.reduce((s: number, l: any) => s + Math.min(l.qty, l.receivedQty) * l.rate, 0);
+        const ordered = p.lines.reduce((s: number, l) => s + l.qty * l.rate, 0);
+        const got = p.lines.reduce((s: number, l) => s + Math.min(l.qty, l.receivedQty) * l.rate, 0);
         return ordered ? got / ordered : 0;
       })();
       return { source: `${p.number} · ${p.supplier.name}`, gstin: p.supplier.gstin, billNo: p.supplierInvoiceNo, date: p.supplierInvoiceDate ?? p.updatedAt, taxable: r2(p.subtotal * share), tax: r2(p.taxTotal * share), sameState: !businessCode || gstinState(p.supplier.gstin) === businessCode };
     }),
-    ...expenses.map((e: any) => ({ source: `${expenseLabel(e.category)} · ${e.vendor ?? e.description}`, gstin: e.vendorGstin, billNo: e.billNo, date: e.date, taxable: e.amount, tax: e.gstAmount, sameState: !businessCode || gstinState(e.vendorGstin) === businessCode })),
+    ...expenses.map((e) => ({ source: `${expenseLabel(e.category)} · ${e.vendor ?? e.description}`, gstin: e.vendorGstin, billNo: e.billNo, date: e.date, taxable: e.amount, tax: e.gstAmount, sameState: !businessCode || gstinState(e.vendorGstin) === businessCode })),
   ];
   const razorpayFeeTax = r2(feeOrders._sum.paymentFeeTax ?? 0);
   if (razorpayFeeTax > 0) {
@@ -272,7 +272,7 @@ export async function getGstReturn(ym: string) {
 
   const cancelledInvoices = await prisma.order.findMany({ where: { createdAt: { gte: start, lt: end }, status: { notIn: BOOKED_STATUSES }, invoiceNumber: { not: null } }, select: { invoiceNumber: true }, orderBy: { invoiceNumber: "asc" } });
   const uninvoiced = await prisma.order.aggregate({ where: { createdAt: { gte: start, lt: end }, status: { in: BOOKED_STATUSES }, invoiceNumber: null }, _count: { _all: true }, _sum: { total: true } });
-  const missingHsn = orders.reduce((s: number, o: any) => s + o.items.filter((i: any) => !i.hsnCode).length, 0);
+  const missingHsn = orders.reduce((s: number, o) => s + o.items.filter((i) => !i.hsnCode).length, 0);
   return { ym, gstin: settings.gstin, legalName: settings.legalName, businessState: settings.businessState, gstr1, creditNotes, cnTotals, itcRows, itc, outward, payable, missingHsn, invoiceCount: orders.length, uninvoiced: { count: uninvoiced._count._all, value: r2(uninvoiced._sum.total ?? 0) }, cancelledInvoices: cancelledInvoices.map((o: any) => o.invoiceNumber as string), docsIssued: docsIssued(orders.map((o: any) => o.invoiceNumber), cancelledInvoices.map((o: any) => o.invoiceNumber)) };
 }
 

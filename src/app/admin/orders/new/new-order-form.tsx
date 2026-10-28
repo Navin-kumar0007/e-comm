@@ -86,7 +86,7 @@ export default function NewOrderForm({ products, settings, buyers = [], initialB
       }
       toast.success("Order created successfully!");
       router.push("/admin/orders");
-    } catch (err) {
+    } catch {
       toast.error("Failed to create order");
       setIsSaving(false);
     }
@@ -157,7 +157,7 @@ export default function NewOrderForm({ products, settings, buyers = [], initialB
               <div className="py-8 text-center text-muted-foreground text-sm">No items added yet. Search and select products above.</div>
             ) : (
               <div className="space-y-3">
-                {items.map((item, i) => (
+                {items.map((item) => (
                   <div key={item.productId} className="flex items-center gap-4 p-3 bg-muted/30 rounded-xl">
                     <div className="flex-1">
                       <div className="font-medium text-sm text-foreground">{item.name}</div>
